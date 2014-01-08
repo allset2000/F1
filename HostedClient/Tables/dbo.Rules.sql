@@ -15,8 +15,5 @@ ALTER TABLE [dbo].[Rules] ADD CONSTRAINT [PK_Rules] PRIMARY KEY CLUSTERED  ([Rul
 GO
 ALTER TABLE [dbo].[Rules] ADD CONSTRAINT [FK_Rules_JobTypeID] FOREIGN KEY ([JobTypeID]) REFERENCES [dbo].[JobTypes] ([JobTypeID])
 GO
-GRANT VIEW DEFINITION ON  [dbo].[Rules] TO [mmoscoso]
-GRANT SELECT ON  [dbo].[Rules] TO [mmoscoso]
-GO
 EXEC sp_addextendedproperty N'MS_Description', N'', 'SCHEMA', N'dbo', 'TABLE', N'Rules', 'COLUMN', N'Enabled'
 GO

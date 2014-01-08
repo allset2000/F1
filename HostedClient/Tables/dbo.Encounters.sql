@@ -16,9 +16,6 @@ ALTER TABLE [dbo].[Encounters] ADD CONSTRAINT [FK_Appointments_Patients] FOREIGN
 GO
 ALTER TABLE [dbo].[Encounters] ADD CONSTRAINT [FK_Encounters_Schedules] FOREIGN KEY ([ScheduleID]) REFERENCES [dbo].[Schedules] ([ScheduleID])
 GO
-GRANT VIEW DEFINITION ON  [dbo].[Encounters] TO [mmoscoso]
-GRANT SELECT ON  [dbo].[Encounters] TO [mmoscoso]
-GO
 EXEC sp_addextendedproperty N'MS_Description', N'Encounter Date', 'SCHEMA', N'dbo', 'TABLE', N'Encounters', 'COLUMN', N'AppointmentDate'
 GO
 EXEC sp_addextendedproperty N'MS_Description', N'Internal ID', 'SCHEMA', N'dbo', 'TABLE', N'Encounters', 'COLUMN', N'EncounterID'

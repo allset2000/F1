@@ -11,6 +11,3 @@ ALTER TABLE [dbo].[RulesReasonsXref] ADD CONSTRAINT [FK_Rulesreasons_ReasonsXref
 GO
 ALTER TABLE [dbo].[RulesReasonsXref] ADD CONSTRAINT [FK_Rules_ReasonXref_Rules] FOREIGN KEY ([RuleID]) REFERENCES [dbo].[Rules] ([RuleID])
 GO
-GRANT VIEW DEFINITION ON  [dbo].[RulesReasonsXref] TO [mmoscoso]
-GRANT SELECT ON  [dbo].[RulesReasonsXref] TO [mmoscoso]
-GO

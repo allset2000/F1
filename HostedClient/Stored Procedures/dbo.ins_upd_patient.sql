@@ -62,6 +62,3 @@ IF @@ROWCOUNT = 0
 
 END
 GO
-GRANT ALTER ON  [dbo].[ins_upd_patient] TO [ENTRADAHEALTH\sshoultz]
-GRANT VIEW DEFINITION ON  [dbo].[ins_upd_patient] TO [ENTRADAHEALTH\sshoultz]
-GO

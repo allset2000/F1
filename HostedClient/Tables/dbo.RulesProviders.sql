@@ -10,6 +10,3 @@ ALTER TABLE [dbo].[RulesProviders] ADD CONSTRAINT [PK_RulesProviders] PRIMARY KE
 GO
 ALTER TABLE [dbo].[RulesProviders] ADD CONSTRAINT [UN_Providers_Clinic_EHRCode] UNIQUE NONCLUSTERED  ([ClinicID], [EHRCode]) ON [PRIMARY]
 GO
-GRANT VIEW DEFINITION ON  [dbo].[RulesProviders] TO [mmoscoso]
-GRANT SELECT ON  [dbo].[RulesProviders] TO [mmoscoso]
-GO

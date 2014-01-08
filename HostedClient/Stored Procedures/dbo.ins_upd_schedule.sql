@@ -81,6 +81,3 @@ FROM @ScheduleID
 
 END
 GO
-GRANT ALTER ON  [dbo].[ins_upd_schedule] TO [ENTRADAHEALTH\sshoultz]
-GRANT VIEW DEFINITION ON  [dbo].[ins_upd_schedule] TO [ENTRADAHEALTH\sshoultz]
-GO

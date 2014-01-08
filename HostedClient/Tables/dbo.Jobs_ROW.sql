@@ -13,7 +13,3 @@ CREATE TABLE [dbo].[Jobs_ROW]
 GO
 ALTER TABLE [dbo].[Jobs_ROW] ADD CONSTRAINT [FK_Jobs_ROW] FOREIGN KEY ([JobID]) REFERENCES [dbo].[Jobs] ([JobID])
 GO
-GRANT UPDATE ON  [dbo].[Jobs_ROW] TO [ENTRADAHEALTH\sshoultz]
-GRANT VIEW DEFINITION ON  [dbo].[Jobs_ROW] TO [mmoscoso]
-GRANT SELECT ON  [dbo].[Jobs_ROW] TO [mmoscoso]
-GO

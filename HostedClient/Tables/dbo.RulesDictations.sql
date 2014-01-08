@@ -12,6 +12,3 @@ ALTER TABLE [dbo].[RulesDictations] ADD CONSTRAINT [PK_Rules_Templates] PRIMARY 
 GO
 ALTER TABLE [dbo].[RulesDictations] ADD CONSTRAINT [FK_Rules_Templates_Rules_Jobs] FOREIGN KEY ([RuleID], [ActionID]) REFERENCES [dbo].[RulesJobs] ([RuleID], [ActionID])
 GO
-GRANT VIEW DEFINITION ON  [dbo].[RulesDictations] TO [mmoscoso]
-GRANT SELECT ON  [dbo].[RulesDictations] TO [mmoscoso]
-GO

@@ -10,6 +10,3 @@ ALTER TABLE [dbo].[RulesReasons] ADD CONSTRAINT [PK_Rules_Reasons] PRIMARY KEY C
 GO
 ALTER TABLE [dbo].[RulesReasons] ADD CONSTRAINT [UN_Reason_Clinic_EHRCode] UNIQUE NONCLUSTERED  ([ClinicID], [EHRCode]) ON [PRIMARY]
 GO
-GRANT VIEW DEFINITION ON  [dbo].[RulesReasons] TO [mmoscoso]
-GRANT SELECT ON  [dbo].[RulesReasons] TO [mmoscoso]
-GO

@@ -13,6 +13,3 @@ ALTER TABLE [dbo].[RulesJobs] ADD CONSTRAINT [FK_Rules_Jobs_Dictators] FOREIGN K
 GO
 ALTER TABLE [dbo].[RulesJobs] ADD CONSTRAINT [FK_Rules_Jobs_Rules_Definition] FOREIGN KEY ([RuleID]) REFERENCES [dbo].[Rules] ([RuleID]) ON DELETE CASCADE
 GO
-GRANT VIEW DEFINITION ON  [dbo].[RulesJobs] TO [mmoscoso]
-GRANT SELECT ON  [dbo].[RulesJobs] TO [mmoscoso]
-GO

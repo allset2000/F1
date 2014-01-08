@@ -29,7 +29,3 @@ CREATE NONCLUSTERED INDEX [IX_RowProcessed_ClinicID_AppointmentID_WithINC_Schedu
 GO
 ALTER TABLE [dbo].[Schedules] ADD CONSTRAINT [FK_Schedules_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID])
 GO
-GRANT UPDATE ON  [dbo].[Schedules] TO [ENTRADAHEALTH\sshoultz]
-GRANT VIEW DEFINITION ON  [dbo].[Schedules] TO [mmoscoso]
-GRANT SELECT ON  [dbo].[Schedules] TO [mmoscoso]
-GO

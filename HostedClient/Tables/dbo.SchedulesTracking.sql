@@ -28,5 +28,3 @@ ALTER TABLE [dbo].[SchedulesTracking] ADD CONSTRAINT [PK_EncountersTracking] PRI
 GO
 ALTER TABLE [dbo].[SchedulesTracking] ADD CONSTRAINT [FK_SchedulesTracking_Schedules] FOREIGN KEY ([ScheduleID]) REFERENCES [dbo].[Schedules] ([ScheduleID])
 GO
-GRANT SELECT ON  [dbo].[SchedulesTracking] TO [mmoscoso]
-GO
