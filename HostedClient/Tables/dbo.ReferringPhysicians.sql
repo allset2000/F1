@@ -20,6 +20,10 @@ CREATE TABLE [dbo].[ReferringPhysicians]
 [Fax1] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_RP_Fax1] DEFAULT (''),
 [Fax2] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_RP_Fax2] DEFAULT ('')
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_ReferringPhysicians] ON [dbo].[ReferringPhysicians] ([ClinicID]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_ReferringPhysicians_1] ON [dbo].[ReferringPhysicians] ([PhysicianID]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[ReferringPhysicians] ADD CONSTRAINT [PK_ReferringPhysicians] PRIMARY KEY CLUSTERED  ([ReferringID]) ON [PRIMARY]
 GO
