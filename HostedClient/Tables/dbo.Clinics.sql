@@ -10,6 +10,7 @@ CREATE TABLE [dbo].[Clinics]
 [Deleted] [bit] NOT NULL CONSTRAINT [DF_Clinics_Active] DEFAULT ((0)),
 [EHRVendorID] [smallint] NOT NULL,
 [EHRClinicID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_EHRClinicID] DEFAULT (''),
+[EHRLocationID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_EHRLocationID] DEFAULT ('')
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[Clinics] ADD 
 CONSTRAINT [PK_Clinics] PRIMARY KEY CLUSTERED  ([ClinicID]) ON [PRIMARY]
