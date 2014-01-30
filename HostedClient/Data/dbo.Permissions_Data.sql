@@ -8,4 +8,5 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (6, 'TAB
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (7, 'TAB-CONS', 'Console Access Tab')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (8, 'TAB-RULES', 'Rules Tab')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (9, 'TAB-ENTRADA-ACCESS', 'Console Access for Entrada Administration')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (10, 'TAB-APP-EXCEPTIONS', 'Application Exceptions Tab')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
