@@ -31,6 +31,8 @@ CREATE PROCEDURE [dbo].[ins_upd_patient]
 AS
 BEGIN
 
+SELECT @MRN = CASE WHEN ISNULL(@MRN,'') = '' THEN 'PNBR:'+@AlternateID ELSE @MRN END
+
 UPDATE Patients
 SET
 	MRN = @MRN,
@@ -50,7 +52,8 @@ SET
 	Phone2 = @Phone2,
 	Fax1 = @Fax1,
 	Fax2 = @Fax2
-WHERE ClinicID = @ClinicID and MRN = @MRN
+WHERE ClinicID = @ClinicID 
+AND ((MRN = @MRN AND LEFT(MRN,5)<> 'PNBR:') OR (AlternateID = @AlternateID AND LEFT(MRN,5)='PNBR:'))
 
 IF @@ROWCOUNT = 0
 	BEGIN

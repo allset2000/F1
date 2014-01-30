@@ -10,7 +10,7 @@ GO
 CREATE PROCEDURE [dbo].[ins_upd_schedule]
 	@ClinicID smallint ,
 	@AppointmentDate datetime,
-	@MRN varchar(50),
+	@MRN varchar(36),
 	@AppointmentID varchar(100),
 	@EncounterID varchar(50),
 	@Attending varchar(50),
@@ -25,7 +25,8 @@ CREATE PROCEDURE [dbo].[ins_upd_schedule]
 	@ReferringID varchar(50),
 	@referringName varchar(100),
 	@attendingFirst varchar(120),
-	@attendingLast varchar(120)
+	@attendingLast varchar(120),
+	@alternate_id varchar(36) = NULL
 
 AS
 BEGIN
@@ -34,7 +35,7 @@ DECLARE @patientID INT
 DECLARE @orig_enc_id VARCHAR(50)
 DECLARE @ScheduleID TABLE (ScheduleID BIGINT)
 
-SET @patientID = (SELECT PatientID FROM Patients WHERE MRN = @MRN and ClinicID = @ClinicID)
+SET @patientID = (SELECT PatientID FROM Patients WHERE ClinicID = @ClinicID AND ((MRN=@MRN AND ISNULL(@MRN,'')<>'') OR (AlternateID=@alternate_id AND ISNULL(@MRN,'')='')))
 SELECT @orig_enc_id = EHRencounterid FROM Schedules WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID
 IF isnull(@orig_enc_id,'') <> ''
 BEGIN
