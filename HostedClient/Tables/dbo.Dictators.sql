@@ -16,7 +16,7 @@ CREATE TABLE [dbo].[Dictators]
 [Signature] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Dictators_Signature] DEFAULT (''),
 [EHRProviderID] [varchar] (36) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [EHRProviderAlias] [varchar] (36) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-[VRMode] [smallint] NOT NULL CONSTRAINT [DF_Dictators_VRMode] DEFAULT ((99))
+[VRMode] [smallint] NOT NULL CONSTRAINT [DF__Dictators__VRMod__4E1E9780] DEFAULT ((99))
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[Dictators] ADD 
 CONSTRAINT [PK_Dictators] PRIMARY KEY CLUSTERED  ([DictatorID]) ON [PRIMARY]
