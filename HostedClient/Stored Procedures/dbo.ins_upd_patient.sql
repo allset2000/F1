@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -33,27 +34,50 @@ BEGIN
 
 SELECT @MRN = CASE WHEN ISNULL(@MRN,'') = '' THEN 'PNBR:'+@AlternateID ELSE @MRN END
 
-UPDATE Patients
-SET
-	MRN = @MRN,
-	AlternateID = @AlternateID,
-	FirstName = @FirstName,
-	MI = @MI,
-	LastName = @LastName,
-	Suffix = @Suffix,
-	Gender = @Gender,
-	Address1 = @Address1,
-	Address2 = @Address2,
-	City = @City,
-	State = @State,
-	Zip = @Zip,
-	DOB = @DOB,
-	Phone1 = @Phone1,
-	Phone2 = @Phone2,
-	Fax1 = @Fax1,
-	Fax2 = @Fax2
-WHERE ClinicID = @ClinicID 
-AND ((MRN = @MRN AND LEFT(MRN,5)<> 'PNBR:') OR (AlternateID = @AlternateID AND LEFT(MRN,5)='PNBR:'))
+-- Use 2 separate statements because SQL Server won't short
+-- circuit the OR statement
+IF ISNULL(@AlternateID,'') != ''
+	UPDATE Patients
+	SET
+		MRN = @MRN,
+		AlternateID = @AlternateID,
+		FirstName = @FirstName,
+		MI = @MI,
+		LastName = @LastName,
+		Suffix = @Suffix,
+		Gender = @Gender,
+		Address1 = @Address1,
+		Address2 = @Address2,
+		City = @City,
+		State = @State,
+		Zip = @Zip,
+		DOB = @DOB,
+		Phone1 = @Phone1,
+		Phone2 = @Phone2,
+		Fax1 = @Fax1,
+		Fax2 = @Fax2
+	WHERE ClinicID = @ClinicID AND AlternateID = @AlternateID
+ELSE
+	UPDATE Patients
+	SET
+		MRN = @MRN,
+		AlternateID = @AlternateID,
+		FirstName = @FirstName,
+		MI = @MI,
+		LastName = @LastName,
+		Suffix = @Suffix,
+		Gender = @Gender,
+		Address1 = @Address1,
+		Address2 = @Address2,
+		City = @City,
+		State = @State,
+		Zip = @Zip,
+		DOB = @DOB,
+		Phone1 = @Phone1,
+		Phone2 = @Phone2,
+		Fax1 = @Fax1,
+		Fax2 = @Fax2
+	WHERE ClinicID = @ClinicID AND MRN = @MRN
 
 IF @@ROWCOUNT = 0
 	BEGIN

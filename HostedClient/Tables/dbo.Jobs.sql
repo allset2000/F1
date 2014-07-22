@@ -12,7 +12,10 @@ CREATE TABLE [dbo].[Jobs]
 [RuleID] [smallint] NULL,
 [AdditionalData] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Jobs_JobNumber] ON [dbo].[Jobs] ([JobNumber]) ON [PRIMARY]
+
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -34,11 +37,12 @@ INSERT INTO Jobs_ROW (Jobid)
 SELECT JOBID FROM INSERTED 
 WHERE Status = 400 
 AND jobid NOT IN 
-	(SELECT jobid FROM jobs_row WHERE jobid = (SELECT JOBID FROM INSERTED))
+	(SELECT jobid FROM jobs_row WHERE jobid IN (SELECT JOBID FROM INSERTED))
 
 
 END
 GO
+
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_ClinicID] ON [dbo].[Jobs] ([ClinicID]) ON [PRIMARY]
@@ -47,8 +51,7 @@ CREATE NONCLUSTERED INDEX [UNQ_ClinicID_Jobnumber] ON [dbo].[Jobs] ([ClinicID], 
 GO
 CREATE NONCLUSTERED INDEX [FK_EncounterID_Status] ON [dbo].[Jobs] ([EncounterID], [Status]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_Jobs_JobNumber] ON [dbo].[Jobs] ([JobNumber]) ON [PRIMARY]
-GO
+
 CREATE NONCLUSTERED INDEX [IX_Jobs_JobTypeID] ON [dbo].[Jobs] ([JobTypeID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) ON [PRIMARY]

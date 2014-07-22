@@ -1,3 +1,7 @@
+INSERT INTO [dbo].[StatusCodes] ([StatusID], [Category], [Description]) VALUES (610, 3, 'NO ENCID IN HL7 MESSAGE')
+INSERT INTO [dbo].[StatusCodes] ([StatusID], [Category], [Description]) VALUES (620, 3, 'NO ENCID FOR SCHEDULED PATIENT')
+INSERT INTO [dbo].[StatusCodes] ([StatusID], [Category], [Description]) VALUES (630, 3, 'JOB ALREADY DELIVERED')
+INSERT INTO [dbo].[StatusCodes] ([StatusID], [Category], [Description]) VALUES (640, 3, 'FAILED TO LOOKUP CLIENT JOB NUMBER IN BACKEND')
 INSERT INTO [dbo].[StatusCodes] ([StatusID], [Category], [Description]) VALUES (100, 1, 'BOOKED')
 INSERT INTO [dbo].[StatusCodes] ([StatusID], [Category], [Description]) VALUES (100, 2, 'PENDING')
 INSERT INTO [dbo].[StatusCodes] ([StatusID], [Category], [Description]) VALUES (200, 1, 'KEPT')

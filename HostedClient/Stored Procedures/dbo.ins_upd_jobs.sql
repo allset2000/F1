@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -22,6 +23,7 @@ DECLARE @resourceID varchar(50)
 
 DECLARE @patientID INT
 DECLARE @appointmentDate DATETIME
+DECLARE @appointmentDateIncreased INT = 0
 DECLARE @additionalData VARCHAR(MAX)
 DECLARE @referringID VARCHAR(50)
 DECLARE @RefDocID BIGINT
@@ -35,6 +37,12 @@ SELECT @clinicID = ClinicID, @locationid = locationID, @attendingId = attending,
 @status = CASE WHEN Status IN ('100','200') THEN 100 ELSE 500 END 
 FROM Schedules S
 WHERE ScheduleID = @schedule_id
+
+--SET FLAG TO 1 IF APPOINTMENT DATE INCREASED BY 1 DAY OR MORE
+SET @appointmentDateIncreased = 
+	(SELECT CASE WHEN
+	(SELECT TOP 1 cast(convert(char(11), AppointmentDate, 113) as datetime) from SchedulesTracking where ScheduleID = @schedule_id ORDER BY ChangedOn DESC) < cast(convert(char(11), @appointmentDate, 113) as datetime)
+	THEN 1 ELSE 0 END)
 
 SET @RefDocID = (SELECT referringID FROM ReferringPhysicians WHERE ClinicID = @clinicID and PhysicianID = @referringID)
 
@@ -81,30 +89,43 @@ IF @@ROWCOUNT = 0
 SET @encounterid = (SELECT encounterid FROM @enc_hold)	
 
 --UPDATE JOBS, GET CURRENT JOBS
-DECLARE @current_jobs_hold TABLE (jobid BIGINT, ruleid BIGINT, Status int)
+DECLARE @current_jobs_hold TABLE (jobid BIGINT, ruleid BIGINT, Status INT, enableUpdate INT)
 DECLARE @current_dictations_hold TABLE (dictationid BIGINT)
 
-INSERT INTO @current_jobs_hold(jobid, ruleid, status)
-SELECT Jobid, R.ruleid, Status
+--GET CURRENT JOBS
+INSERT INTO @current_jobs_hold(jobid, ruleid, status, enableUpdate)
+SELECT Jobid, R.ruleid, Status, 
+	CASE WHEN Status=500 AND (SELECT TOP 1 ChangedBy FROM Jobstracking where JOBID = J.jobid ORDER BY ChangeDate desc) = 'HL7' THEN 1
+		 WHEN Status=500 AND @appointmentDateIncreased = 1 THEN 1
+		 WHEN Status=100 THEN 1
+		 ELSE 0 END
 FROM @rule_hold R INNER JOIN Jobs J WITH(NOLOCK) ON ((J.RuleID=R.RuleID and J.RuleID IS NOT NULL) or (J.RuleID IS NULL)) 
 	 AND J.EncounterID = @encounterid
 
-UPDATE Jobs SET OwnerDictatorID = @OwnerID, Status = @status, AdditionalData = @additionalData, RuleID=R.ruleid
---OUTPUT inserted.JobID, inserted.RuleID,'' INTO @current_jobs_hold 
+--UPDATE CURRENT JOBS
+UPDATE Jobs SET OwnerDictatorID = @OwnerID, Status = @status, AdditionalData = @additionalData, RuleID=R.ruleid, JobTypeID=R.jobtypeid
 FROM @rule_hold R 
-WHERE ((Jobs.RuleID=R.RuleID and Jobs.RuleID IS NOT NULL) or (Jobs.RuleID IS NULL)) 
-	   AND Jobs.EncounterID = @encounterid AND Status IN ('100','500')
+INNER JOIN Jobs J on ((J.RuleID=R.RuleID and J.RuleID IS NOT NULL) or (J.RuleID IS NULL)) AND J.EncounterID = @encounterid
+INNER JOIN @current_jobs_hold JH ON J.JobID = JH.jobid
+WHERE enableUpdate = 1
 
+--UPDATE CURRENT DICTATIONS
 UPDATE Dictations SET Status = @status, DictatorID=R.Dictatorid, QueueID=R.QueueID 
 OUTPUT inserted.DictationID INTO @current_dictations_hold
 FROM Dictations D INNER JOIN Jobs J on D.JobID=J.JobID INNER JOIN @rule_hold R on J.RuleID=R.ruleid
-WHERE D.JobID IN (SELECT JobID FROM @current_jobs_hold where Status in ('100','500')) AND D.Status IN ('100','500')
-INSERT INTO JobsTracking (JobID, Status, ChangeDate, ChangedBy) SELECT Jobid, @status, GETDATE(), 'HL7' FROM @current_jobs_hold WHERE Status in ('100','500')
-INSERT INTO DictationsTracking (DictationID, Status, ChangeDate, ChangedBy) SELECT DictationID, @status, GETDATE(), 'HL7' FROM @current_dictations_hold
+WHERE D.JobID IN (SELECT JobID FROM @current_jobs_hold WHERE enableUpdate=1 )
+AND D.Status IN ('100','500')
+
+--INSERT INTO TRACKING TABLES
+INSERT INTO JobsTracking (JobID, Status, ChangeDate, ChangedBy) 
+	SELECT Jobid, @status, GETDATE(), 'HL7' FROM @current_jobs_hold WHERE enableUpdate=1
+INSERT INTO DictationsTracking (DictationID, Status, ChangeDate, ChangedBy) 
+	SELECT DictationID, @status, GETDATE(), 'HL7' FROM @current_dictations_hold
 
 UPDATE Jobs_Referring SET ReferringID = @RefDocID WHERE JobID IN (SELECT JobID FROM @current_jobs_hold) AND @RefDocID IS NOT NULL
 
-INSERT INTO #result SELECT 'UPDATED JOB: ' + cast(jobid as varchar(100)) +  ' CLINICID: ' + cast(@clinicID as varchar(5)) + ' STATUS: ' + cast(@status as varchar(3)) + ' RULE: ' + cast(ruleid as varchar(100)) FROM @current_jobs_hold
+INSERT INTO #result 
+	SELECT 'UPDATED JOB: ' + cast(jobid as varchar(100)) +  ' CLINICID: ' + cast(@clinicID as varchar(5)) + ' STATUS: ' + cast(@status as varchar(3)) + ' RULE: ' + cast(ruleid as varchar(100)) FROM @current_jobs_hold where enableUpdate=1
 
 --REMOVE JOBS THAT NO LONGER HAVE A VALID RULE
 DECLARE @removed_jobs_hold TABLE (jobid BIGINT, ruleid BIGINT)
@@ -155,7 +176,6 @@ BEGIN
 	
 	INSERT INTO #result SELECT 'INSERTED JOB: ' + cast(jobid as varchar(100)) +  ' CLINICID: ' + cast(@clinicID as varchar(5)) + ' STATUS: ' + cast(@status as varchar(3)) + ' RULE: ' + cast(rj.ruleid as varchar(100)) 
 	FROM @rule_hold RJ INNER JOIN @jobid_hold JH on RJ.ruleid=JH.Ruleid and RJ.row=JH.row WHERE RJ.ruleid NOT IN (SELECT ruleid FROM @current_jobs_hold)
-
 						
 	--INSERT INTO DICTATIONS	
 	DECLARE @dictationid_hold TABLE (Dictationid BIGINT)
@@ -164,9 +184,9 @@ BEGIN
 	SELECT jobid, DT.DictationTypeID,Dictatorid, queueid, 100, 0, '', '', ''
 	FROM @rule_hold RJ 
 	INNER JOIN DictationTypes DT ON RJ.JobTypeID=DT.JobTypeID 
-	INNER JOIN @jobid_hold JH ON RJ.ruleid=JH.Ruleid and RJ.row=JH.row
+	INNER JOIN @jobid_hold JH ON RJ.ruleid=JH.Ruleid
 	WHERE RJ.ruleid NOT IN (SELECT ruleid FROM @current_jobs_hold)
-	
+		
 	INSERT INTO DictationsTracking (DictationID, Status, ChangeDate, ChangedBy)
 	SELECT DictationID, 100, GETDATE(), 'HL7' FROM @dictationid_hold
 	

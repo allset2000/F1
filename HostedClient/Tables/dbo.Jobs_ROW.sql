@@ -10,6 +10,8 @@ CREATE TABLE [dbo].[Jobs_ROW]
 [MessageNum] [int] NULL,
 [MessageTotal] [int] NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_JobID_AckStatus] ON [dbo].[Jobs_ROW] ([JobID], [AckStatus]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[Jobs_ROW] ADD CONSTRAINT [FK_Jobs_ROW] FOREIGN KEY ([JobID]) REFERENCES [dbo].[Jobs] ([JobID])
 GO

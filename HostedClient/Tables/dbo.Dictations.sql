@@ -11,7 +11,12 @@ CREATE TABLE [dbo].[Dictations]
 [FileName] [varchar] (255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [ClientVersion] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_QueueID_INC_DictationID_JobID] ON [dbo].[Dictations] ([QueueID]) INCLUDE ([DictationID], [JobID]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_Status_INC_JobID_DictatorID_QueueID] ON [dbo].[Dictations] ([Status]) INCLUDE ([DictatorID], [JobID], [QueueID]) ON [PRIMARY]
+
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -56,19 +61,17 @@ BEGIN
 	END
 
 	-- We only want to update jobs that are Available (100)
-	UPDATE Jobs SET [Status] = @Status WHERE JobID = @JobID AND [Status] = 100
+	UPDATE Jobs SET [Status] = @Status WHERE JobID = @JobID AND [Status] in (100,500)
 END
 GO
+
 ALTER TABLE [dbo].[Dictations] ADD CONSTRAINT [PK_Dictations] PRIMARY KEY CLUSTERED  ([DictationID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_Dictations_DictatorID] ON [dbo].[Dictations] ([DictatorID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_Dictations_JobID] ON [dbo].[Dictations] ([JobID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_Dictations_QueueID] ON [dbo].[Dictations] ([QueueID]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_Dictations_Status] ON [dbo].[Dictations] ([Status]) ON [PRIMARY]
-GO
+
 ALTER TABLE [dbo].[Dictations] ADD CONSTRAINT [FK_Dictations_DictationTypes] FOREIGN KEY ([DictationTypeID]) REFERENCES [dbo].[DictationTypes] ([DictationTypeID])
 GO
 ALTER TABLE [dbo].[Dictations] ADD CONSTRAINT [FK_Dictations_Jobs] FOREIGN KEY ([JobID]) REFERENCES [dbo].[Jobs] ([JobID]) ON DELETE CASCADE

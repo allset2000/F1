@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[SchedulesTracking]
 [PatientID] [int] NOT NULL,
 [AppointmentID] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [EncounterID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-[Attending] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+[Attending] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [LocationID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [LocationName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [ReasonID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
@@ -23,6 +23,8 @@ CREATE TABLE [dbo].[SchedulesTracking]
 [AttendingFirst] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [AttendingLast] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_SchedulesTracking] ON [dbo].[SchedulesTracking] ([ScheduleID]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[SchedulesTracking] ADD CONSTRAINT [PK_EncountersTracking] PRIMARY KEY CLUSTERED  ([SchedulesTrackingID]) ON [PRIMARY]
 GO

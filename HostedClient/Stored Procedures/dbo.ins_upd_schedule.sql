@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -31,16 +32,58 @@ CREATE PROCEDURE [dbo].[ins_upd_schedule]
 AS
 BEGIN
 
-DECLARE @patientID INT
+DECLARE @PatientID INT
 DECLARE @orig_enc_id VARCHAR(50)
 DECLARE @ScheduleID TABLE (ScheduleID BIGINT)
 
-SET @patientID = (SELECT PatientID FROM Patients WHERE ClinicID = @ClinicID AND ((MRN=@MRN AND ISNULL(@MRN,'')<>'') OR (AlternateID=@alternate_id AND ISNULL(@MRN,'')='')))
-SELECT @orig_enc_id = EHRencounterid FROM Schedules WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID
-IF isnull(@orig_enc_id,'') <> ''
+-- Find the PatientID
+IF ISNULL (@MRN, '') <> ''
+	SELECT @PatientID = PatientID FROM Patients WHERE ClinicID = @ClinicID AND MRN = @MRN
+ELSE
+	SELECT @PatientID = PatientID FROM Patients WHERE ClinicID = @ClinicID AND AlternateID = @alternate_id
+
+-- Preserve any existing EHREncounterID (subsequent messages may not have it)
+SELECT @orig_enc_id = EHREncounterID FROM Schedules WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID
+
+IF ISNULL (@orig_enc_id, '') <> ''
 BEGIN
 	SET @EncounterID = @orig_enc_id
 END
+
+-- If the EHR isn't providing us the attending first/last name, pull it from the Dictators table
+IF @attendingFirst = 'xref'
+BEGIN
+	-- Make sure we don't leave 'xref' if we can't find the dictator
+	SELECT @attendingFirst = NULL
+	SELECT @attendingLast = NULL
+	SELECT @attendingFirst = FirstName, @attendingLast = LastName FROM Dictators WHERE EHRProviderID = @Attending AND ClinicID = @ClinicID
+END
+
+-- Bail if nothing changed (particularly for API clients that we keep getting the same messages)
+DECLARE @Existing INT
+
+SELECT @Existing = COUNT(*) FROM Schedules
+WHERE
+	ClinicID = @ClinicID AND 
+	AppointmentID = @AppointmentID AND
+	AppointmentDate = @AppointmentDate AND
+	PatientID = @PatientID AND
+	ISNULL (EHREncounterID, '') = ISNULL (@EncounterID, '') AND
+	ISNULL (Attending, '') = ISNULL (@Attending, '') AND
+	LocationID = @LocationID AND
+	LocationName = @LocationName AND
+	ReasonID = @ReasonID AND
+	ReasonName = @ReasonName AND
+	ResourceID = @ResourceID AND
+	ResourceName = @ResourceName AND
+	Status = @Status AND
+	ISNULL (AdditionalData, '') = ISNULL (@AdditionalData, '') AND
+	ISNULL (ReferringID, '') = ISNULL (@ReferringID, '') AND
+	ISNULL (ReferringName, '') = ISNULL (@referringName, '') AND
+	ISNULL (AttendingFirst, '') = ISNULL (@attendingFirst, '') AND
+	ISNULL (AttendingLast, '') = ISNULL (@attendingLast, '')
+
+IF @Existing > 0 BEGIN RETURN END
 
 UPDATE Schedules 
 SET 

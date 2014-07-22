@@ -6,12 +6,18 @@ CREATE TABLE [dbo].[JobTypes]
 [Deleted] [bit] NOT NULL CONSTRAINT [DF_JobTypes_Active] DEFAULT ((0)),
 [Vocabulary] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [TddEnabled] [bit] NOT NULL CONSTRAINT [DF_JobTypes_TddEnabled] DEFAULT ((0)),
-[AckEnabled] [smallint] NOT NULL CONSTRAINT [DF_RulesJobs_AckEnabled] DEFAULT ((0))
+[ImagesEnabled] [bit] NOT NULL CONSTRAINT [DF_JobTypes_ImagesEnabled] DEFAULT ((0)),
+[AckEnabled] [smallint] NOT NULL CONSTRAINT [DF_RulesJobs_AckEnabled] DEFAULT ((0)),
+[EHRDocumentTypeID] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_JobTypes_EHRDocumentTypeID] DEFAULT (''),
+[EHRImageTypeID] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_JobTypes_EHRImageTypeID] DEFAULT (''),
+[NoShowEnabled] [bit] NOT NULL CONSTRAINT [DF_JobTypes_NoShowEnabled] DEFAULT ((0)),
+[DisableGenericJobs] [bit] NOT NULL CONSTRAINT [DF_JobTypes_DisableGenericJob] DEFAULT ((0))
 ) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[JobTypes] ADD CONSTRAINT [PK_JobTypes] PRIMARY KEY CLUSTERED  ([JobTypeID]) ON [PRIMARY]
-GO
+ALTER TABLE [dbo].[JobTypes] ADD 
+CONSTRAINT [PK_JobTypes] PRIMARY KEY CLUSTERED  ([JobTypeID]) ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_JobTypes_ClinicID] ON [dbo].[JobTypes] ([ClinicID]) ON [PRIMARY]
+
 GO
+
 ALTER TABLE [dbo].[JobTypes] WITH NOCHECK ADD CONSTRAINT [FK_JobTypes_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID]) ON DELETE CASCADE
 GO
