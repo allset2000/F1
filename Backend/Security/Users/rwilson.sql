@@ -1,0 +1,2 @@
+CREATE USER [rwilson] WITHOUT LOGIN
+GO

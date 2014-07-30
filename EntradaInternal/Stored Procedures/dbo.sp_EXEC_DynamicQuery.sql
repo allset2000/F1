@@ -1,0 +1,23 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+
+
+
+create PROCEDURE [dbo].[sp_EXEC_DynamicQuery]
+
+	@SQL varchar(MAX)
+	
+AS
+
+BEGIN
+
+	EXECUTE (@SQL)
+
+
+
+END
+
+
+GO

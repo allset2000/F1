@@ -1,0 +1,2 @@
+CREATE USER [bliddle] WITHOUT LOGIN
+GO

@@ -1,0 +1,121 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+-- =============================================
+-- Author:		<Author,,Name>
+-- Create date: <Create Date,,>
+-- Description:	<Description,,>
+
+-- change log
+
+-- date		username		description
+-- 5/15/13	jablumenthal	added EditorName per request
+--							from Ron Spears.
+-- =============================================
+CREATE PROCEDURE [dbo].[sp_DEV_Reporting_Delivery_Errors]
+	@clinics varchar(max)
+
+AS
+BEGIN
+
+	if object_id('tempdb..#error_Hold') is not null drop table #error_Hold
+	Create Table #error_Hold (  Jobnumber varchar(60), 
+								Clinicname varchar(250), 
+								message varchar(8000), 
+								ClinicID varchar(10), 
+								errorMessage varchar(8000), 
+								exceptionMessage varchar(8000), 
+								StackTrace varchar(8000), 
+								errorcode int, 
+								error_type varchar(1), 
+								ErrorDate datetime,
+								DictationDate datetime,
+								EditorID varchar(50))
+
+	insert into #error_Hold 
+	Select  JobNumber, 
+			ClinicName, 
+			Message, 
+			ClinicID, 
+			ErrorMessage, 
+			ExceptionMessage, 
+			StackTrace, 
+			null,
+			null,
+			ErrorDate,
+			DictationDate,
+			EditorID
+	from (
+			SELECT  ROW_NUMBER() OVER (PARTITION BY JTDE.DeliveryId ORDER BY ErrorDate DESC) AS 'RowNumber', 
+					ConfigurationName, 
+					JTDE.DeliveryId, 
+					ErrorId, 
+					ErrorDate, 
+					Message, 
+					ErrorMessage, 
+					ExceptionMessage, 
+					StackTrace, 
+					A.JobNumber, 
+					A.ClinicID, 
+					Cl.ClinicName,
+					A.DictationDate, 
+					A.EditorID
+			FROM entrada.dbo.JobsToDeliverErrors JTDE WITH(NOLOCK) 
+			INNER JOIN entrada.dbo.Jobstodeliver JTD WITH(NOLOCK) ON JTDE.DeliveryId=JTD.Deliveryid
+			INNER JOIN entrada.dbo.Jobs A WITH(NOLOCK) on JTD.JobNumber=A.JobNumber
+			inner join Entrada.dbo.Clinics cl WITH(NOLOCK) on A.ClinicID=cl.ClinicID
+			where  JTD.Method <> '700'
+		 ) X 
+	where X.Rownumber = 2 
+	  and x.clinicid in (select * from entradainternal.dbo.fnParseString(@clinics,','))
+
+	Update #error_Hold 
+	set errorcode = left(Message,replace(charindex('|',Message),0,1)-1) 
+	where errorcode is null
+
+	Update #error_Hold 
+	set errorcode = left(rtrim(errorMessage),replace(charindex('|',rtrim(errorMessage)),0,1)-1) 
+	where errorcode is null
+
+	Update #error_Hold 
+	set error_type = replace(LEFT(errorcode,1),'0','9')
+
+	insert into #error_Hold
+	select  X.job_jobumber,
+			X.ClinicName,
+			CASE WHEN msg_num <> msg_total THEN 'ONE OR MORE SECTIONS DID NOT SEND' ELSE 'JOB FAILED TO REACH DESTINATION' END, 
+			ClinicID, 
+			'',
+			'',
+			'',
+			'400',
+			'4',
+			'',
+			'',
+			'' 
+	From (
+			Select  ROW_NUMBER() OVER (Partition BY J.JobNumber order by msg_num desc ) as ROWNUM, 
+					J.JobNumber as job_jobumber, 
+					IJ.JobNumber as int_jobnumber,
+					C.ClinicName,
+					C.ClinicID, 
+					msg_num, 
+					msg_total 
+			from entrada.dbo.Jobs J WITH(NOLOCK)
+			Inner join entrada.dbo.JobDeliveryHistory JDH WITH(NOLOCK) on J.JobNumber=JDH.JobNumber and Method = 200
+			INNER JOIN Entrada.dbo.Clinics C WITH(NOLOCK) on J.Clinicid=C.ClinicID
+			Left Join [CLIENTMONMIRTH.ENTRADA-CPROD.LOCAL\MIRTH].Athena_intrf.dbo.Jobs_Sent_status IJ WITH(NOLOCK) on J.JobNumber=IJ.jobNumber
+			where J.ClinicID in (select [KEY] 
+								 from entrada.dbo.Lookup_Athena_Clinic WITH(NOLOCK)) and J.ClinicID not in (97,98,127,128,130,132,133,134,135,137,138,139,141,142,143,145,146,147,150,151,153,154,155)
+		  )X
+	where ROWNUM = 1 
+	  and (int_jobnumber is null 
+		   or msg_num < msg_total)
+	  and x.clinicid in (select * from entradainternal.dbo.fnParseString(@clinics,','))
+
+	select * 
+	from #error_Hold
+
+END
+GO
