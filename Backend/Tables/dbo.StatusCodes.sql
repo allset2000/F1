@@ -2,7 +2,7 @@ CREATE TABLE [dbo].[StatusCodes]
 (
 [StatusID] [smallint] NOT NULL,
 [StatusName] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-[FriendlyStatusName] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+[FriendlyStatusName] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_StatusCodes_FriendlyStatusName] DEFAULT (''),
 [StatusClass] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [StatusStage] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [EditionStage] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,

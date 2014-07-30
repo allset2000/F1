@@ -12,6 +12,7 @@ FROM         dbo.JobStatusB INNER JOIN
                       dbo.StatusCodes ON dbo.JobStatusB.Status = dbo.StatusCodes.StatusID
 
 GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
@@ -83,22 +84,22 @@ Begin DesignProperties =
          Left = 0
       End
       Begin Tables = 
-         Begin Table = "StatusCodes"
-            Begin Extent = 
-               Top = 6
-               Left = 227
-               Bottom = 114
-               Right = 404
-            End
-            DisplayFlags = 280
-            TopColumn = 0
-         End
          Begin Table = "JobStatusB"
             Begin Extent = 
                Top = 6
                Left = 38
-               Bottom = 114
-               Right = 189
+               Bottom = 125
+               Right = 198
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "StatusCodes"
+            Begin Extent = 
+               Top = 6
+               Left = 236
+               Bottom = 125
+               Right = 411
             End
             DisplayFlags = 280
             TopColumn = 0
@@ -110,8 +111,9 @@ Begin DesignProperties =
    Begin DataPane = 
       Begin ParameterDefaults = ""
       End
-      Begin ColumnWidths = 9
+      Begin ColumnWidths = 10
          Width = 284
+         Width = 1500
          Width = 1500
          Width = 1500
          Width = 1500
@@ -124,9 +126,9 @@ Begin DesignProperties =
    End
    Begin CriteriaPane = 
       Begin ColumnWidths = 11
-         Column = 3435
-         Alias = 900
-         Table = 3030
+         Column = 4545
+         Alias = 3870
+         Table = 1170
          Output = 720
          Append = 1400
          NewValue = 1170
@@ -142,6 +144,7 @@ Begin DesignProperties =
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'vwJobsStatusB', NULL, NULL
 GO
+
 DECLARE @xp int
 SELECT @xp=1
 EXEC sp_addextendedproperty N'MS_DiagramPaneCount', @xp, 'SCHEMA', N'dbo', 'VIEW', N'vwJobsStatusB', NULL, NULL

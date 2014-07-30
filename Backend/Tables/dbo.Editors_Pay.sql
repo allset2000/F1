@@ -9,5 +9,3 @@ CREATE TABLE [dbo].[Editors_Pay]
 GO
 ALTER TABLE [dbo].[Editors_Pay] ADD CONSTRAINT [PK_Editors_Pay] PRIMARY KEY CLUSTERED  ([EditorID]) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[Editors_Pay] ADD CONSTRAINT [FK_Editors_Pay_Editors] FOREIGN KEY ([EditorID]) REFERENCES [dbo].[Editors] ([EditorID])
-GO

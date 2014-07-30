@@ -31,10 +31,10 @@ CREATE TABLE [dbo].[Dictators]
 [ESignatureLocation] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [CloseDocuments] [bit] NULL,
 [NumDaysToClose] [smallint] NULL,
-[DictatorIdOk] [int] NOT NULL CONSTRAINT [DF_Dictators_DictatorIdOk] DEFAULT ((0)),
+[DictatorIdOk] [int] NULL CONSTRAINT [DF_Dictators_DictatorIdOk] DEFAULT ((0)),
 [EHRProviderID] [varchar] (36) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [EHRAliasID] [varchar] (36) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[ProviderType] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ProviderType] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_Dictators_ProviderType] DEFAULT (''),
 [BillSeparated] [bit] NOT NULL CONSTRAINT [DF_Dictators_BillSeparated] DEFAULT ((0)),
 [PhoneNo] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [FaxNo] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -45,11 +45,20 @@ CREATE TABLE [dbo].[Dictators]
 [Custom4] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Custom5] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
+CREATE UNIQUE NONCLUSTERED INDEX [IX_DictatorsDictatorIdOk] ON [dbo].[Dictators] ([DictatorIdOk]) ON [PRIMARY]
+
 GO
+GRANT SELECT ON  [dbo].[Dictators] TO [app_DocExtract]
+GRANT VIEW DEFINITION ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
+GRANT SELECT ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
+GRANT INSERT ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
+GRANT DELETE ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
+GRANT UPDATE ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
+GO
+
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [PK_Dictators] PRIMARY KEY CLUSTERED  ([DictatorID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_Dictators_DictatorIdOk] ON [dbo].[Dictators] ([DictatorIdOk]) ON [PRIMARY]
-GO
+
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_Locations] FOREIGN KEY ([ClinicID], [DefaultLocation]) REFERENCES [dbo].[Locations] ([ClinicID], [LocationID])
 GO
 EXEC sp_addextendedproperty N'MS_Description', N'Top / Bottom', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'ESignatureLocation'

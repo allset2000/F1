@@ -1,10 +1,10 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
-
-CREATE VIEW [dbo].[vwPatients]  WITH SCHEMABINDING
+CREATE VIEW [dbo].[vwPatients]
+WITH SCHEMABINDING 
 AS
 SELECT     PatientId, AppointmentId, JobNumber, ISNULL(AlternateID, '') AS PatientAlternateID, ISNULL(MRN, '') AS MRN, ISNULL(LastName, '') + ', ' + ISNULL(FirstName, '') 
                       AS PatientName, ISNULL(FirstName, '') AS PatientFirstName, ISNULL(MI, '') AS PatientMI, ISNULL(LastName, '') AS PatientLastName, ISNULL(Suffix, '') 
@@ -12,9 +12,11 @@ SELECT     PatientId, AppointmentId, JobNumber, ISNULL(AlternateID, '') AS Patie
                       ISNULL(City, '') AS PatientCity, ISNULL(State, '') AS PatientState, ISNULL(Zip, '') AS PatientZip, ISNULL(Phone, '') AS PatientPhone, ISNULL(Sex, 'U') 
                       AS PatientSex
 FROM         dbo.Jobs_Patients
-
-
 GO
+
+CREATE UNIQUE CLUSTERED INDEX [vwPatientsJobNumber] ON [dbo].[vwPatients] ([JobNumber] DESC) ON [PRIMARY]
+GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
@@ -90,11 +92,11 @@ Begin DesignProperties =
             Begin Extent = 
                Top = 6
                Left = 38
-               Bottom = 346
-               Right = 416
+               Bottom = 302
+               Right = 263
             End
             DisplayFlags = 280
-            TopColumn = 1
+            TopColumn = 0
          End
       End
    End
@@ -103,16 +105,8 @@ Begin DesignProperties =
    Begin DataPane = 
       Begin ParameterDefaults = ""
       End
-      Begin ColumnWidths = 18
+      Begin ColumnWidths = 10
          Width = 284
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
          Width = 1500
          Width = 1500
          Width = 1500
@@ -125,8 +119,8 @@ Begin DesignProperties =
       End
    End
    Begin CriteriaPane = 
-      Begin ColumnWidths = 11
-         Column = 1440
+      Begin ColumnWidths = 9
+         Column = 4395
          Alias = 900
          Table = 1170
          Output = 720
@@ -144,6 +138,7 @@ Begin DesignProperties =
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'vwPatients', NULL, NULL
 GO
+
 DECLARE @xp int
 SELECT @xp=1
 EXEC sp_addextendedproperty N'MS_DiagramPaneCount', @xp, 'SCHEMA', N'dbo', 'VIEW', N'vwPatients', NULL, NULL

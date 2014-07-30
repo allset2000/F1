@@ -9,6 +9,6 @@ CREATE TABLE [dbo].[EditorLogs]
 [ExceptionMessage] [varchar] (1024) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [SessionID] [varchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[EditorLogs] ADD CONSTRAINT [PK_EditorLogs] PRIMARY KEY CLUSTERED  ([EditorLogId] DESC) ON [PRIMARY]
+ALTER TABLE [dbo].[EditorLogs] ADD 
+CONSTRAINT [PK_EditorLog] PRIMARY KEY CLUSTERED  ([EditorLogId] DESC) ON [PRIMARY]
 GO

@@ -13,12 +13,13 @@ WHERE     (ObjectType = 'QACategory') OR
                       (ObjectType = 'Undefined')
 
 GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
       Begin PaneConfiguration = 0
          NumPanes = 4
-         Configuration = "(H (1[36] 4[25] 2[13] 3) )"
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
       End
       Begin PaneConfiguration = 1
          NumPanes = 3
@@ -88,8 +89,8 @@ Begin DesignProperties =
             Begin Extent = 
                Top = 6
                Left = 38
-               Bottom = 309
-               Right = 281
+               Bottom = 357
+               Right = 334
             End
             DisplayFlags = 280
             TopColumn = 0
@@ -115,8 +116,8 @@ Begin DesignProperties =
    End
    Begin CriteriaPane = 
       Begin ColumnWidths = 11
-         Column = 3435
-         Alias = 2445
+         Column = 3660
+         Alias = 4680
          Table = 1170
          Output = 720
          Append = 1400
@@ -133,6 +134,7 @@ Begin DesignProperties =
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'vwQACategories', NULL, NULL
 GO
+
 DECLARE @xp int
 SELECT @xp=1
 EXEC sp_addextendedproperty N'MS_DiagramPaneCount', @xp, 'SCHEMA', N'dbo', 'VIEW', N'vwQACategories', NULL, NULL

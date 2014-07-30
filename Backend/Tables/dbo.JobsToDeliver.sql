@@ -6,6 +6,8 @@ CREATE TABLE [dbo].[JobsToDeliver]
 [RuleName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [LastUpdatedOn] [datetime] NOT NULL CONSTRAINT [DF_JobsToDeliver_LastUpdatedOn] DEFAULT (getdate())
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Method_INC] ON [dbo].[JobsToDeliver] ([Method]) INCLUDE ([DeliveryID], [JobNumber], [LastUpdatedOn], [RuleName]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[JobsToDeliver] ADD CONSTRAINT [PK_JobsToDeliver] PRIMARY KEY CLUSTERED  ([DeliveryID]) ON [PRIMARY]
 GO

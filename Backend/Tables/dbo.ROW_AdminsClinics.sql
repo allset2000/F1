@@ -5,8 +5,9 @@ CREATE TABLE [dbo].[ROW_AdminsClinics]
 [Clinic_ID] [smallint] NULL,
 [DictatorId] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[ROW_AdminsClinics] ADD 
+CONSTRAINT [PK_ROW_AdminsClinics] PRIMARY KEY CLUSTERED  ([PermissionId]) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[ROW_AdminsClinics] ADD CONSTRAINT [PK_Admins_Clinics] PRIMARY KEY CLUSTERED  ([PermissionId]) ON [PRIMARY]
-GO
+
 ALTER TABLE [dbo].[ROW_AdminsClinics] ADD CONSTRAINT [FK_ROW_AdminsClinics_ROW_Admins] FOREIGN KEY ([Admin_ID]) REFERENCES [dbo].[ROW_Admins] ([Admin_ID])
 GO

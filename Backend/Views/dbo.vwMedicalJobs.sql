@@ -41,12 +41,13 @@ FROM         dbo.Dictators INNER JOIN
                       dbo.vwEditors ON dbo.Jobs.EditorID = dbo.vwEditors.EditorID LEFT OUTER JOIN
                       dbo.Jobs_Client ON dbo.Jobs.JobNumber = dbo.Jobs_Client.JobNumber
 GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
       Begin PaneConfiguration = 0
          NumPanes = 4
-         Configuration = "(H (1[42] 4[22] 2[11] 3) )"
+         Configuration = "(H (1[41] 4[25] 2[15] 3) )"
       End
       Begin PaneConfiguration = 1
          NumPanes = 3
@@ -108,118 +109,99 @@ Begin DesignProperties =
    End
    Begin DiagramPane = 
       Begin Origin = 
-         Top = -250
+         Top = 0
          Left = 0
       End
       Begin Tables = 
          Begin Table = "Dictators"
             Begin Extent = 
-               Top = 0
-               Left = 0
-               Bottom = 228
-               Right = 177
+               Top = 6
+               Left = 38
+               Bottom = 114
+               Right = 215
             End
             DisplayFlags = 280
-            TopColumn = 20
+            TopColumn = 0
          End
          Begin Table = "Jobs"
             Begin Extent = 
-               Top = 10
-               Left = 371
-               Bottom = 639
-               Right = 559
+               Top = 6
+               Left = 253
+               Bottom = 114
+               Right = 441
             End
             DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "Clinics"
             Begin Extent = 
-               Top = 218
-               Left = 54
-               Bottom = 326
-               Right = 231
+               Top = 114
+               Left = 38
+               Bottom = 222
+               Right = 215
             End
             DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "vwJobsStatusA"
             Begin Extent = 
-               Top = 4
-               Left = 667
-               Bottom = 228
-               Right = 833
+               Top = 114
+               Left = 253
+               Bottom = 222
+               Right = 419
             End
             DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "Jobs_Referring"
             Begin Extent = 
-               Top = 375
-               Left = 97
-               Bottom = 483
-               Right = 248
+               Top = 222
+               Left = 38
+               Bottom = 330
+               Right = 189
             End
             DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "vwPatients"
             Begin Extent = 
-               Top = 49
-               Left = 992
-               Bottom = 157
-               Right = 1162
+               Top = 222
+               Left = 227
+               Bottom = 330
+               Right = 397
             End
             DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "JobEditingSummary"
             Begin Extent = 
-               Top = 431
-               Left = 661
-               Bottom = 772
-               Right = 861
+               Top = 330
+               Left = 38
+               Bottom = 438
+               Right = 217
             End
-    ', 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL
+       ', 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL
 GO
-EXEC sp_addextendedproperty N'MS_DiagramPane2', N'        DisplayFlags = 280
-            TopColumn = 1
-         End
-         Begin Table = "vwQACategories"
-            Begin Extent = 
-               Top = 347
-               Left = 942
-               Bottom = 537
-               Right = 1135
-            End
-            DisplayFlags = 280
-            TopColumn = 0
-         End
-         Begin Table = "vwQACategories_1"
-            Begin Extent = 
-               Top = 344
-               Left = 1164
-               Bottom = 612
-               Right = 1357
-            End
-            DisplayFlags = 280
+
+EXEC sp_addextendedproperty N'MS_DiagramPane2', N'     DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "vwEditors"
             Begin Extent = 
-               Top = 272
-               Left = 661
-               Bottom = 380
-               Right = 856
+               Top = 330
+               Left = 255
+               Bottom = 438
+               Right = 450
             End
             DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "Jobs_Client"
             Begin Extent = 
-               Top = 220
-               Left = 1090
-               Bottom = 328
-               Right = 1241
+               Top = 438
+               Left = 38
+               Bottom = 546
+               Right = 189
             End
             DisplayFlags = 280
             TopColumn = 0
@@ -231,106 +213,12 @@ EXEC sp_addextendedproperty N'MS_DiagramPane2', N'        DisplayFlags = 280
    Begin DataPane = 
       Begin ParameterDefaults = ""
       End
-      Begin ColumnWidths = 92
-         Width = 284
-         Width = 2775
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 2175
-         Width = 1500
-         Width = 2430
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 2640
-         Width = 1500
-         Width = 2205
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-      End
    End
    Begin CriteriaPane = 
       Begin ColumnWidths = 11
-         Column = 2955
-         Alias = 2925
-         Table = 2895
+         Column = 3600
+         Alias = 2265
+         Table = 1170
          Output = 720
          Append = 1400
          NewValue = 1170
@@ -338,9 +226,7 @@ EXEC sp_addextendedproperty N'MS_DiagramPane2', N'        DisplayFlags = 280
          SortOrder = 1410
          GroupBy = 1350
          Filter = 1350
-         Or = 135', 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL
-GO
-EXEC sp_addextendedproperty N'MS_DiagramPane3', N'0
+         Or = 1350
          Or = 1350
          Or = 1350
       End
@@ -348,7 +234,8 @@ EXEC sp_addextendedproperty N'MS_DiagramPane3', N'0
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL
 GO
+
 DECLARE @xp int
-SELECT @xp=3
+SELECT @xp=2
 EXEC sp_addextendedproperty N'MS_DiagramPaneCount', @xp, 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL
 GO

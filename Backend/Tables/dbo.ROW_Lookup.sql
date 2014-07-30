@@ -8,5 +8,3 @@ CREATE TABLE [dbo].[ROW_Lookup]
 GO
 ALTER TABLE [dbo].[ROW_Lookup] ADD CONSTRAINT [PK_ROW_Lookup] PRIMARY KEY CLUSTERED  ([ClinicID], [Category], [Key]) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[ROW_Lookup] ADD CONSTRAINT [FK_ROW_Lookup_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID])
-GO

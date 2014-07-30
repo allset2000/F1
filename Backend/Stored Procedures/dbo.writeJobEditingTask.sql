@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -37,24 +38,28 @@ IF NOT EXISTS(SELECT * FROM [dbo].[JobEditingTasks] WHERE ([JobEditingTaskId] = 
 	END
 ELSE 
    BEGIN
-	UPDATE [dbo].[JobEditingTasks]
-	 SET
-	 [AssignedToID] = @AssignedToID ,
-	 [EditionNote] = @EditionNote ,
-	 [QACategoryId] = @QACategoryId ,
-	 [CurrentStateId] = @CurrentStateId ,
-	 [NextStateId] = @NextStateId ,
-	 [WorkflowRuleId] = @WorkflowRuleId ,
-	 [AssignmentMode] = @AssignmentMode ,
-	 [AssignedById] = @AssignedById ,
-	 [ReleasedById] = @ReleasedById ,
-	 [AssignedOn] = @AssignedOn ,
-	 [ReceivedOn] = @ReceivedOn ,
-	 [ReturnedOn] = @ReturnedOn ,
-	 [PreviousTaskId] = @PreviousTaskId ,
-	 [NextTaskId] = @NextTaskId ,
-	 [TaskStatus] = @TaskStatus  
-	WHERE 
-		([JobEditingTaskId] = @JobEditingTaskId) 
+		UPDATE [dbo].[JobEditingTasks]
+		 SET
+		 [AssignedToID] = @AssignedToID ,
+		 [EditionNote] = @EditionNote ,
+		 [QACategoryId] = @QACategoryId ,
+		 [CurrentStateId] = @CurrentStateId ,
+		 [NextStateId] = @NextStateId ,
+		 [WorkflowRuleId] = @WorkflowRuleId ,
+		 [AssignmentMode] = @AssignmentMode ,
+		 [AssignedById] = @AssignedById ,
+		 [ReleasedById] = @ReleasedById ,
+		 [AssignedOn] = @AssignedOn ,
+		 [ReceivedOn] = @ReceivedOn ,
+		 [ReturnedOn] = @ReturnedOn ,
+		 [PreviousTaskId] = @PreviousTaskId ,
+		 [NextTaskId] = @NextTaskId ,
+		 [TaskStatus] = @TaskStatus  
+		WHERE 
+			([JobEditingTaskId] = @JobEditingTaskId) and (JobId = @JobId)
+	
+		IF (@@ROWCOUNT <> 1)
+			RAISERROR('UNEXPECTED DATA UPDATING JobEditingTasks table for Job', 10, 1)
+	
 END
 GO

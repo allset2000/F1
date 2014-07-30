@@ -1,8 +1,8 @@
 CREATE TABLE [dbo].[MPTQueryParameters]
 (
-[QueryName] [varchar] (64) COLLATE Modern_Spanish_CI_AS NOT NULL,
+[QueryName] [varchar] (64) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [ParameterIndex] [int] NOT NULL,
-[ParameterName] [nvarchar] (64) COLLATE Modern_Spanish_CI_AS NOT NULL,
+[ParameterName] [nvarchar] (64) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [ParameterOleDbType] [int] NOT NULL CONSTRAINT [DF_MPTQueryParameters_ParameterOleDbType] DEFAULT ((0)),
 [ParameterOracleType] [int] NOT NULL CONSTRAINT [DF_MPTQueryParameters_ParameterOracleType] DEFAULT ((0)),
 [ParameterSqlType] [int] NOT NULL CONSTRAINT [DF_MPTQueryParameters_ParameterSqlType] DEFAULT ((0)),
@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[MPTQueryParameters]
 [ParameterSize] [int] NOT NULL CONSTRAINT [DF_MPTQueryParameters_ParameterSize] DEFAULT ((0)),
 [ParameterScale] [int] NOT NULL CONSTRAINT [DF_MPTQueryParameters_ParameterScale] DEFAULT ((0)),
 [ParameterPrecision] [int] NOT NULL CONSTRAINT [DF_MPTQueryParameters_ParameterPrecision] DEFAULT ((0)),
-[ParameterDefaultValue] [nvarchar] (255) COLLATE Modern_Spanish_CI_AS NULL,
+[ParameterDefaultValue] [nvarchar] (255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ParameterQueryId] [int] NOT NULL IDENTITY(1, 1)
 ) ON [PRIMARY]
 GO

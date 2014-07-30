@@ -1,7 +1,10 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+-- Stored Procedure
+
 CREATE PROCEDURE [dbo].[doReturnCompleteJob] (
 	@JobNumber  varchar(20),
 	@GenericPatientFlag bit,
@@ -11,7 +14,8 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION
 			--SET TRANSACTION ISOLATION LEVEL READ COMMITTED;	
-			
+
+
 			/* Update CompletedOn and other job fields */
 			UPDATE [dbo].Jobs
 			SET CompletedOn = @Timestamp,

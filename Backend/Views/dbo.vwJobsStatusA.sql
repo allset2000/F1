@@ -12,12 +12,13 @@ FROM         dbo.JobStatusA INNER JOIN
                       dbo.StatusCodes ON dbo.JobStatusA.Status = dbo.StatusCodes.StatusID
 
 GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
       Begin PaneConfiguration = 0
          NumPanes = 4
-         Configuration = "(H (1[41] 4[28] 2[12] 3) )"
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
       End
       Begin PaneConfiguration = 1
          NumPanes = 3
@@ -83,22 +84,22 @@ Begin DesignProperties =
          Left = 0
       End
       Begin Tables = 
-         Begin Table = "StatusCodes"
-            Begin Extent = 
-               Top = 21
-               Left = 312
-               Bottom = 250
-               Right = 489
-            End
-            DisplayFlags = 280
-            TopColumn = 0
-         End
          Begin Table = "JobStatusA"
             Begin Extent = 
                Top = 6
                Left = 38
-               Bottom = 219
-               Right = 189
+               Bottom = 151
+               Right = 198
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "StatusCodes"
+            Begin Extent = 
+               Top = 6
+               Left = 236
+               Bottom = 179
+               Right = 411
             End
             DisplayFlags = 280
             TopColumn = 0
@@ -110,7 +111,7 @@ Begin DesignProperties =
    Begin DataPane = 
       Begin ParameterDefaults = ""
       End
-      Begin ColumnWidths = 11
+      Begin ColumnWidths = 10
          Width = 284
          Width = 1500
          Width = 1500
@@ -120,15 +121,14 @@ Begin DesignProperties =
          Width = 1500
          Width = 1500
          Width = 1500
-         Width = 1500
-         Width = 1500
+         Width = 6285
       End
    End
    Begin CriteriaPane = 
       Begin ColumnWidths = 11
-         Column = 4455
-         Alias = 2895
-         Table = 1875
+         Column = 5325
+         Alias = 2670
+         Table = 1170
          Output = 720
          Append = 1400
          NewValue = 1170
@@ -144,6 +144,7 @@ Begin DesignProperties =
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'vwJobsStatusA', NULL, NULL
 GO
+
 DECLARE @xp int
 SELECT @xp=1
 EXEC sp_addextendedproperty N'MS_DiagramPaneCount', @xp, 'SCHEMA', N'dbo', 'VIEW', N'vwJobsStatusA', NULL, NULL

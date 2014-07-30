@@ -18,12 +18,13 @@ FROM         dbo.Jobs_Documents INNER JOIN
                       dbo.vwAllMedicalJobs ON dbo.Jobs_Documents.JobNumber = dbo.vwAllMedicalJobs.JobNumber
 
 GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
       Begin PaneConfiguration = 0
          NumPanes = 4
-         Configuration = "(H (1[25] 4[32] 2[17] 3) )"
+         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
       End
       Begin PaneConfiguration = 1
          NumPanes = 3
@@ -89,22 +90,22 @@ Begin DesignProperties =
          Left = 0
       End
       Begin Tables = 
-         Begin Table = "Jobs_Documents"
+         Begin Table = "vwAllJobs"
             Begin Extent = 
-               Top = 129
-               Left = 377
-               Bottom = 294
-               Right = 641
+               Top = 0
+               Left = 450
+               Bottom = 291
+               Right = 632
             End
             DisplayFlags = 280
-            TopColumn = 2
+            TopColumn = 0
          End
-         Begin Table = "vwJobsForJobSearch"
+         Begin Table = "Jobs_Documents"
             Begin Extent = 
-               Top = 6
-               Left = 38
-               Bottom = 114
-               Right = 218
+               Top = 15
+               Left = 183
+               Bottom = 231
+               Right = 361
             End
             DisplayFlags = 280
             TopColumn = 0
@@ -116,37 +117,8 @@ Begin DesignProperties =
    Begin DataPane = 
       Begin ParameterDefaults = ""
       End
-      Begin ColumnWidths = 38
+      Begin ColumnWidths = 9
          Width = 284
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
          Width = 1500
          Width = 1500
          Width = 1500
@@ -159,15 +131,13 @@ Begin DesignProperties =
    End
    Begin CriteriaPane = 
       Begin ColumnWidths = 11
-         Column = 7380
-         Alias = 4050
-         Table = 2565
+         Column = 1440
+         Alias = 900
+         Table = 1170
          Output = 720
          Append = 1400
          NewValue = 1170
-         So', 'SCHEMA', N'dbo', 'VIEW', N'vwDocuments', NULL, NULL
-GO
-EXEC sp_addextendedproperty N'MS_DiagramPane2', N'rtType = 1350
+         SortType = 1350
          SortOrder = 1410
          GroupBy = 1350
          Filter = 1350
@@ -179,7 +149,8 @@ EXEC sp_addextendedproperty N'MS_DiagramPane2', N'rtType = 1350
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'vwDocuments', NULL, NULL
 GO
+
 DECLARE @xp int
-SELECT @xp=2
+SELECT @xp=1
 EXEC sp_addextendedproperty N'MS_DiagramPaneCount', @xp, 'SCHEMA', N'dbo', 'VIEW', N'vwDocuments', NULL, NULL
 GO

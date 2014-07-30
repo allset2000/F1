@@ -9,8 +9,8 @@ CREATE TABLE [dbo].[Jobs_Referring]
 [DOB] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [SSN] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Sex] [varchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[Address1] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[Address2] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[Address1] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[Address2] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [City] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [State] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Zip] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -18,8 +18,9 @@ CREATE TABLE [dbo].[Jobs_Referring]
 [Fax] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ClinicName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Jobs_Referring] ADD 
+CONSTRAINT [PK_Jobs_Physicians] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[Jobs_Referring] ADD CONSTRAINT [PK_Jobs_Physicians] PRIMARY KEY CLUSTERED  ([JobNumber]) ON [PRIMARY]
-GO
+
 ALTER TABLE [dbo].[Jobs_Referring] ADD CONSTRAINT [FK_Jobs_Referring_Jobs] FOREIGN KEY ([JobNumber]) REFERENCES [dbo].[Jobs] ([JobNumber])
 GO

@@ -24,8 +24,11 @@ CREATE TABLE [dbo].[Clinics]
 [EHRClinicID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [BillingEMail] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_BillingEMail] DEFAULT (''),
 [BillingSalesTerm] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_BillingSalesTerm] DEFAULT (''),
-[SubscriptionsNum] [int] NOT NULL CONSTRAINT [DF_Clinics_BillingSalesTerm1] DEFAULT ((0))
+[SubscriptionsNum] [int] NOT NULL CONSTRAINT [DF_Clinics_SubscriptionsNum] DEFAULT ((0))
 ) ON [PRIMARY]
 GO
+GRANT SELECT ON  [dbo].[Clinics] TO [app_DocExtract]
+GO
+
 ALTER TABLE [dbo].[Clinics] ADD CONSTRAINT [PK_Clinics] PRIMARY KEY CLUSTERED  ([ClinicID]) ON [PRIMARY]
 GO

@@ -1,6 +1,7 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
-SET ANSI_NULLS OFF
+SET ANSI_NULLS ON
 GO
 
 CREATE PROCEDURE [dbo].[qryDBIntegrationRules] 
@@ -12,5 +13,4 @@ CREATE PROCEDURE [dbo].[qryDBIntegrationRules]
 	WHERE (ServerId = @ServerId) AND (TargetServerId <> @ServerId)
 	ORDER BY DbRuleType, SourceName, DbRuleIndex, TargetServerId
 RETURN
-
 GO

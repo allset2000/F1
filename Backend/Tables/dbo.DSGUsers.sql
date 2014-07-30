@@ -6,5 +6,10 @@ CREATE TABLE [dbo].[DSGUsers]
 [CompanyId] [int] NOT NULL
 ) ON [PRIMARY]
 GO
+GRANT SELECT ON  [dbo].[DSGUsers] TO [carnold]
+GRANT INSERT ON  [dbo].[DSGUsers] TO [carnold]
+GRANT UPDATE ON  [dbo].[DSGUsers] TO [carnold]
+GO
+
 ALTER TABLE [dbo].[DSGUsers] ADD CONSTRAINT [PK_DSGUsers] PRIMARY KEY CLUSTERED  ([UserId]) ON [PRIMARY]
 GO

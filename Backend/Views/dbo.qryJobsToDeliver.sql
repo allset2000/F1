@@ -11,13 +11,21 @@ FROM         dbo.JobsToDeliver INNER JOIN
                       dbo.Jobs ON dbo.JobsToDeliver.JobNumber = dbo.Jobs.JobNumber INNER JOIN
                       dbo.Clinics ON dbo.Jobs.ClinicID = dbo.Clinics.ClinicID INNER JOIN
                       dbo.Jobs_Patients ON dbo.Jobs.JobNumber = dbo.Jobs_Patients.JobNumber
+
 GO
+EXEC sp_addextendedproperty N'MS_DiagramPane2', N'   Or = 1350
+      End
+   End
+End
+', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliver', NULL, NULL
+GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
       Begin PaneConfiguration = 0
          NumPanes = 4
-         Configuration = "(H (1[40] 4[20] 2[20] 3) )"
+         Configuration = "(H (1[42] 4[24] 2[10] 3) )"
       End
       Begin PaneConfiguration = 1
          NumPanes = 3
@@ -29,7 +37,7 @@ Begin DesignProperties =
       End
       Begin PaneConfiguration = 3
          NumPanes = 3
-         Configuration = "(H (4 [30] 2 [40] 3))"
+         Configuration = "(H (4[41] 2[29] 3) )"
       End
       Begin PaneConfiguration = 4
          NumPanes = 2
@@ -75,9 +83,10 @@ Begin DesignProperties =
          NumPanes = 1
          Configuration = "(V (2))"
       End
-      ActivePaneConfig = 0
+      ActivePaneConfig = 3
    End
    Begin DiagramPane = 
+      PaneHidden = 
       Begin Origin = 
          Top = 0
          Left = 0
@@ -87,8 +96,8 @@ Begin DesignProperties =
             Begin Extent = 
                Top = 6
                Left = 38
-               Bottom = 126
-               Right = 202
+               Bottom = 127
+               Right = 198
             End
             DisplayFlags = 280
             TopColumn = 0
@@ -96,29 +105,29 @@ Begin DesignProperties =
          Begin Table = "Jobs"
             Begin Extent = 
                Top = 6
-               Left = 240
-               Bottom = 126
-               Right = 437
+               Left = 236
+               Bottom = 243
+               Right = 409
             End
             DisplayFlags = 280
-            TopColumn = 0
+            TopColumn = 1
          End
          Begin Table = "Clinics"
             Begin Extent = 
-               Top = 126
-               Left = 38
-               Bottom = 246
-               Right = 224
+               Top = 143
+               Left = 19
+               Bottom = 262
+               Right = 205
             End
             DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "Jobs_Patients"
             Begin Extent = 
-               Top = 126
-               Left = 262
-               Bottom = 246
-               Right = 422
+               Top = 5
+               Left = 478
+               Bottom = 308
+               Right = 638
             End
             DisplayFlags = 280
             TopColumn = 0
@@ -130,10 +139,21 @@ Begin DesignProperties =
    Begin DataPane = 
       Begin ParameterDefaults = ""
       End
+      Begin ColumnWidths = 9
+         Width = 284
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+      End
    End
    Begin CriteriaPane = 
       Begin ColumnWidths = 11
-         Column = 1440
+         Column = 5370
          Alias = 900
          Table = 1170
          Output = 720
@@ -145,13 +165,10 @@ Begin DesignProperties =
          Filter = 1350
          Or = 1350
          Or = 1350
-         Or = 1350
-      End
-   End
-End
-', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliver', NULL, NULL
+      ', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliver', NULL, NULL
 GO
+
 DECLARE @xp int
-SELECT @xp=1
+SELECT @xp=2
 EXEC sp_addextendedproperty N'MS_DiagramPaneCount', @xp, 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliver', NULL, NULL
 GO

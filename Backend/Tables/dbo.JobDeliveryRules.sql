@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[JobDeliveryRules]
 [JobType] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Method] [smallint] NOT NULL,
 [RuleName] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[AvoidRedelivery] [bit] NOT NULL
+[AvoidRedelivery] [bit] NOT NULL CONSTRAINT [DF_JobDeliveryRules_AvoidRedelivery] DEFAULT ((0))
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[JobDeliveryRules] ADD CONSTRAINT [PK_JobDeliveryRules] PRIMARY KEY CLUSTERED  ([RuleID]) ON [PRIMARY]
