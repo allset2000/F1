@@ -1,11 +1,7 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (11, 'TAB-EXPLINK', 'Configure ExpressLink Tab')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (12, 'SHOW-DIAGNOSTICS', 'Show Diagnostics')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (13, 'TAB-J2D-ERRORS', 'JobDelivery Errors Tab')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (14, 'TAB-SCHEDULES', 'Schedules Tab')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (15, 'FNC-JOB-UPDATE', 'Function - Update Jobs')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (16, 'FNC-ACK-RESEND', 'Function - Resend ACKS (Athena)')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (17, 'FNC-JOB-RESEND', 'Function - Resend Job')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (18, 'TAB-JOBSTODELIVER', 'Jobs To Deliver Tab')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (19, 'FNC-J2D-ADD', 'J2D - Queue jobs to be delivered')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (20, 'FNC-J2D-REMOVE', 'J2D - Remove jobs')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (1, 'TAB-DICT', 'Dictators Tab')
@@ -18,4 +14,11 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (7, 'TAB
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (8, 'TAB-RULES', 'Rules Tab')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (9, 'TAB-ENTRADA-ACCESS', 'Console Access for Entrada Administration')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (10, 'TAB-APP-EXCEPTIONS', 'Application Exceptions Tab')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (11, 'TAB-EXPLINK', 'Configure ExpressLink Tab')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (12, 'SHOW-DIAGNOSTICS', 'Show Diagnostics')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (13, 'TAB-J2D-ERRORS', 'JobDelivery Errors Tab')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (14, 'TAB-SCHEDULES', 'Schedules Tab')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (15, 'FNC-JOB-UPDATE', 'Function - Update Jobs')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (16, 'FNC-ACK-RESEND', 'Function - Resend ACKS (Athena)')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (17, 'FNC-JOB-RESEND', 'Function - Resend Job')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF

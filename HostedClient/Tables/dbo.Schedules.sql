@@ -22,6 +22,12 @@ CREATE TABLE [dbo].[Schedules]
 [AttendingLast] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ChangedOn] [datetime] NULL CONSTRAINT [DF_Schedules_ChangedOn] DEFAULT (getdate())
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [LocationID] ON [dbo].[Schedules] ([LocationID]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [ReasonID] ON [dbo].[Schedules] ([ReasonID]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [ResourceID] ON [dbo].[Schedules] ([ResourceID]) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_Schedules_1] ON [dbo].[Schedules] ([AppointmentID]) ON [PRIMARY]
 
 CREATE NONCLUSTERED INDEX [IX_Schedules] ON [dbo].[Schedules] ([ClinicID]) ON [PRIMARY]
