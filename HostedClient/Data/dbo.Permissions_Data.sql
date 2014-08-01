@@ -1,7 +1,5 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (18, 'TAB-JOBSTODELIVER', 'Jobs To Deliver Tab')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (19, 'FNC-J2D-ADD', 'J2D - Queue jobs to be delivered')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (20, 'FNC-J2D-REMOVE', 'J2D - Remove jobs')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (21, 'FNC-GREENWAY-OVERRIDE', 'Function - Override Greenway return values')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (1, 'TAB-DICT', 'Dictators Tab')
@@ -21,4 +19,9 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (14, 'TA
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (15, 'FNC-JOB-UPDATE', 'Function - Update Jobs')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (16, 'FNC-ACK-RESEND', 'Function - Resend ACKS (Athena)')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (17, 'FNC-JOB-RESEND', 'Function - Resend Job')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (18, 'TAB-JOBSTODELIVER', 'Jobs To Deliver Tab')
+SET IDENTITY_INSERT [dbo].[Permissions] OFF
+SET IDENTITY_INSERT [dbo].[Permissions] ON
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (19, 'FNC-J2D-ADD', 'Function - J2D Queue jobs to be delivered')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (20, 'FNC-J2D-REMOVE', 'Function - J2D  Remove jobs')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
