@@ -55,10 +55,11 @@
     <DataWriteAllFilesInOneDirectory>True</DataWriteAllFilesInOneDirectory>
   </WriteToFileOptions>
   <DataFileSet>
-    <Count>4</Count>
+    <Count>5</Count>
     <DataFile>dbo.EHRVendors_Data.sql</DataFile>
     <DataFile>dbo.Permissions_Data.sql</DataFile>
     <DataFile>dbo.StatusCategories_Data.sql</DataFile>
     <DataFile>dbo.StatusCodes_Data.sql</DataFile>
+    <DataFile>dbo.ROWOverrideFields_Data.sql</DataFile>
   </DataFileSet>
 </DatabaseInformation>
