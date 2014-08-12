@@ -1,10 +1,6 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (22, 'TAB-IMPORTDATA', 'Import Data Tab')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (23, 'FNC-IMPORT-DICTATORS', 'Function - Import Dictators')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (24, 'FNC-IMPORT-LOCATIONS', 'Function - Import Locations for rules')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (25, 'FNC-IMPORT-PROVIDERS', 'Function - Import Providers for rules')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (26, 'FNC-IMPORT-REASONS', 'Function - Import Reasons for rules')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (27, 'FNC-CLINIC-ADD', 'Function - Add Clinic')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (28, 'FNC-CLINIC-ADDEXISTING', 'Function - Add Existing Clinic')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (29, 'FNC-CLINIC-EDIT', 'Function - Edit Clinic')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (1, 'TAB-DICT', 'Dictators Tab')
@@ -28,4 +24,10 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (18, 'TA
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (19, 'FNC-J2D-ADD', 'Function - J2D Queue jobs to be delivered')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (20, 'FNC-J2D-REMOVE', 'Function - J2D  Remove jobs')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (21, 'FNC-GREENWAY-OVERRIDE', 'Function - Override Greenway return values')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (22, 'TAB-IMPORTDATA', 'Import Data Tab')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (23, 'FNC-IMPORT-DICTATORS', 'Function - Import Dictators')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (24, 'FNC-IMPORT-LOCATIONS', 'Function - Import Locations for rules')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (25, 'FNC-IMPORT-PROVIDERS', 'Function - Import Providers for rules')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (26, 'FNC-IMPORT-REASONS', 'Function - Import Reasons for rules')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (27, 'FNC-CLINIC-ADD', 'Function - Add Clinic')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
