@@ -1,8 +1,7 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (30, 'TAB-BACKEND-JOBS', 'Tab - Backend Job Management')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (31, 'FNC-JOBTYPE-ADD', 'Function - Add Jobtype')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (32, 'FNC-JOBTYPE-EDIT', 'Function - Edit Jobtype')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (33, 'FNC-JOBTYPE-TAGS', 'Function - Jobtype Tag Management')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (34, 'FNC-BACKENDJOB-FIXRECFAILED', 'Function - Backend Job Fix Rec Failed')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (35, 'FNC-BACKENDJOB-RETRYREC', 'Function - Backend Job Retry Recognition')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (36, 'FNC-JOBS-CLEAR', 'Function - Clear Jobs from Search screen')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (1, 'TAB-DICT', 'Dictators Tab')
@@ -34,4 +33,8 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (26, 'FN
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (27, 'FNC-CLINIC-ADD', 'Function - Add Clinic')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (28, 'FNC-CLINIC-ADDEXISTING', 'Function - Add Existing Clinic')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (29, 'FNC-CLINIC-EDIT', 'Function - Edit Clinic')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (30, 'TAB-BACKEND-JOBS', 'Tab - Backend Job Management')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (31, 'FNC-JOBTYPE-ADD', 'Function - Add Jobtype')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (32, 'FNC-JOBTYPE-EDIT', 'Function - Edit Jobtype')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (33, 'FNC-JOBTYPE-TAGS', 'Function - Jobtype Tag Management')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
