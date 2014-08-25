@@ -5,7 +5,7 @@ GO
 CREATE VIEW [dbo].[vwMedicalJobs]
 AS
 SELECT     dbo.Jobs.JobNumber, dbo.Jobs.JobId, dbo.Jobs.DictatorID, dbo.Dictators.DictatorIdOk, dbo.Jobs.ClinicID, dbo.Clinics.ClinicName, dbo.Jobs.Location, 
-                      dbo.Jobs.TemplateName, dbo.Dictators.TemplatesFolder, dbo.Jobs.AppointmentDate, dbo.Jobs.AppointmentTime, dbo.Jobs.JobType, dbo.Jobs.ContextName, dbo.Jobs.Vocabulary, 
+					  dbo.Dictators.TemplatesFolder, dbo.Jobs.AppointmentDate, dbo.Jobs.AppointmentTime, dbo.Jobs.JobType, dbo.Jobs.ContextName, dbo.Jobs.Vocabulary, 
                       dbo.Jobs.Stat, dbo.Jobs.CC, dbo.Jobs.GenericPatientFlag, dbo.Jobs.Duration, dbo.Jobs.DictationDate, dbo.Jobs.DictationTime, dbo.Jobs.ReceivedOn, 
                       dbo.Jobs.DueDate, dbo.Jobs.ReturnedOn, dbo.Jobs.CompletedOn, dbo.Jobs.RecServer, dbo.Jobs.BilledOn, dbo.Jobs.Amount, dbo.Jobs.ParentJobNumber, 
                       ISNULL(dbo.Jobs_Client.FileName, '') AS CustomerJobNumber, dbo.Jobs.DocumentStatus, ISNULL(dbo.Dictators.VREnabled, 0) AS VREnabled, 
@@ -28,7 +28,7 @@ SELECT     dbo.Jobs.JobNumber, dbo.Jobs.JobId, dbo.Jobs.DictatorID, dbo.Dictator
                       dbo.JobEditingSummary.CurrentStateId, CASE WHEN CurrentQAStage <> '' THEN CurrentQAStage ELSE EditionStage END AS CurrentEditingStage, 
                       dbo.JobEditingSummary.CurrentQAStage, dbo.JobEditingSummary.LastQAStage, dbo.JobEditingSummary.AssignedToID, dbo.JobEditingSummary.QACategoryId, 
                       dbo.JobEditingSummary.LastQANote, dbo.JobEditingSummary.QAEditorsList, dbo.JobEditingSummary.FinishedOn, dbo.JobEditingSummary.LastEditingTaskId, 
-                      dbo.JobEditingSummary.LastQAEditingTaskId, dbo.vwQACategories.QACategory, vwQACategories_1.QACategory AS QAParentCategory
+                      dbo.JobEditingSummary.LastQAEditingTaskId, dbo.vwQACategories.QACategory, vwQACategories_1.QACategory AS QAParentCategory, dbo.Jobs.TemplateName
 FROM         dbo.Dictators INNER JOIN
                       dbo.Jobs ON dbo.Dictators.DictatorID = dbo.Jobs.DictatorID INNER JOIN
                       dbo.Clinics ON dbo.Jobs.ClinicID = dbo.Clinics.ClinicID INNER JOIN
