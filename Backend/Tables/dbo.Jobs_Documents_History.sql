@@ -9,6 +9,7 @@ CREATE TABLE [dbo].[Jobs_Documents_History]
 [DocumentIdOk] [int] NOT NULL CONSTRAINT [DF_Jobs_Documents_History_DocumentIdOk] DEFAULT ((0)),
 [DocumentTypeId] [int] NOT NULL CONSTRAINT [DF_Jobs_Documents_History_DocumentTypeId] DEFAULT ((0)),
 [DocumentStatusId] [int] NOT NULL CONSTRAINT [DF_Jobs_Documents_History_DocumentStatusId] DEFAULT ((0)),
+[TemplateName] [varchar] (100) NULL,
 [JobId] [int] NOT NULL CONSTRAINT [DF_Jobs_Documents_History_JobId] DEFAULT ((0))
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_JobNumber] ON [dbo].[Jobs_Documents_History] ([JobNumber]) ON [PRIMARY]

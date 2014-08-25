@@ -5,7 +5,7 @@ GO
 CREATE VIEW [dbo].[vwMedicalJobs]
 AS
 SELECT     dbo.Jobs.JobNumber, dbo.Jobs.JobId, dbo.Jobs.DictatorID, dbo.Dictators.DictatorIdOk, dbo.Jobs.ClinicID, dbo.Clinics.ClinicName, dbo.Jobs.Location, 
-                      dbo.Dictators.TemplatesFolder, dbo.Jobs.AppointmentDate, dbo.Jobs.AppointmentTime, dbo.Jobs.JobType, dbo.Jobs.ContextName, dbo.Jobs.Vocabulary, 
+                      dbo.Jobs.TemplateName, dbo.Dictators.TemplatesFolder, dbo.Jobs.AppointmentDate, dbo.Jobs.AppointmentTime, dbo.Jobs.JobType, dbo.Jobs.ContextName, dbo.Jobs.Vocabulary, 
                       dbo.Jobs.Stat, dbo.Jobs.CC, dbo.Jobs.GenericPatientFlag, dbo.Jobs.Duration, dbo.Jobs.DictationDate, dbo.Jobs.DictationTime, dbo.Jobs.ReceivedOn, 
                       dbo.Jobs.DueDate, dbo.Jobs.ReturnedOn, dbo.Jobs.CompletedOn, dbo.Jobs.RecServer, dbo.Jobs.BilledOn, dbo.Jobs.Amount, dbo.Jobs.ParentJobNumber, 
                       ISNULL(dbo.Jobs_Client.FileName, '') AS CustomerJobNumber, dbo.Jobs.DocumentStatus, ISNULL(dbo.Dictators.VREnabled, 0) AS VREnabled, 
