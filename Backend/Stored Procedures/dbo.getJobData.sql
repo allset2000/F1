@@ -14,7 +14,8 @@ CREATE PROCEDURE [dbo].[getJobData] (
 		   [Stat] ,[CC], [Duration], 
 		   CONVERT(varchar, [DictationDate], 101) AS DictationDate,
 		   LTRIM(RTRIM(SUBSTRING(CONVERT(varchar, [DictationTime], 22), 9, 15))) AS DictationTime, 
-		   ISNULL(ParentJobNumber, '') AS ParentJobNumber
+		   ISNULL(ParentJobNumber, '') AS ParentJobNumber, 
+		   [TemplateName]
 	FROM   dbo.vwMedicalJobs
   WHERE (JobNumber = @JobNumber)
 RETURN
