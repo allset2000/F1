@@ -12,8 +12,14 @@ CREATE TABLE [dbo].[Clinics]
 [EHRClinicID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_EHRClinicID] DEFAULT (''),
 [EHRLocationID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_EHRLocationID] DEFAULT (''),
 [ClinicCode] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_ClinicCode] DEFAULT (''),
-[DisableUpdateAlert] [bit] NOT NULL CONSTRAINT [DF_Clinics_DisableUpdateAlert] DEFAULT ((0))
+[DisableUpdateAlert] [bit] NOT NULL CONSTRAINT [DF_Clinics_DisableUpdateAlert] DEFAULT ((0)),
+[CRFlagType] [int] NOT NULL CONSTRAINT [DF_Clinics_CRFlagType] DEFAULT ((0)),
+[ForceCRStartDate] [datetime] NULL,
+[ForceCREndDate] [datetime] NULL,
+[ExcludeStat] [bit] NOT NULL CONSTRAINT [DF_Clinics_ExcludeStat] DEFAULT ((0))
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Clinics] ADD
+CONSTRAINT [FK_Clinics_CRFlagTypes] FOREIGN KEY ([CRFlagType]) REFERENCES [dbo].[CRFlagTypes] ([CRFlagType])
 ALTER TABLE [dbo].[Clinics] ADD 
 CONSTRAINT [PK_Clinics] PRIMARY KEY CLUSTERED  ([ClinicID]) ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_Clinics_MobileCode] ON [dbo].[Clinics] ([MobileCode]) ON [PRIMARY]
