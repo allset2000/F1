@@ -10,7 +10,8 @@ GO
 -- Current procedure does not support multiple dictations for single job.
 -- =============================================
 CREATE PROCEDURE [dbo].[ins_upd_jobs]
-@schedule_id BIGINT
+@schedule_id BIGINT,
+@flagProcessPastAppts INT = 0
 
 AS
 BEGIN
@@ -37,6 +38,13 @@ SELECT @clinicID = ClinicID, @locationid = locationID, @attendingId = attending,
 @status = CASE WHEN Status IN ('100','200') THEN 100 ELSE 500 END 
 FROM Schedules S
 WHERE ScheduleID = @schedule_id
+
+--PAST APPOINTMNET FILTERING
+IF @flagProcessPastAppts = 0 AND cast(convert(char(11), @appointmentDate, 113) as datetime)<cast(convert(char(11), getdate(), 113) as datetime)
+BEGIN
+	INSERT INTO #result SELECT 'APPOINTMENT DATE IS PAST CURRENT DATE AND FLAG IS SET TO: '+CAST(@flagProcessPastAppts AS VARCHAR(1))
+	GOTO FINALIZE_JOB;
+END
 
 --SET FLAG TO 1 IF APPOINTMENT DATE INCREASED BY 1 DAY OR MORE
 SET @appointmentDateIncreased = 
@@ -208,9 +216,10 @@ NO_RULE:
 	UPDATE Dictations SET Status = 500 
 	FROM Dictations D INNER JOIN @job_id_delete JD ON D.JobID=JD.jobid
 	WHERE Status IN ('100','500')
+	RETURN
 	
 FINALIZE_JOB:
 	SELECT result FROM #result
-
+	RETURN	
 END
 GO
