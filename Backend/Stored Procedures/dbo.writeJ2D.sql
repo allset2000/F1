@@ -5,15 +5,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 
 CREATE PROCEDURE [dbo].[writeJ2D] (
-	@JobNumber  [varchar]  (20),
-	@Method  [smallint],
-	@LastUpdatedOn  [datetime]
+	@JobNumber  [varchar]  (20)
 ) AS 
-UPDATE [dbo].[JobsToDeliver]
-	SET [Method] = @Method,
-	[LastUpdatedOn] = @LastUpdatedOn
-WHERE [JobNumber] = @JobNumber
-
+BEGIN
+	Delete from  [dbo].[JobsToDeliver] WHERE [JobNumber] = @JobNumber
+END
 
 GO
 
