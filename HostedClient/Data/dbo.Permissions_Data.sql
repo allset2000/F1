@@ -1,10 +1,5 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (37, 'FNC-IMPORT-FROMSCHEDULES', 'Function - Import data from scheduling messages')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (38, 'FNC-SCHEDULES-REPROCESS', 'Function - Reporcess Schedules')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (39, 'FNC-BACKENDJOB-DELETE', 'Function - Delete Backend Job')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (40, 'FNC-BACKENDJOB-UNLOCK', 'Function - Unlock Backend Job')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (41, 'FNC-BACKENDJOB-RELEASE', 'Function - Releae Backend Job')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (42, 'FNC-BACKENDJOB-REPROCESS', 'Function - Reprocess Backend Job')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (43, 'FNC-JOBS-UNDELETE', 'Function - Undelete Jobs from Search Screen')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (1, 'TAB-DICT', 'Dictators Tab')
@@ -43,4 +38,10 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (33, 'FN
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (34, 'FNC-BACKENDJOB-FIXRECFAILED', 'Function - Backend Job Fix Rec Failed')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (35, 'FNC-BACKENDJOB-RETRYREC', 'Function - Backend Job Retry Recognition')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (36, 'FNC-JOBS-CLEAR', 'Function - Clear Jobs from Search screen')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (37, 'FNC-IMPORT-FROMSCHEDULES', 'Function - Import data from scheduling messages')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (38, 'FNC-SCHEDULES-REPROCESS', 'Function - Reporcess Schedules')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (39, 'FNC-BACKENDJOB-DELETE', 'Function - Delete Backend Job')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (40, 'FNC-BACKENDJOB-UNLOCK', 'Function - Unlock Backend Job')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (41, 'FNC-BACKENDJOB-RELEASE', 'Function - Releae Backend Job')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (42, 'FNC-BACKENDJOB-REPROCESS', 'Function - Reprocess Backend Job')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
