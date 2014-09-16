@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[RulesJobs]
 [RuleID] [smallint] NOT NULL,
 [ActionID] [smallint] NOT NULL IDENTITY(1, 1),
 [DictatorID] [int] NULL,
-[QueueID] [smallint] NULL,
+[QueueID] [int] NULL,
 [ProviderID] [bigint] NULL
 ) ON [PRIMARY]
 GO
