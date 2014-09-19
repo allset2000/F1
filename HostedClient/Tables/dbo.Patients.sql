@@ -18,8 +18,11 @@ CREATE TABLE [dbo].[Patients]
 [Phone1] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Patients_Phone1] DEFAULT (''),
 [Phone2] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Patients_Phone2] DEFAULT (''),
 [Fax1] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Patients_Fax1] DEFAULT (''),
-[Fax2] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Patients_Fax2] DEFAULT ('')
+[Fax2] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Patients_Fax2] DEFAULT (''),
+[PrimaryCareProviderID] [int] NULL
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Patients] ADD
+CONSTRAINT [FK_Patients_ReferringPhysicians] FOREIGN KEY ([PrimaryCareProviderID]) REFERENCES [dbo].[ReferringPhysicians] ([ReferringID])
 CREATE NONCLUSTERED INDEX [IX_ClinicID_INC_MRN_FirstName_MI_LastName] ON [dbo].[Patients] ([ClinicID]) INCLUDE ([FirstName], [LastName], [MI], [MRN]) ON [PRIMARY]
 
 CREATE NONCLUSTERED INDEX [IX_Patients] ON [dbo].[Patients] ([AlternateID]) ON [PRIMARY]
