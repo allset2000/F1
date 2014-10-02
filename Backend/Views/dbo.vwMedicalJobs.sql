@@ -87,7 +87,7 @@ Begin DesignProperties =
       End
       Begin PaneConfiguration = 10
          NumPanes = 2
-         Configuration = "(H (1[66] 2) )"
+         Configuration = "(H (1[43] 2) )"
       End
       Begin PaneConfiguration = 11
          NumPanes = 2
@@ -105,7 +105,7 @@ Begin DesignProperties =
          NumPanes = 1
          Configuration = "(V (2))"
       End
-      ActivePaneConfig = 0
+      ActivePaneConfig = 10
    End
    Begin DiagramPane = 
       Begin Origin = 
@@ -125,13 +125,13 @@ Begin DesignProperties =
          End
          Begin Table = "Jobs"
             Begin Extent = 
-               Top = 6
-               Left = 253
-               Bottom = 114
-               Right = 441
+               Top = 27
+               Left = 547
+               Bottom = 135
+               Right = 735
             End
             DisplayFlags = 280
-            TopColumn = 0
+            TopColumn = 31
          End
          Begin Table = "Clinics"
             Begin Extent = 
@@ -175,15 +175,35 @@ Begin DesignProperties =
          End
          Begin Table = "JobEditingSummary"
             Begin Extent = 
-               Top = 330
-               Left = 38
-               Bottom = 438
-               Right = 217
+               Top = 377
+               Left = 582
+               Bottom = 485
+               Right = 761
             End
-       ', 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL
+   ', 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL
 GO
 
-EXEC sp_addextendedproperty N'MS_DiagramPane2', N'     DisplayFlags = 280
+EXEC sp_addextendedproperty N'MS_DiagramPane2', N'         DisplayFlags = 280
+            TopColumn = 9
+         End
+         Begin Table = "vwQACategories"
+            Begin Extent = 
+               Top = 330
+               Left = 255
+               Bottom = 438
+               Right = 448
+            End
+            DisplayFlags = 280
+            TopColumn = 0
+         End
+         Begin Table = "vwQACategories_1"
+            Begin Extent = 
+               Top = 438
+               Left = 38
+               Bottom = 546
+               Right = 231
+            End
+            DisplayFlags = 280
             TopColumn = 0
          End
          Begin Table = "vwEditors"
@@ -211,10 +231,12 @@ EXEC sp_addextendedproperty N'MS_DiagramPane2', N'     DisplayFlags = 280
    Begin SQLPane = 
    End
    Begin DataPane = 
+      PaneHidden = 
       Begin ParameterDefaults = ""
       End
    End
    Begin CriteriaPane = 
+      PaneHidden = 
       Begin ColumnWidths = 11
          Column = 3600
          Alias = 2265
@@ -234,6 +256,7 @@ EXEC sp_addextendedproperty N'MS_DiagramPane2', N'     DisplayFlags = 280
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL
 GO
+
 
 DECLARE @xp int
 SELECT @xp=2

@@ -23,6 +23,10 @@ CREATE PROCEDURE [dbo].[writeJobEditingTask] (
 	@TaskStatus  [char]  (1) 
 )
 AS
+	declare @tempJobId int
+	--select @tempjobid = jobid from JobEditingTasks where JobEditingTaskId = @NextTaskId
+	declare @ErrorMsg varchar(100)
+	set @ErrorMsg = 'JobEditingTasks table :Issue in updating Next Task ID: NextTaskID: ' +convert(varchar(20), @NextTaskId) + ' JobID: ' + CONVERT(varchar(20), @JobId) + ' TempJobId: ' + CONVERT(varchar(20),@tempJobId)
 
 IF NOT EXISTS(SELECT * FROM [dbo].[JobEditingTasks] WHERE ([JobEditingTaskId] = @JobEditingTaskId))
 	BEGIN
@@ -61,5 +65,16 @@ ELSE
 		IF (@@ROWCOUNT <> 1)
 			RAISERROR('UNEXPECTED DATA UPDATING JobEditingTasks table for Job', 10, 1)
 	
+END
+
+IF(@NextTaskId <> -1)
+BEGIN
+	SELECT @tempjobid = jobid from JobEditingTasks where JobEditingTaskId = @NextTaskId
+	IF (@tempJobId <> @JobId)
+	BEGIN
+		set @ErrorMsg = 'Issue in : '+ @ErrorMsg
+		RAISERROR( @ErrorMsg, 12, 1)
+		RETURN
+	END
 END
 GO
