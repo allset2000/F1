@@ -7,8 +7,8 @@ CREATE PROCEDURE [dbo].[writeContactRole] (
 	@ContactId  [int],
 	@RoleId  [int],
 	@ClinicId  [int],
-	@ClinicsFilter  [varchar]  (255),
-	@DictatorsFilter  [varchar]  (255),
+	@ClinicsFilter  [varchar]  (500),
+	@DictatorsFilter  [varchar]  (500),
 	@JobsFilter  [varchar]  (255),
 	@RoleStatus  [char]  (1) 
 ) AS 
