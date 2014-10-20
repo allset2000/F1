@@ -1,5 +1,8 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (43, 'FNC-JOBS-UNDELETE', 'Function - Undelete Jobs from Search Screen')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (44, 'FNC-CLINIC-ADDDOCUMNET', 'Function - Add Document to Clinic')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (45, 'FNC-CLINIC-EDITDOCUMENT', 'Function - Edit Document for Clinic')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (46, 'FNC-CLINIC-DOWNLOADDOCUMENT', 'Function - Download document for Clinic')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (47, 'FNC-CLINIC-DELETEDOCUMENT', 'Function - Delete document for Clinic')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (1, 'TAB-DICT', 'Dictators Tab')
@@ -44,4 +47,5 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (39, 'FN
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (40, 'FNC-BACKENDJOB-UNLOCK', 'Function - Unlock Backend Job')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (41, 'FNC-BACKENDJOB-RELEASE', 'Function - Releae Backend Job')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (42, 'FNC-BACKENDJOB-REPROCESS', 'Function - Reprocess Backend Job')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (43, 'FNC-JOBS-UNDELETE', 'Function - Undelete Jobs from Search Screen')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
