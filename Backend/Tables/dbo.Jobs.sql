@@ -34,7 +34,9 @@ CREATE TABLE [dbo].[Jobs]
 [JobEditingSummaryId] [int] NOT NULL CONSTRAINT [DF__Jobs__JobEditing__78159CA3] DEFAULT ((-1)),
 [JobId] [int] NOT NULL IDENTITY(2, 1),
 [DueDate] [datetime] NULL,
-[TemplateName] [varchar] (100) NULL
+[TemplateName] [varchar] (100) NULL,
+[IsGenericJob] [bit] NULL,
+[IsNewSchema] [bit] NULL
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[Jobs] ADD 
 CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
