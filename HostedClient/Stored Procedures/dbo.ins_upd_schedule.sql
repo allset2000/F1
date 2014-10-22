@@ -27,7 +27,8 @@ CREATE PROCEDURE [dbo].[ins_upd_schedule]
 	@referringName varchar(100),
 	@attendingFirst varchar(120),
 	@attendingLast varchar(120),
-	@alternate_id varchar(36) = NULL
+	@alternate_id varchar(36) = NULL,
+	@type varchar(1) = 'S'
 
 AS
 BEGIN
@@ -92,7 +93,7 @@ SET
 	EHREncounterID = @EncounterID,
 	Attending = @Attending,
 	LocationID = @LocationID,
-	LocationName = @LocationName,
+	LocationName = ISNULL(@LocationName,''),
 	ReasonID = @ReasonID,
 	ReasonName = @ReasonName,
 	ResourceID = @ResourceID,
@@ -103,22 +104,23 @@ SET
 	ReferringName = @referringName,
 	AttendingFirst = @attendingFirst,
 	AttendingLast = @attendingLast,
-	RowProcessed = 0
+	RowProcessed = 0,
+	Type = @Type
 OUTPUT Inserted.ScheduleID INTO @ScheduleID
 WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID
 
 IF @@ROWCOUNT = 0
 	BEGIN
 	
-	INSERT INTO Schedules (ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, referringID, ReferringName, AttendingFirst, AttendingLast)
+	INSERT INTO Schedules (ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, referringID, ReferringName, AttendingFirst, AttendingLast, Type)
 	OUTPUT Inserted.ScheduleID INTO @ScheduleID	
 	VALUES 
-	(@ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, @LocationName, @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, @ReferringID, @referringName, @attendingFirst, @attendingLast)	
+	(@ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, @ReferringID, @referringName, @attendingFirst, @attendingLast, @type)	
 	
 	END
 
-INSERT INTO SchedulesTracking (ScheduleID, ClinicID, AppointmentDate, PatientID, AppointmentID, EncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, ChangedOn, ChangedBy, referringID, ReferringName, AttendingFirst, AttendingLast)
-SELECT ScheduleID, @ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, @LocationName, @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, GETDATE(), 'HL7', @referringID, @referringname, @AttendingFirst, @attendingLast
+INSERT INTO SchedulesTracking (ScheduleID, ClinicID, AppointmentDate, PatientID, AppointmentID, EncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, ChangedOn, ChangedBy, referringID, ReferringName, AttendingFirst, AttendingLast, Type)
+SELECT ScheduleID, @ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, GETDATE(), 'HL7', @referringID, @referringname, @AttendingFirst, @attendingLast, @Type
 FROM @ScheduleID
 
 

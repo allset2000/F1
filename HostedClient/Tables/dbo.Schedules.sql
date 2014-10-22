@@ -20,7 +20,8 @@ CREATE TABLE [dbo].[Schedules]
 [ReferringName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [AttendingFirst] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [AttendingLast] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[ChangedOn] [datetime] NULL CONSTRAINT [DF_Schedules_ChangedOn] DEFAULT (getdate())
+[ChangedOn] [datetime] NULL CONSTRAINT [DF_Schedules_ChangedOn] DEFAULT (getdate()),
+[Type] [varchar] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF__Schedules__Type__544C7222] DEFAULT ('S')
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [LocationID] ON [dbo].[Schedules] ([LocationID]) ON [PRIMARY]
 

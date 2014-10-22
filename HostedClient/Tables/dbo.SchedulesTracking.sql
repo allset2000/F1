@@ -21,7 +21,8 @@ CREATE TABLE [dbo].[SchedulesTracking]
 [ReferringID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ReferringName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [AttendingFirst] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[AttendingLast] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[AttendingLast] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[Type] [varchar] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF__SchedulesT__Type__5540965B] DEFAULT ('S')
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_SchedulesTracking] ON [dbo].[SchedulesTracking] ([ScheduleID]) ON [PRIMARY]
 
