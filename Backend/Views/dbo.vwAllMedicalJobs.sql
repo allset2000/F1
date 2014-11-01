@@ -19,7 +19,7 @@ SELECT     dbo.Jobs.JobId, dbo.Jobs.JobNumber, dbo.Jobs.JobType, dbo.Jobs.Clinic
                       dbo.vwPatients.PatientZip, dbo.vwPatients.PatientPhone, dbo.vwPatients.PatientSex, ISNULL(dbo.Jobs_Client.FileName, '') AS CustomerJobNumber, 
                       dbo.JobEditingSummary.AssignedToID, dbo.JobEditingSummary.LastEditedByID, dbo.JobEditingSummary.CurrentlyEditedByID, 
                       dbo.JobEditingSummary.LastQAEditorID, dbo.JobEditingSummary.CurrentQAStage, dbo.JobEditingSummary.LastQAStage, dbo.JobEditingSummary.FinishedOn, 
-                      dbo.JobEditingSummary.LastQANote, dbo.JobEditingSummary.QAEditorsList
+                      dbo.JobEditingSummary.LastQANote, dbo.JobEditingSummary.QAEditorsList, dbo.Jobs.IsGenericJob
 FROM         dbo.Jobs_Referring INNER JOIN
                       dbo.Jobs INNER JOIN
                       dbo.Clinics ON dbo.Jobs.ClinicID = dbo.Clinics.ClinicID ON dbo.Jobs_Referring.JobNumber = dbo.Jobs.JobNumber INNER JOIN
