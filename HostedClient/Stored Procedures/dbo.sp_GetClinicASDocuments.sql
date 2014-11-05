@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -12,7 +13,10 @@ CREATE PROCEDURE [dbo].[sp_GetClinicASDocuments] (
 	 @ClinicId int
 ) AS 
 BEGIN
-	SELECT ClinicDocumentID,ClinicId,DocumentFile,FileName,DateCreated,DateUpdated FROM ClinicDocuments WHERE ClinicId = @ClinicId AND IsAccountSpecific = 1
+	SELECT ClinicDocumentID,ClinicId,DocumentFile,FileName,DateCreated,DateUpdated 
+	FROM ClinicDocuments 
+	WHERE ClinicId = @ClinicId AND IsAccountSpecific = 1
+	ORDER BY FileName desc
 END
 
 
