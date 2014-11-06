@@ -23,7 +23,7 @@ if not exists(select 1 from EHRVendors where Name ='Allscripts Sunrise')
 --BEGIN #2471#
 if not exists(select * from Permissions where Code = 'FNC-CLINIC-ADDDOCUMENT')
 	BEGIN
-		INSERT INTO Permissions(Code, Name) values('FNC-CLINIC-ADDDOCUMNET','Function - Add Document to Clinic')
+		INSERT INTO Permissions(Code, Name) values('FNC-CLINIC-ADDDOCUMENT','Function - Add Document to Clinic')
 	END
 if not exists(select * from Permissions where Code = 'FNC-CLINIC-EDITDOCUMENT')
 	BEGIN

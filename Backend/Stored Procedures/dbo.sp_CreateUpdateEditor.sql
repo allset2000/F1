@@ -1,9 +1,8 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-CREATE PROCEDURE [dbo].[sp_CreateEditor]
+CREATE PROCEDURE [dbo].[sp_CreateUpdateEditor]
 (
 	@vEditorID VARCHAR(50) = ''
 	, @vEditorPwd VARCHAR(50) = ''
