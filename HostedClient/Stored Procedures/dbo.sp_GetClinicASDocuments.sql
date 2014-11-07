@@ -16,7 +16,7 @@ BEGIN
 	SELECT ClinicDocumentID,ClinicId,DocumentFile,FileName,DateCreated,DateUpdated 
 	FROM ClinicDocuments 
 	WHERE ClinicId = @ClinicId AND IsAccountSpecific = 1
-	ORDER BY FileName desc
+	ORDER BY FileName
 END
 
 
