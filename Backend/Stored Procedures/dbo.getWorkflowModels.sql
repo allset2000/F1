@@ -1,0 +1,9 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+CREATE PROCEDURE [dbo].[getWorkflowModels] AS  
+BEGIN
+	SELECT * FROM vwWorkflowModels WHERE WorkFlowModelStatus='A'
+END
+GO
