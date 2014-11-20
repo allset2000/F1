@@ -13,7 +13,7 @@ CREATE PROCEDURE [dbo].[sp_GetClinicASDocuments] (
 	 @ClinicId int
 ) AS 
 BEGIN
-	SELECT ClinicDocumentID,ClinicId,DocumentFile,FileName,DateCreated,DateUpdated 
+	SELECT ClinicDocumentID,FileName 
 	FROM ClinicDocuments 
 	WHERE ClinicId = @ClinicId AND IsAccountSpecific = 1
 	ORDER BY FileName

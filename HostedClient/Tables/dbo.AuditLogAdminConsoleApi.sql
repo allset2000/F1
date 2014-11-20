@@ -4,7 +4,7 @@ CREATE TABLE [dbo].[AuditLogAdminConsoleApi]
 [UserID] [int] NOT NULL,
 [RequestID] [uniqueidentifier] NOT NULL,
 [Operation] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[SiteUrl] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[SiteUrl] [varchar] (400) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Parameters] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [OperationTime] [datetime] NOT NULL,
 [ExecutionTime] [int] NOT NULL,
