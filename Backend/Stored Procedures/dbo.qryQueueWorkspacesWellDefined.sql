@@ -18,7 +18,7 @@ SELECT DISTINCT
       ,[ClinicId]
       ,[DictatorId]
       ,[JobsFilter]      
-  FROM [Entrada_100223].[dbo].[vwQueueModel]
+  FROM [dbo].[vwQueueModel]
   WHERE ([QueueWorkspaceId] <> -1 AND [QueueId] <> -1 AND [QueueMemberId]<> -1 AND [EditorIdOk] <> -1 AND EditorStatus = 'A') AND
         (ClinicId = @ClinicId OR DictatorId = @DictatorId)
 RETURN
