@@ -10,6 +10,8 @@ CREATE TABLE [dbo].[JobsDeliveryTracking]
 [AdditionalData] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [DeliveryDate] [datetime] NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [idx_JDT_JobIDDelTypeID] ON [dbo].[JobsDeliveryTracking] ([JobId], [DeliveryTypeId], [Section], [DeliveryTrackingId]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[JobsDeliveryTracking] ADD CONSTRAINT [PK_JobsDeliveryTracking] PRIMARY KEY CLUSTERED  ([DeliveryTrackingId]) ON [PRIMARY]
 GO

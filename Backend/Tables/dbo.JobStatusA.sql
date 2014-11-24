@@ -5,9 +5,11 @@ CREATE TABLE [dbo].[JobStatusA]
 [StatusDate] [datetime] NULL,
 [Path] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Status] ON [dbo].[JobStatusA] ([Status]) INCLUDE ([JobNumber], [Path], [StatusDate]) ON [PRIMARY]
+
 ALTER TABLE [dbo].[JobStatusA] ADD 
 CONSTRAINT [PK_JobStatusA] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_Status] ON [dbo].[JobStatusA] ([Status]) INCLUDE ([JobNumber], [StatusDate]) ON [PRIMARY]
+
 
 ALTER TABLE [dbo].[JobStatusA] ADD
 CONSTRAINT [FK_JobStatusA_StatusCodes] FOREIGN KEY ([Status]) REFERENCES [dbo].[StatusCodes] ([StatusID]) ON DELETE CASCADE ON UPDATE CASCADE
