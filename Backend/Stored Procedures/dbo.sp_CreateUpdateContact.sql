@@ -1,7 +1,9 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+-- Stored Procedure
 
 -- =============================================
 -- Author: Sam Shoultz
@@ -28,7 +30,7 @@ BEGIN
 
 	IF NOT EXISTS (SELECT * FROM Contacts where ContactId = @ID)
 	BEGIN
-	
+
 		DECLARE @NewContactId int
 		-- Get new ContactId and update DBRules table with new id
 		UPDATE DbRules
