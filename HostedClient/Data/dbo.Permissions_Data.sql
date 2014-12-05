@@ -1,6 +1,7 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (54, 'FNC-EDITORS-EDITPAY', 'Function - Edit Editors Pay')
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (55, 'FNC-EDITORS-VIEWEDITORPAY', 'Function - View Editors Pay')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (56, 'FNC-RULES-ADDSCHEDULE', 'Function - Add Schedule based job building rule')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (57, 'FNC-RULES-ADDORDER', 'Function - Add Order based job building rule')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (58, 'FNC-RULES-UPDATE', 'Function - Edit job building rules')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (1, 'TAB-DICT', 'Dictators Tab')
@@ -56,4 +57,6 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (50, 'FN
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (51, 'TAB-BACKEND-COMPANIES', 'Tab - Backend Companies')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (52, 'FNC-BACKENDCOMPANIES-ADD', 'Function - Add Backend Companies')
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (53, 'FNC-BACKENDCOMPANIES-EDIT', 'Function - Edit Backend Companies')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (54, 'FNC-EDITORS-EDITPAY', 'Function - Edit Editors Pay')
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name]) VALUES (55, 'FNC-EDITORS-VIEWEDITORPAY', 'Function - View Editors Pay')
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
