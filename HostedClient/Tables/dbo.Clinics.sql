@@ -16,7 +16,8 @@ CREATE TABLE [dbo].[Clinics]
 [CRFlagType] [int] NOT NULL CONSTRAINT [DF_Clinics_CRFlagType] DEFAULT ((0)),
 [ForceCRStartDate] [datetime] NULL,
 [ForceCREndDate] [datetime] NULL,
-[ExcludeStat] [bit] NOT NULL CONSTRAINT [DF_Clinics_ExcludeStat] DEFAULT ((0))
+[ExcludeStat] [bit] NOT NULL CONSTRAINT [DF_Clinics_ExcludeStat] DEFAULT ((0)),
+[AutoEnrollDevices] [bit] NOT NULL CONSTRAINT [DF_Clinics_AutoEnrollDevices] DEFAULT ((0))
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[Clinics] ADD
 CONSTRAINT [FK_Clinics_CRFlagTypes] FOREIGN KEY ([CRFlagType]) REFERENCES [dbo].[CRFlagTypes] ([CRFlagType])
