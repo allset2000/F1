@@ -4,10 +4,7 @@ CREATE TABLE [dbo].[ArchiveLog]
 [PolicyID] [int] NOT NULL,
 [ArchiveAge] [int] NOT NULL,
 [ArchiveExecutionStartDate] [datetime] NULL,
-[ArchiveExecutionEndDate] [datetime] NULL,
-[PurgeAge] [int] NOT NULL,
-[PurgeExecutionStartDate] [datetime] NULL,
-[PurgeExecutionEndDate] [datetime] NULL
+[ArchiveExecutionEndDate] [datetime] NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[ArchiveLog] ADD CONSTRAINT [PK_ArchiveLog] PRIMARY KEY CLUSTERED  ([ArchiveID]) ON [PRIMARY]
