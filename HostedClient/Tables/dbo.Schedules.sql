@@ -23,7 +23,9 @@ CREATE TABLE [dbo].[Schedules]
 [ChangedOn] [datetime] NULL CONSTRAINT [DF_Schedules_ChangedOn] DEFAULT (getdate()),
 [Type] [varchar] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Schedules_Type] DEFAULT ('S')
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_Schedule_ClinIDResIDResNm] ON [dbo].[Schedules] ([ClinicID], [ResourceID], [ResourceName]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IDX_Schedules_ClinicIDAttending] ON [dbo].[Schedules] ([ClinicID], [Attending], [AttendingLast], [AttendingFirst]) ON [PRIMARY]
+
+
 
 
 
