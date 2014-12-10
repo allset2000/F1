@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -9,6 +10,7 @@ BEGIN
 		COUNT(*) 
 	FROM ExpressLinkConfigurations EL 
 		INNER JOIN Clinics C on C.ClinicId = EL.ClinicId 
-	WHERE DATEDIFF(MINUTE, EL.LastSync, GETDATE()) > 5 OR DATEDIFF(MINUTE, EL.LastScheduleSync, EL.LastSync) > 5
+	WHERE (DATEDIFF(MINUTE, EL.LastSync, GETDATE()) > 5 OR DATEDIFF(MINUTE, EL.LastScheduleSync, EL.LastSync) > 5)
+		  AND EL.Enabled = 1
 END
 GO
