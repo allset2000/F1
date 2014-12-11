@@ -70,7 +70,7 @@ BEGIN
      VALUES(@vEditorID, @vEditorPwd, @iJobCount, @iJobMax, @JobStat, @bAutoDownload, @bManaged, @cManagedBy, @iClinicID, @bEnableAudit, @vSignOff1, @vSignOff2, @vSignOff3, @iRoleID, @vFirstName, @vLastName, @vMI, @iType, @iIdleTime, @iEditorIdOk, @iEditorCompanyId, @vEditorQAIDMatch, @vEditorEMail)
 END
 
-IF NOT EXISTS(select * from EU_UserIDMapping where UserIdOk = @iEditorIdOk)
+IF NOT EXISTS(select * from EU_UserIDMapping where UserIdOk = @iEditorIdOk) AND NOT EXISTS (select * from EU_aspnet_Users where username = @vEditorID)
 BEGIN
 	DECLARE @GUID uniqueidentifier
 	DECLARE @AppID nvarchar(256)
