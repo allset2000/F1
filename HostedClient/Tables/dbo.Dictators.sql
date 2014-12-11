@@ -24,6 +24,8 @@ CREATE TABLE [dbo].[Dictators]
 [SignatureImage] [varbinary] (max) NULL,
 [ImageName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Dictators_ClinicID] ON [dbo].[Dictators] ([ClinicID], [EHRProviderID]) ON [PRIMARY]
+
 ALTER TABLE [dbo].[Dictators] ADD
 CONSTRAINT [FK_Dictators_CRFlagTypes] FOREIGN KEY ([CRFlagType]) REFERENCES [dbo].[CRFlagTypes] ([CRFlagType])
 ALTER TABLE [dbo].[Dictators] ADD 
@@ -33,7 +35,7 @@ ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [IX_Dictators_Unique_DictatorName] 
 
 CREATE NONCLUSTERED INDEX [IX_Dictators_DictatorName] ON [dbo].[Dictators] ([DictatorName]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_Dictators_ClinicID] ON [dbo].[Dictators] ([ClinicID]) ON [PRIMARY]
+
 
 GO
 EXEC sp_addextendedproperty N'MS_Description', N'Default Job Type', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'DefaultJobTypeID'

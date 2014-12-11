@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -11,10 +12,14 @@ CREATE PROCEDURE [dbo].[sp_GetAllExpressLinkConfigurations]
 AS
 BEGIN
 
-	SELECT  EL.*,
+	DECLARE @HourDiff INT
+	SET @HourDiff = (DATEPART(hh, GETDATE() - GETUTCDATE()) - 24)
+
+	SELECT  EL.ID,EL.ApiKey,EL.EHRClinicID,EL.EHRLocationID,EL.EHRType,EL.ConnectionString,EL.Enabled,EL.SyncSetupData,EL.DaysForward,EL.DaysBack,EL.StartDate,EL.LastPatientSync,EL.LastScheduleSync,EL.LastClinicalsSync,DATEADD(hh,@HourDiff,EL.LastSync) as 'LastSync',El.ClientVersion,
 			C.ClinicCode, 
-			CASE WHEN ISNULL(EL.LastSync,'') <> '' AND DATEDIFF(MINUTE, EL.LastSync, GETDATE()) > 5 THEN 'lightcoral' 
-				 WHEN ISNULL(EL.LastScheduleSync,'') <> '' AND DATEDIFF(MINUTE, EL.LastScheduleSync, EL.LastSync) > 5 THEN 'lightyellow' 
+			CASE WHEN EL.Enabled = 0 THEN 'none'
+				 WHEN ISNULL(EL.LastSync,'') <> '' AND DATEDIFF(MINUTE, EL.LastSync, GETDATE()) > 5 THEN 'lightcoral' 
+				 WHEN ISNULL(EL.LastScheduleSync,'') <> '' AND DATEDIFF(HOUR, EL.LastScheduleSync, EL.LastSync) > 6 THEN 'lightyellow' 
 				 ELSE 'none' END AS 'RowColor' 
 	FROM ExpressLinkConfigurations EL 
 		INNER JOIN Clinics C on C.ClinicId = EL.ClinicId 
