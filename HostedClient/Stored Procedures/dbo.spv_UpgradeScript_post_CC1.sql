@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -25,5 +26,10 @@ if not exists(select * from Permissions where Code = 'FNC-RULES-UPDATE')
 		INSERT INTO Permissions(Code, Name) values('FNC-RULES-UPDATE','Function - Edit job building rules')
 	END
 --END #2534#
+--BEGIN #0000# - Entrada/Athena Hackathon item added
+if not exists(select * from Permissions where Code = 'TAB-API-SCRATCHPAD')
+	BEGIN
+		INSERT INTO permissions(code,name) VALUES('TAB-API-SCRATCHPAD','TAB - DEV API ScrathcPAd')
+	END
 END
 GO
