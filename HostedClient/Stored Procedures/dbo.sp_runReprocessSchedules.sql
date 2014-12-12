@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -39,10 +40,6 @@ BEGIN
 		Status int,
 		ChangedOn datetime
 	)
-	
-	DECLARE @SQL_STRING varchar(1000)
-	
-	SET @SQL_STRING  = 'UPDATE dbo.Schedules SET Rowprocessed = ' + CAST(@ReprocessType as varchar(1)) + ' WHERE ClinicId = ' + CAST(@ClinicId as varchar(10)) 
 	
 	insert into #tmp_data
 	EXEC sp_GetSchedulesForSearch @ClinicId, @MRN, @LastName, @FirstName, @Provider, @Location, @Reason, @StartDate, @EndDate

@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -49,17 +50,17 @@ BEGIN
 	BEGIN
 		SET @SQL_STRING = @SQL_STRING + ' and S.ReasonName LIKE ''%' + @Reason + '%'''
 	END
-	IF(@StartDate is not null)
+	IF(@StartDate is not null and @StartDate <> '')
 	BEGIN
 		SET @SQL_STRING = @SQL_STRING + ' and S.AppointmentDate >= ''' + @StartDate + ''''
 	END
-	IF(@EndDate is not null)
+	IF(@EndDate is not null and @EndDate <> '')
 	BEGIN
 		SET @SQL_STRING = @SQL_STRING + ' and S.AppointmentDate <= ''' + @EndDate + ''''
 	END
 		
 	SET @SQL_STRING = @SQL_STRING + ' ORDER BY S.ScheduleID'
-	
+
 	EXEC (@SQL_STRING)
 	
 END
