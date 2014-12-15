@@ -21,7 +21,9 @@ CREATE TABLE [dbo].[Patients]
 [Fax2] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Patients_Fax2] DEFAULT (''),
 [PrimaryCareProviderID] [int] NULL
 ) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_ClinicID_INC_MRN_FirstName_MI_LastName] ON [dbo].[Patients] ([ClinicID]) INCLUDE ([FirstName], [LastName], [MI], [MRN]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_ClinicID_INC_MRN_FirstName_MI_LastName] ON [dbo].[Patients] ([ClinicID], [AlternateID]) INCLUDE ([FirstName], [LastName], [MI], [MRN]) ON [PRIMARY]
+
+
 
 
 
