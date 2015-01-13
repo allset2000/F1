@@ -22,7 +22,8 @@ CREATE TABLE [dbo].[Dictators]
 [ForceCREndDate] [datetime] NULL,
 [ExcludeStat] [bit] NOT NULL CONSTRAINT [DF_Dictators_ExcludeStat] DEFAULT ((0)),
 [SignatureImage] [varbinary] (max) NULL,
-[ImageName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[ImageName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[UserId] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_Dictators_ClinicID] ON [dbo].[Dictators] ([ClinicID], [EHRProviderID]) ON [PRIMARY]
 
