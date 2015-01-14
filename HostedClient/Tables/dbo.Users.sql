@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[Users]
 [Deleted] [bit] NOT NULL CONSTRAINT [DF_Users_Deleted] DEFAULT ((0)),
 [IsLockedOut] [bit] NOT NULL CONSTRAINT [DF_Users_IsLockedOut] DEFAULT ((0)),
 [LastPasswordReset] [datetime] NULL,
-[PasswordAttemptFailuer] [int] NULL,
+[PasswordAttemptFailure] [int] NULL,
 [LastFailedAttempt] [datetime] NULL,
 [DoResetPassword] [bit] NOT NULL CONSTRAINT [DF_Users_DoResetPassword] DEFAULT ((0)),
 [SecurityToken] [uniqueidentifier] NULL,
