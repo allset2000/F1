@@ -15,9 +15,11 @@ BEGIN
 						
 		/* Insert Job History */
 		INSERT INTO [dbo].[Jobs_Documents_History] (
-			[JobNumber], [Doc], [XmlData], [Username], [DocDate]
-		) SELECT JobNumber, Doc, XmlData, Username, DocDate 
-			FROM Jobs_Documents WHERE (JobNumber = @JobNumber);
+			[JobNumber], [Doc], [XmlData], [Username], [DocDate], [Status], [TemplateName],[StatusDate]
+		) SELECT Jobs_Documents.JobNumber, Doc, XmlData, Username, DocDate ,jobs.JobStatus,jobs.TemplateName, Jobs_Documents.StatusDate
+			FROM Jobs_Documents 
+			INNER JOIN Jobs ON Jobs_Documents.JobNumber=jobs.JobNumber
+			WHERE (Jobs_Documents.JobNumber = @JobNumber);
 
 		/* Update Job Document */							
 		UPDATE Jobs_Documents

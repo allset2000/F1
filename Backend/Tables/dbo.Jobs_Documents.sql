@@ -8,7 +8,9 @@ CREATE TABLE [dbo].[Jobs_Documents]
 [DocumentId] [int] NOT NULL CONSTRAINT [DF_Jobs_Documents_DocumentId] DEFAULT ((0)),
 [DocumentTypeId] [int] NOT NULL CONSTRAINT [DF_Jobs_Documents_DocumentTypeId] DEFAULT ((0)),
 [DocumentStatusId] [int] NOT NULL CONSTRAINT [DF_Jobs_Documents_DocumentStatusId] DEFAULT ((0)),
-[JobId] [int] NOT NULL CONSTRAINT [DF_Jobs_Documents_JobId] DEFAULT ((0))
+[JobId] [int] NOT NULL CONSTRAINT [DF_Jobs_Documents_JobId] DEFAULT ((0)),
+[Status] [smallint] NULL,
+[StatusDate] [datetime] NULL,
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_JobDocuments_DocDate] ON [dbo].[Jobs_Documents] ([DocDate]) ON [PRIMARY]
 

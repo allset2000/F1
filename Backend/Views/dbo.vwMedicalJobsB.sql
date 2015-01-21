@@ -30,7 +30,7 @@ SELECT     dbo.Jobs.JobNumber, dbo.Jobs.JobId, dbo.Jobs.DictatorID, dbo.Dictator
                       CASE WHEN CurrentQAStage <> '' THEN CurrentQAStage ELSE EditionStage END AS CurrentEditingStage, dbo.JobEditingSummary.CurrentQAStage, 
                       dbo.JobEditingSummary.LastQAStage, dbo.JobEditingSummary.AssignedToID, dbo.JobEditingSummary.QACategoryId, dbo.JobEditingSummary.LastQANote, 
                       dbo.JobEditingSummary.QAEditorsList, dbo.JobEditingSummary.FinishedOn, dbo.JobEditingSummary.LastEditingTaskId, 
-                      dbo.JobEditingSummary.LastQAEditingTaskId, dbo.Jobs.TemplateName, dbo.Jobs.IsGenericJob
+                      dbo.JobEditingSummary.LastQAEditingTaskId, dbo.Jobs.TemplateName, dbo.Jobs.IsGenericJob, dbo.Jobs.JobStatus AS Status
 FROM         dbo.Dictators INNER JOIN
                       dbo.Jobs ON dbo.Dictators.DictatorID = dbo.Jobs.DictatorID INNER JOIN
                       dbo.Clinics ON dbo.Jobs.ClinicID = dbo.Clinics.ClinicID INNER JOIN
