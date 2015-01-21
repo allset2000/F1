@@ -9,6 +9,7 @@ CREATE PROCEDURE [dbo].[rptWeeklyTotalEditors] (
    @ToDate date
 )
 AS
+	SET @ToDate=DATEADD(day,1,@ToDate);
 	SELECT CONVERT(date, Jobs.ReturnedOn) AS StatusDate, Jobs.EditorID, COUNT(Jobs.JobNumber) AS Jobs, 
 	SUM(vwRptEditingJobs.NumPages) AS Pages, SUM(vwRptEditingJobs.NumVBC) AS Lines
     FROM  Jobs LEFT OUTER JOIN vwRptEditingJobs 
