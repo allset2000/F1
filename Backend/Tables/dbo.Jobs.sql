@@ -34,10 +34,12 @@ CREATE TABLE [dbo].[Jobs]
 [JobEditingSummaryId] [int] NOT NULL CONSTRAINT [DF__Jobs__JobEditing__78159CA3] DEFAULT ((-1)),
 [JobId] [int] NOT NULL IDENTITY(2, 1),
 [DueDate] [datetime] NULL,
-[TemplateName] [varchar] (100) NULL,
+[TemplateName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [IsGenericJob] [bit] NULL,
 [IsNewSchema] [bit] NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_JobId] ON [dbo].[Jobs] ([JobId]) ON [PRIMARY]
+
 ALTER TABLE [dbo].[Jobs] ADD 
 CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_ClinicID_INC] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [ReceivedOn], [Stat]) ON [PRIMARY]
@@ -60,7 +62,7 @@ CREATE NONCLUSTERED INDEX [IX_Jobs_JobStatus] ON [dbo].[Jobs] ([JobStatus]) ON [
 
 CREATE NONCLUSTERED INDEX [IX_JobsJobEditingSummaryId] ON [dbo].[Jobs] ([JobEditingSummaryId]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_JobsJobId] ON [dbo].[Jobs] ([JobId]) ON [PRIMARY]
+
 
 ALTER TABLE [dbo].[Jobs] ADD
 CONSTRAINT [FK_Jobs_Dictators] FOREIGN KEY ([DictatorID]) REFERENCES [dbo].[Dictators] ([DictatorID])

@@ -25,6 +25,10 @@ CREATE TABLE [dbo].[Schedules]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IDX_Schedules_ClinicIDAttending] ON [dbo].[Schedules] ([ClinicID], [Attending], [AttendingLast], [AttendingFirst]) ON [PRIMARY]
 
+CREATE NONCLUSTERED INDEX [IX_Schedule_ClinIDResIDResNm] ON [dbo].[Schedules] ([ClinicID], [ResourceID], [ResourceName]) ON [PRIMARY]
+
+
+
 
 
 
