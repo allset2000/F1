@@ -38,6 +38,8 @@ CREATE TABLE [dbo].[Jobs]
 [IsGenericJob] [bit] NULL,
 [IsNewSchema] [bit] NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_DictatorID_AppointmentDate_includes] ON [dbo].[Jobs] ([DictatorID], [AppointmentDate]) INCLUDE ([ClinicID], [EditorID], [JobEditingSummaryId], [JobNumber], [JobType]) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_Jobs_JobId] ON [dbo].[Jobs] ([JobId]) ON [PRIMARY]
 
 ALTER TABLE [dbo].[Jobs] ADD 
@@ -50,15 +52,15 @@ CREATE NONCLUSTERED INDEX [IX_Jobs_ReturnedOn] ON [dbo].[Jobs] ([ReturnedOn]) IN
 
 CREATE NONCLUSTERED INDEX [IX_JobsDictatorID] ON [dbo].[Jobs] ([DictatorID]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_JobsClinicIDLocationID] ON [dbo].[Jobs] ([ClinicID], [Location]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_JobsEditorID] ON [dbo].[Jobs] ([EditorID]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_Jobs_AppointmentId] ON [dbo].[Jobs] ([AppointmentId]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_Jobs_DocumentId] ON [dbo].[Jobs] ([DocumentId]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_Jobs_JobStatus] ON [dbo].[Jobs] ([JobStatus]) ON [PRIMARY]
+
+
+
+
+
 
 CREATE NONCLUSTERED INDEX [IX_JobsJobEditingSummaryId] ON [dbo].[Jobs] ([JobEditingSummaryId]) ON [PRIMARY]
 
