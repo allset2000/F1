@@ -8,6 +8,8 @@ CREATE TABLE [dbo].[JobEditingTaskMacros]
 [NumCharsEdited] [int] NOT NULL,
 [NumCharsChanged] [int] NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_JobEditingTaskMacros_JobEditingTaskId_includes] ON [dbo].[JobEditingTaskMacros] ([JobEditingTaskId]) INCLUDE ([NumCharsChanged], [NumCharsEdited], [NumCharsUnEdited], [WasEdited]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[JobEditingTaskMacros] ADD CONSTRAINT [PK_JobEditingTaskDataDetail_1] PRIMARY KEY CLUSTERED  ([JobEditingTaskMacroId]) ON [PRIMARY]
 GO

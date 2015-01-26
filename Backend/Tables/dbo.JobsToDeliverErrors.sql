@@ -14,7 +14,7 @@ CREATE NONCLUSTERED INDEX [IX_JobsToDeliverErrors_DeliveryID] ON [dbo].[JobsToDe
 
 CREATE NONCLUSTERED INDEX [IX_JobsToDeliverErrors_ErrorDate] ON [dbo].[JobsToDeliverErrors] ([ErrorDate]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_JobsToDeliverErrors] ON [dbo].[JobsToDeliverErrors] ([ErrorDeliveryId]) ON [PRIMARY]
+
 
 CREATE NONCLUSTERED INDEX [IX_ErrorMessage_INC] ON [dbo].[JobsToDeliverErrors] ([ErrorMessage]) INCLUDE ([DeliveryId]) ON [PRIMARY]
 

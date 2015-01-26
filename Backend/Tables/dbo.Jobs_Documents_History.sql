@@ -16,16 +16,10 @@ CREATE TABLE [dbo].[Jobs_Documents_History]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_JobDocumentsHistory_DocDate] ON [dbo].[Jobs_Documents_History] ([DocDate]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_JobNumber] ON [dbo].[Jobs_Documents_History] ([JobNumber]) ON [PRIMARY]
+
 
 CREATE NONCLUSTERED INDEX [IX_JobNumber_DocDate_INC_Username] ON [dbo].[Jobs_Documents_History] ([JobNumber], [DocDate]) INCLUDE ([Username]) ON [PRIMARY]
 
 GO
 ALTER TABLE [dbo].[Jobs_Documents_History] ADD CONSTRAINT [PK_Jobs_Documents_History] PRIMARY KEY CLUSTERED  ([DocumentID]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_Jobs_Documents_DocumentId] ON [dbo].[Jobs_Documents_History] ([DocumentID]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_Jobs_Documents_History_DocumentIdOk] ON [dbo].[Jobs_Documents_History] ([DocumentIdOk]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_Jobs_Documents_History_JobId] ON [dbo].[Jobs_Documents_History] ([JobId]) ON [PRIMARY]
 GO

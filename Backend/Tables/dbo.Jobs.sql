@@ -38,12 +38,13 @@ CREATE TABLE [dbo].[Jobs]
 [IsGenericJob] [bit] NULL,
 [IsNewSchema] [bit] NULL
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Jobs] ADD 
+CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) WITH (FILLFACTOR=80) ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_Jobs_DictatorID_AppointmentDate_includes] ON [dbo].[Jobs] ([DictatorID], [AppointmentDate]) INCLUDE ([ClinicID], [EditorID], [JobEditingSummaryId], [JobNumber], [JobType]) ON [PRIMARY]
 
 CREATE NONCLUSTERED INDEX [IX_Jobs_JobId] ON [dbo].[Jobs] ([JobId]) ON [PRIMARY]
 
-ALTER TABLE [dbo].[Jobs] ADD 
-CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_ClinicID_INC] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [ReceivedOn], [Stat]) ON [PRIMARY]
 
 CREATE NONCLUSTERED INDEX [IX_ReceivedOn_INC_JobNumber_DictatorID_ClinicID_Location...] ON [dbo].[Jobs] ([ReceivedOn]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [ClinicID], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [Stat]) ON [PRIMARY]

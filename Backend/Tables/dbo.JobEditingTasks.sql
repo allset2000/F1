@@ -26,6 +26,6 @@ ALTER TABLE [dbo].[JobEditingTasks] ADD CONSTRAINT [PK_JobEditingTasks] PRIMARY 
 
 CREATE NONCLUSTERED INDEX [IX_AssignedTo_CurrentStateID_TaskStatus_INC] ON [dbo].[JobEditingTasks] ([AssignedToID], [CurrentStateId], [TaskStatus]) INCLUDE ([JobEditingTaskId], [JobId], [NextStateId], [PreviousTaskId], [QACategoryId]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_AssignedToID_TaskStatus_INC_JobEditingTaskID_JobID_QACategoryID_CurrentStateID_NextStateID_PreviousTaskID] ON [dbo].[JobEditingTasks] ([AssignedToID], [TaskStatus]) INCLUDE ([CurrentStateId], [JobEditingTaskId], [JobId], [NextStateId], [PreviousTaskId], [QACategoryId]) ON [PRIMARY]
+
 
 GO

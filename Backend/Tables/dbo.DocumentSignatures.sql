@@ -12,6 +12,8 @@ CREATE TABLE [dbo].[DocumentSignatures]
 [JobNumber] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [AppliedBy] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_DocumentSignatures_JobNumber_SignatureStatus] ON [dbo].[DocumentSignatures] ([JobNumber], [SignatureStatus]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[DocumentSignatures] ADD CONSTRAINT [PK_DocumentSignature] PRIMARY KEY CLUSTERED  ([DocumentSignatureId]) ON [PRIMARY]
 GO

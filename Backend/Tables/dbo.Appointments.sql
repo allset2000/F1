@@ -14,5 +14,3 @@ CREATE TABLE [dbo].[Appointments]
 GO
 ALTER TABLE [dbo].[Appointments] ADD CONSTRAINT [PK_Appointments] PRIMARY KEY CLUSTERED  ([AppointmentId]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_AppointmentsDocumentId] ON [dbo].[Appointments] ([DocumentId]) ON [PRIMARY]
-GO
