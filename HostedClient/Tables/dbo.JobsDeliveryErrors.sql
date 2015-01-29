@@ -9,6 +9,8 @@ CREATE TABLE [dbo].[JobsDeliveryErrors]
 [FirstAttempt] [datetime] NOT NULL,
 [ChangedOn] [datetime] NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_JobsDeliveryErrors_JobId_ErrorStatus_ErrorMessage] ON [dbo].[JobsDeliveryErrors] ([JobId], [ErrorStatus], [ErrorMessage]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[JobsDeliveryErrors] ADD CONSTRAINT [PK_JobsDeliveryErrors] PRIMARY KEY CLUSTERED  ([DeliveryErrorId]) ON [PRIMARY]
 GO

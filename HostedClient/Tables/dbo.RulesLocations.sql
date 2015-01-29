@@ -5,6 +5,8 @@ CREATE TABLE [dbo].[RulesLocations]
 [EHRCode] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Description] [varchar] (255) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_RulesLocations_EHRCode] ON [dbo].[RulesLocations] ([EHRCode]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[RulesLocations] ADD CONSTRAINT [PK_Rules_Locations] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
 GO

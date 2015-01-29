@@ -22,7 +22,7 @@ CREATE TABLE [dbo].[ReferringPhysicians]
 ) ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_ClinicID_INC_PhysicianID_FirstName_MI_LastName] ON [dbo].[ReferringPhysicians] ([ClinicID]) INCLUDE ([FirstName], [LastName], [MI], [PhysicianID]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_ReferringPhysicians] ON [dbo].[ReferringPhysicians] ([ClinicID]) ON [PRIMARY]
+
 
 CREATE NONCLUSTERED INDEX [IX_ReferringPhysicians_1] ON [dbo].[ReferringPhysicians] ([PhysicianID]) ON [PRIMARY]
 

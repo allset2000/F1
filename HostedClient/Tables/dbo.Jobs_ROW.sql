@@ -10,6 +10,8 @@ CREATE TABLE [dbo].[Jobs_ROW]
 [MessageNum] [int] NULL,
 [MessageTotal] [int] NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_ROW_AckStatus_includes] ON [dbo].[Jobs_ROW] ([AckStatus]) INCLUDE ([CreateDate], [JobID]) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_JobID_AckStatus] ON [dbo].[Jobs_ROW] ([JobID], [AckStatus]) ON [PRIMARY]
 
 GO
