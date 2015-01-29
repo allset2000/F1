@@ -5,6 +5,8 @@ CREATE TABLE [dbo].[JobStatusB]
 [StatusDate] [datetime] NULL,
 [Path] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_JobStatusB_StatusDate] ON [dbo].[JobStatusB] ([StatusDate], [Status]) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_Status_INC_JobNumber] ON [dbo].[JobStatusB] ([Status]) INCLUDE ([JobNumber], [StatusDate]) ON [PRIMARY]
 
 ALTER TABLE [dbo].[JobStatusB] ADD 
