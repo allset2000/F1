@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -26,18 +27,29 @@ BEGIN
 	DECLARE @cur_DemoUser bit
 	DECLARE @UserId INT
 	DECLARE @InviteId INT
+    DECLARE @ShortCode varchar(10)
 
-	SELECT * FROM UserInvitations
+	IF @MI is null BEGIN SET @MI = '' END
 
+	SET @ShortCode = SUBSTRING(@RegistrationCode, 0, CHARINDEX('-',@RegistrationCode,0))
+	
 	SELECT @InviteId=UserInvitationId, @cur_clinicid=ClinicId, @cur_requestuserid=RequestingUserId, @cur_RoleId=RoleId, @cur_DemoUser=IsDemoUser
 	FROM UserInvitations
-	WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @RegistrationCode
+	WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
 
 	-- Create User entry in the DB
 	INSERT INTO Users(UserName,ClinicId,LoginEmail,Name,Password,Salt) VALUES(@EmailAddress, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt)
 	SET @UserId = (SELECT UserId from Users where UserName = @EmailAddress)
 
-	UPDATe UserInvitations SET RegisteredUserId = @UserId WHERE UserInvitationId = @InviteId
+	-- Add User Role Xref
+	IF(@cur_RoleId <= 0)
+	BEGIN
+		SET @cur_RoleId = (SELECT TOP 1 RoleId FROM Roles WHERE RoleName = 'Mobile Secure Messaging')
+	END
+	INSERT INTO UserRoleXref(UserId,RoleId,IsDeleted) VALUES(@UserId,@cur_RoleId,0)
+
+	-- Set the UserId mapping in invitations table, this denotes the user has been registered
+	UPDATE UserInvitations SET RegisteredUserId = @UserId WHERE UserInvitationId = @InviteId
 
 	IF (@cur_DemoUser = 1)
 	BEGIN
@@ -46,29 +58,51 @@ BEGIN
 		DECLARE @DefaultJobTypeId INT
 		DECLARE @Initials VARCHAR(3)
 		DECLARE @Signature VARCHAR(100)
+		DECLARE @DictatorId INT
+		DECLARE @FullName varchar(200)
+		DECLARE @BackendDictator varchar(100)
+		DECLARE @ClinicCode varchar(10)
+		DECLARE @ContactId INT
 
-		SET @DictatorUserName = (SELECT SUBSTRING(@FirstName,0,1) + @LastName)
-		SET @Initials = (SELECT SUBSTRING(@FirstName,0,1) + SUBSTRING(@MI,0,1) + SUBSTRING(@LastName,0,1))
-		SET @Signature = @FirstName + ' ' + @MI + ' ' + @LastName
-		SELECT * FROM JOBTYPES WHERE ClinicId = 227
+		SET @DictatorUserName = LOWER((SELECT SUBSTRING(@FirstName,1,1) + @LastName))
+		SET @Initials = (SELECT SUBSTRING(@FirstName,0,1) + SUBSTRING(@LastName,0,1))
+		SET @Signature = @FirstName + ' ' + @LastName
+		SET @DefaultJobTypeId = (SELECT TOP 1 JobTypeId FROM JOBTYPES WHERE ClinicId = @cur_clinicid)
+		SET @FullName = @FirstName + ' ' + @LastName
+		SET @ClinicCode = (SELECT ClinicCode FROM Clinics where ClinicId = @cur_clinicid)
+		SET @BackendDictator = @ClinicCode + @DictatorUserName
 
 		-- create queue for dictator
 		INSERT INTO Queues(ClinicId,Name,Description,IsDictatorQueue,Deleted) VALUES(@cur_clinicid, @DictatorUserName, 'Default Dictator Queue', 1, 0)
 		SET @QueueId = (SELECT QueueID FROM Queues where ClinicId = @cur_clinicid and Name = @DictatorUserName)
 
 		-- create dictator in hosted db
-		INSERT INTO Dictators(DictatorName,ClinicID,Deleted,DefaultJobTypeID,DefaultQueueID,Password,Salt,FirstName,MI,LastName,Suffix,Initials,Signature,EHRProviderID,EHRProviderAlias,VRMode,CRFlagType,ExcludeStat)
-		VALUES(@DictatorUserName,@cur_clinicid,0,@DefaultJobTypeId,@QueueId,'','',@FirstName,@MI,@LastName,'',@Initials,@Signature,'','',99,0,0)
+		INSERT INTO Dictators(DictatorName,ClinicID,Deleted,DefaultJobTypeID,DefaultQueueID,Password,Salt,FirstName,MI,LastName,Suffix,Initials,Signature,EHRProviderID,EHRProviderAlias,VRMode,CRFlagType,ExcludeStat,UserId)
+		VALUES(@DictatorUserName,@cur_clinicid,0,@DefaultJobTypeId,@QueueId,'','',@FirstName,@MI,@LastName,'',@Initials,@Signature,'','',99,0,0,@UserId)
+		SET @DictatorId = (SELECT DictatorId FROM Dictators WHERE DictatorName = @DictatorUserName and ClinicId = @cur_clinicid)
 
 		-- assign dictator to queue
-
+		INSERT INTO Queue_Users(QueueId,DictatorId) VALUES(@QueueId, @DictatorId)
 
 		-- create backend contact
+		EXEC Entrada.dbo.sp_CreateUpdateContact 0, 'D', @FullName, @FirstName, @MI, @LastName, @Initials, @BackendDictator, '', '', '', '', 'A',''
+		SET @ContactId = (SELECT top 1 ContactId FROM Entrada.dbo.Contacts WHERE UserId = @BackendDictator and ContactType = 'D')
+
 		-- create backend dictator
-		-- Create 50 or so jobs... etc
+		INSERT INTO Entrada.dbo.Dictators(ClinicID,DictatorID,ClientUserID,DefaultLocation,FirstName,MI,LastName,Suffix,Initials,TemplatesFolder,User_Code,Signature,VREnabled,ESignatureEnabled,DictatorIdOk,EHRProviderID,EHRAliasID,ProviderType,BillSeparated,PhoneNo,FaxNo,MedicalLicenseNo,Custom1,Custom2,Custom3,Custom4,Custom5)
+		VALUES(@cur_clinicid,@BackendDictator,@DictatorUserName,1,@FirstName,@MI,@LastName,'',@Initials,@ClinicCode,'',@Signature,1,'',@ContactId,'','','Provider','','','','','','','','','')
+
+		-- Create 50 test jobs
+		DECLARE @JobCnt INT
+		SET @JobCnt = 1
+
+		WHILE (@JobCnt < 50)
+		BEGIN
+			EXEC sp_CreateRandomJobForDictator @cur_clinicid, @DictatorId
+			SET @JobCnt = @JobCnt + 1
+		END
+
 	END
-
-
 END
 
 

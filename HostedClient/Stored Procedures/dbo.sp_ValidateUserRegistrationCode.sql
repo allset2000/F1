@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -20,7 +21,7 @@ BEGIN
 	SELECT UI.PhoneNumber, UI.EmailAddress, UI.ClinicId, UI.FirstName, UI.LastName, C.MobileCode 
 	FROM UserInvitations UI
 		INNER JOIN Clinics C on C.ClinicId = UI.ClinicId
-	WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @RegCode
+	WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
 	and UI.RegisteredUserId is null
 
 END

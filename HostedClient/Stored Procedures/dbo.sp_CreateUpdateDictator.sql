@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -29,6 +30,7 @@ CREATE PROCEDURE [dbo].[sp_CreateUpdateDictator] (
 	@ForceCRStartDate datetime,
 	@ForceCREndDate datetime,
 	@ExcludeStat bit,
+	@UserId int,
 	@SignatureImage varbinary(max) = null,
 	@ImageName varchar(100) = null
 ) AS 
@@ -36,8 +38,8 @@ BEGIN
 	
 	IF NOT EXISTS(select * from Dictators where ClinicID = @ClinicID and DictatorName = @DictatorName)
 	BEGIN
-		INSERT INTO Dictators(DictatorName,ClinicID,Deleted,DefaultJobTypeID,DefaultQueueID,Password,Salt,FirstName,MI,LastName,Suffix,Initials,Signature,EHRProviderID,EHRProviderAlias,VRMode,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,SignatureImage,ImageName)
-		VALUES(@DictatorName,@ClinicID,0,@DefaultJobTypeID,@DefaultQueueID,@Password,@Salt,@FirstName,@MI,@LastName,@Suffix,@Initials,@Signature,@EHRProviderID,@EHRProviderAlias,@VRMode,@CRFlagType,@ForceCRStartDate,@ForceCREndDate,@ExcludeStat,@SignatureImage,@ImageName)
+		INSERT INTO Dictators(DictatorName,ClinicID,Deleted,DefaultJobTypeID,DefaultQueueID,Password,Salt,FirstName,MI,LastName,Suffix,Initials,Signature,EHRProviderID,EHRProviderAlias,VRMode,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,SignatureImage,ImageName,UserId)
+		VALUES(@DictatorName,@ClinicID,0,@DefaultJobTypeID,@DefaultQueueID,@Password,@Salt,@FirstName,@MI,@LastName,@Suffix,@Initials,@Signature,@EHRProviderID,@EHRProviderAlias,@VRMode,@CRFlagType,@ForceCRStartDate,@ForceCREndDate,@ExcludeStat,@SignatureImage,@ImageName,@UserId)
 	END
 	ELSE
 	BEGIN
@@ -59,7 +61,8 @@ BEGIN
 							 ForceCREndDate = @ForceCREndDate,
 							 ExcludeStat = @ExcludeStat,
 							 SignatureImage = @SignatureImage,
-							 ImageName = @ImageName
+							 ImageName = @ImageName,
+							 UserId = @UserId
 		WHERE ClinicID = @ClinicID and DictatorName = @DictatorName
 	END
 	
