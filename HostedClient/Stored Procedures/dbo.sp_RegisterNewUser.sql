@@ -64,7 +64,7 @@ BEGIN
 		DECLARE @ClinicCode varchar(10)
 		DECLARE @ContactId INT
 
-		SET @DictatorUserName = LOWER((SELECT SUBSTRING(@FirstName,1,1) + @LastName))
+		SET @DictatorUserName = LOWER((SELECT SUBSTRING(@FirstName,1,3) + @LastName))
 		SET @Initials = (SELECT SUBSTRING(@FirstName,0,1) + SUBSTRING(@LastName,0,1))
 		SET @Signature = @FirstName + ' ' + @LastName
 		SET @DefaultJobTypeId = (SELECT TOP 1 JobTypeId FROM JOBTYPES WHERE ClinicId = @cur_clinicid)
@@ -73,8 +73,11 @@ BEGIN
 		SET @BackendDictator = @ClinicCode + @DictatorUserName
 
 		-- create queue for dictator
-		INSERT INTO Queues(ClinicId,Name,Description,IsDictatorQueue,Deleted) VALUES(@cur_clinicid, @DictatorUserName, 'Default Dictator Queue', 1, 0)
-		SET @QueueId = (SELECT QueueID FROM Queues where ClinicId = @cur_clinicid and Name = @DictatorUserName)
+		IF NOT EXISTS(SELECT QueueID FROM Queues where ClinicId = @cur_clinicid and Name = @DictatorUserName)
+		BEGIN
+			INSERT INTO Queues(ClinicId,Name,Description,IsDictatorQueue,Deleted) VALUES(@cur_clinicid, @DictatorUserName, 'Default Dictator Queue', 1, 0)
+		END
+		SET @QueueId = (SELECT TOP 1 QueueID FROM Queues where ClinicId = @cur_clinicid and Name = @DictatorUserName)
 
 		-- create dictator in hosted db
 		INSERT INTO Dictators(DictatorName,ClinicID,Deleted,DefaultJobTypeID,DefaultQueueID,Password,Salt,FirstName,MI,LastName,Suffix,Initials,Signature,EHRProviderID,EHRProviderAlias,VRMode,CRFlagType,ExcludeStat,UserId)
@@ -82,7 +85,10 @@ BEGIN
 		SET @DictatorId = (SELECT DictatorId FROM Dictators WHERE DictatorName = @DictatorUserName and ClinicId = @cur_clinicid)
 
 		-- assign dictator to queue
-		INSERT INTO Queue_Users(QueueId,DictatorId) VALUES(@QueueId, @DictatorId)
+		IF NOT EXISTS(SELECT * FROM Queue_Users WHERE QueueId = @QueueId AND DictatorId = @DictatorId)
+		BEGIN
+			INSERT INTO Queue_Users(QueueId,DictatorId) VALUES(@QueueId, @DictatorId)
+		END
 
 		-- create backend contact
 		EXEC Entrada.dbo.sp_CreateUpdateContact 0, 'D', @FullName, @FirstName, @MI, @LastName, @Initials, @BackendDictator, '', '', '', '', 'A',''
@@ -96,11 +102,13 @@ BEGIN
 		DECLARE @JobCnt INT
 		SET @JobCnt = 1
 
-		WHILE (@JobCnt < 50)
+		WHILE (@JobCnt < 51)
 		BEGIN
 			EXEC sp_CreateRandomJobForDictator @cur_clinicid, @DictatorId
 			SET @JobCnt = @JobCnt + 1
 		END
+
+		SELECT * FROM Users where UserId = @UserId
 
 	END
 END

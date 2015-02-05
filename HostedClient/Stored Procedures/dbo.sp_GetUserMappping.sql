@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -22,7 +23,7 @@ BEGIN
 	INSERT INTO #tmp_dictids
 	SELECT * FROM split (@DictatorIdString, ',')
 
-	SELECT U.UserId,U.UserName,D.DictatorId FROM Dictators D
+	SELECT U.UserId,U.UserName,D.DictatorId,U.PWResetRequired FROM Dictators D
 		INNER JOIN Users U on U.UserId = D.UserId
 	WHERE DictatorId in (SELECT DictatorId from #tmp_dictids)
 
