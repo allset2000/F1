@@ -107,10 +107,11 @@ BEGIN
 			EXEC sp_CreateRandomJobForDictator @cur_clinicid, @DictatorId
 			SET @JobCnt = @JobCnt + 1
 		END
-
-		SELECT * FROM Users where UserId = @UserId
-
 	END
+
+	-- pass back to the ws (true/false) for user create
+	SELECT count(*) from Users WHERE UserId = @UserId
+
 END
 
 
