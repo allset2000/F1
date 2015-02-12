@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -13,8 +14,7 @@ CREATE PROCEDURE [dbo].[sp_GetScheduleResources] (
 AS
 BEGIN
 
-	SELECT DISTINCT(ResourceId), ResourceName FROM Schedules
-	WHERE ClinicID = @ClinicId
+	SELECT EHRCode as 'ResourceId',Description as 'ResourceName' FROM RulesProviders WHERE ClinicID = @ClinicId
 
 END
 
