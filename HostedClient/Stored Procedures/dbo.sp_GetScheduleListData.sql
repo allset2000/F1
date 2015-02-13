@@ -7,7 +7,7 @@ GO
 -- Create date: 2/6/2015
 -- Description: SP called from DictateAPI to pull Schedules resource id's
 -- =============================================
-CREATE PROCEDURE [dbo].[sp_GetScheduleData] (
+CREATE PROCEDURE [dbo].[sp_GetScheduleListData] (
 	@ClinicId INT,
 	@ResourceIds VARCHAR(1000),
 	@AppointmentDate DATE,

@@ -1,11 +1,12 @@
 CREATE TABLE [dbo].[RulesReasonsXref]
 (
-[RuleID] [smallint] NOT NULL,
+[RuleID] [int] NOT NULL,
 [ActionID] [int] NOT NULL IDENTITY(1, 1),
-[ReasonID] [smallint] NULL
+[ReasonID] [int] NULL
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[RulesReasonsXref] ADD 
 CONSTRAINT [PK_Rules_ReasonXref] PRIMARY KEY CLUSTERED  ([RuleID], [ActionID]) ON [PRIMARY]
+
 
 
 GO
