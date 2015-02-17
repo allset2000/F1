@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -15,11 +14,11 @@ CREATE PROCEDURE [dbo].[sp_GetAllSessionTracking] (
 BEGIN
 	IF (@ClinicId < 1)
 	BEGIN
-		SELECT UserSessionTrackingId, UserId, CAST(SessionToken as varchar(100)) as 'SessionToken', LastActivity, IsActive, DeviceId FROM UserSessionTracking
+		SELECT UserSessionTrackingId, UserId, SessionToken, LastActivity, IsActive FROM UserSessionTracking
 	END
 	ELSE
 	BEGIN
-		SELECT UST.UserSessionTrackingId, UST.UserId, UST.SessionToken, UST.LastActivity, UST.IsActive,UST.DeviceId 
+		SELECT UST.UserSessionTrackingId, UST.UserId, UST.SessionToken, UST.LastActivity, UST.IsActive 
 		FROM UserSessionTracking UST
 			INNER JOIN Users U on U.UserId = UST.UserId
 			INNER JOIN Dictators D on D.UserId = U.UserId
