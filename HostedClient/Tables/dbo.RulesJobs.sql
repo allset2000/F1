@@ -1,6 +1,6 @@
 CREATE TABLE [dbo].[RulesJobs]
 (
-[RuleID] [smallint] NOT NULL,
+[RuleID] [int] NOT NULL,
 [ActionID] [int] NOT NULL IDENTITY(1, 1),
 [DictatorID] [int] NULL,
 [QueueID] [int] NULL,
@@ -8,6 +8,7 @@ CREATE TABLE [dbo].[RulesJobs]
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[RulesJobs] ADD 
 CONSTRAINT [PK_Rules_Jobs] PRIMARY KEY CLUSTERED  ([RuleID], [ActionID]) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[RulesJobs] ADD CONSTRAINT [FK_Rules_Jobs_Dictators] FOREIGN KEY ([DictatorID]) REFERENCES [dbo].[Dictators] ([DictatorID])
