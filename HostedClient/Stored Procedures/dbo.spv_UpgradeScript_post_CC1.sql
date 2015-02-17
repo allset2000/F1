@@ -31,6 +31,5 @@ if not exists(select * from Permissions where Code = 'TAB-API-SCRATCHPAD')
 	BEGIN
 		INSERT INTO permissions(code,name) VALUES('TAB-API-SCRATCHPAD','TAB - DEV API ScrathcPAd')
 	END
---END #0000# - Entrada/Athena Hackathon item
 END
 GO

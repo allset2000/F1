@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[UserSessionTracking]
 [UserSessionTrackingId] [int] NOT NULL IDENTITY(1, 1),
 [UserId] [int] NOT NULL,
 [SessionToken] [uniqueidentifier] NOT NULL,
-[LastActivity] [datetime] NOT NULL,
+[DateTimeLastActivity] [datetime] NOT NULL,
 [IsActive] [bit] NOT NULL CONSTRAINT [DF_UserSessionTracking_IsActive] DEFAULT ((1))
 ) ON [PRIMARY]
 GO
