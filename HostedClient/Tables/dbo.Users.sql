@@ -1,15 +1,11 @@
 CREATE TABLE [dbo].[Users]
 (
 [UserID] [int] NOT NULL IDENTITY(1, 1),
-<<<<<<< HEAD
 [UserName] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-=======
->>>>>>> release/CC.2
 [ClinicID] [int] NOT NULL,
 [LoginEmail] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [Name] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [Password] [varchar] (64) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-<<<<<<< HEAD
 [Salt] [varchar] (32) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [Deleted] [bit] NOT NULL CONSTRAINT [DF_Users_Deleted] DEFAULT ((0)),
 [IsLockedOut] [bit] NOT NULL CONSTRAINT [DF_Users_IsLockedOut] DEFAULT ((0)),
