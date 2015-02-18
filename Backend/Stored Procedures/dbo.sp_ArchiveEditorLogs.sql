@@ -14,6 +14,13 @@ GO
 	                   In case of failure, the whole transaction will be rolled back to the previous state.
 	                   Logs are created on both, source AND archive databases.
 	
+	Revised Date: 1/28/2015
+	Revised By: Mikayil Bayramov.
+	Revision Details: 1) To improve the perfomance the "DATEDIFF(DAY, js.StatusDate, GETDATE()) >= @archiveAge" segment was replaced with the "GETDATE() - @archiveAge >= js.StatusDate" one.
+	                     Since StatusDate is indexed field, wrapping it into conversion fuction blocks index to be accesed. 
+					  2) Removed WITH (NOLOCK) SQL key word. See reason here: http://stackoverflow.com/questions/686724/sql-server-when-should-you-use-with-nolock
+	Revision Version: 1.1
+	
 	Revised Date: Insert revised date here
 	Revised By: Insert name of developr this scrip was modified.
 	Revision Details: Why this script waschanged?
@@ -21,43 +28,40 @@ GO
 */
 CREATE PROCEDURE [dbo].[sp_ArchiveEditorLogs]
 AS 
-SET XACT_ABORT ON
+SET XACT_ABORT ON 
 BEGIN  
 	--Use distributed transaction since we are cross referencing multiple databases	     
 	BEGIN DISTRIBUTED TRANSACTION [Archiving Editor Logs] 
 		BEGIN TRY
-			DECLARE @arciveAge AS INT,
+			DECLARE @archiveAge AS INT,
 					@policyID AS INT, 
 					@archiveID AS INT = 0
 					
-			--Get EditorLog policy parameters	
-			SELECT @arciveAge = ArchiveAge, 
-				   @policyID = PolicyID
+			--Get policy parameters	
+			SELECT @archiveAge = ArchiveAge, @policyID = PolicyID
 			FROM dbo.EA_ArchivePolicy
-			WHERE PolicyName = 'EditorLogs' AND 
-				  IsActive = 1
+			WHERE PolicyName = 'EditorLogs' AND IsActive = 1
  
 			--Begin process only if there is a data to archive.	  
-			IF EXISTS(SELECT TOP 1 1 FROM dbo.EditorLogs WHERE DATEDIFF(DAY, OperationTime, GETDATE()) >= @arciveAge)
-			BEGIN
+			IF EXISTS(SELECT TOP 1 1 FROM dbo.EditorLogs WHERE GETDATE() - @archiveAge >= OperationTime) BEGIN
 				--Create archive log for EditorLogs policy
 				INSERT INTO dbo.EA_ArchiveLog(PolicyID, ArchiveAge, ArchiveExecutionStartDate)
-				VALUES (@policyID, @arciveAge, GETDATE())
+				VALUES (@policyID, @archiveAge, GETDATE())
 				
-				--Get created ArchiveID
+				--Get created archiveID
 				SELECT @archiveID = SCOPE_IDENTITY() 
 				
 				--Archive
 				INSERT INTO dbo.EA_EditorLogs
 				SELECT el.*, @archiveID
-				FROM dbo.EditorLogs AS el WITH(NOLOCK)
-				WHERE DATEDIFF(DAY, OperationTime, GETDATE()) >= @arciveAge
+				FROM dbo.EditorLogs AS el
+				WHERE GETDATE() - @archiveAge >= OperationTime
 
 				--Remove archived records from source database/table
 				DELETE FROM dbo.EditorLogs
-				WHERE DATEDIFF(DAY, OperationTime, GETDATE()) >= @arciveAge
+				WHERE GETDATE() - @archiveAge >= OperationTime
 				
-				--Set EditorLog policy archive end time
+				--Set policy archive end time
 				UPDATE dbo.EA_ArchiveLog
 				SET ArchiveExecutionEndDate = GETDATE()
 				WHERE ArchiveID = @archiveID
