@@ -1,6 +1,6 @@
 CREATE TABLE [dbo].[Rules]
 (
-[RuleID] [smallint] NOT NULL IDENTITY(1, 1),
+[RuleID] [int] NOT NULL IDENTITY(1, 1),
 [ClinicID] [smallint] NOT NULL,
 [Enabled] [bit] NOT NULL CONSTRAINT [DF_Rules_Enabled] DEFAULT ((1)),
 [CreatedOn] [datetime] NOT NULL CONSTRAINT [DF_Rules_CreatedOn] DEFAULT (getdate()),
@@ -11,9 +11,10 @@ CREATE TABLE [dbo].[Rules]
 [JobTypeID] [int] NOT NULL,
 [Type] [varchar] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Rules_Type] DEFAULT ('S')
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Rules] ADD 
+CONSTRAINT [PK_Rules] PRIMARY KEY CLUSTERED  ([RuleID]) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[Rules] ADD CONSTRAINT [PK_Rules] PRIMARY KEY CLUSTERED  ([RuleID]) ON [PRIMARY]
-GO
+
 ALTER TABLE [dbo].[Rules] ADD CONSTRAINT [FK_Rules_JobTypeID] FOREIGN KEY ([JobTypeID]) REFERENCES [dbo].[JobTypes] ([JobTypeID])
 GO
 EXEC sp_addextendedproperty N'MS_Description', N'', 'SCHEMA', N'dbo', 'TABLE', N'Rules', 'COLUMN', N'Enabled'
