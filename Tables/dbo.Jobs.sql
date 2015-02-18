@@ -35,10 +35,34 @@ CREATE TABLE [dbo].[Jobs]
 [JobId] [int] NOT NULL IDENTITY(2, 1),
 [DueDate] [datetime] NULL,
 [TemplateName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[ArchiveID] [int] NOT NULL
+[IsGenericJob] [bit] NULL,
+[IsNewSchema] [bit] NULL,
+[IsProcessed] [bit] NOT NULL CONSTRAINT [DF__Jobs__IsProcesse__274FAE79] DEFAULT ((0))
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_AppointmentId] ON [dbo].[Jobs] ([AppointmentId]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_ClinicID_INC] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [ReceivedOn], [Stat]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_JobsClinicIDLocationID] ON [dbo].[Jobs] ([ClinicID], [Location]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_JobsDictatorID] ON [dbo].[Jobs] ([DictatorID]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_Jobs_DocumentId] ON [dbo].[Jobs] ([DocumentId]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_JobsEditorID] ON [dbo].[Jobs] ([EditorID]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_JobsJobEditingSummaryId] ON [dbo].[Jobs] ([JobEditingSummaryId]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_JobsJobId] ON [dbo].[Jobs] ([JobId]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_ReceivedOn_INC_JobNumber_DictatorID_ClinicID_Location...] ON [dbo].[Jobs] ([ReceivedOn]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [ClinicID], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [Stat]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_Jobs_ReturnedOn] ON [dbo].[Jobs] ([ReturnedOn]) INCLUDE ([EditorID], [JobNumber]) ON [PRIMARY]
+
+ALTER TABLE [dbo].[Jobs] ADD
+CONSTRAINT [FK_Jobs_Dictators] FOREIGN KEY ([DictatorID]) REFERENCES [dbo].[Dictators] ([DictatorID])
+ALTER TABLE [dbo].[Jobs] ADD
+CONSTRAINT [FK_Jobs_DocumentStatus] FOREIGN KEY ([DocumentStatus]) REFERENCES [dbo].[DocumentStatus] ([DocStatus])
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_ArchiveLog] FOREIGN KEY ([ArchiveID]) REFERENCES [dbo].[ArchiveLog] ([ArchiveID])
 GO

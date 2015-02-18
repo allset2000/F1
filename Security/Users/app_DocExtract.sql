@@ -1,0 +1,2 @@
+CREATE USER [app_DocExtract] WITHOUT LOGIN
+GO
