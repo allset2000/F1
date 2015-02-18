@@ -21,30 +21,24 @@ CREATE TABLE [dbo].[Schedules]
 [AttendingFirst] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [AttendingLast] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ChangedOn] [datetime] NULL CONSTRAINT [DF_Schedules_ChangedOn] DEFAULT (getdate()),
-[Type] [varchar] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Schedules_Type] DEFAULT ('S')
+[Type] [varchar] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF__Schedules__Type__544C7222] DEFAULT ('S')
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IDX_Schedules_ClinicIDAttending] ON [dbo].[Schedules] ([ClinicID], [Attending], [AttendingLast], [AttendingFirst]) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_Schedule_ClinIDResIDResNm] ON [dbo].[Schedules] ([ClinicID], [ResourceID], [ResourceName]) ON [PRIMARY]
-
-
-
-
-
-
-
-CREATE NONCLUSTERED INDEX [LocationID] ON [dbo].[Schedules] ([LocationID]) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [ReasonID] ON [dbo].[Schedules] ([ReasonID]) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [ResourceID] ON [dbo].[Schedules] ([ResourceID]) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_Schedules_1] ON [dbo].[Schedules] ([AppointmentID]) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_Schedules] ON [dbo].[Schedules] ([ClinicID]) ON [PRIMARY]
-
 GO
 ALTER TABLE [dbo].[Schedules] ADD CONSTRAINT [PK_Schedules] PRIMARY KEY CLUSTERED  ([ScheduleID]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Schedules_1] ON [dbo].[Schedules] ([AppointmentID]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Schedules] ON [dbo].[Schedules] ([ClinicID]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IDX_Schedules_ClinicIDAttending] ON [dbo].[Schedules] ([ClinicID], [Attending], [AttendingLast], [AttendingFirst]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Schedule_ClinIDResIDResNm] ON [dbo].[Schedules] ([ClinicID], [ResourceID], [ResourceName]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [LocationID] ON [dbo].[Schedules] ([LocationID]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [ReasonID] ON [dbo].[Schedules] ([ReasonID]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [ResourceID] ON [dbo].[Schedules] ([ResourceID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_RowProcessed_ClinicID_AppointmentID_WithINC_ScheduleID_AppointmentDate] ON [dbo].[Schedules] ([RowProcessed], [ClinicID], [AppointmentID]) INCLUDE ([AppointmentDate], [ScheduleID]) ON [PRIMARY]
 GO
