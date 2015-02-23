@@ -1,12 +1,4 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (66, 'FNC-DICTATOR-CHANGEUSER', 'Function - Change Dictator User', NULL, 4)
-SET IDENTITY_INSERT [dbo].[Permissions] OFF
-SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (60, 'MOBILE-JOB-LIST', 'Access to Mobile Job List', NULL, 1)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (61, 'MOBILE-SCHEDULE-LIST', 'Access to Mobile Schedule List', NULL, 2)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (62, 'MOBILE-SECURE-MESSAGING', 'Access to Mobile Secure Messaging', NULL, 3)
-SET IDENTITY_INSERT [dbo].[Permissions] OFF
-SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (1, 'TAB-DICT', 'Dictators Tab', NULL, 4)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (2, 'TAB-JOBS', 'Jobs Tab', NULL, 5)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (3, 'TAB-QUEU', 'Queues Tab', NULL, 6)
@@ -66,7 +58,11 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissi
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (57, 'FNC-RULES-ADDORDER', 'Function - Add Order based job building rule', NULL, 9)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (58, 'FNC-RULES-UPDATE', 'Function - Edit job building rules', NULL, 9)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (59, 'TAB-API-SCRATCHPAD', 'TAB - DEV API ScrathcPAd', NULL, 18)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (60, 'MOBILE-JOB-LIST', 'Access to Mobile Job List', NULL, 1)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (61, 'MOBILE-SCHEDULE-LIST', 'Access to Mobile Schedule List', NULL, 2)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (62, 'MOBILE-SECURE-MESSAGING', 'Access to Mobile Secure Messaging', NULL, 3)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (63, 'TAB-INVITATIONS', 'Tab - Invitations', NULL, 19)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (64, 'FNC-INVITATIONS-ADD', 'Function - Add Invitations', NULL, 19)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (65, 'FNC-INVITATION-RESEND', 'Function - Resend Invitation', NULL, 19)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (66, 'FNC-DICTATOR-CHANGEUSER', 'Function - Change Dictator User', NULL, 4)
 SET IDENTITY_INSERT [dbo].[Permissions] OFF

@@ -17,12 +17,13 @@ CREATE TABLE [dbo].[Clinics]
 [ForceCRStartDate] [datetime] NULL,
 [ForceCREndDate] [datetime] NULL,
 [ExcludeStat] [bit] NOT NULL CONSTRAINT [DF_Clinics_ExcludeStat] DEFAULT ((0)),
-[AutoEnrollDevices] [bit] NOT NULL CONSTRAINT [DF_Clinics_AutoEnrollDevices] DEFAULT ((0))
+[AutoEnrollDevices] [bit] NOT NULL CONSTRAINT [DF_Clinics_AutoEnrollDevices] DEFAULT ((0)),
+[SreType] [nvarchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF__Clinics__SreType__076201D4] DEFAULT ('NOSRE')
 ) ON [PRIMARY]
-ALTER TABLE [dbo].[Clinics] ADD
-CONSTRAINT [FK_Clinics_CRFlagTypes] FOREIGN KEY ([CRFlagType]) REFERENCES [dbo].[CRFlagTypes] ([CRFlagType])
-ALTER TABLE [dbo].[Clinics] ADD 
-CONSTRAINT [PK_Clinics] PRIMARY KEY CLUSTERED  ([ClinicID]) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Clinics] ADD CONSTRAINT [PK_Clinics] PRIMARY KEY CLUSTERED  ([ClinicID]) ON [PRIMARY]
+GO
 CREATE NONCLUSTERED INDEX [IX_Clinics_MobileCode] ON [dbo].[Clinics] ([MobileCode]) ON [PRIMARY]
-
+GO
+ALTER TABLE [dbo].[Clinics] ADD CONSTRAINT [FK_Clinics_CRFlagTypes] FOREIGN KEY ([CRFlagType]) REFERENCES [dbo].[CRFlagTypes] ([CRFlagType])
 GO

@@ -10,12 +10,10 @@ CREATE TABLE [dbo].[Jobs]
 [Stat] [bit] NOT NULL,
 [Priority] [smallint] NOT NULL CONSTRAINT [DF_Jobs_Priority] DEFAULT ((0)),
 [RuleID] [smallint] NULL,
-[AdditionalData] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[AdditionalData] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[IsProcessed] [bit] NOT NULL CONSTRAINT [DF__Jobs__IsProcesse__0579B962] DEFAULT ((0))
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-CREATE UNIQUE NONCLUSTERED INDEX [IX_Jobs_JobNumber] ON [dbo].[Jobs] ([JobNumber]) ON [PRIMARY]
-
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -42,7 +40,6 @@ AND jobid NOT IN
 
 END
 GO
-
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_ClinicID] ON [dbo].[Jobs] ([ClinicID]) ON [PRIMARY]
@@ -51,7 +48,8 @@ CREATE NONCLUSTERED INDEX [UNQ_ClinicID_Jobnumber] ON [dbo].[Jobs] ([ClinicID], 
 GO
 CREATE NONCLUSTERED INDEX [FK_EncounterID_Status] ON [dbo].[Jobs] ([EncounterID], [Status]) ON [PRIMARY]
 GO
-
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Jobs_JobNumber] ON [dbo].[Jobs] ([JobNumber]) ON [PRIMARY]
+GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_JobTypeID] ON [dbo].[Jobs] ([JobTypeID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) ON [PRIMARY]

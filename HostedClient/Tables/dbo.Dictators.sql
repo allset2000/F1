@@ -22,16 +22,14 @@ CREATE TABLE [dbo].[Dictators]
 [ForceCREndDate] [datetime] NULL,
 [ExcludeStat] [bit] NOT NULL CONSTRAINT [DF_Dictators_ExcludeStat] DEFAULT ((0)),
 [SignatureImage] [varbinary] (max) NULL,
-[ImageName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[ImageName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[UserId] [int] NULL,
+[SreType] [nvarchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [PK_Dictators] PRIMARY KEY CLUSTERED  ([DictatorID]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [IX_Dictators_Unique_DictatorName] UNIQUE NONCLUSTERED  ([DictatorName], [ClinicID]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_Dictators_ClinicID] ON [dbo].[Dictators] ([ClinicID], [EHRProviderID]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_Dictators_DictatorName] ON [dbo].[Dictators] ([DictatorName]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID])
 GO
