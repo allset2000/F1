@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[PatientDataAccess]
 [PatientDataAccessID] [int] NOT NULL IDENTITY(1, 1),
 [MessageThreadID] [int] NOT NULL,
 [UserID] [int] NOT NULL,
-[IsPermited] [bit] NOT NULL CONSTRAINT [DF__PatientDa__IsPer__1486F2C8] DEFAULT ((0)),
+[IsPermited] [bit] NOT NULL CONSTRAINT [DF__PatientDa__IsPer__26A5A303] DEFAULT ((0)),
 [CreatedDate] [datetime] NOT NULL,
 [UpdatedDate] [datetime] NULL
 ) ON [PRIMARY]
