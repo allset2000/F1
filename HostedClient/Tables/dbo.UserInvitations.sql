@@ -15,7 +15,8 @@ CREATE TABLE [dbo].[UserInvitations]
 [DateTimeRequested] [datetime] NOT NULL,
 [DateTimeInvitationSent] [datetime] NULL,
 [IsDemoUser] [bit] NULL,
-[RegisteredUserId] [int] NULL
+[RegisteredUserId] [int] NULL,
+[InvitationMessage] [varchar] (1500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[UserInvitations] ADD CONSTRAINT [PK_UserInvitation] PRIMARY KEY CLUSTERED  ([UserInvitationId]) ON [PRIMARY]

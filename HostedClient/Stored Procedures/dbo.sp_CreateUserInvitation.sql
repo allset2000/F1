@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -20,6 +21,7 @@ CREATE PROCEDURE [dbo].[sp_CreateUserInvitation]
 	, @SecurityToken VARCHAR(50)
 	, @IsDemoUser BIT
 	, @RequestingUserId INT
+	, @InvitationMessage VARCHAR(1500)
 )
 AS
 BEGIN
@@ -37,7 +39,8 @@ INSERT INTO [dbo].[UserInvitations]
            ,[DateTimeInvitationSent]
            ,[IsDemoUser]
 		   ,[RequestingUserId]
-		   ,[DateTimeRequested])
+		   ,[DateTimeRequested]
+		   ,[InvitationMessage])
      VALUES
            (@FirstName
            ,@MI
@@ -52,6 +55,7 @@ INSERT INTO [dbo].[UserInvitations]
            ,GETDATE()
            ,@IsDemoUser
 		   ,@RequestingUserId
-		   ,GETDATE())
+		   ,GETDATE()
+		   ,@InvitationMessage)
 END
 GO

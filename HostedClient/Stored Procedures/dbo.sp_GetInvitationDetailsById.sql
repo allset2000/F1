@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -29,6 +30,7 @@ BEGIN
 		  ,[IsDemoUser]
 		  ,R.RoleName
 		  ,ISNULL(C.Name,'') AS 'ClinicName'
+		  ,InvitationMessage
 	  FROM [dbo].[UserInvitations] UI
 	  LEFT JOIN Clinics C
 	  ON C.ClinicID = UI.ClinicId
