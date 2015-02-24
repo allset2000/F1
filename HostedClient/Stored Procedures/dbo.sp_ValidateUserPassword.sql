@@ -29,12 +29,12 @@ BEGIN
 
 
 	-- Compare password sent vs db password
-	IF EXISTS (select * from Users where UserId = @UserId and Password = @Password)
+	IF EXISTS (select * from Users where UserID = @UserId and Password = @Password and Deleted = 0)
 	BEGIN
 		-- Compare user roles for application access
 		IF EXISTS (select * from UserRoleXref URX INNER JOIN RoleApplicationXref RAX on RAX.RoleId = URX.RoleId WHERE URX.UserId = @UserId and RAX.ApplicationId = @ApplicationId)
 		BEGIN
-			UPDATE Users SET LastLoginDate = GETDATE() WHERE UserId = @UserId
+			UPDATE Users SET LastLoginDate = GETDATE() WHERE UserID = @UserId
 			SELECT @True,0
 		END
 		ELSE

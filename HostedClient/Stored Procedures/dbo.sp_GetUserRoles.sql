@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -16,7 +17,7 @@ BEGIN
 
 		SELECT R.* FROM UserRoleXref URX
 			INNER JOIN Roles R on R.RoleId = URX.RoleId
-		WHERE URX.UserId = @userid
+		WHERE URX.UserId = @userid and URX.IsDeleted = 0
 
 END
 

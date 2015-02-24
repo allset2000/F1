@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -17,6 +18,17 @@ if not exists(select * from Permissions where Code = 'FNC-DICTATOR-CHANGEUSER')
 		INSERT INTO Permissions(code,name,parentpermissionid,moduleid) values('FNC-DICTATOR-CHANGEUSER','Function - Change Dictator User',null,4)
 	END
 --END #3398# - change user permission for dictator management
-
+-- #0000# - Added perm for adding dictator
+if not exists(select * from Permissions where Code = 'FNC-DICTATORS-ADD')
+	BEGIN
+		INSERT INTO Permissions(Code,Name,ModuleId) VALUES('FNC-DICTATORS-ADD','Function - Add New Dictators',4)
+	END
+-- #0000# - Added perm for adding dictator
+--BEGIN #3402# - Add / Remove Role from all dictators for client
+if not exists(select * from Permissions where Code = 'FNC-DICTATORS-ADDMASSROLE')
+	BEGIN
+		INSERT INTO Permissions(Code,Name,ModuleId) VALUES('FNC-DICTATORS-ADDMASSROLE','Function - Manage Dictator Roles (Mass)',4)
+	END
+--END #3402# - Add / Remove Role from all dictators for client
 END
 GO

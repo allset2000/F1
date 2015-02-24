@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -10,8 +11,8 @@ GO
 CREATE PROCEDURE [dbo].[sp_UpdateRolePermissions]
 (
 	@RoleId INT,
-	@AddPerms varchar(100),
-	@DelPerms varchar(100),
+	@AddPerms varchar(1000),
+	@DelPerms varchar(1000),
 	@MobilePerm bit,
 	@ACPerm bit,
 	@ChangedBy varchar(100)

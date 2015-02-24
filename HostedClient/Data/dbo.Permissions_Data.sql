@@ -1,4 +1,8 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (67, 'FNC-DICTATORS-ADD', 'Function - Add New Dictators', NULL, 4)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (68, 'FNC-DICTATORS-ADDMASSROLE', 'Function - Manage Dictator Roles (Mass)', NULL, 4)
+SET IDENTITY_INSERT [dbo].[Permissions] OFF
+SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (1, 'TAB-DICT', 'Dictators Tab', NULL, 4)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (2, 'TAB-JOBS', 'Jobs Tab', NULL, 5)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (3, 'TAB-QUEU', 'Queues Tab', NULL, 6)
