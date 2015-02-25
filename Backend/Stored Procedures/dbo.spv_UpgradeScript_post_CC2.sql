@@ -20,6 +20,8 @@ IF NOT EXISTS(select * from DbQueryParameters where QueryName = 'getFullDocument
 IF NOT EXISTS(select * from DbQueryParameters where QueryName = 'getFullDocumentWithJobNumberAndStatus' and ParameterIndex = 1 and ParameterName = 'Status'
 			and ParameterSqlType = 16 and ParameterSize = 0)
 	BEGIN
+		-- the below delete is to remove other old value associate to this parameterName; this executes only for once
+		delete from DbQueryParameters where QueryName = 'getFullDocumentWithJobNumberAndStatus' and ParameterName = 'Status'
 		INSERT INTO [dbo].[DbQueryParameters] ([QueryName], [ParameterIndex], [ParameterName], [ParameterSqlType], [ParameterMySqlType], [ParameterOleDbType], 
 		[ParameterOracleType], [ParameterDirection], [ParameterSize], [ParameterScale], [ParameterPrecision], [ParameterDefaultValue]) 
 		VALUES (N'getFullDocumentWithJobNumberAndStatus', 1, N'Status', 16, 2, 2, 27, 1, 0, 0, 0, N'')
