@@ -24,8 +24,10 @@ CREATE TABLE [dbo].[Dictators]
 [SignatureImage] [varbinary] (max) NULL,
 [ImageName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [UserId] [int] NULL,
-[SreType] [nvarchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[SreType] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+ALTER TABLE [dbo].[Dictators] ADD
+CONSTRAINT [FK__Dictators__SreTy__72F0F4D3] FOREIGN KEY ([SreType]) REFERENCES [dbo].[SreEngine] ([Id])
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [PK_Dictators] PRIMARY KEY CLUSTERED  ([DictatorID]) ON [PRIMARY]
 GO

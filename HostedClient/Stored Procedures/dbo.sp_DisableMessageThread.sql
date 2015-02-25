@@ -57,7 +57,7 @@ BEGIN
 
 				--Finaly, copy all revoked user permision records of the current message thread to [dbo].[PatientDataAccessHistory]
 				--NOTE! Do it only for users that previously been granted premission
-				INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, PermitionRevokedDate)
+				INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, UpdatedDate)
 				SELECT PatientDataAccessID, MessageThreadID, UserID, @RevokedPemissionID, CreatedDate, @UpdateDate
 				FROM [dbo].[PatientDataAccess]
 				WHERE MessageThreadID = @MessageThreadID AND 

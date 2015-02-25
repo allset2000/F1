@@ -57,7 +57,7 @@ BEGIN
 					--If the patient info sharing was changed for the current user, 
 					--then copy this record from [dbo].[PatientDataAccess] to [dbo].[PatientDataAccessHistory]
 					IF (SELECT @PermissionCode) != (SELECT @PermissionHistory)BEGIN
-						INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, PermitionRevokedDate)
+						INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, UpdatedDate)
 						SELECT PatientDataAccessID, MessageThreadID, UserID, @PatientDataAccessPermissionID, CreatedDate, @CreateUpdateDate
 						FROM [dbo].[PatientDataAccess]
 						WHERE PatientDataAccessID = @PatientDataAccessID
