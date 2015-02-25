@@ -17,11 +17,12 @@ IF NOT EXISTS(select * from DbQueryParameters where QueryName = 'getFullDocument
 		[ParameterOracleType], [ParameterDirection], [ParameterSize], [ParameterScale], [ParameterPrecision], [ParameterDefaultValue]) 
 		VALUES (N'getFullDocumentWithJobNumberAndStatus', 0, N'JobNumber', 22, 15, 200, 22, 1, 20, 0, 0, N'')
 	END
-IF NOT EXISTS(select * from DbQueryParameters where QueryName = 'getFullDocumentWithJobNumberAndStatus' and ParameterIndex = 1 and ParameterName = 'Status')
+IF NOT EXISTS(select * from DbQueryParameters where QueryName = 'getFullDocumentWithJobNumberAndStatus' and ParameterIndex = 1 and ParameterName = 'Status'
+			and ParameterSqlType = 16 and ParameterSize = 0)
 	BEGIN
 		INSERT INTO [dbo].[DbQueryParameters] ([QueryName], [ParameterIndex], [ParameterName], [ParameterSqlType], [ParameterMySqlType], [ParameterOleDbType], 
 		[ParameterOracleType], [ParameterDirection], [ParameterSize], [ParameterScale], [ParameterPrecision], [ParameterDefaultValue]) 
-		VALUES (N'getFullDocumentWithJobNumberAndStatus', 1, N'Status', 22, 15, 200, 22, 1, 20, 0, 0, N'')
+		VALUES (N'getFullDocumentWithJobNumberAndStatus', 1, N'Status', 16, 2, 2, 27, 1, 0, 0, 0, N'')
 	END
 IF NOT EXISTS(select * from DbQueryParameters where QueryName = 'getFullDocumentWithJobNumberAndStatus' and ParameterIndex = 2 and ParameterName = 'DocID')
 	BEGIN
