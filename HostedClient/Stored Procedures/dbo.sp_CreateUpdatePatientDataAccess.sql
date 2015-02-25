@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -15,69 +16,70 @@ GO
 	Revision Version: What version is this?
 */
 CREATE PROCEDURE [dbo].[sp_CreateUpdatePatientDataAccess] (
-	@ThreadID VARCHAR(100),
-    @ThreadOwnerID INT,
+	@MessageThreadID INT,
+	@MessageThreadOwnerID INT,
+	@PatientID INT,
     @UserID INT,
-	@IsPermited BIT
+	@PermissionCode INT
 )
 AS
 SET XACT_ABORT ON
 BEGIN
 	BEGIN TRANSACTION CreateUpdatePatientDataAccess
 		BEGIN TRY
-			DECLARE @MessageThreadID AS INT,
-					@PatientDataAccessID AS INT,
-					@IsPermitedHistory AS BIT,
-					@RecordAccessDate AS DATETIME = GETDATE()
+			DECLARE @PatientDataAccessID AS INT = -1,
+					@PermissionHistory AS INT = -1,
+					@CreateUpdateDate AS DATETIME = GETDATE(),
+					@PatientDataAccessPermissionID AS INT
 
-			--Get parent id per thread id and thread owner id
-			SELECT @MessageThreadID = MessageThreadID
-			FROM [dbo].[MessageThreads] 
-			WHERE ThreadID = @ThreadID AND
-				  ThreadOwnerID = @ThreadOwnerID
+			--Do only if patient clinic is not related to one of user's clinics
+			IF NOT EXISTS (SELECT TOP 1 1
+                           FROM [dbo].[Patients] AS p INNER JOIN [dbo].[Dictators] AS d ON p.ClinicID = d.ClinicID
+			               WHERE p.PatientID = @PatientID AND d.UserId =  @UserID) BEGIN
 
-			--Get child id per parent id and user id
-			SELECT @PatientDataAccessID = PatientDataAccessID
-			FROM [dbo].[PatientDataAccess]
-			WHERE MessageThreadID = @MessageThreadID AND 
-				  UserID = @UserID 
+				--Get PatientDataAccessPermissionID 
+				SELECT @PatientDataAccessPermissionID  = PatientDataAccessPermissionID 
+				FROM [dbo].[PatientDataAccessPermissions]
+				WHERE PermissionCode = @PermissionCode
 
-			--Check if the permission record for this thread/user is found
-			IF (SELECT @PatientDataAccessID) IS NOT NULL BEGIN
-				--Collect the previous IsPermited value. We will need it, later.
-				SELECT @IsPermitedHistory = IsPermited
-				FROM [dbo].[PatientDataAccess]
-				WHERE PatientDataAccessID = @PatientDataAccessID
-
-				--If found then update the record
-				UPDATE [dbo].[PatientDataAccess]
-				SET IsPermited= @IsPermited,
-					UpdatedDate = @RecordAccessDate
-				WHERE PatientDataAccessID = @PatientDataAccessID AND 
-				      IsPermited != @IsPermited
-			END
-			ELSE BEGIN
-				--Else, insert new one     
-				INSERT INTO [dbo].[PatientDataAccess] (MessageThreadID, UserID, IsPermited, CreatedDate, UpdatedDate)
-				VALUES (@MessageThreadID, @UserID, @IsPermited, @RecordAccessDate, NULL)
-
-				--Reload @PatientDataAccessID
+				--Get PatientDataAccessID per MessageThreadID and user id
 				SELECT @PatientDataAccessID = PatientDataAccessID
 				FROM [dbo].[PatientDataAccess]
-				WHERE MessageThreadID = @MessageThreadID AND 
-					  UserID = @UserID 
-			END
+				WHERE MessageThreadID = @MessageThreadID AND UserID = @UserID 
 
-			--If the patient info sharing was revoked for the current user (provided @IsPermited value is 0), 
-			--then copy this record from [dbo].[PatientDataAccess] to [dbo].[PatientDataAccessHistory]
-			--NOTE!  do it only for users that previous been granted premission or new users premissions
-			IF (SELECT @IsPermited) = 0 AND ((SELECT @IsPermitedHistory) = 1 OR (SELECT @IsPermitedHistory) IS NULL) BEGIN
-				INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, IsPermited, CreatedDate, PermitionRevokedDate)
-				SELECT PatientDataAccessID, MessageThreadID, UserID, IsPermited, CreatedDate, @RecordAccessDate
-				FROM [dbo].[PatientDataAccess]
-				WHERE PatientDataAccessID = @PatientDataAccessID
-			END
+				--Check if the permission record for this thread/user is found
+				IF (SELECT @PatientDataAccessID) != -1  BEGIN
+					--Collect the previous PermissionCode value. We will need it, later.
+					SET @PermissionHistory = (SELECT pdap.PermissionCode 
+					                          FROM [dbo].[PatientDataAccessPermissions] AS pdap INNER JOIN [dbo].[PatientDataAccess] AS pda ON pda.PatientDataAccessPermissionID = pdap.PatientDataAccessPermissionID
+											  WHERE pda.PatientDataAccessID = @PatientDataAccessID)
 
+					--If the patient info sharing was changed for the current user, 
+					--then copy this record from [dbo].[PatientDataAccess] to [dbo].[PatientDataAccessHistory]
+					IF (SELECT @PermissionCode) != (SELECT @PermissionHistory)BEGIN
+						INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, PermitionRevokedDate)
+						SELECT PatientDataAccessID, MessageThreadID, UserID, @PatientDataAccessPermissionID, CreatedDate, @CreateUpdateDate
+						FROM [dbo].[PatientDataAccess]
+						WHERE PatientDataAccessID = @PatientDataAccessID
+
+						--Then update the record
+						UPDATE [dbo].[PatientDataAccess]
+						SET PatientDataAccessPermissionID = @PatientDataAccessPermissionID,
+							UpdatedDate = @CreateUpdateDate
+						WHERE PatientDataAccessID = @PatientDataAccessID
+					END
+				END
+				ELSE BEGIN
+					--Else, insert new one     
+					INSERT INTO [dbo].[PatientDataAccess] (MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, UpdatedDate)
+					VALUES (@MessageThreadID, @UserID, @PatientDataAccessPermissionID, @CreateUpdateDate, NULL)
+
+					--Reload @PatientDataAccessID
+					SELECT @PatientDataAccessID = PatientDataAccessID
+					FROM [dbo].[PatientDataAccess]
+					WHERE MessageThreadID = @MessageThreadID AND UserID = @UserID 
+				END
+			END
 			SELECT @PatientDataAccessID
 		END TRY
 		BEGIN CATCH

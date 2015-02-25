@@ -1,0 +1,8 @@
+CREATE TABLE [dbo].[SreEngine]
+(
+[Id] [int] NOT NULL IDENTITY(1, 1),
+[SreType] [varchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[SreEngine] ADD CONSTRAINT [PK__SreEngin__3214EC076D28D555] PRIMARY KEY CLUSTERED  ([Id]) ON [PRIMARY]
+GO

@@ -18,8 +18,10 @@ CREATE TABLE [dbo].[Clinics]
 [ForceCREndDate] [datetime] NULL,
 [ExcludeStat] [bit] NOT NULL CONSTRAINT [DF_Clinics_ExcludeStat] DEFAULT ((0)),
 [AutoEnrollDevices] [bit] NOT NULL CONSTRAINT [DF_Clinics_AutoEnrollDevices] DEFAULT ((0)),
-[SreType] [nvarchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF__Clinics__SreType__076201D4] DEFAULT ('NOSRE')
+[SreType] [int] NULL
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Clinics] ADD
+CONSTRAINT [FK__Clinics__SreType__73E5190C] FOREIGN KEY ([SreType]) REFERENCES [dbo].[SreEngine] ([Id])
 GO
 ALTER TABLE [dbo].[Clinics] ADD CONSTRAINT [PK_Clinics] PRIMARY KEY CLUSTERED  ([ClinicID]) ON [PRIMARY]
 GO

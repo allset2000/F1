@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -8,6 +9,7 @@ GO
 	Version: 1.0
 	Details: Disables message thread per povidded thread id and thread owner id.
 	         Then revokes all users under the current message thread patient info sharing permissions.
+			 NOTE! Users that have been previously revoked permissions, and filtered out from the process (they've already been denied permissions, so what is the point). 
 	
 	Revised Date: Insert revised date here
 	Revised By: Insert name of developer this scrip was modified.
@@ -24,7 +26,8 @@ BEGIN
 	BEGIN TRANSACTION DisableMessageThread
 		BEGIN TRY
 			DECLARE @MessageThreadID AS INT,
-			        @RecordAccessDate AS DATETIME = GETDATE()
+			        @UpdateDate AS DATETIME = GETDATE(),
+					@RevokedPemissionID AS INT = (SELECT PatientDataAccessPermissionID FROM [dbo].[PatientDataAccessPermissions] WHERE PermissionCode = 0)
 
 			--Get message thread id per thread id and thread owner id
 			SELECT @MessageThreadID = MessageThreadID
@@ -36,27 +39,26 @@ BEGIN
 				--First, disable the message thread.
 				UPDATE [dbo].[MessageThreads] 
 				SET IsActive= 0,
-					UpdatedDate = @RecordAccessDate
+					UpdatedDate = @UpdateDate
 				WHERE MessageThreadID = @MessageThreadID
 
 				--Then revoke all user permissions for the current message thread.
 				--But before, get all PatientDataAccessID that are about to be updated, for later actions.
 				SELECT PatientDataAccessID
 				INTO #Temp
-				FROM [dbo].[PatientDataAccess]
-				WHERE MessageThreadID = @MessageThreadID AND 
-				      IsPermited != 0
+				FROM [dbo].[PatientDataAccess] 
+				WHERE MessageThreadID = 3 AND 
+				      PatientDataAccessPermissionID != @RevokedPemissionID
 
 				UPDATE [dbo].[PatientDataAccess]
-				SET IsPermited= 0,
-					UpdatedDate = @RecordAccessDate
-				WHERE MessageThreadID = @MessageThreadID AND 
-				      IsPermited != 0
+				SET PatientDataAccessPermissionID = @RevokedPemissionID,
+					UpdatedDate = @UpdateDate
+				WHERE PatientDataAccessID IN (SELECT PatientDataAccessID FROM #Temp)
 
 				--Finaly, copy all revoked user permision records of the current message thread to [dbo].[PatientDataAccessHistory]
 				--NOTE! Do it only for users that previously been granted premission
-				INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, IsPermited, CreatedDate, PermitionRevokedDate)
-				SELECT PatientDataAccessID, MessageThreadID, UserID, IsPermited, CreatedDate, @RecordAccessDate
+				INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, PermitionRevokedDate)
+				SELECT PatientDataAccessID, MessageThreadID, UserID, @RevokedPemissionID, CreatedDate, @UpdateDate
 				FROM [dbo].[PatientDataAccess]
 				WHERE MessageThreadID = @MessageThreadID AND 
 				      PatientDataAccessID IN (SELECT PatientDataAccessID FROM #Temp)
