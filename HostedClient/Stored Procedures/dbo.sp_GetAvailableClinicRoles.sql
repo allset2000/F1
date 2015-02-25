@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -19,13 +20,13 @@ BEGIN
 	BEGIN
 		SELECT * FROM Roles R
 			INNER JOIN RoleApplicationXref RAX on RAX.RoleId = R.RoleId
-		WHERE RAX.ApplicationId = @applicationid
+		WHERE RAX.ApplicationId = @applicationid and RAX.IsDeleted = 0
 	END
 	ELSE
 	BEGIN
 		SELECT * FROM Roles R
 			INNER JOIN RoleApplicationXref RAX on RAX.RoleId = R.RoleId
-		WHERE RAX.ApplicationId = @applicationid and R.ClinicId in (0, @clinicid)
+		WHERE RAX.ApplicationId = @applicationid and R.ClinicId in (0, @clinicid) and RAX.IsDeleted = 0
 	END
 
 END
