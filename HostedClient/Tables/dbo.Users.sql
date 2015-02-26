@@ -15,8 +15,9 @@ CREATE TABLE [dbo].[Users]
 [PWResetRequired] [bit] NOT NULL CONSTRAINT [DF_Users_DoResetPassword] DEFAULT ((0)),
 [SecurityToken] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Users_SecurityToken] DEFAULT (''),
 [LastLoginDate] [datetime] NULL,
-[QuickBloxPassword] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[QuickBloxUserLogin] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[FirstName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[MI] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[LastName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Users] ADD CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED  ([UserID]) ON [PRIMARY]

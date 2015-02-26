@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -19,9 +20,9 @@ CREATE PROCEDURE [dbo].[sp_GetUserByQuickBloxUserLogin]
 ) 
 AS 
 BEGIN
-	SELECT UserID, UserName, ClinicId, LoginEmail, Name, [Password], Salt, Deleted, IsLockedOut, LastPasswordReset, PasswordAttemptFailure, 
-	       LastFailedAttempt, PWResetRequired, SecurityToken, LastLoginDate, QuickBloxUserLogin, QuickBloxPassword
-	FROM [dbo].[Users] 
-	WHERE QuickBloxUserLogin = @QuickBloxUserLogin
+	SELECT u.UserID, u.UserName, u.ClinicId, u.LoginEmail, u.Name, u.[Password], u.Salt, u.Deleted, u.IsLockedOut, u.LastPasswordReset, u.PasswordAttemptFailure, 
+	       u.LastFailedAttempt, u.PWResetRequired, u.SecurityToken, u.LastLoginDate
+	FROM [dbo].[Users] AS u INNER JOIN [dbo].[QuickBloxUsers] AS qbu ON u.UserId = qbu.UserID
+	WHERE qbu.[Login] = @QuickBloxUserLogin
 END
 GO

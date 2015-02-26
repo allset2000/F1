@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -17,7 +18,7 @@ CREATE PROCEDURE [dbo].[sp_GetUserByUserName] (
 	@UserName varchar(100)
 ) AS 
 BEGIN
-	SELECT UserID, UserName, ClinicId, LoginEmail, Name, Password, Salt, Deleted, IsLockedOut,LastPasswordReset,PasswordAttemptFailure,LastFailedAttempt,PWResetRequired,SecurityToken,LastLoginDate,QuickBloxUserLogin, QuickBloxPassword
+	SELECT UserID, UserName, ClinicId, LoginEmail, Name, Password, Salt, Deleted, IsLockedOut,LastPasswordReset,PasswordAttemptFailure,LastFailedAttempt,PWResetRequired,SecurityToken,LastLoginDate
 	FROM Users where UserName = @UserName
 END
 GO
