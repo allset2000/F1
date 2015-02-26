@@ -25,9 +25,9 @@ SET XACT_ABORT ON
 BEGIN
 	BEGIN TRANSACTION DisableMessageThread
 		BEGIN TRY
-			DECLARE @MessageThreadID AS INT,
+			DECLARE @MessageThreadID AS INT = -1,
 			        @UpdateDate AS DATETIME = GETDATE(),
-					@RevokedPemissionID AS INT = (SELECT PatientDataAccessPermissionID FROM [dbo].[PatientDataAccessPermissions] WHERE PermissionCode = 0)
+					@RevokedPemissionID AS INT = (SELECT PatientDataAccessPermissionID FROM [dbo].[PatientDataAccessPermissions] WHERE PermissionCode = 0) 
 
 			--Get message thread id per thread id and thread owner id
 			SELECT @MessageThreadID = MessageThreadID
@@ -35,7 +35,7 @@ BEGIN
 			WHERE ThreadID = @ThreadID AND
 				  ThreadOwnerID = @ThreadOwnerID
 
-			IF (SELECT @MessageThreadID) IS NOT NULL BEGIN
+			IF (SELECT @MessageThreadID)!= -1 BEGIN
 				--First, disable the message thread.
 				UPDATE [dbo].[MessageThreads] 
 				SET IsActive= 0,
@@ -44,10 +44,10 @@ BEGIN
 
 				--Then revoke all user permissions for the current message thread.
 				--But before, get all PatientDataAccessID that are about to be updated, for later actions.
-				SELECT PatientDataAccessID
+				SELECT PatientDataAccessID, PatientDataAccessPermissionID
 				INTO #Temp
 				FROM [dbo].[PatientDataAccess] 
-				WHERE MessageThreadID = 3 AND 
+				WHERE MessageThreadID = @MessageThreadID AND 
 				      PatientDataAccessPermissionID != @RevokedPemissionID
 
 				UPDATE [dbo].[PatientDataAccess]
@@ -58,10 +58,9 @@ BEGIN
 				--Finaly, copy all revoked user permision records of the current message thread to [dbo].[PatientDataAccessHistory]
 				--NOTE! Do it only for users that previously been granted premission
 				INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, UpdatedDate)
-				SELECT PatientDataAccessID, MessageThreadID, UserID, @RevokedPemissionID, CreatedDate, @UpdateDate
-				FROM [dbo].[PatientDataAccess]
-				WHERE MessageThreadID = @MessageThreadID AND 
-				      PatientDataAccessID IN (SELECT PatientDataAccessID FROM #Temp)
+				SELECT pda.PatientDataAccessID, pda.MessageThreadID, pda.UserID, t.PatientDataAccessPermissionID, pda.CreatedDate, @UpdateDate
+				FROM [dbo].[PatientDataAccess] AS pda INNER JOIN #Temp AS t ON pda.PatientDataAccessID = t.PatientDataAccessID
+				WHERE MessageThreadID = @MessageThreadID 
 			END 
 		END TRY
 		BEGIN CATCH

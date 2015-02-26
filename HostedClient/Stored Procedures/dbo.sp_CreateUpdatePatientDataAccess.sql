@@ -28,9 +28,10 @@ BEGIN
 	BEGIN TRANSACTION CreateUpdatePatientDataAccess
 		BEGIN TRY
 			DECLARE @PatientDataAccessID AS INT = -1,
-					@PermissionHistory AS INT = -1,
+					@PreviousPermissionCode AS INT = -1,
 					@CreateUpdateDate AS DATETIME = GETDATE(),
-					@PatientDataAccessPermissionID AS INT
+					@PatientDataAccessPermissionID AS INT,
+					@PreviousPatientDataAccessPermissionID AS INT
 
 			--Do only if patient clinic is not related to one of user's clinics
 			IF NOT EXISTS (SELECT TOP 1 1
@@ -49,16 +50,16 @@ BEGIN
 
 				--Check if the permission record for this thread/user is found
 				IF (SELECT @PatientDataAccessID) != -1  BEGIN
-					--Collect the previous PermissionCode value. We will need it, later.
-					SET @PermissionHistory = (SELECT pdap.PermissionCode 
-					                          FROM [dbo].[PatientDataAccessPermissions] AS pdap INNER JOIN [dbo].[PatientDataAccess] AS pda ON pda.PatientDataAccessPermissionID = pdap.PatientDataAccessPermissionID
-											  WHERE pda.PatientDataAccessID = @PatientDataAccessID)
+					--Collect the previous PermissionCode and PatientDataAccessPermissionID values. We will need it, later.
+					SELECT @PreviousPermissionCode = pdap.PermissionCode, @PreviousPatientDataAccessPermissionID = pda.PatientDataAccessPermissionID 
+					FROM [dbo].[PatientDataAccessPermissions] AS pdap INNER JOIN [dbo].[PatientDataAccess] AS pda ON pda.PatientDataAccessPermissionID = pdap.PatientDataAccessPermissionID
+					WHERE pda.PatientDataAccessID = @PatientDataAccessID
 
 					--If the patient info sharing was changed for the current user, 
 					--then copy this record from [dbo].[PatientDataAccess] to [dbo].[PatientDataAccessHistory]
-					IF (SELECT @PermissionCode) != (SELECT @PermissionHistory)BEGIN
+					IF (SELECT @PermissionCode) != (SELECT @PreviousPermissionCode)BEGIN
 						INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, UpdatedDate)
-						SELECT PatientDataAccessID, MessageThreadID, UserID, @PatientDataAccessPermissionID, CreatedDate, @CreateUpdateDate
+						SELECT PatientDataAccessID, MessageThreadID, UserID, @PreviousPatientDataAccessPermissionID, CreatedDate, @CreateUpdateDate
 						FROM [dbo].[PatientDataAccess]
 						WHERE PatientDataAccessID = @PatientDataAccessID
 
