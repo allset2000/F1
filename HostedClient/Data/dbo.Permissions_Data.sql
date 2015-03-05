@@ -1,6 +1,5 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (67, 'FNC-DICTATORS-ADD', 'Function - Add New Dictators', NULL, 4)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (68, 'FNC-DICTATORS-ADDMASSROLE', 'Function - Manage Dictator Roles (Mass)', NULL, 4)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (69, 'FNC-CLINIC-ADMINCLINIC', 'Function - Manage Clinic', NULL, 20)
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (1, 'TAB-DICT', 'Dictators Tab', NULL, 4)
@@ -69,4 +68,6 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissi
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (64, 'FNC-INVITATIONS-ADD', 'Function - Add Invitations', NULL, 19)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (65, 'FNC-INVITATION-RESEND', 'Function - Resend Invitation', NULL, 19)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (66, 'FNC-DICTATOR-CHANGEUSER', 'Function - Change Dictator User', NULL, 4)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (67, 'FNC-DICTATORS-ADD', 'Function - Add New Dictators', NULL, 4)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (68, 'FNC-DICTATORS-ADDMASSROLE', 'Function - Manage Dictator Roles (Mass)', NULL, 4)
 SET IDENTITY_INSERT [dbo].[Permissions] OFF

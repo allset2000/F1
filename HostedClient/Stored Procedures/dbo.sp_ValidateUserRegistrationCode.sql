@@ -20,7 +20,7 @@ BEGIN
 
 	SELECT UI.PhoneNumber, UI.EmailAddress, UI.ClinicId, UI.FirstName, UI.LastName, C.MobileCode , UI.MI
 	FROM UserInvitations UI
-		INNER JOIN Clinics C on C.ClinicId = UI.ClinicId
+		LEFT OUTER JOIN Clinics C on C.ClinicId = UI.ClinicId
 	WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
 	and UI.RegisteredUserId is null
 

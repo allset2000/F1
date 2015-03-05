@@ -38,7 +38,7 @@ BEGIN
 	WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
 
 	-- Create User entry in the DB
-	INSERT INTO Users(UserName,ClinicId,LoginEmail,Name,Password,Salt) VALUES(@EmailAddress, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt)
+	INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt) VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt)
 	SET @UserId = (SELECT UserId from Users where UserName = @EmailAddress)
 
 	-- Add User Role Xref
