@@ -19,10 +19,11 @@ CREATE TABLE [dbo].[Jobs_Patients]
 [PatientId] [int] NOT NULL CONSTRAINT [DF_Jobs_Patients_PatientId] DEFAULT ((0)),
 [AppointmentId] [int] NOT NULL CONSTRAINT [DF_Jobs_Patients_AppointmentId] DEFAULT ((0))
 ) ON [PRIMARY]
-ALTER TABLE [dbo].[Jobs_Patients] ADD 
-CONSTRAINT [PK_Jobs_Patients] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
 GO
-
+ALTER TABLE [dbo].[Jobs_Patients] ADD CONSTRAINT [PK_Jobs_Patients] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Jobs_Patients_AppointmentId] ON [dbo].[Jobs_Patients] ([AppointmentId]) ON [PRIMARY]
+GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_Patients_PatientId] ON [dbo].[Jobs_Patients] ([PatientId]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Jobs_Patients] ADD CONSTRAINT [FK_Jobs_Patients_Jobs] FOREIGN KEY ([JobNumber]) REFERENCES [dbo].[Jobs] ([JobNumber])
