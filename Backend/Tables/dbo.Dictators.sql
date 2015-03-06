@@ -43,10 +43,17 @@ CREATE TABLE [dbo].[Dictators]
 [Custom2] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Custom3] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Custom4] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[Custom5] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[Custom5] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[SreTypeId] [int] NULL
 ) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [PK_Dictators] PRIMARY KEY CLUSTERED  ([DictatorID]) ON [PRIMARY]
+GO
 CREATE UNIQUE NONCLUSTERED INDEX [IX_DictatorsDictatorIdOk] ON [dbo].[Dictators] ([DictatorIdOk]) ON [PRIMARY]
-
+GO
+ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_Locations] FOREIGN KEY ([ClinicID], [DefaultLocation]) REFERENCES [dbo].[Locations] ([ClinicID], [LocationID])
+GO
+ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK__Dictators__SreTy__542254F0] FOREIGN KEY ([SreTypeId]) REFERENCES [dbo].[SreEngineType] ([SreTypeId])
 GO
 GRANT SELECT ON  [dbo].[Dictators] TO [app_DocExtract]
 GRANT VIEW DEFINITION ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
@@ -54,12 +61,6 @@ GRANT SELECT ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
 GRANT INSERT ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
 GRANT DELETE ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
 GRANT UPDATE ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
-GO
-
-ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [PK_Dictators] PRIMARY KEY CLUSTERED  ([DictatorID]) ON [PRIMARY]
-GO
-
-ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_Locations] FOREIGN KEY ([ClinicID], [DefaultLocation]) REFERENCES [dbo].[Locations] ([ClinicID], [LocationID])
 GO
 EXEC sp_addextendedproperty N'MS_Description', N'Top / Bottom', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'ESignatureLocation'
 GO

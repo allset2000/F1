@@ -13,6 +13,17 @@ GO
 	                   For exception handling Try/Catch blocks are used. 
 	                   In case of failure, the whole transaction will be rolled back to the previous state.
 	                   Logs are created on both, source AND archive databases.
+
+	Revision Details: 1) To improve the perfomance the "DATEDIFF(DAY, js.StatusDate, GETDATE()) >= @archiveAge" segment was replaced with the "GETDATE() - @archiveAge >= js.StatusDate" one.
+	                     Since StatusDate is indexed field, wrapping it into conversion fuction blocks index to be accesed. 
+					  2) Removed WITH (NOLOCK) SQL key word. See reason here: http://stackoverflow.com/questions/686724/sql-server-when-should-you-use-with-nolock
+					  3) Also, "LEFT OUTER JOIN dbo.Jobs_ArchiveDetails AS jad ON j.JobNumber = jad.JobNumber" segments for JobTracking table was replaced with 
+					     "LEFT OUTER JOIN dbo.EA_JobTracking AS ejt ON j.JobNumber = ejt.JobNumber".
+						 With this approach we still validate against records that have been archived previously but also, maintaining  independence for archiving tables from Jobs_ArchiveDetails one. 
+						 In other words, if for example, there are job numbers in Jobs_ArchiveDetails table created from Jobs_Documents_History activation, then with the previous approach these 
+						 job numbers will not be pulled from JobTracking table, which will lead to logical error.
+					  4) Added clustered indexes to temp tables 
+	Revision Version: 1.1
 	
 	Revised Date: Insert revised date here
 	Revised By: Insert name of developr this scrip was modified.
@@ -31,42 +42,41 @@ BEGIN
 					@policyId AS INT, 
 					@archiveID AS INT = 0
 			
-			--Get JobTracking policy parameters		
-			SELECT @archiveAge = ArchiveAge, 
-				   @policyId = PolicyID
+			--Get policy parameters		
+			SELECT @archiveAge = ArchiveAge, @policyId = PolicyID
 			FROM dbo.EA_ArchivePolicy
-			WHERE PolicyName = 'JobTracking' AND 
-				  IsActive = 1
+			WHERE PolicyName = 'JobTracking' AND IsActive = 1
 
-			--Get JobNumbers of Job Tracking that will be archived  
-			--Validate against Jobs_ArchiveDetails, to make sure we do not get previously archived jobs.
 			IF OBJECT_ID('tempdb..#ArchivedJobTracking') IS NOT NULL DROP TABLE #ArchivedJobTracking
-			SELECT DISTINCT j.JobNumber
-			INTO #ArchivedJobTracking
-			FROM dbo.Jobs AS j WITH(NOLOCK) INNER JOIN dbo.JobTracking AS jt WITH(NOLOCK) ON j.JobNumber = jt.JobNumber
-											INNER JOIN dbo.JobStatusB AS js ON j.JobNumber = js.JobNumber AND js.[Status] = @statusCode
-											LEFT OUTER JOIN dbo.Jobs_ArchiveDetails AS jad ON j.JobNumber = jad.JobNumber 
-			WHERE DATEDIFF(DAY, js.StatusDate, GETDATE()) >= @archiveAge AND
-				  jad.TrackingArchivedOn IS NULL
+			CREATE TABLE #ArchivedJobTracking (JobNumber VARCHAR(50) NOT NULL)
+			CREATE CLUSTERED INDEX IX_JobNumber ON #ArchivedJobTracking (JobNumber)
+
+			--Get records to be archived  
+			--Make sure we do not get previously archived jobs.
+			INSERT INTO #ArchivedJobTracking
+			SELECT DISTINCT j.JobNumber 
+			FROM dbo.Jobs AS j INNER JOIN dbo.JobTracking AS jt ON j.JobNumber = jt.JobNumber
+							   INNER JOIN dbo.JobStatusB AS js ON j.JobNumber = js.JobNumber AND js.[Status] = @statusCode
+							   LEFT OUTER JOIN dbo.EA_JobTracking AS ejt ON j.JobNumber = ejt.JobNumber 
+			WHERE GETDATE() - @archiveAge >= js.StatusDate AND ejt.JobNumber IS NULL
 		  
 			--Begin process only if there is a data
 			IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobTracking) 
 			BEGIN
-				--Create archive log for JobTracking policy
+				--Create archive log for policy
 				INSERT INTO dbo.EA_ArchiveLog(PolicyID, ArchiveAge, ArchiveExecutionStartDate)
 				VALUES (@policyId, @archiveAge, GETDATE())
 				
-				--Get created ArchiveID
+				--Get created archiveID
 				SELECT @archiveID = SCOPE_IDENTITY() 
 				
 				--Archive only those that haven't been archived yet.
 				INSERT INTO dbo.EA_JobTracking
 				SELECT jd.*, @archiveID
-				FROM dbo.JobTracking AS jd WITH(NOLOCK)INNER JOIN #ArchivedJobTracking AS ajt ON jd.JobNumber = ajt.JobNumber
+				FROM dbo.JobTracking AS jd INNER JOIN #ArchivedJobTracking AS ajt ON jd.JobNumber = ajt.JobNumber
 
 				--Remove archived records from source database/tables
-				DELETE jd
-				FROM dbo.JobTracking AS jd INNER JOIN #ArchivedJobTracking AS ajt on jd.JobNumber = ajt.JobNumber
+				DELETE jd FROM dbo.JobTracking AS jd INNER JOIN #ArchivedJobTracking AS ajt on jd.JobNumber = ajt.JobNumber
 				
 				--Log archive details
 				INSERT INTO dbo.Jobs_ArchiveDetails (JobNumber, TrackingArchivedOn)
@@ -75,13 +85,13 @@ BEGIN
 				WHERE  jad.JobNumber IS NULL
 				
 				--Update archive details 
-				--Update only those jobs that match archived in this transaction ones and TrackingArchivedOn is null
+				--Update only those jobs that match archived in this transaction ones
 				UPDATE jad
 				SET jad.TrackingArchivedOn = GETDATE()
 				FROM dbo.Jobs_ArchiveDetails AS jad INNER JOIN #ArchivedJobTracking AS ajt ON jad.JobNumber = ajt.JobNumber
 				WHERE jad.TrackingArchivedOn IS NULL
 				
-				--Set JobsDocument policy archive end time
+				--Set policy archive end time
 				UPDATE dbo.EA_ArchiveLog
 				SET ArchiveExecutionEndDate = GETDATE()
 				WHERE ArchiveID = @archiveID

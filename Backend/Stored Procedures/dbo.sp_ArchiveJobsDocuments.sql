@@ -15,6 +15,19 @@ GO
 	                   Logs are created on both, source AND archive databases.
 	
 	
+	Revised Date: 1/28/2015
+	Revised By: Mikayil Bayramov.
+	Revision Details: 1) To improve the perfomance the "DATEDIFF(DAY, js.StatusDate, GETDATE()) >= @archiveAge" segment was replaced with the "GETDATE() - @archiveAge >= js.StatusDate" one.
+	                     Since StatusDate is indexed field, wrapping it into conversion fuction blocks index to be accesed. 
+					  2) Removed WITH (NOLOCK) SQL key word. See reason here: http://stackoverflow.com/questions/686724/sql-server-when-should-you-use-with-nolock
+					  3) Also, "LEFT OUTER JOIN dbo.Jobs_ArchiveDetails AS jad ON j.JobNumber = jad.JobNumber" segments for Jobs_Documents and Jobs_Documents_History tables was replaced with 
+					     "LEFT OUTER JOIN dbo.EA_Jobs_Documents AS jad ON j.JobNumber = jad.JobNumber" and ""LEFT OUTER JOIN dbo.EA_Jobs_Documents_Hisotry AS jad ON j.JobNumber = jad.JobNumber" respectively.
+						 With this approach we still validate against records that have been archived previously but also, maintaining  independence for archiving tables from Jobs_ArchiveDetails one. 
+						 In other words, if for example, there are job numbers in Jobs_ArchiveDetails table created from Jobs_Documents_History activation, then with the previous approach these 
+						 job numbers will not be pulled from Jobs_Documents table, which will lead to logical error. 
+					  4) Added clustered indexes to temp tables
+	Revision Version: 1.1
+
 	Revised Date: Insert revised date here
 	Revised By: Insert name of developr this scrip was modified.
 	Revision Details: Why this script waschanged?
@@ -32,74 +45,68 @@ BEGIN
 					@policyId AS INT,
 					@archiveID AS INT = 0
 					
-			--Get JobDocuments policy parameters	
-			SELECT @archiveAge = ArchiveAge, 
-				   @policyId = PolicyID
+			--Get policy parameters	
+			SELECT @archiveAge = ArchiveAge, @policyId = PolicyID
 			FROM dbo.EA_ArchivePolicy
-			WHERE PolicyName = 'JobDocuments' AND 
-				  IsActive = 1
+			WHERE PolicyName = 'JobDocuments' AND IsActive = 1
 
-			--Get JobNumbers of Jobs Documents and Jobs Documents History that will be archived  
-			--Validate against Jobs_ArchiveDetails, to make sure we do not get previously archived jobs.
 			IF OBJECT_ID('tempdb..#ArchivedJobsDocuments') IS NOT NULL DROP TABLE #ArchivedJobsDocuments
-			SELECT DISTINCT j.JobNumber
-			INTO #ArchivedJobsDocuments
-			FROM dbo.Jobs AS j WITH(NOLOCK) INNER JOIN dbo.Jobs_Documents AS jd WITH(NOLOCK) ON j.JobNumber = jd.JobNumber
-											INNER JOIN dbo.JobStatusB AS js ON j.JobNumber = js.JobNumber AND js.[Status] = @statusCode
-											LEFT OUTER JOIN dbo.Jobs_ArchiveDetails AS jad ON j.JobNumber = jad.JobNumber 
-			WHERE DATEDIFF(DAY, js.StatusDate, GETDATE()) >= @archiveAge AND
-				  jad.DocumentArchivedOn IS NULL
-				  
+			CREATE TABLE #ArchivedJobsDocuments (JobNumber VARCHAR(50) NOT NULL)
+			CREATE CLUSTERED INDEX IX_JobNumber ON #ArchivedJobsDocuments (JobNumber)
+
 			IF OBJECT_ID('tempdb..#ArchivedJobsDocumentsHistory') IS NOT NULL DROP TABLE #ArchivedJobsDocumentsHistory
-			SELECT DISTINCT j.JobNumber
-			INTO #ArchivedJobsDocumentsHistory
-			FROM dbo.Jobs AS j with(nolock) INNER JOIN dbo.Jobs_Documents_History AS jdh WITH(NOLOCK) ON j.JobNumber = jdh.JobNumber
-			                                INNER JOIN dbo.JobStatusB AS js ON j.JobNumber = js.JobNumber AND js.[Status] = @statusCode
-											LEFT OUTER JOIN dbo.Jobs_ArchiveDetails AS jad ON j.JobNumber = jad.JobNumber
-			WHERE DATEDIFF(DAY, js.StatusDate, GETDATE()) >= @archiveAge AND
-				  jad.DocumentArchivedOn IS NULL
+			CREATE TABLE #ArchivedJobsDocumentsHistory (JobNumber VARCHAR(50) NOT NULL)
+			CREATE CLUSTERED INDEX IX_JobNumber ON #ArchivedJobsDocumentsHistory (JobNumber)
+
+			--Get records to be archived 
+			--Make sure we do not get previously archived jobs.
+			INSERT INTO #ArchivedJobsDocuments
+			SELECT DISTINCT j.JobNumber 
+			FROM dbo.Jobs AS j INNER JOIN dbo.Jobs_Documents AS jd ON j.JobNumber = jd.JobNumber
+							   INNER JOIN dbo.JobStatusB AS js ON j.JobNumber = js.JobNumber AND js.[Status] = @statusCode
+							   LEFT OUTER JOIN dbo.EA_Jobs_Documents AS jad ON j.JobNumber = jad.JobNumber 
+			WHERE GETDATE() - @archiveAge >= js.StatusDate AND jad.JobNumber IS NULL
+				  
+			INSERT INTO #ArchivedJobsDocumentsHistory
+			SELECT DISTINCT j.JobNumber 
+			FROM dbo.Jobs AS j INNER JOIN dbo.Jobs_Documents_History AS jdh ON j.JobNumber = jdh.JobNumber
+			                   INNER JOIN dbo.JobStatusB AS js ON j.JobNumber = js.JobNumber AND js.[Status] = @statusCode
+							   LEFT OUTER JOIN dbo.EA_Jobs_Documents_History AS jad ON j.JobNumber = jad.JobNumber
+			WHERE GETDATE() - @archiveAge >= js.StatusDate AND jad.JobNumber IS NULL
 				  
 			--Begin process only if there is a data.
-			IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsDocuments) OR EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsDocumentsHistory) 
-			BEGIN
-				--Create archive log for JobDocuments policy
+			IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsDocuments) OR EXISTS (SELECT TOP 1 1 FROM #ArchivedJobsDocumentsHistory) BEGIN
+				--Create archive log for policy
 				INSERT INTO dbo.EA_ArchiveLog(PolicyID, ArchiveAge, ArchiveExecutionStartDate)
 				VALUES (@policyId, @archiveAge, GETDATE())
 				
-				--Get created ArchiveID
+				--Get created archiveID
 				SELECT @archiveID = SCOPE_IDENTITY() 
 				
-				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsDocuments)
-				BEGIN
+				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsDocuments) BEGIN
 					--Archive only those that haven't been archived yet.
 					INSERT INTO dbo.EA_Jobs_Documents
 					SELECT jd.*, @archiveID
-					FROM dbo.Jobs_Documents AS jd WITH(NOLOCK)INNER JOIN #ArchivedJobsDocuments AS ajd ON jd.JobNumber = ajd.JobNumber
+					FROM dbo.Jobs_Documents AS jd INNER JOIN #ArchivedJobsDocuments AS ajd ON jd.JobNumber = ajd.JobNumber
 					
 					--Remove archived records from source database/tables
-					DELETE jd
-					FROM dbo.Jobs_Documents AS jd INNER JOIN #ArchivedJobsDocuments AS ajd on jd.JobNumber = ajd.JobNumber
+					DELETE jd FROM dbo.Jobs_Documents AS jd INNER JOIN #ArchivedJobsDocuments AS ajd on jd.JobNumber = ajd.JobNumber
 				END
 				
-				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsDocumentsHistory) 
-				BEGIN
+				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsDocumentsHistory) BEGIN
 					--Archive only those that haven't been archived yet.
 					INSERT INTO dbo.EA_Jobs_Documents_History
 					SELECT jdh.*, @archiveID
-					FROM dbo.Jobs_Documents_History AS jdh WITH(NOLOCK)INNER JOIN #ArchivedJobsDocumentsHistory AS ajdh ON jdh.JobNumber = ajdh.JobNumber
+					FROM dbo.Jobs_Documents_History AS jdh INNER JOIN #ArchivedJobsDocumentsHistory AS ajdh ON jdh.JobNumber = ajdh.JobNumber
 					
 					--Remove archived records from source database/tables
-					DELETE jdh
-					FROM dbo.Jobs_Documents_History AS jdh INNER JOIN #ArchivedJobsDocumentsHistory AS ajdh ON jdh.JobNumber = ajdh.JobNumber
+					DELETE jdh FROM dbo.Jobs_Documents_History AS jdh INNER JOIN #ArchivedJobsDocumentsHistory AS ajdh ON jdh.JobNumber = ajdh.JobNumber
 				END
 				
 				--Create list of archived jobs
 				IF OBJECT_ID('tempdb..#ArchivedJobs') IS NOT NULL DROP TABLE #ArchivedJobs
-				SELECT DISTINCT a.JobNumber
-				INTO #ArchivedJobs
-				FROM (SELECT JobNumber FROM #ArchivedJobsDocuments
-					  UNION ALL
-					  SELECT JobNumber FROM #ArchivedJobsDocumentsHistory) AS a
+				SELECT DISTINCT a.JobNumber INTO #ArchivedJobs
+				FROM (SELECT JobNumber FROM #ArchivedJobsDocuments UNION ALL SELECT JobNumber FROM #ArchivedJobsDocumentsHistory) AS a
 				      
 				--Log archive details
 				INSERT INTO dbo.Jobs_ArchiveDetails (JobNumber, DocumentArchivedOn)
@@ -108,13 +115,13 @@ BEGIN
 				WHERE  jad.JobNumber IS NULL
 				
 				--Update archive details 
-				--Update only those jobs that match archived in this transaction ones and DcoumentArchivedOn is null
+				--Update only those jobs that match archived in this transaction ones
 				UPDATE jad
 				SET jad.DocumentArchivedOn = GETDATE()
 				FROM dbo.Jobs_ArchiveDetails AS jad INNER JOIN #ArchivedJobs AS aj ON jad.JobNumber = aj.JobNumber
 				WHERE jad.DocumentArchivedOn IS NULL
 				
-				--Set JobsDocument policy archive end time
+				--Set policy archive end time
 				UPDATE dbo.EA_ArchiveLog
 				SET ArchiveExecutionEndDate = GETDATE()
 				WHERE ArchiveID = @archiveID
