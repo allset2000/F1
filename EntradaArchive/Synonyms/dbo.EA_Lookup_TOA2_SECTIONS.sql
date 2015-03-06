@@ -1,0 +1,2 @@
+CREATE SYNONYM [dbo].[EA_Lookup_TOA2_SECTIONS] FOR [Entrada].[dbo].[Lookup_TOA2_SECTIONS]
+GO
