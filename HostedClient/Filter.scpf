@@ -112,7 +112,7 @@
       </SymmetricKey>
       <Synonym version="1">
         <Include>True</Include>
-        <Expression />
+        <Expression>TRUE</Expression>
       </Synonym>
       <Table version="1">
         <Include>True</Include>
