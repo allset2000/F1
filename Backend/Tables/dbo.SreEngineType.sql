@@ -1,8 +1,13 @@
-CREATE TABLE [dbo].[SreEngineType]
-(
-[SreTypeId] [int] NOT NULL IDENTITY(1, 1),
-[SreType] [nvarchar] (10) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
-) ON [PRIMARY]
+CREATE TABLE dbo.SREEngineType
+            (
+            SRETypeId int NOT NULL IDENTITY (1, 1),
+            SREType varchar(30) NULL
+            ) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[SreEngineType] ADD CONSTRAINT [PK__SreEngin__1C6DAA963A24495C] PRIMARY KEY CLUSTERED  ([SreTypeId]) ON [PRIMARY]
+ALTER TABLE [dbo].SREEngineType ADD CONSTRAINT [PK_SREEngineType] PRIMARY KEY CLUSTERED  (SRETypeId) ON [PRIMARY]
+GO 
+ALTER TABLE dbo.Clinics ADD SRETypeId int null CONSTRAINT fk_clinic_SRETypeId FOREIGN KEY (SRETypeId) REFERENCES SREEngineType (SRETypeId)
 GO
+ALTER TABLE dbo.Dictators ADD SRETypeId int null CONSTRAINT fk_dictators_SRETypeId FOREIGN KEY (SRETypeId) REFERENCES SREEngineType (SRETypeId)
+GO
+
