@@ -6,6 +6,8 @@ CREATE TABLE [dbo].[DictationsTracking]
 [ChangeDate] [datetime] NOT NULL,
 [ChangedBy] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_DictationsTracking_Status_INC] ON [dbo].[DictationsTracking] ([Status]) INCLUDE ([ChangeDate], [DictationID]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[DictationsTracking] ADD CONSTRAINT [PK_DictationsTracking] PRIMARY KEY CLUSTERED  ([DictationsTrackingID]) ON [PRIMARY]
 GO
