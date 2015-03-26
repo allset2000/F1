@@ -175,9 +175,5 @@ BEGIN
 		BEGIN
 			INSERT INTO SREEngineType(SRETypeId,SREType)VALUES(2,'BBN')
 		END
-	IF NOT EXISTS(SELECT * FROM SREEngineType WHERE SREType='Disabled')		
-		BEGIN
-			INSERT INTO SREEngineType(SRETypeId,SREType)VALUES(3,'Disabled')
-		END
 --END #3433#		
 END
