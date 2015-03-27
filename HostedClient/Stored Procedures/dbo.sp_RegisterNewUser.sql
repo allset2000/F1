@@ -37,6 +37,12 @@ BEGIN
 	FROM UserInvitations
 	WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
 
+	-- Validate the ClinicId
+	IF(@cur_clinicid <=0)
+	BEGIN
+		SET @cur_clinicid = (select ConfigValue from SystemConfiguration where ConfigKey = 'SMDefaultClinic')
+	END
+
 	-- Create User entry in the DB
 	INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt) VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt)
 	SET @UserId = (SELECT UserId from Users where UserName = @EmailAddress)
@@ -44,7 +50,7 @@ BEGIN
 	-- Add User Role Xref
 	IF(@cur_RoleId <= 0)
 	BEGIN
-		SET @cur_RoleId = (SELECT TOP 1 RoleId FROM Roles WHERE RoleName = 'Mobile Secure Messaging')
+		SET @cur_RoleId = (select ConfigValue from SystemConfiguration where ConfigKey = 'RUDefualtRole')
 	END
 	INSERT INTO UserRoleXref(UserId,RoleId,IsDeleted) VALUES(@UserId,@cur_RoleId,0)
 

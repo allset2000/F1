@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -13,8 +14,9 @@ CREATE PROCEDURE [dbo].[sp_GetScheduleMessagesToSync] (
 )
 AS
 BEGIN
-	SELECT s.* 
-	FROM Schedules AS s INNER JOIN dbo.vw_GetEncountersToSync AS gets ON s.ScheduleID = gets.ScheduleID AND gets.ScheduleID IS NOT NULL
+	SELECT s.*, gets.JobId, S.Status as 'AppointmentStatus'
+	FROM Schedules AS s 
+	INNER JOIN dbo.vw_GetEncountersToSync AS gets ON s.ScheduleID = gets.ScheduleID AND gets.ScheduleID IS NOT NULL
 	WHERE (gets.Dictations_DictatorID = @DictatorId or gets.Queue_Users_DictatorID = @DictatorId) AND 
 	      (@MaxFutureDays IS NULL OR (DATEDIFF (D, GETDATE(), gets.AppointmentDate) <= @MaxFutureDays))
 END

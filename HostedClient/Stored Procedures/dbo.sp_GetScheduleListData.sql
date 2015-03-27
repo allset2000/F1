@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -44,17 +45,11 @@ BEGIN
 		SELECT ScheduleId, FirstName, MI, LastName, MRN, ReasonForVisit, AppointmentDate, AppointmentStatus, JobId, JobStatus, JobNumber
     	FROM (
 			SELECT	S.ScheduleId, 
-					P.FirstName, 
-					P.MI, 
-					P.LastName, 
-					P.MRN, 
-					S.ReasonName as 'ReasonForVisit', 
-					S.AppointmentDate,
+					S.ResourceID,
+					P.PatientID, 
+					S.ReasonName, 
 					S.Status as 'AppointmentStatus', 
-					J.JobId, 
-					J.Status as 'JobStatus', 
-					J.JobNumber,
-					S.ChangedOn
+					J.JobId 
 			FROM Schedules S 
 				INNER JOIN Patients P on P.PatientID = S.PatientID
 				INNER JOIN #tmp_resourceids TR on TR.ResourceId = S.ResourceId
@@ -73,16 +68,11 @@ BEGIN
 	ELSE
 	BEGIN
 		SELECT	S.ScheduleId, 
-				P.FirstName, 
-				P.MI, 
-				P.LastName, 
-				P.MRN, 
-				S.ReasonName as 'ReasonForVisit', 
-				S.AppointmentDate,
+				S.ResourceID,
+				P.PatientID,
+				S.ReasonName,
 				S.Status as 'AppointmentStatus', 
-				J.JobId, 
-				J.Status as 'JobStatus', 
-				J.JobNumber 
+				J.JobId 
 		FROM Schedules S 
 			INNER JOIN Patients P on P.PatientID = S.PatientID
 			INNER JOIN #tmp_resourceids TR on TR.ResourceId = S.ResourceId
