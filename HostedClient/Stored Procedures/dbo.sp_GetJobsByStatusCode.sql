@@ -11,7 +11,7 @@ GO
 CREATE PROCEDURE [dbo].[sp_GetJobsByStatusCode] (
 	 @StatusCode int,
 	 @IncludeErrors bit,
-	 @ProcessFailureCount int
+	 @ProcessFailureCount INT -- added new parametert to exclude the jobs which were process failured jobs,I was aboou to check-in, looks like Sam checked in with latest changes
 ) AS 
 BEGIN
 	IF (@IncludeErrors = 1)

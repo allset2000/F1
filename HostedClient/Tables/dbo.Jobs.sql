@@ -11,6 +11,7 @@ CREATE TABLE [dbo].[Jobs]
 [Priority] [smallint] NOT NULL CONSTRAINT [DF_Jobs_Priority] DEFAULT ((0)),
 [RuleID] [smallint] NULL,
 [AdditionalData] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ProcessFailureCount] [smallint] NULL,
 [IsProcessed] [bit] NOT NULL CONSTRAINT [DF__Jobs__IsProcesse__0579B962] DEFAULT ((0))
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
