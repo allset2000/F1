@@ -37,6 +37,7 @@ CREATE TABLE [dbo].[Jobs]
 [TemplateName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [IsGenericJob] [bit] NULL,
 [IsNewSchema] [bit] NULL,
+[ProcessFailureCount] [smallint] NULL,
 [IsProcessed] [bit] NOT NULL CONSTRAINT [DF__Jobs__IsProcesse__274FAE79] DEFAULT ((0))
 ) ON [PRIMARY]
 GO
