@@ -1,5 +1,12 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (69, 'FNC-CLINIC-ADMINCLINIC', 'Function - Manage Clinic', NULL, 20)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (70, 'TAB-NOTIFICATIONS', 'Tab - Notifications', NULL, 22)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (71, 'FNC-NOTIFICATIONS-ADD', 'Function - Add Notifications', NULL, 22)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (72, 'FNC-NOTIFICATIONS-EDIT', 'Function - Edit Notifications', NULL, 22)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (73, 'TAB-BACKENDLEGACYROW', 'Tab - Backend Legacy ROW', NULL, 23)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (74, 'FNC-BACKENDLEGACYROWUSER-ADD', 'Function - Add Backend Legacy ROWUser', NULL, 23)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (75, 'FNC-BACKENDLEGACYROWUSER-EDIT', 'Function - Edit Backend Legacy ROWUser', NULL, 23)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (76, 'FNC-BACKENDLEGACYROWCLINIC-ADD', 'Function - Add Backend Legacy ROWClinic', NULL, 23)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (77, 'FNC-BACKENDLEGACYROWCLINIC-EDIT', 'Function - Edit Backend Legacy ROWClinic', NULL, 23)
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (1, 'TAB-DICT', 'Dictators Tab', NULL, 4)
@@ -70,4 +77,5 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissi
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (66, 'FNC-DICTATOR-CHANGEUSER', 'Function - Change Dictator User', NULL, 4)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (67, 'FNC-DICTATORS-ADD', 'Function - Add New Dictators', NULL, 4)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (68, 'FNC-DICTATORS-ADDMASSROLE', 'Function - Manage Dictator Roles (Mass)', NULL, 4)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (69, 'FNC-CLINIC-ADMINCLINIC', 'Function - Manage Clinic', NULL, 20)
 SET IDENTITY_INSERT [dbo].[Permissions] OFF

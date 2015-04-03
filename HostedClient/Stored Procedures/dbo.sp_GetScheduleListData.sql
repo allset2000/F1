@@ -42,14 +42,16 @@ BEGIN
 
 	IF (@LastSync is not null)
 	BEGIN
-		SELECT ScheduleId, FirstName, MI, LastName, MRN, ReasonForVisit, AppointmentDate, AppointmentStatus, JobId, JobStatus, JobNumber
+		SELECT ScheduleId, ResourceID, PatientID, ReasonName, AppointmentStatus, JobId
     	FROM (
 			SELECT	S.ScheduleId, 
 					S.ResourceID,
 					P.PatientID, 
 					S.ReasonName, 
 					S.Status as 'AppointmentStatus', 
-					J.JobId 
+					J.JobId,
+					S.Changedon,
+					S.AppointmentDate
 			FROM Schedules S 
 				INNER JOIN Patients P on P.PatientID = S.PatientID
 				INNER JOIN #tmp_resourceids TR on TR.ResourceId = S.ResourceId
@@ -72,7 +74,7 @@ BEGIN
 				P.PatientID,
 				S.ReasonName,
 				S.Status as 'AppointmentStatus', 
-				J.JobId 
+				J.JobId
 		FROM Schedules S 
 			INNER JOIN Patients P on P.PatientID = S.PatientID
 			INNER JOIN #tmp_resourceids TR on TR.ResourceId = S.ResourceId
