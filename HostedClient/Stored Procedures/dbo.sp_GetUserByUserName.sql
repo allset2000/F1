@@ -18,7 +18,7 @@ CREATE PROCEDURE [dbo].[sp_GetUserByUserName] (
 	@UserName varchar(100)
 ) AS 
 BEGIN
-	SELECT UserID, UserName, ClinicId, LoginEmail, Name, Password, Salt, Deleted, IsLockedOut,LastPasswordReset,PasswordAttemptFailure,LastFailedAttempt,PWResetRequired,SecurityToken,LastLoginDate
+	SELECT UserID, UserName, ClinicId, LoginEmail, Name, Password, Salt, Deleted, IsLockedOut,LastPasswordReset,PasswordAttemptFailure,LastFailedAttempt,PWResetRequired,SecurityToken,LastLoginDate,Firstname,Lastname
 	FROM Users where UserName = @UserName
 END
 GO
