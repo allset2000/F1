@@ -1,7 +1,11 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+
+--Create Stored procedure
+
 /*
 	Created By: Mikayil Bayramov
 	Created Date: 03/21/2015
