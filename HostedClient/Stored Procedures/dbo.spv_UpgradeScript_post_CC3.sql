@@ -11,6 +11,21 @@ GO
 CREATE PROCEDURE [dbo].[spv_UpgradeScript_post_CC3]
 AS
 BEGIN
+-- #0000# - Adding Data values for PatientDataAccessPermissions
+IF NOT EXISTS(select 1 from PatientDataAccessPermissions Where PermissionCode = 0)
+BEGIN
+	INSERT INTO PatientDataAccessPermissions(PermissionCode, Name,Description,CreatedDate,UpdatedDate) values(0,'None','Cannot have access to patient demographic and/or clinical data',GETDATE(),GETDATE())
+END
+IF NOT EXISTS(select 1 from PatientDataAccessPermissions Where PermissionCode = 1)
+BEGIN
+	INSERT INTO PatientDataAccessPermissions(PermissionCode, Name,Description,CreatedDate,UpdatedDate) values(1,'Demographic','Can have access to patient demographic data',GETDATE(),GETDATE())
+END
+IF NOT EXISTS(select 1 from PatientDataAccessPermissions Where PermissionCode = 2)
+BEGIN
+	INSERT INTO PatientDataAccessPermissions(PermissionCode, Name,Description,CreatedDate,UpdatedDate) values(2,'Clinical','Can have access to patient demographic and clinical data',GETDATE(),GETDATE())
+END
+-- #0000# - END Adding Data values for PatientDataAccessPermissions
+
 -- #0000# - Upgraded DB to CC.3 (data changes)
 -- Included tickets in the below scripts are as follows:
 -- #3398# - Change user permission for dictator management
