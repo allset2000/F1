@@ -63,7 +63,15 @@ BEGIN
 	WHERE UI.RequestingUserId = @UserId
 	and UI.RegisteredUserId is null and UI.FirstName is not null
 
-	-- Step4: Map favorites
+	-- Step5: Add User that invited you
+	INSERT INTO #contactlist (UserId,FirstName,MI,LastName,QuickBloxUSerID,QBUserLogin,IsFavorite)
+	SELECT	U.UserId, U.FirstNAme, U.MI, U.LastName, QBU.QuickBloxUserID, QBU.Login as 'QBUserLogin', 0 as 'IsFavorite'
+	FROM UserInvitations UI
+		INNER JOIN Users U on U.UserId = UI.RequestingUserId
+		INNER JOIN QuickBloxUsers QBU on U.UserID = QBU.UserID
+	WHERE UI.RegisteredUserId = @UserId
+
+	-- Step6: Map favorites
 	UPDATE #contactlist set IsFavorite = 1 WHERE UserId in (SELECT FavUserId FROM SMContactFavorites WHERE UserId = @UserId and IsDeleted = 0)
 
 	SELECT * FROM #contactlist

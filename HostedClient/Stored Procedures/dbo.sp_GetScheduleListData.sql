@@ -42,13 +42,13 @@ BEGIN
 
 	IF (@LastSync is not null)
 	BEGIN
-		SELECT ScheduleId, ResourceID, PatientID, ReasonName, AppointmentStatus, JobId
+		SELECT ScheduleID, ResourceID, PatientID, ReasonName, AppointmentStatus, AppointmentDate, JobId
     	FROM (
-			SELECT	S.ScheduleId, 
+			SELECT	S.ScheduleID, 
 					S.ResourceID,
 					P.PatientID, 
 					S.ReasonName, 
-					S.Status as 'AppointmentStatus', 
+					S.Status as 'AppointmentStatus',
 					J.JobId,
 					S.Changedon,
 					S.AppointmentDate
@@ -60,6 +60,7 @@ BEGIN
 			WHERE S.Clinicid = @ClinicId
 				  and S.AppointmentDate >= @StartDate
 				  and S.AppointmentDate <= @EndApptDate
+				  and S.Status in (0,100,200)
 			Order By S.Changedon DESC
 			OFFSET @CurrentPlace ROWS
 			FETCH NEXT @SelectAmount ROWS ONLY
@@ -69,12 +70,13 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		SELECT	S.ScheduleId, 
+		SELECT	S.ScheduleID, 
 				S.ResourceID,
 				P.PatientID,
 				S.ReasonName,
 				S.Status as 'AppointmentStatus', 
-				J.JobId
+				J.JobId,
+				S.AppointmentDate
 		FROM Schedules S 
 			INNER JOIN Patients P on P.PatientID = S.PatientID
 			INNER JOIN #tmp_resourceids TR on TR.ResourceId = S.ResourceId
@@ -83,6 +85,7 @@ BEGIN
 		WHERE S.Clinicid = @ClinicId
 				and S.AppointmentDate >= @StartDate
 				and S.AppointmentDate <= @EndApptDate
+				and S.Status in (0,100,200)
 		Order By S.AppointmentDate,S.Changedon DESC
 		OFFSET @CurrentPlace ROWS
 		FETCH NEXT @SelectAmount ROWS ONLY
