@@ -26,14 +26,15 @@ CREATE PROCEDURE [dbo].[sp_CreateUpdateClinic] (
 	@AutoEnrollDevices bit,
 	@CRFlagType int,
 	@ForceCRStartDate datetime = null,
-	@ForceCREndDate datetime = null
+	@ForceCREndDate datetime = null,
+	@SRETypeID int = -1
 ) AS 
 BEGIN
 	
 	IF NOT EXISTS(SELECT * FROM Clinics where ClinicID = @ClinicID)
 	BEGIN
-		INSERT INTO Clinics(ClinicId,Name,MobileCode,AccountManagerID,ExpressQueuesEnabled,ImageCaptureEnabled,PatientClinicalsEnabled,Deleted,EHRVendorID,EHRClinicID,EHRLocationID,ClinicCode,DisableUpdateAlert,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,AutoEnrollDevices)
-		VALUES(@ClinicId,@Name, @MobileCode, @AccountManagerID, @ExpressQueuesEnabled, @ImageCaptureEnabled, @PatientClinicalsEnabled, @Deleted, @EHRVendorID, @EHRClinicID, @EHRLocationID, @ClinicCode, @DisableUpdateAlert, @CRFlagType, @ForceCRStartDate, @ForceCREndDate, @ExcludeStat, @AutoEnrollDevices)
+		INSERT INTO Clinics(ClinicId,Name,MobileCode,AccountManagerID,ExpressQueuesEnabled,ImageCaptureEnabled,PatientClinicalsEnabled,Deleted,EHRVendorID,EHRClinicID,EHRLocationID,ClinicCode,DisableUpdateAlert,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,AutoEnrollDevices,SRETypeID)
+		VALUES(@ClinicId,@Name, @MobileCode, @AccountManagerID, @ExpressQueuesEnabled, @ImageCaptureEnabled, @PatientClinicalsEnabled, @Deleted, @EHRVendorID, @EHRClinicID, @EHRLocationID, @ClinicCode, @DisableUpdateAlert, @CRFlagType, @ForceCRStartDate, @ForceCREndDate, @ExcludeStat, @AutoEnrollDevices, @SRETypeID)
 
 		IF (@EHRVendorID = 2)
 		BEGIN
@@ -61,7 +62,8 @@ BEGIN
 						   ForceCRStartDate = @ForceCRStartDate, 
 						   ForceCREndDate = @ForceCREndDate, 
 						   ExcludeStat = @ExcludeStat, 
-						   AutoEnrollDevices = @AutoEnrollDevices
+						   AutoEnrollDevices = @AutoEnrollDevices,
+						   SRETypeID = @SRETypeID
 		WHERE ClinicId = @ClinicID
 
 		IF (@EHRVendorID = 2)
@@ -82,4 +84,7 @@ END
 
 
 
+
 GO
+
+
