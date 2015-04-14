@@ -7,13 +7,13 @@ CREATE TABLE [dbo].[JobTypes]
 [Vocabulary] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [TddEnabled] [bit] NOT NULL CONSTRAINT [DF_JobTypes_TddEnabled] DEFAULT ((0)),
 [AckEnabled] [smallint] NOT NULL CONSTRAINT [DF_RulesJobs_AckEnabled] DEFAULT ((0)),
-[EHRDocumentTypeID] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_JobTypes_EHRDocumentTypeID] DEFAULT (''),
+[EHRDocumentTypeID] [varchar] (150) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_JobTypes_EHRDocumentTypeID] DEFAULT (''),
 [EHRImageTypeID] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_JobTypes_EHRImageTypeID] DEFAULT (''),
 [NoShowEnabled] [bit] NOT NULL CONSTRAINT [DF__JobTypes__NoShow__4C364F0E] DEFAULT ((0)),
 [DisableGenericJobs] [bit] NOT NULL CONSTRAINT [DF__JobTypes__Disabl__4D2A7347] DEFAULT ((0)),
 [AllowEncounterSearch] [bit] NOT NULL CONSTRAINT [DF_JobTypes_AllowEncounterSearch] DEFAULT ((0)),
 [AllowNotifications] [bit] NOT NULL CONSTRAINT [DF_JobTypes_AllowNotifications] DEFAULT ((0)),
-[DocumentType] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_JobTypes_DocumentType] DEFAULT ('')
+[DocumentType] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_JobTypes_DocumentType] DEFAULT ('')
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[JobTypes] ADD 
 CONSTRAINT [PK_JobTypes] PRIMARY KEY CLUSTERED  ([JobTypeID]) ON [PRIMARY]
