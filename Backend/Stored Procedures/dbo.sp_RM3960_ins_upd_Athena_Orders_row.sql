@@ -1,7 +1,9 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+-- Stored Procedure
 
 /* =============================================
 Author: Mike Cardwell
@@ -15,7 +17,7 @@ CREATE Procedure [dbo].[sp_RM3960_ins_upd_Athena_Orders_row]
 
 @clinicCode varchar(5),
 @JobType varchar(60)
- 
+
 as 
 BEGIN
 
@@ -26,24 +28,24 @@ BEGIN
          PRINT'Clinic Id not Found'
          return-1
 END
- 
+
 If NOT EXISTS(Select jobTypeId from entradahostedClient.dbo.Jobtypes where clinicID=@clinicID and name = @JobType)
 BEGIN
          PRINT'Clinic Does not have this job type setup'
          RETURN-1
 END
- 
+
 DECLARE @message VARCHAR(1000)
 DECLARE @fielData VARCHAR(1000)
 DECLARE @ruleName VARCHAR(40)
- 
+
 SET @ruleName ='OrderInterpretation'
 Set @message = 
 'MSH|^~\&|ENTRADA|||##athenaclinic##|##Now##||ORU^R02|##Id##|P|2.3|##JobNumber##|##ClientJobNbr##|||||||
 PID|||##PatMRN##||##PatLastName##^##PatFirstName##^##PatMI##|##PatDOB##|||||||||||||||||||||||||
 ##BEGIN_REPEAT##OBR||##encnbr##|##orderid##|##Sections##|||||||||||||||||
 OBX|1|TX|||##TemplateDocument##||||||R|||##Now##||##END_REPEAT##'
- 
+
 Set @fielData = 
 '<renaming_rule>
   <settings>
@@ -122,8 +124,8 @@ ELSE
 BEGIN
          PRINT'Updated Job Delivery Rule'
 END
- 
-UPDATE entrada.dbo.ROW_HL7Rules Set Message= @message, FieldData=@fielData WHERE ClinicID=@clinicID and @JobType=@JobType
+
+UPDATE entrada.dbo.ROW_HL7Rules Set Message= @message, FieldData=@fielData WHERE ClinicID=@clinicID and Rulename = @ruleName
 IF @@ROWCOUNT= 0
 BEGIN
          INSERT INTO Entrada.dbo.ROW_HL7Rules(ClinicID,Message, FieldData, RuleName)values (@clinicID, @message, @fielData, @ruleName)
@@ -131,12 +133,12 @@ BEGIN
 END
 ELSE
 BEGIN
-         PRINT'Updated Job Delivery Rule'
+         PRINT'Updated Row_HL7 Rule'
 END
- 
- 
- 
- 
+
+
+
+
 END
 
 GO
