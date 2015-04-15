@@ -2,6 +2,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+-- Stored Procedure
 
 -- =============================================
 -- Author: Sam Shoultz
@@ -31,7 +32,7 @@ BEGIN
 	BEGIN
 		UPDATE Jobs_Row SET ROWStatus = @RowStatus, ChangedDate = GETDATE() WHERE JobID = @JobId
 	END
-		
+
 	IF (@AckStatus is not null)
 	BEGIN
 		UPDATE Jobs_Row SET AckStatus = @AckStatus, ChangedDate = GETDATE() WHERE JobID = @JobId
@@ -48,5 +49,6 @@ BEGIN
 	END
 
 END
+
 
 GO

@@ -19,6 +19,8 @@ CREATE TABLE [dbo].[Users]
 [MI] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [LastName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Users_LoginEmail] ON [dbo].[Users] ([LoginEmail]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[Users] ADD CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED  ([UserID]) ON [PRIMARY]
 GO
