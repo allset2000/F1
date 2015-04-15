@@ -11,6 +11,8 @@ CREATE TABLE [dbo].[Dictations]
 [FileName] [varchar] (255) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [ClientVersion] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Dictations_QueueID_Status_INC] ON [dbo].[Dictations] ([QueueID], [Status]) INCLUDE ([DictatorID], [JobID]) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_QueueID_INC_DictationID_JobID] ON [dbo].[Dictations] ([QueueID]) INCLUDE ([DictationID], [JobID]) ON [PRIMARY]
 
 CREATE NONCLUSTERED INDEX [IX_Status_INC_JobID_DictatorID_QueueID] ON [dbo].[Dictations] ([Status]) INCLUDE ([DictatorID], [JobID], [QueueID]) ON [PRIMARY]
