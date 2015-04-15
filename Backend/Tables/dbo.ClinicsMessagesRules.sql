@@ -11,10 +11,9 @@ CREATE TABLE [dbo].[ClinicsMessagesRules](
 [NoStatJobContentPattern] [varchar] (4000) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [SendTo] [varchar] (4000) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [StatJobFrequency] [decimal] (8, 2) NOT NULL,
-[NoStatJobFrequency] [decimal] (8, 2) NOT NULL
-	[NoStatJobFrequency] [decimal](8, 2) NOT NULL,
-	,[UserID] [int] NULL,
-	[NotificationTypeID] [int] NULL,
+[NoStatJobFrequency] [decimal](8, 2) NOT NULL,
+[UserID] [int] NULL,
+[NotificationTypeID] [int] NULL,
  CONSTRAINT [PK_CRMessageRules] PRIMARY KEY CLUSTERED 
 (
 	[MessageRuleId] ASC
