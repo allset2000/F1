@@ -34,7 +34,7 @@ BEGIN
 
 	CREATE TABLE #tmp_resourceids
 	(
-		ResourceId INT
+		ResourceId VARCHAR(100)
 	)
 
 	INSERT INTO #tmp_resourceids
@@ -49,7 +49,7 @@ BEGIN
 					P.PatientID, 
 					S.ReasonName, 
 					S.Status as 'AppointmentStatus',
-					J.JobId,
+					CASE WHEN J.JobId is null THEN 'null' ELSE CAST(J.JobId as varchar(10)) END as JobId,
 					S.Changedon,
 					S.AppointmentDate
 			FROM Schedules S 
@@ -75,7 +75,7 @@ BEGIN
 				P.PatientID,
 				S.ReasonName,
 				S.Status as 'AppointmentStatus', 
-				J.JobId,
+				CASE WHEN J.JobId is null THEN 'null' ELSE CAST(J.JobId as varchar(10)) END as JobId,
 				S.AppointmentDate
 		FROM Schedules S 
 			INNER JOIN Patients P on P.PatientID = S.PatientID

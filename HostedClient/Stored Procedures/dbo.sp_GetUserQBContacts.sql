@@ -25,6 +25,13 @@ BEGIN
 		IsFavorite bit
 	)
 
+	-- Step1: Add the User to the list (mobile needs the user added at all times)
+	INSERT INTO #contactlist (UserId,FirstName,MI,LastName,QuickBloxUSerID,QBUserLogin,IsFavorite)
+	SELECT DISTINCT(U.UserId), U.FirstName, U.MI, U.LastName, QBU.QuickBloxUserID, QBU.Login as 'QBUserLogin', 0 as 'IsFavorite'
+	FROM Users U
+		INNER JOIN QuickBloxUsers QBU on U.UserID = QBU.UserID
+	WHERE U.UserId = @UserId
+
 	-- Step 1a: For the users with dictators associated (doctors) mapped to the same clinics of the users clincs
 	INSERT INTO #contactlist (UserId,FirstName,MI,LastName,QuickBloxUSerID,QBUserLogin,IsFavorite)
 	SELECT DISTINCT(U.UserId), U.FirstName, U.MI, U.LastName, QBU.QuickBloxUserID, QBU.Login as 'QBUserLogin', 0 as 'IsFavorite'
@@ -35,6 +42,7 @@ BEGIN
 						 FROM Dictators D
 							INNER JOIN Clinics C on C.ClinicId = D.ClinicId
 						 WHERE D.UserId = @UserId)
+	and U.UserId not in (select UserId from #contactlist)
 
 	-- Step 2: For the Users who are SM only (no dictators) mapped to the same clinics for the user clinics
 	INSERT INTO #contactlist (UserId,FirstName,MI,LastName,QuickBloxUSerID,QBUserLogin,IsFavorite)
