@@ -10,7 +10,7 @@ AS
 BEGIN
 	SELECT 
 		Admin_ID
-		, Admin_Password
+		, '' AS Admin_Password
 	FROM ROW_Admins
 	WHERE Admin_ID = @Admin_ID
 END
