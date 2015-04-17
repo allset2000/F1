@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -12,7 +13,8 @@ CREATE PROCEDURE [dbo].[ins_upd_clinical]
 	@MRN varchar(36),
 	@Category varchar(60),
 	@Data varchar(max),
-	@EHRControlID varchar(100)
+	@EHRControlID varchar(100),
+	@Status varchar(100) = null
 AS
 BEGIN
 	SET NOCOUNT ON;
@@ -26,18 +28,26 @@ BEGIN
 		RETURN
 	END
 
-    UPDATE PatientClinicals
-	SET
-		Data = @Data
-	WHERE
-		EHRControlID = @EHRControlID AND
-		Category = @Category AND
-		PatientID = @PatientID
-
-	IF @@ROWCOUNT = 0
+	IF (@Status = 'INACTIVE')
 	BEGIN
-		INSERT INTO PatientClinicals (PatientID, Category, Data, EHRControlID)
-		VALUES (@PatientID, @Category, @Data, @EHRControlID)
+		DELETE FROM PatientClinicals WHERE EHRControlID = @EHRControlID AND	Category = @Category AND PatientID = @PatientID
 	END
+	ELSE
+	BEGIN
+		UPDATE PatientClinicals
+		SET
+			Data = @Data
+		WHERE
+			EHRControlID = @EHRControlID AND
+			Category = @Category AND
+			PatientID = @PatientID
+
+		IF @@ROWCOUNT = 0
+		BEGIN
+			INSERT INTO PatientClinicals (PatientID, Category, Data, EHRControlID)
+			VALUES (@PatientID, @Category, @Data, @EHRControlID)
+		END
+	END
+
 END
 GO
