@@ -28,5 +28,3 @@ ALTER TABLE [dbo].[Users] ADD CONSTRAINT [uc_UserName] UNIQUE NONCLUSTERED  ([Us
 GO
 CREATE NONCLUSTERED INDEX [IX_Users_ClinicID] ON [dbo].[Users] ([ClinicID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_Users_LoginEmail] ON [dbo].[Users] ([LoginEmail]) ON [PRIMARY]
-GO
