@@ -26,7 +26,7 @@ BEGIN
 	DECLARE @StartDate DateTime
 	DECLARE @EndApptDate DateTime
 	SET @SelectAmount = @SelectSize * 3 -- we pull 3 pages worth of data
-	SET @CurrentPlace = @CurrentPage * @SelectSize
+	SET @CurrentPlace = (@CurrentPage - 1) * @SelectSize -- Current page should start at 0 to calculate the current item its looking at
 	SET @DaysForward = @DaysForward + 1 -- need to add 1 to ensure daysforward is correct
 	SET @DaysPast = @DaysPast * -1
 	SET @StartDate = DATEADD(day,@DaysPast,@AppointmentDate)
