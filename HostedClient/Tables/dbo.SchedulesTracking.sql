@@ -6,7 +6,7 @@ CREATE TABLE [dbo].[SchedulesTracking]
 [AppointmentDate] [datetime] NOT NULL,
 [PatientID] [int] NOT NULL,
 [AppointmentID] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-[EncounterID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+[EncounterID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Attending] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [LocationID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [LocationName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
