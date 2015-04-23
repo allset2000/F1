@@ -22,10 +22,8 @@ BEGIN
 		  ,[ClinicsMessagesRules].[StatJobFrequency]
 		  ,[ClinicsMessagesRules].[NoStatJobFrequency]
 		  ,[ClinicsMessagesRules].[UserID]
-		  ,[ClinicsMessagesRules].[NotificationTypeID]
-		  ,CASE WHEN [NotificationTypeID] = 1 THEN 'CRStatJobAvailable'
-				WHEN [NotificationTypeID] = 2 THEN 'CRJobAvailable'
-				WHEN [NotificationTypeID] = 3 THEN 'OrphanJobNotification' END AS [NotificationType]
+		  ,CASE WHEN [MessageTypeId] = 1 THEN 'CRJobAvailable'
+				WHEN [MessageTypeId] = 2 THEN 'OrphanJobAvailable' END AS [NotificationType]
 		  ,[Contacts].FullName AS [User]
 		  ,[Locations].[LocationName]
 		  ,[Clinics].[ClinicName]

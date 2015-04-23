@@ -18,7 +18,6 @@ CREATE PROCEDURE [dbo].[sp_CreateMessageRule]
 	, @StatJobFrequency DECIMAL(8,2) = null
 	, @NoStatJobFrequency DECIMAL(8,2) = null
 	, @UserID INT = -1
-	, @NotificationTypeID INT = -1
 )
 AS
 BEGIN	
@@ -38,8 +37,7 @@ BEGIN
 				,[SendTo]
 				,[StatJobFrequency]
 				,[NoStatJobFrequency]
-				,[UserID]
-				,[NotificationTypeID])
+				,[UserID])
 			VALUES
 				((SELECT MAX(MessageRuleId)+1 FROM [ClinicsMessagesRules])
 				,@MessageTypeId
@@ -54,8 +52,7 @@ BEGIN
 				,@SendTo
 				,@StatJobFrequency
 				,@NoStatJobFrequency
-				,@UserID
-				,@NotificationTypeID)
+				,@UserID)
 	SELECT SCOPE_IDENTITY()		
 	END
 	ELSE
@@ -75,7 +72,6 @@ BEGIN
 			,[StatJobFrequency] = @StatJobFrequency
 			,[NoStatJobFrequency] = @NoStatJobFrequency
 			,[UserID] = @UserID
-			,[NotificationTypeID] = @NotificationTypeID
 		WHERE [MessageRuleId] = @MessageRuleId
 	END
 END
