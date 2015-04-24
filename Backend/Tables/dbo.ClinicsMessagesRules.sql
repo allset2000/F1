@@ -13,7 +13,6 @@ CREATE TABLE [dbo].[ClinicsMessagesRules](
 [StatJobFrequency] [decimal] (8, 2) NOT NULL,
 [NoStatJobFrequency] [decimal](8, 2) NOT NULL,
 [UserID] [int] NULL,
-[NotificationTypeID] [int] NULL,
  CONSTRAINT [PK_CRMessageRules] PRIMARY KEY CLUSTERED 
 (
 	[MessageRuleId] ASC
