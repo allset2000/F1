@@ -1,7 +1,7 @@
 /******************************    
 ** File:  spGetJobsForSREProcessing.sql    
 ** Name:  spGetJobsForSREProcessing    
-** Desc:  Get the jobs with given status and updates the Isprocessed column to 1    
+** Desc:  Get the jobs with given status and updates the IsLockedForProcessing column to 1    
 ** Auth:  Suresh    
 ** Date:  13/Feb/2015    
 **************************    
@@ -32,43 +32,43 @@ DECLARE @UpdatedJobCount INT
  Vocabulary varchar(255),  
  Stat bit,  
  ReceivedOn datetime,  
- IsProcessed bit,  
+ IsLockedForProcessing bit,  
  SRETypeId int  
  )  
    
- DECLARE @IsProcessed BIT    
+ DECLARE @IsLockedForProcessing BIT    
  -- Get nVoQ Jobs  
   INSERT INTO @TempJobs    
-  SELECT top (@vintNVoQJobCount) jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.Isprocessed,  
+  SELECT top (@vintNVoQJobCount) jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,  
   CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId   
   FROM  Jobs jb    
   INNER JOIN dbo.Dictators d on jb.DictatorID = d.DictatorID  
   INNER JOIN Clinics c on jb.ClinicID = c.ClinicID  
   INNER JOIN  JobStatusA js ON jb.JobNumber = js.JobNumber    
   WHERE  js.Status = 110  
-  AND jb.IsProcessed = 0  
+  AND jb.IsLockedForProcessing = 0  
   --AND jb.DictatorID = 'nvoqaposton'  
   AND ((d.SRETypeId IS NOT NULL AND d.SRETypeId = 1) or (d.SRETypeId is NULL AND C.SRETypeId IS NOT NULL AND C.SRETypeID=1))  
   ORDER BY JB.Stat desc, JB.ReceivedOn desc  
    
  -- Get BBN Jobs  
   INSERT INTO @TempJobs   
-  SELECT top (@vintBBNJobCount) jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.Isprocessed,  
+  SELECT top (@vintBBNJobCount) jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,  
   CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId   
   FROM  Jobs jb    
   INNER JOIN dbo.Dictators d on jb.DictatorID = d.DictatorID  
   INNER JOIN Clinics c on jb.ClinicID = c.ClinicID  
   INNER JOIN  JobStatusA js ON jb.JobNumber = js.JobNumber    
   WHERE  js.Status = 110  
-  AND jb.IsProcessed = 0  
+  AND jb.IsLockedForProcessing = 0  
   --AND jb.DictatorID = 'nvoqaposton'  
   AND ((d.SRETypeId IS NOT NULL AND d.SRETypeId = 2) or (d.SRETypeId is NULL AND C.SRETypeId IS NOT NULL AND C.SRETypeID=2))  
   ORDER BY JB.Stat desc, JB.ReceivedOn desc  
   
-  --update the jobs to IsProcessed  
-  UPDATE JOBS Set IsProcessed =1 FROM JOBS JB   
+  --update the jobs to IsLockedForProcessing  
+  UPDATE JOBS Set IsLockedForProcessing =1 FROM JOBS JB   
   INNER JOIN @TempJobs TJ on JB.JobNumber = TJ.JobNumber  
-  WHERE JB.IsProcessed=0  
+  WHERE JB.IsLockedForProcessing=0  
     
   SET @UpdatedJobCount = @@ROWCOUNT  
   SELECT @SelectedJobCount = COUNT(*) FROM @TempJobs  

@@ -38,7 +38,7 @@ CREATE TABLE [dbo].[Jobs]
 [IsGenericJob] [bit] NULL,
 [IsNewSchema] [bit] NULL,
 [ProcessFailureCount] [smallint] NULL,
-[IsProcessed] [bit] NOT NULL CONSTRAINT [DF__Jobs__IsProcesse__274FAE79] DEFAULT ((0))
+[IsLockedForProcessing] [bit] NOT NULL CONSTRAINT [DF__Jobs__IsProcesse__274FAE79] DEFAULT ((0))
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
