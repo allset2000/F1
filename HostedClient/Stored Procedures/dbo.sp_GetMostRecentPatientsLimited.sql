@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -55,7 +56,7 @@ SELECT  p.PatientID ,
         p.City ,
         p.State ,
         p.Zip ,
-        p.DOB ,
+        CASE WHEN ISDATE(dob) = 1 THEN convert(varchar(10),cast(dob as date),101) ELSE '01/01/1900' END as 'DOB',
         p.Phone1 ,
         p.Phone2 ,
         p.Fax1 ,

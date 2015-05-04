@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -13,9 +14,15 @@ CREATE PROCEDURE [dbo].[sp_GetPatientsToSync] (
 	 @MaxFutureDays int
 ) AS 
 BEGIN
+	CREATE TABLE #tmp_patientid
+	(
+		PatientId int
+	)
+
 	IF (@MaxFutureDays >= 0)
 	BEGIN
-		SELECT DISTINCT P.*
+		INSERT INTO #tmp_patientid
+		SELECT DISTINCT P.PatientId
 		FROM Dictations D
 			INNER JOIN Jobs J on J.JobID = D.JobID 
 			INNER JOIN Encounters E ON J.EncounterID = E.EncounterID
@@ -29,7 +36,8 @@ BEGIN
 	END
 	ELSE
 	BEGIN
-		SELECT DISTINCT P.*
+		INSERT INTO #tmp_patientid
+		SELECT DISTINCT P.PatientId
 		FROM Dictations D
 			INNER JOIN Jobs J on J.JobID = D.JobID 
 			INNER JOIN Encounters E ON J.EncounterID = E.EncounterID
@@ -40,5 +48,31 @@ BEGIN
 				AND Q.Deleted = 0
 				AND (D.DictatorID = @DictatorId or QU.DictatorID = @DictatorId)
 	END
+
+	SELECT  PatientID ,
+			ClinicID ,
+			MRN ,
+			AlternateID ,
+			FirstName ,
+			MI ,
+			LastName ,
+			Suffix ,
+			Gender ,
+			Address1 ,
+			Address2 ,
+			City ,
+			State ,
+			Zip ,
+			CASE WHEN ISDATE(dob) = 1 THEN convert(varchar(10),cast(dob as date),101) ELSE '01/01/1900' END as 'DOB',
+			Phone1 ,
+			Phone2 ,
+			Fax1 ,
+			Fax2 ,
+			PrimaryCareProviderID
+       FROM dbo.Patients 
+	   WHERE PatientId in (select PatientId from #tmp_patientid)
+
+	   DROP TABLE #tmp_patientid
+
 END
 GO
