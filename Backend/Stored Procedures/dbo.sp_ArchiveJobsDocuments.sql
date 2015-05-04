@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -85,8 +86,8 @@ BEGIN
 				
 				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsDocuments) BEGIN
 					--Archive only those that haven't been archived yet.
-					INSERT INTO dbo.EA_Jobs_Documents
-					SELECT jd.*, @archiveID
+					INSERT INTO dbo.EA_Jobs_Documents(JobNumber, Doc, XmlData, Username, DocDate, DocumentId, DocumentTypeId, DocumentStatusId, JobId, [Status], StatusDate, ArchiveID)
+					SELECT jd.JobNumber, jd.Doc, jd.XmlData, jd.Username, jd.DocDate, jd.DocumentId, jd.DocumentTypeId, jd.DocumentStatusId, jd.JobId, jd.[Status], jd.StatusDate, @archiveID
 					FROM dbo.Jobs_Documents AS jd INNER JOIN #ArchivedJobsDocuments AS ajd ON jd.JobNumber = ajd.JobNumber
 					
 					--Remove archived records from source database/tables
@@ -95,8 +96,8 @@ BEGIN
 				
 				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsDocumentsHistory) BEGIN
 					--Archive only those that haven't been archived yet.
-					INSERT INTO dbo.EA_Jobs_Documents_History
-					SELECT jdh.*, @archiveID
+					INSERT INTO dbo.EA_Jobs_Documents_History (DocumentID, JobNumber, Doc, XmlData, Username, DocDate, DocumentIdOk, DocumentTypeId, DocumentStatusId, JobId, TemplateName, [Status], StatusDate, ArchiveID)
+					SELECT jdh.DocumentID, jdh.JobNumber, jdh.Doc, jdh.XmlData, jdh.Username, jdh.DocDate, jdh.DocumentIdOk, jdh.DocumentTypeId, jdh.DocumentStatusId, jdh.JobId, jdh.TemplateName, jdh.[Status], jdh.StatusDate, @archiveID
 					FROM dbo.Jobs_Documents_History AS jdh INNER JOIN #ArchivedJobsDocumentsHistory AS ajdh ON jdh.JobNumber = ajdh.JobNumber
 					
 					--Remove archived records from source database/tables
