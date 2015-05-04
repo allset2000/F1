@@ -68,6 +68,8 @@ INSERT INTO Modules(ModuleId,ApplicationId,ModuleName,IsDeleted,DateCreated,Date
 INSERT INTO Modules(ModuleId,ApplicationId,ModuleName,IsDeleted,DateCreated,DateUpdated) VALUES(19,5,'Mobile Invitations',0,GETDATE(),GETDATE())
 INSERT INTO Modules(ModuleId,ApplicationId,ModuleName,IsDeleted,DateCreated,DateUpdated) VALUES(20,5,'Clinics',0,GETDATE(),GETDATE())
 INSERT INTO Modules(ModuleId,ApplicationId,ModuleName,IsDeleted,DateCreated,DateUpdated) VALUES(21,5,'Entrada Administration',0,GETDATE(),GETDATE())
+INSERT INTO Modules(ModuleId,ApplicationId,ModuleName,IsDeleted,DateCreated,DateUpdated) VALUES(22,5,'Notifications',0,GETDATE(),GETDATE())
+INSERT INTO Modules(ModuleId,ApplicationId,ModuleName,IsDeleted,DateCreated,DateUpdated) VALUES(23,5,'Legacy Return of Work',0,GETDATE(),GETDATE())
 SET IDENTITY_INSERT [dbo].[Modules] OFF
 -- Clear all permissions and Re-Insert permissions mapping them to the correct module
 TRUNCATE TABLE Permissions
@@ -141,6 +143,14 @@ INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALU
 INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(67,'FNC-DICTATORS-ADD','Function - Add New Dictators',null,4)
 INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(68,'FNC-DICTATORS-ADDMASSROLE','Function - Manage Dictator Roles (Mass)',null,4)
 INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(69,'FNC-CLINIC-ADMINCLINIC','Function - Manage Clinic',null,20)
+INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(70,'TAB-NOTIFICATIONS','Tab - Notifications',null,22)
+INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(71,'FNC-NOTIFICATIONS-ADD','Function - Add Notifications',null,22)
+INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(72,'FNC-NOTIFICATIONS-EDIT','Function - Edit Notifications',null,22)
+INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(73,'TAB-BACKENDLEGACYROW','Tab - Backend Legacy ROW',null,23)
+INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(74,'FNC-BACKENDLEGACYROWUSER-ADD','Function - Add Backend Legacy ROWUser',null,23)
+INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(75,'FNC-BACKENDLEGACYROWUSER-EDIT','Function - Edit Backend Legacy ROWUser',null,23)
+INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(76,'FNC-BACKENDLEGACYROWCLINIC-ADD','Function - Add Backend Legacy ROWClinic',null,23)
+INSERT INTO Permissions(PermissionID,Code,Name,ParentPermissionId,ModuleId) VALUES(77,'FNC-BACKENDLEGACYROWCLINIC-EDIT','Function - Edit Backend Legacy ROWClinic',null,23)
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 -- Add RowOverrideFields
 IF NOT EXISTS (select 1 from RowOverrideFields where FieldName = 'DocumentId')
