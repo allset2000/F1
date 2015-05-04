@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -52,8 +53,8 @@ BEGIN
 				SELECT @archiveID = SCOPE_IDENTITY() 
 				
 				--Archive
-				INSERT INTO dbo.EA_EditorLogs
-				SELECT el.*, @archiveID
+				INSERT INTO dbo.EA_EditorLogs (EditorLogId, EditorID, OperationTime, OperationName, JobNumber, SuccessFlag, ExceptionMessage, SessionID, ArchiveID)
+				SELECT el.EditorLogId, el.EditorID, el.OperationTime, el.OperationName, el.JobNumber, el.SuccessFlag, el.ExceptionMessage, el.SessionID, @archiveID
 				FROM dbo.EditorLogs AS el
 				WHERE GETDATE() - @archiveAge >= OperationTime
 
