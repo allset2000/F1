@@ -69,7 +69,7 @@ BEGIN
 	SELECT	null, UI.FirstNAme, UI.MI, UI.LastName, null, null, 0 as 'IsFavorite'
 	FROM UserInvitations UI
 	WHERE UI.RequestingUserId = @UserId
-	and UI.RegisteredUserId is null and UI.FirstName is not null
+	and UI.RegisteredUserId is null and UI.FirstName is not null and UI.InvitationSent = 1
 
 	-- Step5: Add User that invited you
 	INSERT INTO #contactlist (UserId,FirstName,MI,LastName,QuickBloxUSerID,QBUserLogin,IsFavorite)

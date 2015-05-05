@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -88,8 +89,8 @@ BEGIN
 				
 				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobEditingTasks) BEGIN
 					--Archive only those that haven't been archived yet.
-					INSERT INTO dbo.EA_JobEditingTasks
-					SELECT jet.*, @archiveID
+					INSERT INTO dbo.EA_JobEditingTasks (JobEditingTaskId, JobId, AssignedToID, EditionNote, QACategoryId, CurrentStateId, NextStateId, WorkflowRuleId, AssignmentMode, AssignedById, ReleasedById, AssignedOn, ReceivedOn, ReturnedOn, PreviousTaskId, NextTaskId, TaskStatus, ArchiveID)
+					SELECT jet.JobEditingTaskId, jet.JobId, jet.AssignedToID, jet.EditionNote, jet.QACategoryId, jet.CurrentStateId, jet.NextStateId, jet.WorkflowRuleId, jet.AssignmentMode, jet.AssignedById, jet.ReleasedById, jet.AssignedOn, jet.ReceivedOn, jet.ReturnedOn, jet.PreviousTaskId, jet.NextTaskId, jet.TaskStatus, @archiveID
 					FROM dbo.JobEditingTasks AS jet INNER JOIN #ArchivedJobEditingTasks AS ajet ON jet.JobId = ajet.JobId AND jet.JobEditingTaskId = ajet.JobEditingTaskId
 
 					--Remove archived records from source database/tables
@@ -97,16 +98,16 @@ BEGIN
 				END
 				
 				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobEditingTasksData) BEGIN
-					INSERT INTO dbo.EA_JobEditingTasksData
-					SELECT jetd.*, @archiveID
+					INSERT INTO dbo.EA_JobEditingTasksData (JobEditingTaskId, NumPages, NumLines, NumChars, NumVBC, NumCharsPC, BodyWSpaces, HeaderFirstWSpaces, HeaderPrimaryWSpaces, HeaderEvenWSpaces, FooterFirstWSpaces, FooterPrimaryWSpaces, FooterEvenWSpaces, HeaderTotalWSpaces, FooterTotalWSpaces, HeaderFooterTotalWSpaces, DocumentWSpaces, NumTotalMacros, NumMacrosUnEdited, NumMacrosEdited, NumCharsUnEditedMacros, NumCharsEditedMacros, NumCharsChangedMacros, ArchiveID)
+					SELECT jetd.JobEditingTaskId, jetd.NumPages, jetd.NumLines, jetd.NumChars, jetd.NumVBC, jetd.NumCharsPC, jetd.BodyWSpaces, jetd.HeaderFirstWSpaces, jetd.HeaderPrimaryWSpaces, jetd.HeaderEvenWSpaces, jetd.FooterFirstWSpaces, jetd.FooterPrimaryWSpaces, jetd.FooterEvenWSpaces, jetd.HeaderTotalWSpaces, jetd.FooterTotalWSpaces, jetd.HeaderFooterTotalWSpaces, jetd.DocumentWSpaces, jetd.NumTotalMacros, jetd.NumMacrosUnEdited, jetd.NumMacrosEdited, jetd.NumCharsUnEditedMacros, jetd.NumCharsEditedMacros, jetd.NumCharsChangedMacros, @archiveID
 					FROM dbo.JobEditingTasksData AS jetd INNER JOIN #ArchivedJobEditingTasksData AS ajetd ON jetd.JobEditingTaskId = ajetd.JobEditingTaskId
 					
 					DELETE jetd FROM dbo.JobEditingTasksData AS jetd INNER JOIN #ArchivedJobEditingTasksData AS ajetd ON jetd.JobEditingTaskId = ajetd.JobEditingTaskId
 				END
 
 				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobEditingSummary) BEGIN
-					INSERT INTO dbo.EA_JobEditingSummary
-					SELECT jes.*, @archiveID
+					INSERT INTO dbo.EA_JobEditingSummary (JobId, LastEditedByID, CurrentlyEditedByID, LastQAEditorID, CurrentStateId, CurrentQAStage, LastQAStage, AssignedToID, QACategoryId, LastQANote, QAEditorsList, FinishedOn, EditorEditingTaskId, LastEditingTaskId, LastQAEditingTaskId, BillingEditingTaskId, ArchiveID)
+					SELECT jes.JobId, jes.LastEditedByID, jes.CurrentlyEditedByID, jes.LastQAEditorID, jes.CurrentStateId, jes.CurrentQAStage, jes.LastQAStage, jes.AssignedToID, jes.QACategoryId, jes.LastQANote, jes.QAEditorsList, jes.FinishedOn, jes.EditorEditingTaskId, jes.LastEditingTaskId, jes.LastQAEditingTaskId, jes.BillingEditingTaskId, @archiveID
 					FROM dbo.JobEditingSummary AS jes INNER JOIN #ArchivedJobEditingSummary AS ajes ON jes.JobId = ajes.JobId
 					
 					DELETE jes FROM dbo.JobEditingSummary AS jes INNER JOIN #ArchivedJobEditingSummary AS ajes ON jes.JobId = ajes.JobId

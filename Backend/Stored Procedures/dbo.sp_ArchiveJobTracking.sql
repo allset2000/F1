@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -71,8 +72,8 @@ BEGIN
 				SELECT @archiveID = SCOPE_IDENTITY() 
 				
 				--Archive only those that haven't been archived yet.
-				INSERT INTO dbo.EA_JobTracking
-				SELECT jd.*, @archiveID
+				INSERT INTO dbo.EA_JobTracking (JobNumber, StatusID, [Status], StatusDate, [Path],  ArchiveID)
+				SELECT jd.JobNumber, jd.StatusID, jd.[Status], jd.StatusDate, jd.[Path], @archiveID
 				FROM dbo.JobTracking AS jd INNER JOIN #ArchivedJobTracking AS ajt ON jd.JobNumber = ajt.JobNumber
 
 				--Remove archived records from source database/tables
