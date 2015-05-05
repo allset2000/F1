@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -48,18 +49,18 @@ BEGIN
 				SELECT @archiveID = SCOPE_IDENTITY() 
 
 				--Archive
-				INSERT INTO dbo.EA_AuditLogExpressLinkApi
-				SELECT *, @archiveID
+				INSERT INTO dbo.EA_AuditLogExpressLinkApi (LogID, ApiKey, ConfigID, Operation, [Parameters], OperationTime, ExecutionTime, Success, Exception, ArchiveID)
+				SELECT LogID, ApiKey, ConfigID, Operation, [Parameters], OperationTime, ExecutionTime, Success, Exception, @archiveID
 				FROM dbo.AuditLogExpressLinkApi
 				WHERE GETDATE() - @archiveAge >= OperationTime
 
-				INSERT INTO dbo.EA_AuditLogDictateApi
-				SELECT *, @archiveID
+				INSERT INTO dbo.EA_AuditLogDictateApi (LogID, DictatorID, Operation, [Parameters], OperationTime, ExecutionTime, Success, Exception, ArchiveID)
+				SELECT LogID, DictatorID, Operation, [Parameters], OperationTime, ExecutionTime, Success, Exception, @archiveID
 				FROM dbo.AuditLogDictateApi
 				WHERE GETDATE() - @archiveAge >= OperationTime
 
-				INSERT INTO dbo.EA_AuditLogAdminConsoleApi
-				SELECT *, @archiveID
+				INSERT INTO dbo.EA_AuditLogAdminConsoleApi (LogID, UserID, RequestID, Operation, SiteUrl, [Parameters], OperationTime, ExecutionTime, Success, Exception, ArchiveID)
+				SELECT LogID, UserID, RequestID, Operation, SiteUrl, [Parameters], OperationTime, ExecutionTime, Success, Exception, @archiveID
 				FROM dbo.AuditLogAdminConsoleApi
 				WHERE GETDATE() - @archiveAge >= OperationTime
 
