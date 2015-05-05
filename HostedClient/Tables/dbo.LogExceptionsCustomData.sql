@@ -30,7 +30,9 @@ CREATE TABLE [dbo].[LogExceptionsCustomData]
 [MobileOS] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [QuickBloxUserId] [int] NULL,
 [JobTypeID] [int] NULL,
-[UserAgent] [varchar] (300) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[UserAgent] [varchar] (300) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ApiKey] [varchar] (300) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[DeliveryID] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[LogExceptionsCustomData] ADD CONSTRAINT [PK_LogExceptionsCustomData] PRIMARY KEY CLUSTERED  ([LogExceptionsCustomDataID]) ON [PRIMARY]
