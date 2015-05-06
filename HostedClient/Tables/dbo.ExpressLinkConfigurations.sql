@@ -17,7 +17,9 @@ CREATE TABLE [dbo].[ExpressLinkConfigurations]
 [LastScheduleSync] [datetime] NULL,
 [LastClinicalsSync] [datetime] NULL,
 [LastSync] [datetime] NULL,
-[ClientVersion] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_ExpressLinkConfigurations_ClientVersion] DEFAULT ('')
+[ClientVersion] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_ExpressLinkConfigurations_ClientVersion] DEFAULT (''),
+[EnableInboundData] [bit] NOT NULL CONSTRAINT [DF_ExpressLinkConfigurations_EnableInboundData] DEFAULT ((0)),
+[EnableReturnOfWork] [bit] NOT NULL CONSTRAINT [DF_ExpressLinkConfigurations_EnableReturnOfWork] DEFAULT ((0))
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[ExpressLinkConfigurations] ADD CONSTRAINT [PK_ExpressLinkConfigurations] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
