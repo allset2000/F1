@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -17,7 +18,7 @@ AS
 BEGIN
 	CREATE TABLE #tmp_resourceids
 	(
-		ResourceId INT
+		ResourceId VARCHAR(100)
 	)
 
 	INSERT INTO #tmp_resourceids
