@@ -36,6 +36,7 @@ BEGIN
 DECLARE @PatientID INT
 DECLARE @orig_enc_id VARCHAR(50)
 DECLARE @ScheduleID TABLE (ScheduleID BIGINT)
+DECLARE @CurrentStatus INT
 
 -- Find the PatientID
 IF ISNULL (@MRN, '') <> ''
@@ -44,11 +45,16 @@ ELSE
 	SELECT @PatientID = PatientID FROM Patients WHERE ClinicID = @ClinicID AND AlternateID = @alternate_id
 
 -- Preserve any existing EHREncounterID (subsequent messages may not have it)
-SELECT @orig_enc_id = EHREncounterID FROM Schedules WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID
+SELECT @orig_enc_id = EHREncounterID, @currentStatus=Status FROM Schedules WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID
 
 IF ISNULL (@orig_enc_id, '') <> ''
 BEGIN
 	SET @EncounterID = @orig_enc_id
+END
+
+IF ISNULL(@currentStatus,100) = 200 AND @Status = 100
+BEGIN
+	SET @status = 200
 END
 
 -- If the EHR isn't providing us the attending first/last name, pull it from the Dictators table

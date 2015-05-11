@@ -1,9 +1,7 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
 /*
 	Created By: Mikayil Bayramov
 	Created Date: 01/28/2014
@@ -110,7 +108,8 @@ BEGIN
 				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsPatients) BEGIN
 					--Archive only those that haven't been archived yet.
 					INSERT INTO dbo.EA_Jobs_Patients (JobNumber, AlternateID, MRN, FirstName, MI, LastName, Suffix, DOB, SSN, Address1, Address2, City, [State], Zip, Phone, Sex, PatientId, AppointmentId, ArchiveID)
-					SELECT jp.JobNumber, jp.AlternateID, jp.MRN, jp.FirstName, jp.MI, jp.LastName, jp.Suffix, jp.DOB, jp.SSN, jp.Address1, jp.Address2, jp.City, jp.[State], jp.Zip, jp.Phone, jp.Sex, jp.PatientId, jp.AppointmentId, @archiveID
+					SELECT jp.JobNumber, jp.AlternateID, jp.MRN, jp.FirstName, jp.MI, jp.LastName, jp.Suffix, jp.DOB, jp.SSN, jp.Address1, jp.Address2, jp.City, jp.[State], jp.Zip, jp.Phone, jp.Sex, jp.PatientId, 
+					       jp.AppointmentId, @archiveID
 					FROM dbo.Jobs_Patients AS jp INNER JOIN #ArchivedJobsPatients AS ajp ON jp.JobNumber = ajp.JobNumber
 					
 					--Remove archived records from source database/tables
@@ -119,15 +118,21 @@ BEGIN
 				
 				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsReferring) BEGIN
 					INSERT INTO dbo.EA_Jobs_Referring (JobNumber, PhysicianID, FirstName, MI, LastName, Suffix, DOB, SSN, Sex, Address1, Address2, City, [State], Zip, Phone, Fax, ClinicName, ArchiveID)
-					SELECT jr.JobNumber, jr.PhysicianID, jr.FirstName, jr.MI, jr.LastName, jr.Suffix, jr.DOB, jr.SSN, jr.Sex, jr.Address1, jr.Address2, jr.City, jr.[State], jr.Zip, jr.Phone, jr.Fax, jr.ClinicName, @archiveID
+					SELECT jr.JobNumber, jr.PhysicianID, jr.FirstName, jr.MI, jr.LastName, jr.Suffix, jr.DOB, jr.SSN, jr.Sex, jr.Address1, jr.Address2, jr.City, jr.[State], jr.Zip, jr.Phone, jr.Fax, 
+					       jr.ClinicName, @archiveID
 					FROM dbo.Jobs_Referring AS jr INNER JOIN #ArchivedJobsReferring AS ajr ON jr.JobNumber = ajr.JobNumber
 					
 					DELETE jr FROM dbo.Jobs_Referring AS jr INNER JOIN #ArchivedJobsReferring AS ajr ON jr.JobNumber = ajr.JobNumber
 				END
 				
 				IF EXISTS(SELECT TOP 1 1 FROM #ArchivedJobsCustom) BEGIN
-					INSERT INTO dbo.EA_Jobs_Custom (JobNumber, Custom1, Custom2, Custom3, Custom4, Custom5, Custom6, Custom7, Custom8, Custom9, Custom10, Custom11, Custom12, Custom13, Custom14, Custom15, Custom16, Custom17, Custom18, Custom19, Custom20, Custom21, Custom22, Custom23, Custom24, Custom25, Custom26, Custom27, Custom28, Custom29, Custom30, Custom31, Custom32, Custom33, Custom34, Custom35, Custom36, Custom37, Custom38, Custom39, Custom40, Custom41, Custom42, Custom43, Custom44, Custom45, Custom46, Custom47, Custom48, Custom49, Custom50, ArchiveID)
-					SELECT jc.JobNumber, jc.Custom1, jc.Custom2, jc.Custom3, jc.Custom4, jc.Custom5, jc.Custom6, jc.Custom7, jc.Custom8, jc.Custom9, jc.Custom10, jc.Custom11, jc.Custom12, jc.Custom13, jc.Custom14, jc.Custom15, jc.Custom16, jc.Custom17, jc.Custom18, jc.Custom19, jc.Custom20, jc.Custom21, jc.Custom22, jc.Custom23, jc.Custom24, jc.Custom25, jc.Custom26, jc.Custom27, jc.Custom28, jc.Custom29, jc.Custom30, jc.Custom31, jc.Custom32, jc.Custom33, jc.Custom34, jc.Custom35, jc.Custom36, jc.Custom37, jc.Custom38, jc.Custom39, jc.Custom40, jc.Custom41, jc.Custom42, jc.Custom43, jc.Custom44, jc.Custom45, jc.Custom46, jc.Custom47, jc.Custom48, jc.Custom49, jc.Custom50, @archiveID
+					INSERT INTO dbo.EA_Jobs_Custom (JobNumber, Custom1, Custom2, Custom3, Custom4, Custom5, Custom6, Custom7, Custom8, Custom9, Custom10, Custom11, Custom12, Custom13, Custom14, Custom15, Custom16, Custom17, 
+					                                Custom18, Custom19, Custom20, Custom21, Custom22, Custom23, Custom24, Custom25, Custom26, Custom27, Custom28, Custom29, Custom30, Custom31, Custom32, Custom33, Custom34, 
+													Custom35, Custom36, Custom37, Custom38, Custom39, Custom40, Custom41, Custom42, Custom43, Custom44, Custom45, Custom46, Custom47, Custom48, Custom49, Custom50, ArchiveID)
+					SELECT jc.JobNumber, jc.Custom1, jc.Custom2, jc.Custom3, jc.Custom4, jc.Custom5, jc.Custom6, jc.Custom7, jc.Custom8, jc.Custom9, jc.Custom10, jc.Custom11, jc.Custom12, jc.Custom13, jc.Custom14, jc.Custom15, 
+					       jc.Custom16, jc.Custom17, jc.Custom18, jc.Custom19, jc.Custom20, jc.Custom21, jc.Custom22, jc.Custom23, jc.Custom24, jc.Custom25, jc.Custom26, jc.Custom27, jc.Custom28, jc.Custom29, jc.Custom30, 
+						   jc.Custom31, jc.Custom32, jc.Custom33, jc.Custom34, jc.Custom35, jc.Custom36, jc.Custom37, jc.Custom38, jc.Custom39, jc.Custom40, jc.Custom41, jc.Custom42, jc.Custom43, jc.Custom44, jc.Custom45, 
+						   jc.Custom46, jc.Custom47, jc.Custom48, jc.Custom49, jc.Custom50, @archiveID
 					FROM dbo.Jobs_Custom AS jc INNER JOIN #ArchivedJobsCustom AS ajc ON jc.JobNumber = ajc.JobNumber
 					
 					DELETE jc FROM dbo.Jobs_Custom AS jc INNER JOIN #ArchivedJobsCustom AS ajc on jc.JobNumber = ajc.JobNumber
