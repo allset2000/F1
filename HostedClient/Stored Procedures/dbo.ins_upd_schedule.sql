@@ -119,10 +119,10 @@ WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID
 IF @@ROWCOUNT = 0
 	BEGIN
 	
-	INSERT INTO Schedules (ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, referringID, ReferringName, AttendingFirst, AttendingLast, Type, ChangedOn)
+	INSERT INTO Schedules (ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, referringID, ReferringName, AttendingFirst, AttendingLast, Type, CreateDate, ChangedOn)
 	OUTPUT Inserted.ScheduleID INTO @ScheduleID	
 	VALUES 
-	(@ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, @ReferringID, @referringName, @attendingFirst, @attendingLast, @type, GETDATE())
+	(@ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, @ReferringID, @referringName, @attendingFirst, @attendingLast, @type, GETDATE(), GETDATE())
 	
 	END
 
