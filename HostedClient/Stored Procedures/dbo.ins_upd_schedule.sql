@@ -130,5 +130,9 @@ INSERT INTO SchedulesTracking (ScheduleID, ClinicID, AppointmentDate, PatientID,
 SELECT ScheduleID, @ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, GETDATE(), 'HL7', @referringID, @referringname, @AttendingFirst, @attendingLast, @Type
 FROM @ScheduleID
 
+-- Ensure the RulesReasons and RulesProviders tables are updated
+EXEC dbo.ins_upd_rulesreasons @ClinicID, @ReasonID, @ReasonName, @Type
+EXEC dbo.ins_upd_rulesproviders @ClinicID, @ResourceID, @ResourceName
+
 END
 GO
