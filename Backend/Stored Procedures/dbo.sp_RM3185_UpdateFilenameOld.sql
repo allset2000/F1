@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -14,19 +15,16 @@ GO
 
 CREATE PROCEDURE [dbo].[sp_RM3185_UpdateFilenameOld]
 
-@JobID bigint
+@Jobnumber varchar(20)
 
 AS 
 
 Begin Tran
 
-UPDATE JC
+UPDATE Entrada.dbo.Jobs_Client
 set Filename = Filename + '-old'
-from Entrada.dbo.Jobs_Client JC
-INNER JOIN EntradaHostedClient.dbo.Jobs J ON J.Jobnumber = JC.Filename
-where jobid = @JobID
+where jobnumber = @Jobnumber
 
 Commit Tran
-
 
 GO
