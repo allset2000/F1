@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -36,7 +37,7 @@ BEGIN
 			SET @StartDate = (select convert(datetime, @SearchData))
 			SET @EndApptDate = (select DATEADD(day,1,@StartDate))
 
-			SELECT	S.ScheduleID, 
+			SELECT TOP 100 S.ScheduleID, 
 					S.ResourceID,
 					P.PatientID,
 					S.ReasonName,
@@ -57,7 +58,7 @@ BEGIN
 		ELSE
 		BEGIN
 			SET @SearchData = '%' + @SearchData + '%'
-			SELECT	S.ScheduleID, 
+			SELECT TOP 100 S.ScheduleID, 
 					S.ResourceID,
 					P.PatientID,
 					S.ReasonName,
@@ -82,7 +83,7 @@ BEGIN
 			SET @StartDate = (select convert(datetime, @SearchData))
 			SET @EndApptDate = (select DATEADD(day,1,@StartDate))
 
-			SELECT	S.ScheduleID, 
+			SELECT TOP 100 S.ScheduleID, 
 					S.ResourceID,
 					P.PatientID,
 					S.ReasonName,
@@ -102,7 +103,7 @@ BEGIN
 		ELSE
 		BEGIN
 			SET @SearchData = '%' + @SearchData + '%'
-			SELECT	S.ScheduleID, 
+			SELECT TOP 100 S.ScheduleID, 
 					S.ResourceID,
 					P.PatientID,
 					S.ReasonName,
