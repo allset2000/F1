@@ -24,20 +24,24 @@ CREATE TABLE [dbo].[Dictators]
 [SignatureImage] [varbinary] (max) NULL,
 [ImageName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [UserId] [int] NULL,
-[SreType] [int] NULL
+[SRETypeId] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-ALTER TABLE [dbo].[Dictators] ADD
-CONSTRAINT [FK__Dictators__SreTy__72F0F4D3] FOREIGN KEY ([SreType]) REFERENCES [dbo].[SreEngine] ([Id])
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [PK_Dictators] PRIMARY KEY CLUSTERED  ([DictatorID]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [IX_Dictators_Unique_DictatorName] UNIQUE NONCLUSTERED  ([DictatorName], [ClinicID]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Dictators_ClinicID] ON [dbo].[Dictators] ([ClinicID], [EHRProviderID]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Dictators_DictatorName] ON [dbo].[Dictators] ([DictatorName]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID])
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_CRFlagTypes] FOREIGN KEY ([CRFlagType]) REFERENCES [dbo].[CRFlagTypes] ([CRFlagType])
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_JobTypes] FOREIGN KEY ([DefaultJobTypeID]) REFERENCES [dbo].[JobTypes] ([JobTypeID])
+GO
+ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [fk_dictators_SRETypeId] FOREIGN KEY ([SRETypeId]) REFERENCES [dbo].[SREEngineType] ([SRETypeId])
 GO
 EXEC sp_addextendedproperty N'MS_Description', N'Default Job Type', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'DefaultJobTypeID'
 GO

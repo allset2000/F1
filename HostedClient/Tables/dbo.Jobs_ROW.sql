@@ -1,5 +1,6 @@
 CREATE TABLE [dbo].[Jobs_ROW]
 (
+[JobRowID] [int] NOT NULL IDENTITY(1, 1),
 [JobID] [bigint] NOT NULL,
 [AckStatus] [int] NOT NULL CONSTRAINT [DF_Jobs_ROW_AckStatus] DEFAULT ((100)),
 [ROWStatus] [int] NOT NULL CONSTRAINT [DF_Jobs_ROW_ROWStatus] DEFAULT ((100)),
@@ -10,9 +11,15 @@ CREATE TABLE [dbo].[Jobs_ROW]
 [MessageNum] [int] NULL,
 [MessageTotal] [int] NULL
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Jobs_ROW] ADD 
+CONSTRAINT [PK_Jobs_ROW] PRIMARY KEY CLUSTERED  ([JobRowID]) ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_Jobs_ROW_AckStatus_includes] ON [dbo].[Jobs_ROW] ([AckStatus]) INCLUDE ([CreateDate], [JobID]) ON [PRIMARY]
 
 CREATE NONCLUSTERED INDEX [IX_JobID_AckStatus] ON [dbo].[Jobs_ROW] ([JobID], [AckStatus]) ON [PRIMARY]
+
+
+
+
 
 GO
 ALTER TABLE [dbo].[Jobs_ROW] ADD CONSTRAINT [FK_Jobs_ROW] FOREIGN KEY ([JobID]) REFERENCES [dbo].[Jobs] ([JobID])
