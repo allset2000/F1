@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -36,8 +37,10 @@ BEGIN
 					 RegisteredUserId,
 					 InvitationMessage
 		FROM UserInvitations
-		WHERE PhoneNumber = @PhoneNumber or EmailAddress = @EmailAddress
+		WHERE PhoneNumber = @PhoneNumber or EmailAddress = @EmailAddress and RegisteredUserId is null
 	END
 
 END
+
+
 GO
