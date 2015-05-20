@@ -1,6 +1,6 @@
 /******************************  
-** File:  spGetDictatorByClinetUserIdAndClinicId.sql  
-** Name:  spGetDictatorByClinetUserIdAndClinicId  
+** File:  spGetDictatorByClientUserIdAndClinicId.sql  
+** Name:  spGetDictatorByClientUserIdAndClinicId  
 ** Desc:  Get Dictator details based on clinic ID and ClinetUserId 
 ** Auth:  Suresh  
 ** Date:  18/May/2015  
@@ -13,7 +13,7 @@
 *******************************/  
 spEntradadropStoredProcedure 'spGetDictatorByDictatoridAndClinic'
 GO
-CREATE PROCEDURE [dbo].[spGetDictatorByClinetUserIdAndClinicId] 
+CREATE PROCEDURE [dbo].[spGetDictatorByClientUserIdAndClinicId] 
 (  
  @ClientUserID varchar(50),
  @vintClinicID  smallint  
