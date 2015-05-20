@@ -15,6 +15,10 @@ CREATE TABLE [dbo].[Jobs_Documents_History]
 [StatusDate] [datetime] NULL,
 [ArchiveID] [int] NOT NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_JobDocumentsHistory_DocDate] ON [dbo].[Jobs_Documents_History] ([DocDate]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_JobNumber_DocDate_INC_Username] ON [dbo].[Jobs_Documents_History] ([JobNumber], [DocDate]) INCLUDE ([Username]) ON [PRIMARY]
+
 ALTER TABLE [dbo].[Jobs_Documents_History] ADD 
 CONSTRAINT [PK_Jobs_Documents_History] PRIMARY KEY CLUSTERED  ([DocumentID]) ON [PRIMARY]
 GO

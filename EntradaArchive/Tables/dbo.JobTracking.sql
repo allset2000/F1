@@ -7,6 +7,12 @@ CREATE TABLE [dbo].[JobTracking]
 [StatusID] [int] NOT NULL,
 [ArchiveID] [int] NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_JobTracking] ON [dbo].[JobTracking] ([JobNumber], [Status]) INCLUDE ([StatusDate]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_JobTracking_Status] ON [dbo].[JobTracking] ([Status], [JobNumber]) INCLUDE ([StatusDate]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_JobTracking_StatusDate] ON [dbo].[JobTracking] ([StatusDate]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[JobTracking] ADD CONSTRAINT [PK_JobTracking] PRIMARY KEY CLUSTERED  ([StatusID]) ON [PRIMARY]
 GO

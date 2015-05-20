@@ -10,6 +10,10 @@ CREATE TABLE [dbo].[EditorLogs]
 [SessionID] [varchar] (128) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [ArchiveID] [int] NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_EditorLogs_JobNumber] ON [dbo].[EditorLogs] ([JobNumber] DESC) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_EditorLogs_OperationTime] ON [dbo].[EditorLogs] ([OperationTime]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[EditorLogs] ADD CONSTRAINT [PK_EditorLog] PRIMARY KEY CLUSTERED  ([EditorLogId] DESC) ON [PRIMARY]
 GO
