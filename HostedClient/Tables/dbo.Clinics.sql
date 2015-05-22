@@ -19,7 +19,13 @@ CREATE TABLE [dbo].[Clinics]
 [ExcludeStat] [bit] NOT NULL CONSTRAINT [DF_Clinics_ExcludeStat] DEFAULT ((0)),
 [AutoEnrollDevices] [bit] NOT NULL CONSTRAINT [DF_Clinics_AutoEnrollDevices] DEFAULT ((0)),
 [SRETypeId] [int] NULL,
-[DisablePatientImages] [bit] NOT NULL CONSTRAINT [DF_Clinics_DisablePatientImages] DEFAULT ((0))
+[DisablePatientImages] [bit] NOT NULL CONSTRAINT [DF_Clinics_DisablePatientImages] DEFAULT ((0)),
+[PortalTimeout] [int] NULL,
+[DaysToResetPassword] [int] NULL,
+[PreviousPasswordCount] [int] NULL,
+[PasswordMinCharacters] [int] NULL,
+[FailedPasswordLockoutCount] [int] NULL,
+[TimeZoneId] [int] NULL
 ) ON [PRIMARY]
 
 GO
