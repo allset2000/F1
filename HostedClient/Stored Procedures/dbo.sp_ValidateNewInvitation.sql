@@ -3,6 +3,8 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+-- Stored Procedure
+
 -- =============================================
 -- Author: Sam Shoultz
 -- Create date: 05/04/2015
@@ -17,7 +19,7 @@ CREATE PROCEDURE [dbo].[sp_ValidateNewInvitation]
 AS
 BEGIN
 
-	IF EXISTS (SELECT 1 FROM UserInvitations WHERE PhoneNumber = @PhoneNumber or EmailAddress = @EmailAddress)
+	IF EXISTS (SELECT 1 FROM UserInvitations WHERE RegisteredUserId is null and (PhoneNumber = @PhoneNumber or EmailAddress = @EmailAddress))
 	BEGIN
 		SELECT TOP 1 UserInvitationId,
 					 FirstName,
@@ -37,7 +39,7 @@ BEGIN
 					 RegisteredUserId,
 					 InvitationMessage
 		FROM UserInvitations
-		WHERE PhoneNumber = @PhoneNumber or EmailAddress = @EmailAddress and RegisteredUserId is null
+		WHERE RegisteredUserId is null and (PhoneNumber = @PhoneNumber or EmailAddress = @EmailAddress)
 	END
 
 END
