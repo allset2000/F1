@@ -13,6 +13,10 @@ CREATE TABLE [dbo].[Jobs_Documents]
 [Status] [smallint] NULL,
 [StatusDate] [datetime] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_JobDocuments_DocDate] ON [dbo].[Jobs_Documents] ([DocDate]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_Jobs_Documents_JobId] ON [dbo].[Jobs_Documents] ([JobId]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[Jobs_Documents] ADD CONSTRAINT [PK_Jobs_Documents] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
 GO

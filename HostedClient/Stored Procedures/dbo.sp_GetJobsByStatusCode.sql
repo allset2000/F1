@@ -1,7 +1,9 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+-- Stored Procedure
 
 -- =============================================
 -- Author: Sam Shoultz
@@ -11,7 +13,7 @@ GO
 CREATE PROCEDURE [dbo].[sp_GetJobsByStatusCode] (
 	 @StatusCode int,
 	 @IncludeErrors bit,
-	 @ProcessFailureCount INT -- added new parametert to exclude the jobs which were process failured jobs,I was aboou to check-in, looks like Sam checked in with latest changes
+	 @ProcessFailureCount int
 ) AS 
 BEGIN
 	IF (@IncludeErrors = 1)
@@ -31,4 +33,5 @@ BEGIN
 		ORDER BY J.STAT DESC, DT.ChangeDate
 	END
 END
+
 GO
