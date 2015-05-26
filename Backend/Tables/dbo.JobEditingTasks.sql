@@ -18,6 +18,8 @@ CREATE TABLE [dbo].[JobEditingTasks]
 [NextTaskId] [int] NOT NULL,
 [TaskStatus] [char] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_JobEditingTask_TaskStatus_JobID] ON [dbo].[JobEditingTasks] ([TaskStatus], [JobId], [NextStateId], [AssignedToID], [CurrentStateId]) INCLUDE ([ReturnedOn]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[JobEditingTasks] ADD CONSTRAINT [PK_JobEditingTasks] PRIMARY KEY NONCLUSTERED  ([JobEditingTaskId]) ON [PRIMARY]
 GO
