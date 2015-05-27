@@ -20,6 +20,8 @@ CREATE TABLE [dbo].[Jobs_Patients]
 [AppointmentId] [int] NOT NULL,
 [ArchiveID] [int] NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_Patients_PatientId] ON [dbo].[Jobs_Patients] ([PatientId]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[Jobs_Patients] ADD CONSTRAINT [PK_Jobs_Patients] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) ON [PRIMARY]
 GO
