@@ -4,9 +4,4 @@ CREATE TABLE dbo.SREEngineType
             SREType varchar(30) NULL
             ) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].SREEngineType ADD CONSTRAINT [PK_SREEngineType] PRIMARY KEY CLUSTERED  (SRETypeId) ON [PRIMARY]
-GO 
-ALTER TABLE dbo.Clinics ADD SRETypeId int null CONSTRAINT fk_clinic_SRETypeId FOREIGN KEY (SRETypeId) REFERENCES SREEngineType (SRETypeId)
-GO
-ALTER TABLE dbo.Dictators ADD SRETypeId int null CONSTRAINT fk_dictators_SRETypeId FOREIGN KEY (SRETypeId) REFERENCES SREEngineType (SRETypeId)
-GO
+ALTER TABLE [dbo].SREEngineType ADD CONSTRAINT [pk_SRETypeId] PRIMARY KEY CLUSTERED  (SRETypeId) ON [PRIMARY]
