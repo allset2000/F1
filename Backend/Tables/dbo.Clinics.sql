@@ -30,7 +30,6 @@ CREATE TABLE [dbo].[Clinics]
 GO
 ALTER TABLE [dbo].[Clinics] ADD CONSTRAINT [PK_Clinics] PRIMARY KEY CLUSTERED  ([ClinicID]) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[Clinics] ADD CONSTRAINT [FK__Clinics__SreType__55167929] FOREIGN KEY ([SreTypeId]) REFERENCES [dbo].[SreEngineType] ([SreTypeId])
-GO
+
 GRANT SELECT ON  [dbo].[Clinics] TO [app_DocExtract]
 GO
