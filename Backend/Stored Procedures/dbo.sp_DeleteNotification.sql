@@ -8,6 +8,7 @@ CREATE PROCEDURE [dbo].[sp_DeleteNotification]
 )
 AS
 BEGIN
+	DELETE FROM ClinicsMessages WHERE MessageRuleID = @MessageRuleID
 	DELETE FROM ClinicsMessagesRules WHERE MessageRuleID = @MessageRuleID
 	SELECT 1
 END
