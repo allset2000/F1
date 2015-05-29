@@ -14,12 +14,11 @@ spEntradadropStoredProcedure 'spRevertJobStatusForSRE'
 GO
 CREATE PROCEDURE [dbo].[spRevertJobStatusForSRE]
 (    
-@vvcrJobNumber NVARCHAR(20)
+@vvcrJobNumber VARCHAR(20)
 )     
 AS    
 BEGIN 
 	UPDATE jobs SET Status = 300 WHERE JobNumber =  @vvcrJobNumber AND Status=350
 END 
-
-
+GO
 
