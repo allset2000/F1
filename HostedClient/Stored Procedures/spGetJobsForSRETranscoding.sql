@@ -1,3 +1,7 @@
+    SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 /******************************        
 ** File:  spGetJobsForSRETranscoding.sql        
 ** Name:  spGetJobsForSRETranscoding        
@@ -10,8 +14,7 @@
 * PR   Date     Author  Description         
 * --   --------   -------   ------------------------------------     
 *******************************/    
-spEntradadropStoredProcedure 'spGetJobsForSRETranscoding'
-GO    
+    
 CREATE PROCEDURE [dbo].[spGetJobsForSRETranscoding]    
 (        
  @statusCode  INT,      
@@ -70,3 +73,4 @@ BEGIN
  SELECT * FROM @TempJobs        
  COMMIT TRANSACTION             
 END 
+GO
