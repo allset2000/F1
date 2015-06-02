@@ -19,6 +19,12 @@ CREATE TABLE [dbo].[JobEditingTasks]
 [TaskStatus] [char] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [ArchiveID] [int] NOT NULL
 ) ON [PRIMARY]
+CREATE CLUSTERED INDEX [IX_JobEditingTasksJobId] ON [dbo].[JobEditingTasks] ([JobId]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_AssignedTo_CurrentStateID_TaskStatus_INC] ON [dbo].[JobEditingTasks] ([AssignedToID], [CurrentStateId], [TaskStatus]) INCLUDE ([JobEditingTaskId], [JobId], [NextStateId], [PreviousTaskId], [QACategoryId]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_JobEditingTask_TaskStatus_JobID] ON [dbo].[JobEditingTasks] ([TaskStatus], [JobId], [NextStateId], [AssignedToID], [CurrentStateId]) INCLUDE ([ReturnedOn]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[JobEditingTasks] ADD CONSTRAINT [PK_JobEditingTasks] PRIMARY KEY NONCLUSTERED  ([JobEditingTaskId]) ON [PRIMARY]
 GO

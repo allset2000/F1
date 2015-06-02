@@ -12,6 +12,10 @@ CREATE TABLE [dbo].[LogExceptions]
 [ErrorCreatedDate] [datetime] NOT NULL CONSTRAINT [DF__LogExcept__Error__70F39DC8] DEFAULT (getdate()),
 [ErrorWrittenDate] [datetime] NOT NULL CONSTRAINT [DF__LogExcept__Error__71E7C201] DEFAULT (getdate())
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_LogExceptions_ErrorCreatedDate] ON [dbo].[LogExceptions] ([ErrorCreatedDate] DESC) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_LogExceptions_ErrorWrittenDate] ON [dbo].[LogExceptions] ([ErrorWrittenDate] DESC) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[LogExceptions] ADD CONSTRAINT [PK_LogExceptions] PRIMARY KEY CLUSTERED  ([LogExceptionID]) ON [PRIMARY]
 GO

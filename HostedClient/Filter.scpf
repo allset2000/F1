@@ -84,7 +84,7 @@
       </Rule>
       <Schema version="1">
         <Include>True</Include>
-        <Expression>TRUE</Expression>
+        <Expression />
       </Schema>
       <SearchPropertyList version="1">
         <Include>True</Include>

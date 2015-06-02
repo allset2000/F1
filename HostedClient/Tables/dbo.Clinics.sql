@@ -27,6 +27,8 @@ CREATE TABLE [dbo].[Clinics]
 [FailedPasswordLockoutCount] [int] NULL,
 [TimeZoneId] [int] NULL
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Clinics] ADD
+CONSTRAINT [fk_clinic_SRETypeId] FOREIGN KEY ([SRETypeId]) REFERENCES [dbo].[SREEngineType] ([SRETypeId])
 
 GO
 ALTER TABLE [dbo].[Clinics] ADD CONSTRAINT [PK_Clinics] PRIMARY KEY CLUSTERED  ([ClinicID]) ON [PRIMARY]
