@@ -77,9 +77,30 @@ BEGIN
 	FROM UserInvitations UI
 		INNER JOIN Users U on U.UserId = UI.RequestingUserId
 		INNER JOIN QuickBloxUsers QBU on U.UserID = QBU.UserID
-	WHERE UI.RegisteredUserId = @UserId
+	WHERE UI.RegisteredUserId = @UserId and U.UserId not in (select UserId from #contactlist)
 
-	-- Step6: Map favorites
+	DECLARE @ClinicId INT
+	SET @ClinicId = (SELECT ClinicId FROM Users WHERE UserId = @UserId)
+
+	IF (@ClinicId != (SELECT ConfigValue from SystemConfiguration where ConfigKey = 'SMDefaultClinic'))
+	BEGIN
+		-- Step6a: Add any user that belongs to the same clinic as you but is not the default SM clinic and is a dictator
+		INSERT INTO #contactlist (UserId,FirstName,MI,LastName,QuickBloxUSerID,QBUserLogin,IsFavorite)
+		SELECT DISTINCT U.UserId, U.FirstNAme, U.MI, U.LastName, QBU.QuickBloxUserID, QBU.Login as 'QBUserLogin', 0 as 'IsFavorite'
+		FROM Dictators D
+			INNER JOIN Users U on U.UserId = D.UserId
+			INNER JOIN QuickBloxUsers QBU on U.UserID = QBU.UserID
+		WHERE D.ClinicId = @ClinicId and U.UserId not in (select UserId from #contactlist)
+
+		-- Step6b: Add any user that belongs to the same clinic as you but is not the default SM clinic and is a SM only user
+		INSERT INTO #contactlist (UserId,FirstName,MI,LastName,QuickBloxUSerID,QBUserLogin,IsFavorite)
+		SELECT	U.UserId, U.FirstNAme, U.MI, U.LastName, QBU.QuickBloxUserID, QBU.Login as 'QBUserLogin', 0 as 'IsFavorite'
+		FROM Users U
+			INNER JOIN QuickBloxUsers QBU on U.UserID = QBU.UserID
+		WHERE U.UserId = @UserId and U.UserId not in (select UserId from #contactlist)
+	END
+
+	-- Step7: Map favorites
 	UPDATE #contactlist set IsFavorite = 1 WHERE UserId in (SELECT FavUserId FROM SMContactFavorites WHERE UserId = @UserId and IsDeleted = 0)
 
 	SELECT * FROM #contactlist
