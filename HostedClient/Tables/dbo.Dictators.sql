@@ -59,12 +59,6 @@ ALTER TABLE [dbo].[Dictators]  WITH CHECK ADD  CONSTRAINT [FK_Dictators_JobTypes
 REFERENCES [dbo].[JobTypes] ([JobTypeID])
 GO
 
-CREATE NONCLUSTERED INDEX [IX_Dictators_ClinicID] ON [dbo].[Dictators] ([ClinicID], [EHRProviderID]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_Dictators_DictatorName] ON [dbo].[Dictators] ([DictatorName]) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID])
-
 ALTER TABLE [dbo].[Dictators] CHECK CONSTRAINT [FK_Dictators_JobTypes]
 
 GO
@@ -76,10 +70,9 @@ GO
 ALTER TABLE [dbo].[Dictators] CHECK CONSTRAINT [fk_dictators_SRETypeId]
 GO
 
-ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [fk_dictators_SRETypeId] FOREIGN KEY ([SRETypeId]) REFERENCES [dbo].[SREEngineType] ([SRETypeId])
-GO
-EXEC sp_addextendedproperty N'MS_Description', N'Default Job Type', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'DefaultJobTypeID'
 
+--EXEC sp_addextendedproperty N'MS_Description', N'Default Job Type', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'DefaultJobTypeID'
+--GO
 EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Client UserID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Dictators', @level2type=N'COLUMN',@level2name=N'DictatorID'
 
 GO
