@@ -26,8 +26,8 @@ BEGIN
 END
 -- #0000# - END Adding Data values for PatientDataAccessPermissions
 
--- #0000# - Upgraded DB to CC.3 (data changes)
 -- Included tickets in the below scripts are as follows:
+-- #0000# - Upgraded DB to CC.3 (data changes)
 -- #3398# - Change user permission for dictator management
 -- #3402# - Add / Remove Role from all dictators for client
 UPDATE DeliveryTypes SET Description = 'HL7 Letter' WHERE DeliveryTypeId = 3
@@ -195,52 +195,89 @@ BEGIN
 END
 DROP TABLE #temp_perm
 -- Insert System Configuration Values
-INSERT INTO SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('SMDefaultClinic','1','Default Clinicid for SM Invitations from mobile',GETDATE(),GETDATE())
-INSERT INTO SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('RUDefualtRole','392','Defualt RoleId to be used when a user is registered',GETDATE(),GETDATE())
+IF NOT EXISTS (SELECT 1 FROM SystemConfiguration WHERE ConfigKey = 'SMDefaultClinic') BEGIN
+	DECLARE @ClinicId INT
+	DECLARE @PatientId INT
+	DECLARE @SMRoleId INT
+
+	SET @ClinicId = (SELECT MAX(ClinicId)+1 FROM Clinics)
+
+	INSERT INTO Clinics(ClinicId,Name,MobileCode,AccountManagerID,ExpressQueuesEnabled,ImageCaptureEnabled,PatientClinicalsEnabled,Deleted,EHRVendorID,EHRClinicId,EHRLocationID,ClinicCode,DisableUpdateAlert,CRFlagType,ExcludeStat,AutoEnrollDevices,SRETypeId,DisablePatientImages)
+	VALUES(@ClinicId,'SM Only Entrada Clinic','99999',2,0,0,0,0,1,'ENTRADA','','ENTSM',0,0,0,0,1,0)
+
+	INSERT INTO Entrada.dbo.Clinics(ClinicId,ClinicName,ClinicCode,Active,NumDictators,EnableTDD,HostedModel,HostedClinicId,EHRClinicId,BillingEMail,BillingSalesTerm,SubscriptionsNum)
+	VAlUES(@ClinicId,'SM Only Entrada Clinic','ENTSM',1,0,0,1,@ClinicId,'ENTRADA','','',0)
+
+	INSERT INTO Entrada.dbo.Locations(ClinicId,LocationID,LocationName) VALUES(@ClinicId,1,'Main')
+
+	INSERT INTO Patients(ClinicId,MRN,AlternateId,FirstName,MI,LastName,Suffix,Gender,Address1,Address2,City,State,Zip,DOB,Phone1,Phone2,Fax1,Fax2)
+	VALUES(@ClinicId,'999999','','GENERIC','','PATIENT','','','','','','','','','','','','')
+
+	SET @PatientId = @@IDENTITY
+
+	INSERT INTO SystemSettings(ClinicID,GenericPatientId) VALUES(@ClinicId, @PatientId)
+
+	INSERT INTO Roles(ClinicId,RoleName,Description) VALUES(@ClinicId,'Clinic Administrators','Users who have full control to create other users and assign them permissions.')
+	SET @SMRoleId = @@IDENTITY
+	INSERT INTO RolePermissionXref (RoleID, PermissionID, IsDeleted) VALUES (@SMRoleId, 7, 0)
+	INSERT INTO Roles(ClinicId,RoleName,Description) VALUES(@ClinicId,'Users','Users have default permissions.')
+	SET @SMRoleId = @@IDENTITY
+	INSERT INTO RolePermissionXref (RoleID, PermissionID, IsDeleted) VALUES (@SMRoleId, 1, 0)
+	INSERT INTO RolePermissionXref (RoleID, PermissionID, IsDeleted) VALUES (@SMRoleId, 2, 0)
+	INSERT INTO RolePermissionXref (RoleID, PermissionID, IsDeleted) VALUES (@SMRoleId, 3, 0)
+	INSERT INTO RolePermissionXref (RoleID, PermissionID, IsDeleted) VALUES (@SMRoleId, 6, 0)
+
+	INSERT INTO SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated)
+	VALUES('SMDefaultClinic',@ClinicId,'Default Clinicid for SM Invitations from mobile',GETDATE(),GETDATE())
+
+END
+IF NOT EXISTS (SELECT 1 FROM SystemConfiguration WHERE ConfigKey = 'RUDefualtRole') BEGIN
+	DECLARE @RoleId INT
+
+	INSERT INTO Roles(ClinicId,RoleName,Description) VALUES(0, 'Mobile - SM Only', 'Mobile SM only')
+	SET @RoleId = @@IDENTITY
+	INSERT INTO RolePermissionXref (RoleID, PermissionID, IsDeleted) VALUES (@RoleId, 62, 0)
+	INSERT INTO SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated)
+	VALUES('RUDefualtRole',@RoleId,'Defualt RoleId to be used when a user is registered',GETDATE(),GETDATE())
+END
 -- Map new User data
 UPDATE Users SET UserName = LoginEmail, SecurityToken = '', FirstName = SUBSTRING(Name,0,(CHARINDEX(' ',Name,0))), LastName = SUBSTRING(Name,(CHARINDEX(' ',Name,0)),LEN(Name) - CHARINDEX(' ',Name,0) + 1), MI=''
-	
-
-
 
 ------------------------------------------------------------------------------------------------------------------------
 -- ADDED BY MIKAYIL BAYRAMOV ON 4/10/2015
 ------------------------------------------------------------------------------------------------------------------------	
 
-
-
 --FEATURE #2354 - Centralized Error Monitoring System - Phase 1
 
-IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'DICTATE_INTERNAL_API') BEGIN
-	INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)
-	VALUES('Mobile Dictate Internal WEB API', 'DICTATE_INTERNAL_API', 1, 1, 0, 'inteltamojit@gmail.com', 'noreply@entradahealth.com', 'Failure at Mobile Dictate Internal WEB API', 'smtp.entradahealth.net', 1, 'MobileDictateInternalWebApiErrorLog.txt', 'C:\EntradaLogs\', 1, 0, NULL, NULL, 0, NULL, NULL, GETDATE(), NULL)
-	PRINT 'ADDED LOG CONFIGURATION FOR Mobile Dictate Internal WEB API'
-END
+	IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'DICTATE_INTERNAL_API') BEGIN
+		INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)
+		VALUES('Mobile Dictate Internal WEB API', 'DICTATE_INTERNAL_API', 1, 1, 0, 'inteltamojit@gmail.com', 'noreply@entradahealth.com', 'Failure at Mobile Dictate Internal WEB API', 'smtp.entradahealth.net', 1, 'MobileDictateInternalWebApiErrorLog.txt', 'C:\EntradaLogs\', 1, 0, NULL, NULL, 0, NULL, NULL, GETDATE(), NULL)
+		PRINT 'ADDED LOG CONFIGURATION FOR Mobile Dictate Internal WEB API'
+	END
 
-IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'EXPRESS_LINK_INTERNAL_API') BEGIN
-	INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)
-	VALUES('Express Link Internal WEB API', 'EXPRESS_LINK_INTERNAL_API', 1, 1, 0, 'inteltamojit@gmail.com', 'noreply@entradahealth.com', 'Failure at Express Link Internal WEB API', 'smtp.entradahealth.net', 1, 'ExpressLinkInternalWebApiErrorLog.txt', 'C:\EntradaLogs\', 1, 0, NULL, NULL, 0, NULL, NULL, GETDATE(), NULL)
-	PRINT 'ADDED LOG CONFIGURATION FOR Express Link Internal WEB API'
-END
+	IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'EXPRESS_LINK_INTERNAL_API') BEGIN
+		INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)
+		VALUES('Express Link Internal WEB API', 'EXPRESS_LINK_INTERNAL_API', 1, 1, 0, 'inteltamojit@gmail.com', 'noreply@entradahealth.com', 'Failure at Express Link Internal WEB API', 'smtp.entradahealth.net', 1, 'ExpressLinkInternalWebApiErrorLog.txt', 'C:\EntradaLogs\', 1, 0, NULL, NULL, 0, NULL, NULL, GETDATE(), NULL)
+		PRINT 'ADDED LOG CONFIGURATION FOR Express Link Internal WEB API'
+	END
 
-IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'EXPRESS_LINK_PUBLIC_API') BEGIN
-	INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate) 
-	VALUES ('Express Link Public WEB API', 'EXPRESS_LINK_PUBLIC_API', 1, 1, 0, 'inteltamojit@gmail.com', 'noreply@entradahealth.com', 'Failure at Express Link Public WEB API', 'smtp.entradahealth.net', 1, 'ExpressLinkPublicWebApiErrorLog.txt', 'C:\EntradaLogs\', 1, 0, NULL, NULL, 1, 'http://localhost:58521', 'api/logger/createexceptionlog', GETDATE(), NULL)
-	PRINT 'ADDED LOG CONFIGURATION FOR Express Link Public WEB API'
-END
+	IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'EXPRESS_LINK_PUBLIC_API') BEGIN
+		INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate) 
+		VALUES ('Express Link Public WEB API', 'EXPRESS_LINK_PUBLIC_API', 1, 1, 0, 'inteltamojit@gmail.com', 'noreply@entradahealth.com', 'Failure at Express Link Public WEB API', 'smtp.entradahealth.net', 1, 'ExpressLinkPublicWebApiErrorLog.txt', 'C:\EntradaLogs\', 1, 0, NULL, NULL, 1, 'http://localhost:58521', 'api/logger/createexceptionlog', GETDATE(), NULL)
+		PRINT 'ADDED LOG CONFIGURATION FOR Express Link Public WEB API'
+	END
 
-IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'SPEECH_RECOGNITION_ENGINE') BEGIN
-	INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)
-	VALUES ('Speech Recognition Engine', 'SPEECH_RECOGNITION_ENGINE', 1, 0, 0, 'nramadheni@entradahealth.com', 'noreply@entradahealth.com', 'Speech Recognition Engine', 'smtp.entradahealth.net', 1, 'SpeechRecognitionEngineErrorLog.txt', 'C:\EntradaLogs\', 0, 0, NULL, NULL,  0, NULL, NULL, GETDATE(), NULL)
-	PRINT 'ADDED LOG CONFIGURATION FOR Speech Recognition Engine'
-END
+	IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'SPEECH_RECOGNITION_ENGINE') BEGIN
+		INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)
+		VALUES ('Speech Recognition Engine', 'SPEECH_RECOGNITION_ENGINE', 1, 0, 0, 'nramadheni@entradahealth.com', 'noreply@entradahealth.com', 'Speech Recognition Engine', 'smtp.entradahealth.net', 1, 'SpeechRecognitionEngineErrorLog.txt', 'C:\EntradaLogs\', 0, 0, NULL, NULL,  0, NULL, NULL, GETDATE(), NULL)
+		PRINT 'ADDED LOG CONFIGURATION FOR Speech Recognition Engine'
+	END
 
-IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'MOBILE_APP') BEGIN
-	INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)	  
-	VALUES ('Entrada Mobile Application', 'MOBILE_APP', 1, 1, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, 0, NULL, NULL, 0, NULL, NULL, GETDATE(), NULL)
-	PRINT 'ADDED LOG CONFIGURATION FOR Entrada Mobile Application'
-END
-
+	IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'MOBILE_APP') BEGIN
+		INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)	  
+		VALUES ('Entrada Mobile Application', 'MOBILE_APP', 1, 1, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, 0, NULL, NULL, 0, NULL, NULL, GETDATE(), NULL)
+		PRINT 'ADDED LOG CONFIGURATION FOR Entrada Mobile Application'
+	END
 END
 
 GO
