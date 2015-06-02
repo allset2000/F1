@@ -21,6 +21,8 @@ CREATE TABLE [dbo].[Clinics]
 [SRETypeId] [int] NULL,
 [DisablePatientImages] [bit] NOT NULL CONSTRAINT [DF_Clinics_DisablePatientImages] DEFAULT ((0))
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Clinics] ADD
+CONSTRAINT [fk_clinic_SRETypeId] FOREIGN KEY ([SRETypeId]) REFERENCES [dbo].[SREEngineType] ([SRETypeId])
 
 GO
 ALTER TABLE [dbo].[Clinics] ADD CONSTRAINT [PK_Clinics] PRIMARY KEY CLUSTERED  ([ClinicID]) ON [PRIMARY]
