@@ -243,12 +243,10 @@ END
 -- Map new User data
 UPDATE Users SET UserName = LoginEmail, SecurityToken = '', FirstName = SUBSTRING(Name,0,(CHARINDEX(' ',Name,0))), LastName = SUBSTRING(Name,(CHARINDEX(' ',Name,0)),LEN(Name) - CHARINDEX(' ',Name,0) + 1), MI=''
 
-------------------------------------------------------------------------------------------------------------------------
--- ADDED BY MIKAYIL BAYRAMOV ON 4/10/2015
-------------------------------------------------------------------------------------------------------------------------	
-
---FEATURE #2354 - Centralized Error Monitoring System - Phase 1
-
+	/*
+		Added By Mikayil Bayramov on 4/8/2015
+		Add values to LogConfiguration which is centralized cofiguration for Entrada.Logger
+	*/
 	IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'DICTATE_INTERNAL_API') BEGIN
 		INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)
 		VALUES('Mobile Dictate Internal WEB API', 'DICTATE_INTERNAL_API', 1, 1, 0, 'inteltamojit@gmail.com', 'noreply@entradahealth.com', 'Failure at Mobile Dictate Internal WEB API', 'smtp.entradahealth.net', 1, 'MobileDictateInternalWebApiErrorLog.txt', 'C:\EntradaLogs\', 1, 0, NULL, NULL, 0, NULL, NULL, GETDATE(), NULL)
