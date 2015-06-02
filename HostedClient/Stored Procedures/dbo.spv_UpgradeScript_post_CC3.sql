@@ -276,6 +276,15 @@ UPDATE Users SET UserName = LoginEmail, SecurityToken = '', FirstName = SUBSTRIN
 		VALUES ('Entrada Mobile Application', 'MOBILE_APP', 1, 1, 0, NULL, NULL, NULL, NULL, 0, NULL, NULL, 0, 0, NULL, NULL, 0, NULL, NULL, GETDATE(), NULL)
 		PRINT 'ADDED LOG CONFIGURATION FOR Entrada Mobile Application'
 	END
+
+	/*
+		Added By Mikayil Bayramov on 6/2/2015
+		Add value to [EntradaQuickBloxApplications] for QuickBlox production
+	*/
+	IF NOT EXISTS (SELECT 1 FROM [dbo].[EntradaQuickBloxApplications] WHERE ApplicationID = 3) BEGIN
+		INSERT INTO [dbo].[EntradaQuickBloxApplications] (ApplicationID, ApplicationTitle, AuthorizationKey, AuthorizationSecret)	  
+		VALUES (3, 'Entrada Mobile XMPP - Prod', 'NeE8cRMnvrUGdYC',	'fzGvDKYxeGRRxQ7')
+	END
 END
 
 GO
