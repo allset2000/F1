@@ -277,6 +277,12 @@ UPDATE Users SET UserName = LoginEmail, SecurityToken = '', FirstName = SUBSTRIN
 		PRINT 'ADDED LOG CONFIGURATION FOR Entrada Mobile Application'
 	END
 
+	IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'EXPRESS_LINK_CLIENT') BEGIN
+		INSERT INTO [dbo].[LogConfiguration]( ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)
+		VALUES('Express Link Client', 'EXPRESS_LINK_CLIENT', 1, 1, 0, 'inteltamojit@gmail.com', 'noreply@entradahealth.com', 'Failure at Express Link Client', 'smtp.entradahealth.net', 0, NULL, NULL, 0, 0, NULL, NULL, 0, NULL, NULL, getdate(), NULL )
+		PRINT 'ADDED LOG CONFIGURATION FOR Express Link Client'
+	END
+
 	/*
 		Added By Mikayil Bayramov on 6/2/2015
 		Add value to [EntradaQuickBloxApplications] for QuickBlox production
