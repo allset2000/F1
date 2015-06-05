@@ -25,8 +25,8 @@ BEGIN
 		BEGIN TRY
 		DECLARE @cur_clinicid INT
 		DECLARE @cur_requestuserid INT
-		DECLARE @cur_RoleId INT
-		DECLARE @cur_InvitationType bit
+		DECLARE @cur_RoleId VARCHAR(500)
+		DECLARE @cur_InvitationType INT
 		DECLARE @UserId INT
 		DECLARE @InviteId INT
 		DECLARE @ShortCode varchar(10)
@@ -35,7 +35,11 @@ BEGIN
 
 		SET @ShortCode = SUBSTRING(@RegistrationCode, 0, CHARINDEX('-',@RegistrationCode,0))
 	
-		SELECT @InviteId=UserInvitationId, @cur_clinicid=ClinicId, @cur_requestuserid=RequestingUserId, @cur_RoleId=RoleId, @cur_InvitationType=InvitationTypeId
+		SELECT @InviteId=UserInvitationId, 
+			   @cur_clinicid=ClinicId, 
+			   @cur_requestuserid=RequestingUserId, 
+			   @cur_RoleId=RoleId, 
+			   @cur_InvitationType=InvitationTypeId
 		FROM UserInvitations
 		WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
 
@@ -64,7 +68,7 @@ BEGIN
 		END
 
 		-- Add User Role Xref
-		IF(@cur_RoleId <= 0)
+		IF(LEN(@cur_RoleId) <= 0)
 		BEGIN
 			IF EXISTS(select 1 from SystemConfiguration where ConfigKey = 'RUDefualtRole')
 			BEGIN
@@ -75,7 +79,26 @@ BEGIN
 				RAISERROR ('Server Configuration not setup',16,1);
 			END
 		END
-		INSERT INTO UserRoleXref(UserId,RoleId,IsDeleted) VALUES(@UserId,@cur_RoleId,0)
+		ELSE
+		BEGIN
+				CREATE TABLE #tmp_roles
+				(
+					RoleId INT, 
+					Processed INT
+				)
+
+				INSERT INTO #tmp_roles (RoleId, Processed)
+				SELECT Value,0 FROM split (@cur_RoleId, ',')
+
+				WHILE EXISTS(SELECT 1 FROM #tmp_roles WHERE Processed = 0)
+				BEGIN
+					DECLARE @new_RoleId INT
+					SET @new_RoleId = (SELECT TOP 1 RoleId FROM #tmp_Roles WHERE Processed = 0)
+					INSERT INTO UserRoleXref(UserId,RoleId,IsDeleted) VALUES(@UserId,@new_RoleId,0)
+					UPDATE #tmp_roles SET Processed = 1 WHERE RoleId = @new_RoleId
+				END
+				DROP TABLE #tmp_roles
+		END
 
 		-- Set the UserId mapping in invitations table, this denotes the user has been registered
 		UPDATE UserInvitations SET RegisteredUserId = @UserId WHERE UserInvitationId = @InviteId
