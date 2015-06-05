@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -6,16 +5,10 @@ GO
     
 -- =============================================    
 -- Author: Santhosh Mukk    
--- Create date: 01/14/2015    
--- Description: SP used to get all Invitations to display on the Admin Console    
-
--- Updated 6/1/2015
--- Changes: Added Invitation Type column and removed the IsDemoUser column
-
--- Updated 6/4/2015
--- Changes: Added support for multiple RoleId's
+-- Create date: 06/4/2015    
+-- Description: SP used to get all Invitations sent or pending - should return all invitations other than deleted ones
 -- =============================================    
-CREATE PROCEDURE [dbo].[qryGetAllInvitations]  AS     
+CREATE PROCEDURE [dbo].[sp_GetAllInvitations]  AS     
 BEGIN       
 	SELECT UserInvitationId,
 		   FirstName,
@@ -35,7 +28,7 @@ BEGIN
 	  FROM [dbo].[UserInvitations] UI
 		  LEFT JOIN Clinics C ON C.ClinicID = UI.ClinicId AND C.Deleted = 0
 		  INNER JOIN UserInvitationTypes UIT on UIT.InvitationTypeId = UI.InvitationTypeId
-	WHERE ISNULL(UI.RegisteredUserId,'0') = 0 and UI.Deleted = 0
+	WHERE UI.Deleted = 0
   END
 
   

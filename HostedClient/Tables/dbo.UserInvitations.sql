@@ -10,14 +10,15 @@ CREATE TABLE [dbo].[UserInvitations]
 [RequestingUserId] [int] NOT NULL,
 [ClinicId] [int] NOT NULL,
 [InvitationMethod] [int] NOT NULL,
-[RoleId] [int] NULL,
+[RoleId] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [SecurityToken] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [DateTimeRequested] [datetime] NOT NULL,
 [DateTimeInvitationSent] [datetime] NULL,
 [IsDemoUser] [bit] NULL,
 [RegisteredUserId] [int] NULL,
 [InvitationMessage] [varchar] (1500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[InvitationTypeId] [int] NULL
+[InvitationTypeId] [int] NULL,
+[Deleted] [bit] NOT NULL CONSTRAINT [DF_UserInvitations_Deleted] DEFAULT ((0))
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[UserInvitations] ADD
 CONSTRAINT [FK_UserInvitations_InvitationTypeId] FOREIGN KEY ([InvitationTypeId]) REFERENCES [dbo].[UserInvitationTypes] ([InvitationTypeId])

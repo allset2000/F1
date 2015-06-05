@@ -10,18 +10,18 @@ GO
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_CreateUserInvitation]
 (
-	@FirstName VARCHAR(100) = ''
-	, @MI VARCHAR(100) = ''
-	, @LastName VARCHAR(100) = ''
-	, @EmailAddress VARCHAR(100) = ''
-	, @PhoneNumber VARCHAR(15) = ''
-	, @ClinicId INT = -1
-	, @InvitationMethod INT
-	, @RoleId INT = -1
-	, @SecurityToken VARCHAR(50)
-	, @IsDemoUser BIT
-	, @RequestingUserId INT
-	, @InvitationMessage VARCHAR(1500)
+	@FirstName VARCHAR(100) = '',
+	@MI VARCHAR(100) = '',
+	@LastName VARCHAR(100) = '',
+	@EmailAddress VARCHAR(100) = '',
+	@PhoneNumber VARCHAR(15) = '',
+	@ClinicId INT = -1,
+	@InvitationMethod INT,
+	@RoleId VARCHAR(500) = '',
+	@SecurityToken VARCHAR(50),
+	@InvitationTypeId INT,
+	@RequestingUserId INT,
+	@InvitationMessage VARCHAR(1500)
 )
 AS
 BEGIN
@@ -37,7 +37,7 @@ INSERT INTO [dbo].[UserInvitations]
            ,[RoleId]
            ,[SecurityToken]
            ,[DateTimeInvitationSent]
-           ,[IsDemoUser]
+           ,[InvitationTypeId]
 		   ,[RequestingUserId]
 		   ,[DateTimeRequested]
 		   ,[InvitationMessage])
@@ -53,7 +53,7 @@ INSERT INTO [dbo].[UserInvitations]
            ,@RoleId
            ,@SecurityToken
            ,GETDATE()
-           ,@IsDemoUser
+           ,@InvitationTypeId
 		   ,@RequestingUserId
 		   ,GETDATE()
 		   ,@InvitationMessage)

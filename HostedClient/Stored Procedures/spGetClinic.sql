@@ -13,6 +13,10 @@
 *******************************/  
 spEntradadropStoredProcedure 'spGetClinic'
 GO
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 CREATE PROCEDURE [dbo].[spGetClinic] 
 (  
  @vintClinicID  INT  
@@ -39,20 +43,18 @@ BEGIN
 	C.AutoEnrollDevices,
 	C.SRETypeId,
 	C.DisablePatientImages,
+	C.PortalTimeout,
+	C.DaysToResetPassword,
+	C.PreviousPasswordCount,
+	C.PasswordMinCharacters,
+	C.FailedPasswordLockoutCount,
+	C.TimeZoneId,
 	EV.CanAck, 
 	EV.Name AS EHRVendorName,
 	CA.ConnectionString AS ApiConnectionString
 	FROM Clinics C 
-		INNER JOIN EHRVendors EV 
-		ON C.EHRVendorID = EV.EHRVendorID
-		LEFT OUTER JOIN ClinicApis CA
-		ON C.ClinicID = CA.ClinicID
+		INNER JOIN EHRVendors EV ON C.EHRVendorID = EV.EHRVendorID
+		LEFT OUTER JOIN ClinicApis CA ON C.ClinicID = CA.ClinicID
 	WHERE C.ClinicID = @vintClinicID
 END  
-GO  
-
-
-
-
-
-
+GO
