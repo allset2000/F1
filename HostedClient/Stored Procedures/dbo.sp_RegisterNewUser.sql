@@ -21,12 +21,12 @@ CREATE PROCEDURE [dbo].[sp_RegisterNewUser]
 )
 AS
 BEGIN
-	BEGIN TRANSACTION CreateUpdatePatientDataAccess
+	BEGIN TRANSACTION RegisterNewUser
 		BEGIN TRY
 		DECLARE @cur_clinicid INT
 		DECLARE @cur_requestuserid INT
 		DECLARE @cur_RoleId INT
-		DECLARE @cur_DemoUser bit
+		DECLARE @cur_InvitationType bit
 		DECLARE @UserId INT
 		DECLARE @InviteId INT
 		DECLARE @ShortCode varchar(10)
@@ -35,7 +35,7 @@ BEGIN
 
 		SET @ShortCode = SUBSTRING(@RegistrationCode, 0, CHARINDEX('-',@RegistrationCode,0))
 	
-		SELECT @InviteId=UserInvitationId, @cur_clinicid=ClinicId, @cur_requestuserid=RequestingUserId, @cur_RoleId=RoleId, @cur_DemoUser=IsDemoUser
+		SELECT @InviteId=UserInvitationId, @cur_clinicid=ClinicId, @cur_requestuserid=RequestingUserId, @cur_RoleId=RoleId, @cur_InvitationType=InvitationTypeId
 		FROM UserInvitations
 		WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
 
@@ -80,7 +80,7 @@ BEGIN
 		-- Set the UserId mapping in invitations table, this denotes the user has been registered
 		UPDATE UserInvitations SET RegisteredUserId = @UserId WHERE UserInvitationId = @InviteId
 
-		IF (@cur_DemoUser = 1)
+		IF (@cur_InvitationType = (SELECT InvitationTypeId FROM UserInvitationTypes WHERE InvitationTypeName = 'Mobile Demo'))
 		BEGIN
 			DECLARE @DictatorUserName VARCHAR(100)
 			DECLARE @QueueId INT
@@ -156,7 +156,7 @@ BEGIN
 		SELECT 1 from Users WHERE UserId = @UserId
 	END TRY
 	BEGIN CATCH
-		IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION CreateUpdatePatientDataAccess
+		IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION RegisterNewUser
 			
 		DECLARE @errorMessage AS VARCHAR(4000) = (SELECT ERROR_MESSAGE()),
 				@errorSeverity AS INT = (SELECT ERROR_SEVERITY()),
@@ -167,7 +167,7 @@ BEGIN
 		SELECT @errorMessage as 'ErrorMessage'
 	END CATCH
 
-	IF @@TRANCOUNT > 0 COMMIT TRANSACTION CreateUpdatePatientDataAccess
+	IF @@TRANCOUNT > 0 COMMIT TRANSACTION RegisterNewUser
 END
 
 
