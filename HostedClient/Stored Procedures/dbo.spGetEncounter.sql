@@ -11,8 +11,6 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-spEntradadropStoredProcedure 'spGetEncounter'
-GO
 CREATE PROCEDURE [dbo].[spGetEncounter]   
 (    
  @vintEncounterID BIGINT  

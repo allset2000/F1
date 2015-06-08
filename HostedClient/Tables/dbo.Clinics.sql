@@ -25,7 +25,10 @@ CREATE TABLE [dbo].[Clinics]
 [PreviousPasswordCount] [int] NULL,
 [PasswordMinCharacters] [int] NULL,
 [FailedPasswordLockoutCount] [int] NULL,
-[TimeZoneId] [int] NULL
+[TimeZoneId] [int] NULL,
+[RealTimeClinicIP] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[RealTimeClinicPortNo] [int] NULL,
+[RealTimeEnabled] [bit] NOT NULL CONSTRAINT [DF_Clinics_RealTimeEnabled] DEFAULT ((0))
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[Clinics] ADD
 CONSTRAINT [fk_clinic_SRETypeId] FOREIGN KEY ([SRETypeId]) REFERENCES [dbo].[SREEngineType] ([SRETypeId])

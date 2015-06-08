@@ -1,7 +1,7 @@
 /******************************    
-** File:  spGetDictation.sql    
-** Name:  spGetDictation    
-** Desc:  Get the Dictations based on dictation id 
+** File:  spGetDictationsForJob.sql    
+** Name:  spGetDictationsForJob    
+** Desc:  Get the Dictations based on job id 
 ** Auth:  Suresh    
 ** Date:  18/May/2015    
 **************************    
@@ -9,13 +9,11 @@
 *************************    
 * PR   Date     Author  Description     
 * --   --------   -------   ------------------------------------    
-**   exec spGetDictation  
+**   exec spGetDictationsForJob  
 *******************************/
-spEntradadropStoredProcedure 'spGetDictation'
-GO
-CREATE PROCEDURE [dbo].[spGetDictation]    
+CREATE PROCEDURE [dbo].[spGetDictationsForJob]    
 (        
- @vintDictationID BIGINT
+ @vintJobID BIGINT
 )         
 AS        
 BEGIN 
@@ -33,5 +31,5 @@ BEGIN
 	FROM Dictations d
 	INNER JOIN DictationTypes dt
 	ON d.DictationTypeID = dt.DictationTypeID
-	WHERE d.DictationID=@vintDictationID
+	WHERE d.JobID=@vintJobID
 END 

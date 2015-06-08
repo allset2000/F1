@@ -11,7 +11,6 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-spEntradadropStoredProcedure 'spGetClinic'
 GO
 SET QUOTED_IDENTIFIER ON
 GO
@@ -49,6 +48,9 @@ BEGIN
 	C.PasswordMinCharacters,
 	C.FailedPasswordLockoutCount,
 	C.TimeZoneId,
+	C.RealTimeClinicIP,
+	C.RealTimeClinicPortNo,
+	C.RealTimeEnabled,
 	EV.CanAck, 
 	EV.Name AS EHRVendorName,
 	CA.ConnectionString AS ApiConnectionString

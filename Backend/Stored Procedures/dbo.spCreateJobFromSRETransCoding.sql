@@ -11,8 +11,6 @@
 * --   --------   -------   ------------------------------------    
 **   exec spCreateJobFromSRETransCoding  
 *******************************/
-spEntradadropStoredProcedure 'spCreateJobFromSRETransCoding'
-GO
 CREATE PROCEDURE dbo.spCreateJobFromSRETransCoding    
 (    
  @xmlJobsClient XML,

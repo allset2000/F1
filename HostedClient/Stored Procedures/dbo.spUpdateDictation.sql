@@ -11,8 +11,6 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-spEntradadropStoredProcedure 'spUpdateDictation'
-GO
 CREATE PROCEDURE [dbo].[spUpdateDictation]  
 (
  @bgintJobID BIGINT,  
