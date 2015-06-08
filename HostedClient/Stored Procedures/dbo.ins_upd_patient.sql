@@ -32,11 +32,18 @@ CREATE PROCEDURE [dbo].[ins_upd_patient]
 AS
 BEGIN
 
-SELECT @MRN = CASE WHEN ISNULL(@MRN,'') = '' THEN 'PNBR:'+@AlternateID ELSE @MRN END
+DECLARE @VendorID INT
+DECLARE @PatientID BIGINT
+SET @VendorID = (SELECT EHRVendorID FROM Clinics WHERE ClinicID = @clinicID)
 
+IF @vendorID = 3
+BEGIN 	 
+	SELECT @MRN = CASE WHEN ISNULL(@MRN,'') = '' THEN 'PNBR:'+@AlternateID ELSE @MRN END
+	SET @patientID = (SELECT TOP 1 PATIENTID FROM patients WHERE AlternateID = @AlternateID and ClinicID = @clinicID ORDER BY CHARINDEX('PNBR:',MRN,0) ASC)
+END
 -- Use 2 separate statements because SQL Server won't short
 -- circuit the OR statement
-IF ISNULL(@AlternateID,'') != '' --AND EXISTS(SELECT * FROM Patients WHERE ClinicID = @ClinicID AND MRN = ('PNBR:'+@AlternateID) and AlternateID = @AlternateID)
+IF @PatientID IS NOT NULL AND NOT EXISTS (SELECT MRN FROM patients where ClinicID=@clinicID AND MRN=@MRN )
 	UPDATE Patients
 	SET
 		MRN = @MRN,
@@ -56,7 +63,7 @@ IF ISNULL(@AlternateID,'') != '' --AND EXISTS(SELECT * FROM Patients WHERE Clini
 		Phone2 = @Phone2,
 		Fax1 = @Fax1,
 		Fax2 = @Fax2
-	WHERE ClinicID = @ClinicID AND AlternateID = @AlternateID
+	WHERE ClinicID = @ClinicID AND patientID = @patientID
 ELSE
 	UPDATE Patients
 	SET
