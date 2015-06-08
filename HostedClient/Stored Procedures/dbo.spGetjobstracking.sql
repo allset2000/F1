@@ -11,8 +11,6 @@
 * --   --------   -------   ------------------------------------    
 **   exec spGetDictationsForJob  
 *******************************/
-spEntradadropStoredProcedure 'spGetjobstracking'
-GO
 CREATE PROCEDURE [dbo].[spGetjobstracking]    
 (        
  @vintJobID BIGINT,  
