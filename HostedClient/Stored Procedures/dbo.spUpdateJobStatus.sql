@@ -11,8 +11,6 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-spEntradadropStoredProcedure 'spUpdateJobStatus'
-GO
 CREATE PROCEDURE [dbo].[spUpdateJobStatus]  
 (  
  @bgintjobId  BIGINT,  

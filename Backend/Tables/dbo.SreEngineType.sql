@@ -1,6 +1,6 @@
 CREATE TABLE dbo.SREEngineType
             (
-            SRETypeId int NOT NULL IDENTITY (1, 1),
+            SRETypeId int NOT NULL,
             SREType varchar(30) NULL
             ) ON [PRIMARY]
 GO

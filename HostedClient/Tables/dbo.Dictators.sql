@@ -28,24 +28,57 @@ CREATE TABLE [dbo].[Dictators]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [PK_Dictators] PRIMARY KEY CLUSTERED  ([DictatorID]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [IX_Dictators_Unique_DictatorName] UNIQUE NONCLUSTERED  ([DictatorName], [ClinicID]) ON [PRIMARY]
-GO
+
 CREATE NONCLUSTERED INDEX [IX_Dictators_ClinicID] ON [dbo].[Dictators] ([ClinicID], [EHRProviderID]) ON [PRIMARY]
-GO
+
 CREATE NONCLUSTERED INDEX [IX_Dictators_DictatorName] ON [dbo].[Dictators] ([DictatorName]) ON [PRIMARY]
+
 GO
-ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID])
+
+SET ANSI_PADDING OFF
 GO
-ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_CRFlagTypes] FOREIGN KEY ([CRFlagType]) REFERENCES [dbo].[CRFlagTypes] ([CRFlagType])
+
+ALTER TABLE [dbo].[Dictators]  WITH CHECK ADD  CONSTRAINT [FK_Dictators_Clinics] FOREIGN KEY([ClinicID])
+REFERENCES [dbo].[Clinics] ([ClinicID])
 GO
-ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [FK_Dictators_JobTypes] FOREIGN KEY ([DefaultJobTypeID]) REFERENCES [dbo].[JobTypes] ([JobTypeID])
+
+ALTER TABLE [dbo].[Dictators] CHECK CONSTRAINT [FK_Dictators_Clinics]
 GO
-ALTER TABLE [dbo].[Dictators] ADD CONSTRAINT [fk_dictators_SRETypeId] FOREIGN KEY ([SRETypeId]) REFERENCES [dbo].[SREEngineType] ([SRETypeId])
+
+ALTER TABLE [dbo].[Dictators]  WITH CHECK ADD  CONSTRAINT [FK_Dictators_CRFlagTypes] FOREIGN KEY([CRFlagType])
+REFERENCES [dbo].[CRFlagTypes] ([CRFlagType])
 GO
-EXEC sp_addextendedproperty N'MS_Description', N'Default Job Type', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'DefaultJobTypeID'
+
+ALTER TABLE [dbo].[Dictators] CHECK CONSTRAINT [FK_Dictators_CRFlagTypes]
 GO
-EXEC sp_addextendedproperty N'MS_Description', N'Client UserID', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'DictatorID'
+
+ALTER TABLE [dbo].[Dictators]  WITH CHECK ADD  CONSTRAINT [FK_Dictators_JobTypes] FOREIGN KEY([DefaultJobTypeID])
+REFERENCES [dbo].[JobTypes] ([JobTypeID])
 GO
-EXEC sp_addextendedproperty N'MS_Description', N'BackEnd Dictator Name', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'DictatorName'
+
+ALTER TABLE [dbo].[Dictators] CHECK CONSTRAINT [FK_Dictators_JobTypes]
+
+GO
+
+ALTER TABLE [dbo].[Dictators]  WITH CHECK ADD  CONSTRAINT [fk_dictators_SRETypeId] FOREIGN KEY([SRETypeId])
+REFERENCES [dbo].[SREEngineType] ([SRETypeId])
+GO
+
+ALTER TABLE [dbo].[Dictators] CHECK CONSTRAINT [fk_dictators_SRETypeId]
+GO
+
+
+--EXEC sp_addextendedproperty N'MS_Description', N'Default Job Type', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'DefaultJobTypeID'
+--GO
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Client UserID' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Dictators', @level2type=N'COLUMN',@level2name=N'DictatorID'
+
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'BackEnd Dictator Name' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Dictators', @level2type=N'COLUMN',@level2name=N'DictatorName'
+GO
+
+EXEC sys.sp_addextendedproperty @name=N'MS_Description', @value=N'Default Job Type' , @level0type=N'SCHEMA',@level0name=N'dbo', @level1type=N'TABLE',@level1name=N'Dictators', @level2type=N'COLUMN',@level2name=N'DefaultJobTypeID'
 GO

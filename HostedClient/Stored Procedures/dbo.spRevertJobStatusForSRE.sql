@@ -10,8 +10,6 @@
 * PR   Date     Author  Description     
 * --   --------   -------   ------------------------------------ 
 *******************************/
-spEntradadropStoredProcedure 'spRevertJobStatusForSRE'
-GO
 CREATE PROCEDURE [dbo].[spRevertJobStatusForSRE]
 (    
 @vvcrJobNumber VARCHAR(20)

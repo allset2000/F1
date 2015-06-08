@@ -11,8 +11,6 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-spEntradadropStoredProcedure 'spGetDictator'
-GO
 CREATE PROCEDURE [dbo].[spGetDictator]  
 (  
  @vintDictatorID  INT  

@@ -11,8 +11,6 @@
 * --   --------   -------   ------------------------------------    
 **   exec spGetImagesForJob  
 *******************************/
-spEntradadropStoredProcedure 'spGetImagesForJob'
-GO
 CREATE PROCEDURE [dbo].[spGetImagesForJob]    
 (        
  @vintJobID BIGINT

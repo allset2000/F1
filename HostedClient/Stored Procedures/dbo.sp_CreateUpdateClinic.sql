@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -74,7 +75,7 @@ BEGIN
 			END
 			ELSE
 			BEGIN
-				INSERT INTO ClinicAPIs(ClinicId, ConnectionString) VALUES(@cur_clinicid, 'PracticeID='+@EHRClinicID+';DepartmentID=1')
+				INSERT INTO ClinicAPIs(ClinicId, ConnectionString) VALUES(@ClinicID, 'PracticeID='+@EHRClinicID+';DepartmentID=1')
 			END
 		END
 	END
@@ -86,5 +87,3 @@ END
 
 
 GO
-
-
