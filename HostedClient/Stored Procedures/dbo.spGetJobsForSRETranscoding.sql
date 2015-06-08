@@ -66,7 +66,7 @@ BEGIN
   BEGIN          
    ROLLBACK TRANSACTION          
    DECLARE @ErrorMsg varchar(200)          
-   SET @ErrorMsg = '[spGetJobsByStatus] - Job Count mismatch: @JobCount =' + convert(varchar, @SelectedJobCount) + ' @@RowCount =' + convert(varchar, @UpdatedJobCount)          
+   SET @ErrorMsg = '[spGetJobsForSRETranscoding] - Job Count mismatch: @JobCount =' + convert(varchar, @SelectedJobCount) + ' @@RowCount =' + convert(varchar, @UpdatedJobCount)          
    RAISERROR (@ErrorMsg, 16, 1)     
    RETURN;          
   END         
