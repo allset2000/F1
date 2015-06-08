@@ -28,14 +28,17 @@ CREATE PROCEDURE [dbo].[sp_CreateUpdateClinic] (
 	@CRFlagType int,
 	@ForceCRStartDate datetime = null,
 	@ForceCREndDate datetime = null,
-	@SRETypeID int = -1
+	@SRETypeID int = -1,
+	@RealTimeClinicIP varchar(50) = null,
+	@RealTimeClinicPortNo int = null,
+	@RealTimeEnabled bit = 0
 ) AS 
 BEGIN
 	
 	IF NOT EXISTS(SELECT * FROM Clinics where ClinicID = @ClinicID)
 	BEGIN
-		INSERT INTO Clinics(ClinicId,Name,MobileCode,AccountManagerID,ExpressQueuesEnabled,ImageCaptureEnabled,PatientClinicalsEnabled,Deleted,EHRVendorID,EHRClinicID,EHRLocationID,ClinicCode,DisableUpdateAlert,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,AutoEnrollDevices,SRETypeID)
-		VALUES(@ClinicId,@Name, @MobileCode, @AccountManagerID, @ExpressQueuesEnabled, @ImageCaptureEnabled, @PatientClinicalsEnabled, @Deleted, @EHRVendorID, @EHRClinicID, @EHRLocationID, @ClinicCode, @DisableUpdateAlert, @CRFlagType, @ForceCRStartDate, @ForceCREndDate, @ExcludeStat, @AutoEnrollDevices, @SRETypeID)
+		INSERT INTO Clinics(ClinicId,Name,MobileCode,AccountManagerID,ExpressQueuesEnabled,ImageCaptureEnabled,PatientClinicalsEnabled,Deleted,EHRVendorID,EHRClinicID,EHRLocationID,ClinicCode,DisableUpdateAlert,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,AutoEnrollDevices,SRETypeID,RealTimeClinicIP,RealTimeClinicPortNo,RealTimeEnabled)
+		VALUES(@ClinicId,@Name, @MobileCode, @AccountManagerID, @ExpressQueuesEnabled, @ImageCaptureEnabled, @PatientClinicalsEnabled, @Deleted, @EHRVendorID, @EHRClinicID, @EHRLocationID, @ClinicCode, @DisableUpdateAlert, @CRFlagType, @ForceCRStartDate, @ForceCREndDate, @ExcludeStat, @AutoEnrollDevices, @SRETypeID, @RealTimeClinicIP, @RealTimeClinicPortNo, @RealTimeEnabled)
 
 		IF (@EHRVendorID = 2)
 		BEGIN
@@ -64,7 +67,10 @@ BEGIN
 						   ForceCREndDate = @ForceCREndDate, 
 						   ExcludeStat = @ExcludeStat, 
 						   AutoEnrollDevices = @AutoEnrollDevices,
-						   SRETypeID = @SRETypeID
+						   SRETypeID = @SRETypeID,
+						   RealTimeClinicIP = @RealTimeClinicIP,
+						   RealTimeClinicPortNo = @RealTimeClinicPortNo,
+						   RealTimeEnabled = @RealTimeEnabled
 		WHERE ClinicId = @ClinicID
 
 		IF (@EHRVendorID = 2)
