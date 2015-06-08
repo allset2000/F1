@@ -11,8 +11,6 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-spEntradadropStoredProcedure 'spGetClinic'
-GO
 CREATE PROCEDURE [dbo].[spGetClinic] 
 (  
  @vintClinicID  INT  

@@ -11,8 +11,6 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-spEntradadropStoredProcedure 'spCheckFileAlreadyInBackend'
-GO
 CREATE PROCEDURE [dbo].[spCheckFileAlreadyInBackend] 
 (  
  @vvcrDictatorID VARCHAR(50),

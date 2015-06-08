@@ -11,8 +11,6 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-spEntradadropStoredProcedure 'spGetReferringPhysiciansForJob'
-GO
 CREATE PROCEDURE [dbo].[spGetReferringPhysiciansForJob] 
 (  
  @vintJobID BIGINT

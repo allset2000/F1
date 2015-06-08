@@ -11,8 +11,6 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-spEntradadropStoredProcedure 'spGetDictatorByDictatoridAndClinic'
-GO
 CREATE PROCEDURE [dbo].[spGetDictatorByClientUserIdAndClinicId] 
 (  
  @ClientUserID varchar(50),
