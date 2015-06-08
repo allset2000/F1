@@ -1,7 +1,7 @@
 /******************************  
 ** File:  spGetSREInProcessJob.sql  
 ** Name:  spGetSREInProcessJob  
-** Desc:  Get Encounter details based on encounter id 
+** Desc:  Get SRE InProcess Job i.e. process started with BBN
 ** Auth:  Suresh  
 ** Date:  18/May/2015  
 **************************  
@@ -11,8 +11,6 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-spEntradadropStoredProcedure 'spGetSREInProcessJob'
-GO
 CREATE PROCEDURE [dbo].[spGetSREInProcessJob]   
 (    
  @vvcrJobNumber VARCHAR(20),
