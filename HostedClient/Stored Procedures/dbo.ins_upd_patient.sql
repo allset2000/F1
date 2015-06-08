@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -35,7 +36,7 @@ SELECT @MRN = CASE WHEN ISNULL(@MRN,'') = '' THEN 'PNBR:'+@AlternateID ELSE @MRN
 
 -- Use 2 separate statements because SQL Server won't short
 -- circuit the OR statement
-IF ISNULL(@AlternateID,'') != '' AND EXISTS(SELECT * FROM Patients WHERE ClinicID = @ClinicID AND MRN = ('PNBR:'+@AlternateID) and AlternateID = @AlternateID)
+IF ISNULL(@AlternateID,'') != '' --AND EXISTS(SELECT * FROM Patients WHERE ClinicID = @ClinicID AND MRN = ('PNBR:'+@AlternateID) and AlternateID = @AlternateID)
 	UPDATE Patients
 	SET
 		MRN = @MRN,
