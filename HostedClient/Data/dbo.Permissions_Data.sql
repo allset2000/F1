@@ -1,12 +1,6 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (70, 'TAB-NOTIFICATIONS', 'Tab - Notifications', NULL, 22)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (71, 'FNC-NOTIFICATIONS-ADD', 'Function - Add Notifications', NULL, 22)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (72, 'FNC-NOTIFICATIONS-EDIT', 'Function - Edit Notifications', NULL, 22)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (73, 'TAB-BACKENDLEGACYROW', 'Tab - Backend Legacy ROW', NULL, 23)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (74, 'FNC-BACKENDLEGACYROWUSER-ADD', 'Function - Add Backend Legacy ROWUser', NULL, 23)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (75, 'FNC-BACKENDLEGACYROWUSER-EDIT', 'Function - Edit Backend Legacy ROWUser', NULL, 23)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (76, 'FNC-BACKENDLEGACYROWCLINIC-ADD', 'Function - Add Backend Legacy ROWClinic', NULL, 23)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (77, 'FNC-BACKENDLEGACYROWCLINIC-EDIT', 'Function - Edit Backend Legacy ROWClinic', NULL, 23)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (78, 'FNC-INVITATION-DELETE', 'Function - Delete Invitation', NULL, 19)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (79, 'FNC-USERS-DELETE', 'Function - Delete User', NULL, 21)
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (1, 'TAB-DICT', 'Dictators Tab', NULL, 4)
@@ -52,7 +46,6 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissi
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (41, 'FNC-BACKENDJOB-RELEASE', 'Function - Releae Backend Job', NULL, 15)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (42, 'FNC-BACKENDJOB-REPROCESS', 'Function - Reprocess Backend Job', NULL, 15)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (43, 'FNC-JOBS-UNDELETE', 'Function - Undelete Jobs from Search Screen', NULL, 5)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (44, 'FNC-CLINIC-ADDDOCUMNET', 'Function - Add Document to Clinic', NULL, 20)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (45, 'FNC-CLINIC-EDITDOCUMENT', 'Function - Edit Document for Clinic', NULL, 20)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (46, 'FNC-CLINIC-DOWNLOADDOCUMENT', 'Function - Download document for Clinic', NULL, 20)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (47, 'FNC-CLINIC-DELETEDOCUMENT', 'Function - Delete document for Clinic', NULL, 20)
@@ -78,4 +71,15 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissi
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (67, 'FNC-DICTATORS-ADD', 'Function - Add New Dictators', NULL, 4)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (68, 'FNC-DICTATORS-ADDMASSROLE', 'Function - Manage Dictator Roles (Mass)', NULL, 4)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (69, 'FNC-CLINIC-ADMINCLINIC', 'Function - Manage Clinic', NULL, 20)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (70, 'TAB-NOTIFICATIONS', 'Tab - Notifications', NULL, 22)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (71, 'FNC-NOTIFICATIONS-ADD', 'Function - Add Notifications', NULL, 22)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (72, 'FNC-NOTIFICATIONS-EDIT', 'Function - Edit Notifications', NULL, 22)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (73, 'TAB-BACKENDLEGACYROW', 'Tab - Backend Legacy ROW', NULL, 23)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (74, 'FNC-BACKENDLEGACYROWUSER-ADD', 'Function - Add Backend Legacy ROWUser', NULL, 23)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (75, 'FNC-BACKENDLEGACYROWUSER-EDIT', 'Function - Edit Backend Legacy ROWUser', NULL, 23)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (76, 'FNC-BACKENDLEGACYROWCLINIC-ADD', 'Function - Add Backend Legacy ROWClinic', NULL, 23)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (77, 'FNC-BACKENDLEGACYROWCLINIC-EDIT', 'Function - Edit Backend Legacy ROWClinic', NULL, 23)
+SET IDENTITY_INSERT [dbo].[Permissions] OFF
+SET IDENTITY_INSERT [dbo].[Permissions] ON
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (44, 'FNC-CLINIC-ADDDOCUMENT', 'Function - Add Document to Clinic', NULL, 20)
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
