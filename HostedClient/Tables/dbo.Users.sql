@@ -17,7 +17,9 @@ CREATE TABLE [dbo].[Users]
 [LastLoginDate] [datetime] NULL,
 [FirstName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [MI] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[LastName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[LastName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[PhoneNumber] [varchar] (15) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[TimeZoneId] [int] NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Users] ADD CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED  ([UserID]) ON [PRIMARY]
