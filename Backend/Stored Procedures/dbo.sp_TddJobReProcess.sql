@@ -13,7 +13,7 @@ BEGIN
 	BEGIN
 		BEGIN TRY
 			BEGIN TRANSACTION
-				INSERT INTO DocumentsToProcess VALUES (@JobNumber)
+				INSERT INTO DocumentsToProcess ([JobNumber]) VALUES (@JobNumber)
 				INSERT INTO JobsTddReProcess VALUES(@JobNumber, SUSER_NAME(), GETDATE())
 			COMMIT TRANSACTION
 		END TRY
