@@ -13,12 +13,7 @@ CREATE PROCEDURE [dbo].[sp_UpdateDocToProcessJobProcessFailureCount]
  @jobNumber VARCHAR(20)
  AS
 BEGIN
- declare @ProcessFailureCount smallint
-
- IF(( select ProcessFailureCount from DocumentsToProcess where JobNumber = @jobNumber) is NOT NULL)
-			UPDATE DocumentsToProcess SET @ProcessFailureCount = ProcessFailureCount = ProcessFailureCount + 1 WHERE (JobNumber = @jobNumber)
- ELSE
-		UPDATE DocumentsToProcess SET  ProcessFailureCount = 1 WHERE (JobNumber = @jobNumber)
+  UPDATE DocumentsToProcess SET ProcessFailureCount = ISNULL(ProcessFailureCount,0)+1 WHERE (JobNumber = @jobNumber)
 END
 
 GO
