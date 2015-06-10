@@ -70,6 +70,12 @@ END
 IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-USERS-DELETE') BEGIN
 	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-USERS-DELETE','Function - Delete User',null,21)
 END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-USERS-UNBLOCK') BEGIN
+	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-USERS-UNBLOCK','Function - Unblock User',null,21)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-USERS-RESETPASSWORD') BEGIN
+	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-USERS-RESETPASSWORD','Function - Reset Users Password',null,21)
+END
 
 -- #4355 End of permission code adding
 END
