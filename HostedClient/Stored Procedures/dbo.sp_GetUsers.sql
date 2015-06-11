@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -16,11 +17,54 @@ BEGIN
 
 	IF (@clinicid <= 0)
 	BEGIN
-		SELECT * FROM Users
+		SELECT UserID,
+			   ClinicId,
+			   LoginEmail,
+			   Name,
+			   Password,
+			   Salt,
+			   UserName,
+			   Deleted,
+			   IsLockedOut,
+			   LastPasswordReset,
+			   PasswordAttemptFailure,
+			   LastFailedAttempt,
+			   PWResetRequired,
+			   SecurityToken,
+			   LastLoginDate,
+			   FirstName,
+			   MI,
+			   LastName,
+			   PhoneNumber,
+			   TimeZoneId, 
+			   CASE WHEN Deleted = 1 THEN 'Deleted' WHEN IsLockedOut = 1 THEN 'Portal Max Login Failure' ELSE 'Enabled' END as 'UserStatus' 
+		FROM Users
 	END
 	ELSE
 	BEGIN
-		SELECT * FROM Users WHERE ClinicId = @clinicid
+		SELECT UserID,
+			   ClinicId,
+			   LoginEmail,
+			   Name,
+			   Password,
+			   Salt,
+			   UserName,
+			   Deleted,
+			   IsLockedOut,
+			   LastPasswordReset,
+			   PasswordAttemptFailure,
+			   LastFailedAttempt,
+			   PWResetRequired,
+			   SecurityToken,
+			   LastLoginDate,
+			   FirstName,
+			   MI,
+			   LastName,
+			   PhoneNumber,
+			   TimeZoneId, 
+			   CASE WHEN Deleted = 1 THEN 'Deleted' WHEN IsLockedOut = 1 THEN 'Portal Max Login Failure' ELSE 'Enabled' END as 'UserStatus' 
+		FROM Users
+		WHERE ClinicId = @clinicid
 	END
 
 END
