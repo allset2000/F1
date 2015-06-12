@@ -1,21 +1,22 @@
-/******************************  
-** File:  spGetClinic.sql  
-** Name:  spGetClinic  
-** Desc:  Get Clinic based on clinic ID 
-** Auth:  Suresh  
-** Date:  18/May/2015  
-**************************  
-** Change History  
-**************************  
-** PR   Date     Author  Description   
-** --   --------   -------   ------------------------------------  
-**   
-*******************************/  
-GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+/******************************
+** File:  spGetClinicById.sql
+** Name:  spGetClinicById
+** Desc:  Get SreTypeId of Clinic  based on clinic id
+** Auth:  Suresh
+** Date:  30/05/2015
+**************************
+** Change History
+******************
+** Ticket       Date	    Author           Description	
+** --           --------    -------          ------------------------------------
+** D.2 - 4355   6/8         Sam Shoultz      Added new Clinic values / variables to the SP
+**
+*******************************/
 CREATE PROCEDURE [dbo].[spGetClinic] 
 (  
  @vintClinicID  INT  
