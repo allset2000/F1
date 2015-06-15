@@ -11,7 +11,7 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-CREATE PROCEDURE [dbo].[spGetClinic] 
+Create PROCEDURE [dbo].[spGetClinic] 
 (  
  @vintClinicID  INT  
 )  
@@ -37,6 +37,15 @@ BEGIN
 	C.AutoEnrollDevices,
 	C.SRETypeId,
 	C.DisablePatientImages,
+	C.PortalTimeout,
+	C.DaysToResetPassword,
+	C.PreviousPasswordCount,
+	C.PasswordMinCharacters,
+	C.FailedPasswordLockoutCount,
+	C.TimeZoneId,
+	C.RealTimeClinicIP,
+	C.RealTimeClinicPortNo,
+	C.RealTimeEnabled,
 	EV.CanAck, 
 	EV.Name AS EHRVendorName,
 	CA.ConnectionString AS ApiConnectionString
