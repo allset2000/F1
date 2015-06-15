@@ -1,6 +1,15 @@
 SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (78, 'FNC-INVITATION-DELETE', 'Function - Delete Invitation', NULL, 19)
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (79, 'FNC-USERS-DELETE', 'Function - Delete User', NULL, 21)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (80, 'FNC-USERS-UNBLOCK', 'Function - Unblock User', NULL, 21)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (81, 'FNC-USERS-RESETPASSWORD', 'Function - Reset Users Password', NULL, 21)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (82, 'FNC-USERS-SENDRESETEMAIL', 'Function - Send Password reset email for User', NULL, 21)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (83, 'MNU-HOMEPAGE', 'Menu Item - Home Page', NULL, 24)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (84, 'MNU-JOBREPORTS', 'Menu Item - Job Reports Page', NULL, 25)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (85, 'MNU-JOBDETAILSVIEWER', 'Menu Item - Job Details Page', NULL, 26)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (86, 'FNC-JOBDETAILSVIEWER-EDITDOCUMENT', 'Function - Edit Document', NULL, 26)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (87, 'FNC-JOBDETAILSVIEWER-APPROVEJOBSINCR', 'Function - Approve Jobs in CR', NULL, 26)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (88, 'FNC-JOBDETAILSVIEWER-EDITDEMOGRAPHICS', 'Function - Edit Demographics', NULL, 26)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (89, 'FNC-JOBDETAILSVIEWER-VIEWONLY', 'Function - View Only', NULL, 26)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (90, 'MNU-SECUREMESSENGER', 'Menu Item - Secure Messenger Page', NULL, 27)
 SET IDENTITY_INSERT [dbo].[Permissions] OFF
 SET IDENTITY_INSERT [dbo].[Permissions] ON
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (1, 'TAB-DICT', 'Dictators Tab', NULL, 4)
@@ -46,6 +55,7 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissi
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (41, 'FNC-BACKENDJOB-RELEASE', 'Function - Releae Backend Job', NULL, 15)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (42, 'FNC-BACKENDJOB-REPROCESS', 'Function - Reprocess Backend Job', NULL, 15)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (43, 'FNC-JOBS-UNDELETE', 'Function - Undelete Jobs from Search Screen', NULL, 5)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (44, 'FNC-CLINIC-ADDDOCUMENT', 'Function - Add Document to Clinic', NULL, 20)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (45, 'FNC-CLINIC-EDITDOCUMENT', 'Function - Edit Document for Clinic', NULL, 20)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (46, 'FNC-CLINIC-DOWNLOADDOCUMENT', 'Function - Download document for Clinic', NULL, 20)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (47, 'FNC-CLINIC-DELETEDOCUMENT', 'Function - Delete document for Clinic', NULL, 20)
@@ -79,7 +89,6 @@ INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissi
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (75, 'FNC-BACKENDLEGACYROWUSER-EDIT', 'Function - Edit Backend Legacy ROWUser', NULL, 23)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (76, 'FNC-BACKENDLEGACYROWCLINIC-ADD', 'Function - Add Backend Legacy ROWClinic', NULL, 23)
 INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (77, 'FNC-BACKENDLEGACYROWCLINIC-EDIT', 'Function - Edit Backend Legacy ROWClinic', NULL, 23)
-SET IDENTITY_INSERT [dbo].[Permissions] OFF
-SET IDENTITY_INSERT [dbo].[Permissions] ON
-INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (44, 'FNC-CLINIC-ADDDOCUMENT', 'Function - Add Document to Clinic', NULL, 20)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (78, 'FNC-INVITATION-DELETE', 'Function - Delete Invitation', NULL, 19)
+INSERT INTO [dbo].[Permissions] ([PermissionID], [Code], [Name], [ParentPermissionID], [ModuleId]) VALUES (79, 'FNC-USERS-DELETE', 'Function - Delete User', NULL, 21)
 SET IDENTITY_INSERT [dbo].[Permissions] OFF

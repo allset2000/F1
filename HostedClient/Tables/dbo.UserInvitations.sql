@@ -18,7 +18,7 @@ CREATE TABLE [dbo].[UserInvitations]
 [RegisteredUserId] [int] NULL,
 [InvitationMessage] [varchar] (1500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [InvitationTypeId] [int] NULL,
-[Deleted] [bit] NOT NULL CONSTRAINT [DF_UserInvitations_Deleted] DEFAULT ((0))
+[Deleted] [bit] NULL CONSTRAINT [DF_UserInvitations_Deleted] DEFAULT ((0))
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[UserInvitations] ADD
 CONSTRAINT [FK_UserInvitations_InvitationTypeId] FOREIGN KEY ([InvitationTypeId]) REFERENCES [dbo].[UserInvitationTypes] ([InvitationTypeId])

@@ -76,8 +76,45 @@ END
 IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-USERS-RESETPASSWORD') BEGIN
 	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-USERS-RESETPASSWORD','Function - Reset Users Password',null,21)
 END
-
 -- #4355 End of permission code adding
+-- #0000# - Adding new modules / permissions for new customer portal
+IF NOT EXISTS (SELECT 1 FROM Modules WHERE ModuleName = 'Home Page') BEGIN
+	INSERT INTO Modules(ApplicationId,ModuleName,IsDeleted,DateCreated,DateUpdated) VALUES(6,'Home Page',0,GETDATE(),GETDATE())
+END
+IF NOT EXISTS (SELECT 1 FROM Modules WHERE ModuleName = 'Job Reports') BEGIN
+	INSERT INTO Modules(ApplicationId,ModuleName,IsDeleted,DateCreated,DateUpdated) VALUES(6,'Job Reports',0,GETDATE(),GETDATE())
+END
+IF NOT EXISTS (SELECT 1 FROM Modules WHERE ModuleName = 'Job Details Viewer') BEGIN
+	INSERT INTO Modules(ApplicationId,ModuleName,IsDeleted,DateCreated,DateUpdated) VALUES(6,'Job Details Viewer',0,GETDATE(),GETDATE())
+END
+IF NOT EXISTS (SELECT 1 FROM Modules WHERE ModuleName = 'Secure Messenger') BEGIN
+	INSERT INTO Modules(ApplicationId,ModuleName,IsDeleted,DateCreated,DateUpdated) VALUES(6,'Secure Messenger',0,GETDATE(),GETDATE())
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-HOMEPAGE') BEGIN
+	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('MNU-HOMEPAGE','Menu Item - Home Page',null,24)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-JOBREPORTS') BEGIN
+	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('MNU-JOBREPORTS','Menu Item - Job Reports Page',null,25)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-JOBDETAILSVIEWER') BEGIN
+	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('MNU-JOBDETAILSVIEWER','Menu Item - Job Details Page',null,26)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBDETAILSVIEWER-EDITDOCUMENT') BEGIN
+	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-JOBDETAILSVIEWER-EDITDOCUMENT','Function - Edit Document',null,26)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBDETAILSVIEWER-APPROVEJOBSINCR') BEGIN
+	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-JOBDETAILSVIEWER-APPROVEJOBSINCR','Function - Approve Jobs in CR',null,26)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBDETAILSVIEWER-EDITDEMOGRAPHICS') BEGIN
+	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-JOBDETAILSVIEWER-EDITDEMOGRAPHICS','Function - Edit Demographics',null,26)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBDETAILSVIEWER-VIEWONLY') BEGIN
+	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-JOBDETAILSVIEWER-VIEWONLY','Function - View Only',null,26)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-SECUREMESSENGER') BEGIN
+	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('MNU-SECUREMESSENGER','Menu Item - Secure Messenger Page',null,27)
+END
+-- #0000# - End of adding new data
 END
 
 GO

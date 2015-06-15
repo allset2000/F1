@@ -15,6 +15,7 @@ CREATE PROCEDURE [dbo].[sp_UpdateRolePermissions]
 	@DelPerms varchar(1000),
 	@MobilePerm bit,
 	@ACPerm bit,
+	@CustomerPortalPerm bit,
 	@ChangedBy varchar(100)
 )
 AS
@@ -62,9 +63,10 @@ BEGIN
 	-- Flip values, AC sends true if checked, true in this case means deleted
 	IF (@MobilePerm = 1) BEGIN SET @MobilePerm = 0 END ELSE BEGIN SET @MobilePerm = 1 END
 	IF (@ACPerm = 1) BEGIN SET @ACPerm = 0 END ELSE BEGIN SET @ACPerm = 1 END
+	IF (@CustomerPortalPerm = 1) BEGIN SET @CustomerPortalPerm = 0 END ELSE BEGIN SET @CustomerPortalPerm = 1 END
 
 	-- Check / Update permissions to Mobile App
-	IF EXISTS (select * from RoleApplicationXref where RoleId = @RoleId and ApplicationId = 4) -- Mobile
+	IF EXISTS (select 1 from RoleApplicationXref where RoleId = @RoleId and ApplicationId = 4) -- Mobile
 	BEGIN
 		UPDATE RoleApplicationXref SET IsDeleted = @MobilePerm WHERE RoleId = @RoleId and ApplicationId = 4
 	END
@@ -77,7 +79,7 @@ BEGIN
 	END
 
 	-- Check / Update permissions to Admin Console
-	IF EXISTS (select * from RoleApplicationXref where RoleId = @RoleId and ApplicationId = 5) -- AC
+	IF EXISTS (select 1 from RoleApplicationXref where RoleId = @RoleId and ApplicationId = 5) -- AC
 	BEGIN
 		UPDATE RoleApplicationXref SET IsDeleted = @ACPerm WHERE RoleId = @RoleId and ApplicationId = 5
 	END
@@ -86,6 +88,19 @@ BEGIN
 		IF (@ACPerm  = 0)
 		BEGIN
 			INSERT INTO RoleApplicationXref(RoleId,ApplicationId,IsDeleted) VALUES(@RoleId, 5, 0)
+		END	
+	END
+
+	-- Check / Update permissions to Customer Portal
+	IF EXISTS (select 1 from RoleApplicationXref where RoleId = @RoleId and ApplicationId = 6) -- AC
+	BEGIN
+		UPDATE RoleApplicationXref SET IsDeleted = @CustomerPortalPerm WHERE RoleId = @RoleId and ApplicationId = 6
+	END
+	ELSE
+	BEGIN
+		IF (@CustomerPortalPerm = 0)
+		BEGIN
+			INSERT INTO RoleApplicationXref(RoleId,ApplicationId,IsDeleted) VALUES(@RoleId, 6, 0)
 		END	
 	END
 
