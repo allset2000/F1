@@ -20,6 +20,12 @@ CREATE TABLE [dbo].[Clinics]
 [AutoEnrollDevices] [bit] NOT NULL CONSTRAINT [DF_Clinics_AutoEnrollDevices] DEFAULT ((0)),
 [SRETypeId] [int] NULL,
 [DisablePatientImages] [bit] NOT NULL CONSTRAINT [DF_Clinics_DisablePatientImages] DEFAULT ((0)),
+[PortalTimeout] [int] NULL,
+[DaysToResetPassword] [int] NULL,
+[PreviousPasswordCount] [int] NULL,
+[PasswordMinCharacters] [int] NULL,
+[FailedPasswordLockoutCount] [int] NULL,
+[TimeZoneId] [int] NULL,
 [RealTimeClinicIP] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [RealTimeClinicPortNo] [int] NULL,
 [RealTimeEnabled] [bit] NOT NULL CONSTRAINT [DF_Clinics_RealTimeEnabled] DEFAULT ((0))
