@@ -1,7 +1,9 @@
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author:		Narender
 -- Create date: 05/25/2015
@@ -34,13 +36,14 @@ CREATE PROCEDURE [dbo].[sp_GetPortalJobReportPreference]
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-    Select	@DateField = USP.DateField, @Range = USP.[Range],@From = USP.[From], @To = USP.[To], @JobType= JT.Name, @JobStatus= USP.JobStatus,
+    Select	@DateField = USP.DateField, @Range = USP.[Range],@From = USP.[From], @To = USP.[To], @JobType= USP.JobType, @JobStatus= USP.JobStatus,
 			@DictatorID = USP.DictatorID, @MRN = USP.MRN, @FirstName = USP.FirstName, @LastName = USP.LastName, @DeviceGenerated = USP.IsDeviceGenerated, @CC = USP.CC,
 			@STAT = USP.STAT, @SelectedColumns = USP.SelectedColumns, @GroupBy = USP.GroupBy, @ResultsPerPage = USP.ResultsPerPage, @SortBy = USP.SortBy, @SortType = USP.SortType,
 			@ClinicID = USP.ClinicID, @IsSaved= USP.IsSaved from PortalJobReportPreferences USP 
-	inner join JobTypes JT on USP.JobType = JT.ID where USP.ID = @preferenceId
+		where USP.ID = @preferenceId
 	
 	if(@Range is not null)
 		SELECT 

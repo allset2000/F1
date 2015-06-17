@@ -32,7 +32,7 @@ CREATE PROCEDURE [dbo].[sp_InsertAndUpdatePortalJobReportPreferences]
   @sortType VARCHAR(50) = null,
   @reportName VARCHAR(300) = null,
   @id SMALLINT = null,
-  @clinicId smallint,
+  @clinicId smallint= null,
   @isSaved BIT,
   @newPrefID int output
 )
@@ -48,8 +48,7 @@ BEGIN TRY
 			VALUES (@userName, @dateField, @range, @from, @to, @jobType, @jobStatus, @dictatorID, @mrn, @firstName, @lastName, @isDeviceGenerated,
 			@cc, @stat, @selectedColumns, @groupBy, @resultsPerPage, @sortBy, @sortType, @reportName, @clinicId, @isSaved)
 
-			select @newPrefID=MAX(ID) FROM PortalJobReportPreferences --SCOPE_IDENTITY() --need to return newly inserted ID back to UI
-			
+			select @newPrefID=SCOPE_IDENTITY()
 		END
 		IF @Operation = 2 --Update
 		BEGIN
@@ -61,13 +60,6 @@ BEGIN TRY
 				MRN = @mrn, FirstName = @firstName, LastName = @lastName, isDeviceGenerated = @isDeviceGenerated, CC = @cc, STAT= @stat, SelectedColumns=  @selectedColumns, 
 				GroupBy = @groupBy, ResultsPerPage = @resultsPerPage, SortBy = @sortBy, SortType = @sortType, ReportName = @reportName, ClinicId = @clinicId 
 				WHERE ID=@id AND UserName=@userName
-			END
-		END
-		IF @Operation = 3 --Delete
-		BEGIN
-			IF @id is not null
-			BEGIN
-				DELETE FROM PortalJobReportPreferences WHERE ID=@id AND UserName=@userName	
 			END
 		END
    COMMIT TRANSACTION
@@ -82,6 +74,6 @@ BEGIN CATCH
 		END
 END CATCH
 
+
+
 GO
-
-
