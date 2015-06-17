@@ -31,7 +31,7 @@ BEGIN
 		MRN varchar(50),
 		PatientFirstName varchar(100),
 		PatientLastName varchar(100),
-		PatientDOB datetime,
+		PatientDOB varchar(100),
 		ResourceName varchar(100),
 		LocationID varchar(50),
 		LocationName varchar(100),
