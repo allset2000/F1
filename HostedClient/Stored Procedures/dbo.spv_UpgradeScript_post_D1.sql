@@ -18,6 +18,15 @@ IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'ADMIN
 	PRINT 'ADDED LOG CONFIGURATION FOR Entrada Admin Console'
 END
 -- #3889# - End of adds
+
+-- #4414# - Adding centrilized logger to Dictate API public 
+IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'DICTATE_PUBLIC_API') BEGIN
+	INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)	  
+    VALUES ('Mobile Dictate Public WEB API','DICTATE_PUBLIC_API',1, 1, 0, NULL, 'noreply@entradahealth.com',	'Failure at Mobile Dictate Public WEB API',	'smtp.entradahealth.net', 1, 'MobileDictatePubliclWebApiErrorLog.txt', 'C:\EntradaLogs\',  1, 0, NULL, NULL, 0,	NULL, NULL,	GETDATE(),	NULL)
+	PRINT 'ADDED LOG CONFIGURATION FOR Entrada Mobile Dictate Public WEB API'
+END
+-- #4414# - End of adds
+
 END
 
 GO
