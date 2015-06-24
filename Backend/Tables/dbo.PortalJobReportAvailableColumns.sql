@@ -1,9 +1,12 @@
-CREATE TABLE [dbo].[PortalJobReportAvailableColumns]
+CREATE TABLE [dbo].[PortalJobReportAvailableColumns](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [varchar](50) NOT NULL,
+	[Width] [varchar](10) NULL,
+	[DisplayFormat] [varchar](50) NULL,
+ CONSTRAINT [PK_AvailableColumns] PRIMARY KEY CLUSTERED 
 (
-[Id] [int] NOT NULL IDENTITY(1, 1),
-[Name] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
-GO
 
-ALTER TABLE [dbo].[PortalJobReportAvailableColumns] ADD CONSTRAINT [PK_AvailableColumns] PRIMARY KEY CLUSTERED  ([Id]) ON [PRIMARY]
 GO

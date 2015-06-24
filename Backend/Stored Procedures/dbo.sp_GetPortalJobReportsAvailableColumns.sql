@@ -12,7 +12,7 @@ GO
 CREATE PROCEDURE [dbo].[sp_GetPortalJobReportsAvailableColumns]
 AS
 BEGIN
-	SELECT Id,Name FROM PortalJobReportAvailableColumns
+	SELECT Id,Name,Width,DisplayFormat FROM PortalJobReportAvailableColumns
 END
 
 GO
