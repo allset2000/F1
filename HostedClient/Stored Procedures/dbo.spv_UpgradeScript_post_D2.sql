@@ -17,17 +17,17 @@ IF NOT EXISTS (SELECT 1 FROM dbo.Applications WHERE Description = 'Customer Port
 END
 -- #4355 - End Adding new apps
 -- #4355# - Adding Timezone lookup table values
-IF NOT EXISTS (SELECT 1 FROM dbo.TimeZone WHERE TimeZoneName='WST') BEGIN
-	INSERT INTO TimeZone(TimeZoneName) values('WST')
+IF NOT EXISTS (SELECT 1 FROM dbo.TimeZone WHERE TimeZoneName='PST') BEGIN
+	INSERT INTO TimeZone(TimeZoneName,GMTOffset) values('PST',-8)
 END
 IF NOT EXISTS (SELECT 1 FROM dbo.TimeZone WHERE TimeZoneName='MNT') BEGIN
-	INSERT INTO TimeZone(TimeZoneName) values('MNT')
+	INSERT INTO TimeZone(TimeZoneName,GMTOffset) values('MNT',-7)
 END
 IF NOT EXISTS (SELECT 1 FROM dbo.TimeZone WHERE TimeZoneName='CST') BEGIN
-	INSERT INTO TimeZone(TimeZoneName) values('CST')
+	INSERT INTO TimeZone(TimeZoneName,GMTOffset) values('CST',-6)
 END
 IF NOT EXISTS (SELECT 1 FROM dbo.TimeZone WHERE TimeZoneName='EST') BEGIN
-	INSERT INTO TimeZone(TimeZoneName) values('EST')
+	INSERT INTO TimeZone(TimeZoneName,GMTOffset) values('EST',-5)
 END
 -- #4355# - End of adds
 -- #4355# - Adding default values to system config table
@@ -46,6 +46,8 @@ END
 IF NOT EXISTS (SELECT 1 FROM dbo.SystemConfiguration WHERE ConfigKey = 'DEF_FailedPasswordLockoutCount') BEGIN
 	insert into SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('DEF_FailedPasswordLockoutCount','5','Default value for how many failed login attempts locks an account',GETDATE(),GETDATE())
 END
+-- Update all clinic standard values
+UPDATE Clinics SET PortalTimeout = 20, DaysToResetPassword = 90, PreviousPasswordCount = 3, PasswordMinCharacters = 8, FailedPasswordLockoutCount = 5
 -- #4355 - End of config adds
 -- #4355 - UserInvitaion Types and migration
 IF NOT EXISTS (SELECT 1 FROM dbo.UserInvitationTypes WHERE InvitationTypeName = 'Portal') BEGIN
@@ -62,7 +64,10 @@ IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = 'UserInvi
 	UPDATE UserInvitations SET InvitationTypeId = 3 where IsDemoUser = 0
 	ALTER TABLE UserInvitations DROP COLUMN IsDemoUser
 END
--- #4355 - End of User InvitationTypes
+IF EXISTS (SELECT 1 FROM UserInvitations WHERE Deleted is null) BEGIN
+	UPDATE UserInvitations SET Deleted = 0 WHERE Deleted is null
+END
+-- #4355 - End of User InvitationTypes and Migration
 -- #4355 - Adding new permission codes for epic
 IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-INVITATION-DELETE') BEGIN
 	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-INVITATION-DELETE','Function - Delete Invitation',null,19)
