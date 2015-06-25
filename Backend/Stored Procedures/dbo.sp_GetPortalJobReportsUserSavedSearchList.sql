@@ -15,7 +15,7 @@ CREATE PROCEDURE [dbo].[sp_GetPortalJobReportsUserSavedSearchList]
 )
 AS
 BEGIN
-	SELECT * FROM PortalJobReportPreferences where UserName = @userName AND IsSaved = 1
+	SELECT * FROM PortalJobReportPreferences where UserID = @userName AND IsSaved = 1
 END
 
 GO

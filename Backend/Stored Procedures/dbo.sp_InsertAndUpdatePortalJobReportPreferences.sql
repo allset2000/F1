@@ -4,7 +4,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author: Narender
--- Create date: 05/22/2015
+-- Create date: 05/21/2015
 -- Description: SP Used to Save the User Search Preferences
 -- =============================================
 
@@ -43,10 +43,14 @@ BEGIN TRY
 		IF @Operation = 1 --insert 
 		BEGIN
 			--Insert the Record into PortalJobReportPreferences table
-			INSERT INTO PortalJobReportPreferences(UserName, DateField, [Range], [From], [To], JobType, JobStatus, DictatorID, MRN, FirstName, LastName,
-			isDeviceGenerated, CC, STAT, SelectedColumns, GroupBy, ResultsPerPage, SortBy, SortType, ReportName, ClinicId, IsSaved )
+			INSERT INTO PortalJobReportPreferences(UserID, DateField, [Range], [From], [To], JobType, JobStatus, DictatorID, MRN, FirstName, LastName,
+			isDeviceGenerated, CC, STAT, SelectedColumns, GroupBy, ResultsPerPage, SortBy, SortType, ReportName, ClinicId, IsSaved,CreatedDate, UpdatedDate )
 			VALUES (@userName, @dateField, @range, @from, @to, @jobType, @jobStatus, @dictatorID, @mrn, @firstName, @lastName, @isDeviceGenerated,
-			@cc, @stat, @selectedColumns, @groupBy, @resultsPerPage, @sortBy, @sortType, @reportName, @clinicId, @isSaved)
+			@cc, @stat, @selectedColumns, @groupBy, @resultsPerPage, @sortBy, @sortType, @reportName, @clinicId, @isSaved, GetDate(), GetDate())
+
+			-- this is to deleted all the temporarily saved reports of this user
+			if(@isSaved =1 )
+				Delete from PortalJobReportPreferences where UserID = @userName and IsSaved = 0;
 
 			select @newPrefID=SCOPE_IDENTITY()
 		END
@@ -58,8 +62,11 @@ BEGIN TRY
 				UPDATE PortalJobReportPreferences
 				SET DateField = @dateField, [Range] = @range, [From] = @from, [To] = @to, JobType = @jobType, JobStatus = @jobStatus, DictatorID = @dictatorID,
 				MRN = @mrn, FirstName = @firstName, LastName = @lastName, isDeviceGenerated = @isDeviceGenerated, CC = @cc, STAT= @stat, SelectedColumns=  @selectedColumns, 
-				GroupBy = @groupBy, ResultsPerPage = @resultsPerPage, SortBy = @sortBy, SortType = @sortType, ReportName = @reportName, ClinicId = @clinicId 
-				WHERE ID=@id AND UserName=@userName
+				GroupBy = @groupBy, ResultsPerPage = @resultsPerPage, SortBy = @sortBy, SortType = @sortType, ReportName = @reportName, ClinicId = @clinicId, UpdatedDate = GetDate()
+				WHERE ID=@id AND UserID=@userName
+				
+				-- this is to deleted all the temporarily saved reports of this user
+				Delete from PortalJobReportPreferences where UserID = @userName and IsSaved = 0;
 			END
 		END
    COMMIT TRANSACTION
@@ -73,7 +80,3 @@ BEGIN CATCH
 			RAISERROR(@ErrMsg, @ErrSeverity, 1)
 		END
 END CATCH
-
-
-
-GO
