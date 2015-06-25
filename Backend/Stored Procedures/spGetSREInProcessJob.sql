@@ -18,8 +18,7 @@ CREATE PROCEDURE [dbo].[spGetSREInProcessJob]
 )    
 AS    
 BEGIN   
-	SELECT jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,    
-	js.path    
+	SELECT jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,js.path,js.StatusDate
 	FROM  Jobs jb      
 	INNER JOIN dbo.Dictators d on jb.DictatorID = d.DictatorID    
 	INNER JOIN Clinics c on jb.ClinicID = c.ClinicID    
