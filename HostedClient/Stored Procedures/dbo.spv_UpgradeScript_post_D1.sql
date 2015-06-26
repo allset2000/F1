@@ -27,6 +27,15 @@ IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'DICTA
 END
 -- #4414# - End of adds
 
+
+-- #3930 part b# - Adding centrilized logger to Real Time TCP IP server
+IF NOT EXISTS (SELECT 1 FROM dbo.LogConfiguration WHERE ApplicationCode = 'REAL_TIME_TCP_IP_SERVER') BEGIN
+	INSERT INTO dbo.LogConfiguration (ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)	  
+    VALUES ('Real Time TCP IP Server','REAL_TIME_TCP_IP_SERVER',1, 1, 0, NULL, 'noreply@entradahealth.com',	'Failure at Real Time TCP IP Server',	'smtp.entradahealth.net', 1, 'RealTimeTcpIpServerErrorLog.txt', 'C:\EntradaLogs\',  1, 0, NULL, NULL, 0,	NULL, NULL,	GETDATE(),	NULL)
+	PRINT 'ADDED LOG CONFIGURATION FOR Real Time TCP IP Server'
+END
+
+-- #3930# - End of adds
 END
 
 GO
