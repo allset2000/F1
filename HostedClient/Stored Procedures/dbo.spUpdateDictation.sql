@@ -12,7 +12,7 @@
 **   
 *******************************/
   
-alter PROCEDURE [dbo].[spUpdateDictation]  
+CREATE PROCEDURE [dbo].[spUpdateDictation]  
 (
  @bgintJobID BIGINT,  
  @bgintDictationID  BIGINT,
