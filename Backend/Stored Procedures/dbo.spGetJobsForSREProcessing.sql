@@ -11,8 +11,7 @@
 * --   --------   -------   ------------------------------------    
 **   exec spGetJobsForSREProcessing 110, 5,5  
 *******************************/
-DROP PROCEDURE dbo.spGetJobsForSREProcessing
-GO    
+
 CREATE PROCEDURE dbo.spGetJobsForSREProcessing    
 (    
  @vintStatus  INT,    
@@ -33,14 +32,15 @@ DECLARE @UpdatedJobCount INT
  Stat bit,  
  ReceivedOn datetime,  
  IsLockedForProcessing bit,  
- SRETypeId int  
+ SRETypeId int,
+ ProcessTypeId  int   
  )  
    
  DECLARE @IsLockedForProcessing BIT    
  -- Get nVoQ Jobs  
   INSERT INTO @TempJobs    
   SELECT top (@vintNVoQJobCount) jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,  
-  CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId   
+  CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId,2 as ProcessTypeId      
   FROM  Jobs jb    
   INNER JOIN dbo.Dictators d on jb.DictatorID = d.DictatorID  
   INNER JOIN Clinics c on jb.ClinicID = c.ClinicID  
@@ -54,7 +54,7 @@ DECLARE @UpdatedJobCount INT
  -- Get BBN Jobs  
   INSERT INTO @TempJobs   
   SELECT top (@vintBBNJobCount) jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,  
-  CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId   
+  CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId,2 as ProcessTypeId      
   FROM  Jobs jb    
   INNER JOIN dbo.Dictators d on jb.DictatorID = d.DictatorID  
   INNER JOIN Clinics c on jb.ClinicID = c.ClinicID  

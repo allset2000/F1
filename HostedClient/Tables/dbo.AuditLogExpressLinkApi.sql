@@ -10,6 +10,8 @@ CREATE TABLE [dbo].[AuditLogExpressLinkApi]
 [Success] [bit] NOT NULL,
 [Exception] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_AuditlogExpressLinkAPI_ConfigID] ON [dbo].[AuditLogExpressLinkApi] ([ConfigID] DESC, [OperationTime] DESC) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[AuditLogExpressLinkApi] ADD CONSTRAINT [PK_AuditLogExpressLinkApi] PRIMARY KEY CLUSTERED  ([LogID]) ON [PRIMARY]
 GO
