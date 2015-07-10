@@ -11,7 +11,7 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-Create PROCEDURE [dbo].[spGetClinic] 
+CREATE PROCEDURE [dbo].[spGetClinic] 
 (  
  @vintClinicID  INT  
 )  
@@ -36,7 +36,10 @@ BEGIN
 	C.ExcludeStat,
 	C.AutoEnrollDevices,
 	C.SRETypeId,
-	C.DisablePatientImages
+	C.DisablePatientImages,
+	EV.CanAck, 
+	EV.Name AS EHRVendorName,
+	CA.ConnectionString AS ApiConnectionString
 	FROM Clinics C 
 		INNER JOIN EHRVendors EV 
 		ON C.EHRVendorID = EV.EHRVendorID
@@ -44,10 +47,4 @@ BEGIN
 		ON C.ClinicID = CA.ClinicID
 	WHERE C.ClinicID = @vintClinicID
 END  
-GO  
-
-
-
-
-
-
+GO
