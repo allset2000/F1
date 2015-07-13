@@ -10,12 +10,19 @@
 ** PR   Date     Author  Description   
 ** --   --------   -------   ------------------------------------  
 **   
-*******************************/  
+*******************************/
+  
 CREATE PROCEDURE [dbo].[spUpdateDictation]  
 (
  @bgintJobID BIGINT,  
- @bgintDictationID  BIGINT,  
+ @bgintDictationID  BIGINT,
+ @vintDictationTypeID int,
+ @vintDictatorID int,
+ @vintQueueID int,
+ @smintDuration smallint,
+ @vvcrMachineName varchar(50),
  @vvcrFileName VARCHAR(255),
+ @vvcrClientVersion VARCHAR(100),
  @vvcrChangedBy VARCHAR(20),
  @vintStatus  SMALLINT 
 )  
@@ -29,7 +36,8 @@ BEGIN TRY
 	SELECT @OldDictationStatus = status FROM Dictations WHERE DictationID = @bgintDictationID 
 	SELECT @OldJobStatus = status FROM Jobs WHERE jobID = @bgintJobID 
 	
-	UPDATE Dictations SET FileName = @vvcrFileName,status=@vintStatus WHERE DictationID = @bgintDictationID  
+	UPDATE Dictations SET FileName = @vvcrFileName,status=@vintStatus,JobID=@bgintJobID,DictationTypeID=@vintDictationTypeID,DictatorID=@vintDictatorID,
+	QueueID=@vintQueueID,Duration=@smintDuration,MachineName=@vvcrMachineName WHERE DictationID = @bgintDictationID  
 	
 	-- Only update if the status changed
 	IF (@OldDictationStatus <> @vintStatus)

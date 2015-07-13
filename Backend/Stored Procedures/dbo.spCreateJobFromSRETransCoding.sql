@@ -90,7 +90,7 @@ BEGIN TRY
 	IF (@xmlJobsImages is not null)
 		INSERT INTO Jobs_Images(JobNumber,ImagePath)
 		SELECT Images.value('JobNumber[1]','VARCHAR(20)') AS JobNumber,Images.value('ImagePath[1]','VARCHAR(200)') AS DictatorID
-		FROM @xmlJobsImages.nodes('JobsImages')Catalog(Images)
+		FROM @xmlJobsImages.nodes('/JobsImages/JobsImage')Catalog(Images)
 
 	--Insert hosted data into backend JobTracking table with status 100
 	INSERT INTO JobTracking(JobNumber,Status,StatusDate,Path)
