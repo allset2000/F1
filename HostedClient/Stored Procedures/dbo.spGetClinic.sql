@@ -36,7 +36,10 @@ BEGIN
 	C.ExcludeStat,
 	C.AutoEnrollDevices,
 	C.SRETypeId,
-	C.DisablePatientImages
+	C.DisablePatientImages,
+	EV.CanAck, 
+	EV.Name AS EHRVendorName,
+	CA.ConnectionString AS ApiConnectionString
 	FROM Clinics C 
 		INNER JOIN EHRVendors EV 
 		ON C.EHRVendorID = EV.EHRVendorID
