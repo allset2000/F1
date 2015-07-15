@@ -24,7 +24,7 @@ CREATE PROCEDURE [dbo].[sp_GetJobsToSync](
 	 @MaxFutureDays INT
 ) AS 
 BEGIN
-	SELECT j.JobID, j.ClinicID, j.JobTypeID, j.Stat, j.[Priority]
+	SELECT j.JobID, j.JobNumber, j.ClinicID, j.JobTypeID, j.Stat, j.[Priority]
 	FROM dbo.Dictations AS d INNER JOIN dbo.Jobs AS j ON d.JobID = j.JobID 
 						     INNER JOIN dbo.Encounters AS e ON j.EncounterID = e.EncounterID
 						     INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID
