@@ -1,40 +1,30 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
 -- =============================================
--- Author: Sam Shoultz
--- Create date: 12/3/2014
--- Description: SP called from DictateAPI to pull Dictations to sync on mobile
+--	Author: Sam Shoultz
+--	Create date: 12/3/2014
+--	Description: SP called from DictateAPI to pull Dictations to sync on mobile
+
+--	Modified By: Mikayil Bayramov
+--	Modification Date: 5/29/2015
+--	Details: Performance improvement
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetDictationsToSync] (
-	 @DictatorId int,
-	 @MaxFutureDays int
+	 @DictatorId INT,
+	 @MaxFutureDays INT
 ) AS 
 BEGIN
-	IF (@MaxFutureDays > 0)
-	BEGIN	 
-		SELECT D.* 
-		FROM Dictations D
-			INNER JOIN Jobs J ON D.JobID = J.JobID
-			INNER JOIN Encounters E ON J.EncounterID = E.EncounterID
-			INNER JOIN Queue_Users QU on QU.QueueID = D.QueueID
-			INNER JOIN Queues Q on Q.QueueID = QU.QueueID
-		WHERE (D.DictatorID = @DictatorId or QU.DictatorID = @DictatorId)
-			  AND D.Status in (200,100)
-			  AND DATEDIFF (D, GETDATE (), E.AppointmentDate) <= @MaxFutureDays
-			  AND Q.Deleted = 0
-	END
-	ELSE
-	BEGIN
-		SELECT D.* 
-		FROM Dictations D
-			INNER JOIN Jobs J ON D.JobID = J.JobID
-			INNER JOIN Queue_Users QU on QU.QueueID = D.QueueID
-			INNER JOIN Queues Q on Q.QueueID = QU.QueueID
-		WHERE D.Status in (200,100)
-			  AND (D.DictatorID = @DictatorId or QU.DictatorID = @DictatorId)
-			  AND Q.Deleted = 0
-	END
+	SELECT d.DictationID, d.DictationTypeID, d.QueueID, d.[Status]
+	FROM dbo.Dictations AS d INNER JOIN dbo.Jobs AS j ON d.JobID = j.JobID
+							 INNER JOIN dbo.Encounters AS e ON j.EncounterID = e.EncounterID 
+							 INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID
+							 INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
+	WHERE qu.DictatorID = @DictatorId AND 
+		  DATEDIFF (D, GETDATE(), e.AppointmentDate) <= @MaxFutureDays AND
+		  d.[Status] IN (100, 200)  AND 
+		  q.Deleted = 0
 END
 GO
