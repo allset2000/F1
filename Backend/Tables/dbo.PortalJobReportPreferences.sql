@@ -33,6 +33,7 @@ CREATE TABLE [dbo].[PortalJobReportPreferences](
 	[IsSaved] [bit] NULL,
 	[CreatedDate] [datetime] NULL,
 	[UpdatedDate] [datetime] NULL,
+	[JobNumber] [varchar](20) NULL,
  CONSTRAINT [PK_UserSearchPreferences] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC
@@ -50,3 +51,5 @@ GO
 
 ALTER TABLE [dbo].[PortalJobReportPreferences] CHECK CONSTRAINT [FK_PortalJobReportPreferences_Dictators]
 GO
+
+

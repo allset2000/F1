@@ -1,7 +1,9 @@
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
+
 -- =============================================
 -- Author: Narender
 -- Create date: 05/21/2015
@@ -34,6 +36,7 @@ CREATE PROCEDURE [dbo].[sp_InsertAndUpdatePortalJobReportPreferences]
   @id SMALLINT = null,
   @clinicId smallint= null,
   @isSaved BIT,
+  @jobNumber VARCHAR(20) = null,
   @newPrefID int output
 )
 AS
@@ -44,9 +47,9 @@ BEGIN TRY
 		BEGIN
 			--Insert the Record into PortalJobReportPreferences table
 			INSERT INTO PortalJobReportPreferences(UserID, DateField, [Range], [From], [To], JobType, JobStatus, DictatorID, MRN, FirstName, LastName,
-			isDeviceGenerated, CC, STAT, SelectedColumns, GroupBy, ResultsPerPage, SortBy, SortType, ReportName, ClinicId, IsSaved,CreatedDate, UpdatedDate )
+			isDeviceGenerated, CC, STAT, SelectedColumns, GroupBy, ResultsPerPage, SortBy, SortType, ReportName, ClinicId, IsSaved,CreatedDate, UpdatedDate,JobNumber )
 			VALUES (@userName, @dateField, @range, @from, @to, @jobType, @jobStatus, @dictatorID, @mrn, @firstName, @lastName, @isDeviceGenerated,
-			@cc, @stat, @selectedColumns, @groupBy, @resultsPerPage, @sortBy, @sortType, @reportName, @clinicId, @isSaved, GetDate(), GetDate())
+			@cc, @stat, @selectedColumns, @groupBy, @resultsPerPage, @sortBy, @sortType, @reportName, @clinicId, @isSaved, GetDate(), GetDate(),@jobNumber)
 
 			-- this is to deleted all the temporarily saved reports of this user
 			if(@isSaved =1 )
@@ -80,3 +83,7 @@ BEGIN CATCH
 			RAISERROR(@ErrMsg, @ErrSeverity, 1)
 		END
 END CATCH
+
+GO
+
+
