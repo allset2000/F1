@@ -41,7 +41,7 @@ BEGIN
 				set  @SortType= null;
 			end
 		If(@IsSaved is NULL) 
-			return -1 -- this condition is to make sure that we get a valid filter recored, not to try to get a record which was deleted
+			return -1 -- this condition is to make sure that we get a valid filter record, not to try to get a record which was deleted
 
 		SELECT J.JobNumber, J.DictatorID, J.JobType, J.IsGenericJob as DeviceGenerated,J.AppointmentDate,J.CC,J.Stat, JP.MRN, (JP.FirstName + ' '+ JP.LastName) AS Patient,
 				js.JobStatus,JTI.StatusDate AS 'In Process',jta.StatusDate AS 'Awaiting Delivery'
@@ -50,13 +50,13 @@ BEGIN
 			   FROM dbo.JobTracking JT  
 			   INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
 			   INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId  
-			   WHERE JT.JobNumber=j.JobNumber AND jg.Id=1 and JT.StatusDate >= DATEADD(M,-12,getdate()) -- will  always get lessthan 3 months data..
+			   WHERE JT.JobNumber=j.JobNumber AND jg.Id=1 and JT.StatusDate >= DATEADD(M,-4,getdate()) -- will  always get lessthan 3 months data..
 			   GROUP BY jg.Id,jt.JobNumber,JG.StatusGroup) JTI
 			OUTER APPLY(SELECT JT.JobNumber,MAX(jt.StatusDate) StatusDate,jg.Id,JG.StatusGroup
 			   FROM dbo.JobTracking JT  
 			   INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
 			   INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId  
-			   WHERE  JT.JobNumber=j.JobNumber AND jg.Id=5 and JT.StatusDate >= DATEADD(M,-12,getdate()) -- will  always get lessthan 3 months data..-- 5 is for status group for Awaiting Delivery
+			   WHERE  JT.JobNumber=j.JobNumber AND jg.Id=4 and JT.StatusDate >= DATEADD(M,-4,getdate()) -- will  always get lessthan 3 months data..-- 4 is for status group for Awaiting Delivery
 			   GROUP BY jg.Id,jt.JobNumber,JG.StatusGroup) JTA
 			OUTER APPLY(SELECT case when JSA.StatusDate is null then (JG.StatusGroup + ': '+ CONVERT(varchar, JSB.StatusDate, 100)) 
 				  ELSE (JG.StatusGroup + ': '+ CONVERT(varchar, JSA.StatusDate, 100)) end JobStatus, JG.StatusGroup,JG.Id 
@@ -82,7 +82,7 @@ BEGIN
 			and (@STAT is null or J.Stat = @STAT) 
 			and (@ClinicID is null or J.ClinicID = @ClinicID)  
 			and (@JobNumber is null or J.JobNumber = @JobNumber)  
-			and (J.ReceivedOn  >= DATEADD(M,-12,getdate())) --  >= DATEADD(M,-4,getdate()-- will  always get lessthan 3 months data..
+			and (J.ReceivedOn  >= DATEADD(M,-4,getdate())) --  >= DATEADD(M,-4,getdate()-- will  always get lessthan 3 months data..
 
 		--GROUP BY  J.JobNumber,J.DictatorID, J.JobType, J.IsGenericJob, AppointmentDate, J.JobStatus, J.CC,J.Stat, MRN,JP.FirstName,JP.LastName,JTI.StatusDate,JTA.StatusDate,js.JobStatus,J.ClinicID
 		  Order by
@@ -160,13 +160,13 @@ BEGIN
 			   FROM dbo.JobTracking JT  
 			   INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
 			   INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId  
-			   WHERE JT.JobNumber=j.JobNumber AND jg.Id=1 and JT.StatusDate >= DATEADD(M,-12,getdate()) -- will  always get lessthan 3 months data..
+			   WHERE JT.JobNumber=j.JobNumber AND jg.Id=1 and JT.StatusDate >= DATEADD(M,-4,getdate()) -- will  always get lessthan 3 months data..
 			   GROUP BY jg.Id,jt.JobNumber,JG.StatusGroup) JTI
 			OUTER APPLY(SELECT JT.JobNumber,MAX(jt.StatusDate) StatusDate,jg.Id,JG.StatusGroup
 			   FROM dbo.JobTracking JT  
 			   INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
 			   INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId  
-			   WHERE  JT.JobNumber=j.JobNumber AND jg.Id=5 and JT.StatusDate >= DATEADD(M,-12,getdate()) -- will  always get lessthan 3 months data..-- 5 is for status group for Awaiting Delivery
+			   WHERE  JT.JobNumber=j.JobNumber AND jg.Id=4 and JT.StatusDate >= DATEADD(M,-4,getdate()) -- will  always get lessthan 3 months data..-- 4 is for status group for Awaiting Delivery
 			   GROUP BY jg.Id,jt.JobNumber,JG.StatusGroup) JTA
 			OUTER APPLY(SELECT case when JSA.StatusDate is null then (JG.StatusGroup + ': '+ CONVERT(varchar, JSB.StatusDate, 100)) 
 				  ELSE (JG.StatusGroup + ': '+ CONVERT(varchar, JSA.StatusDate, 100)) end JobStatus, JG.StatusGroup,JG.Id 
@@ -192,11 +192,9 @@ BEGIN
 			and (@STAT is null or J.Stat = @STAT) 
 			and (@ClinicID is null or J.ClinicID = @ClinicID) 
 			and (@JobNumber is null or J.JobNumber = @JobNumber)  
-			and (J.ReceivedOn  >= DATEADD(M,-12,getdate())) --  >= DATEADD(M,-4,getdate()-- will  always get lessthan 3 months data..
-        
-		-- this is to delet the temporarly save user search filters from table
-		--Delete from PortalJobReportPreferences where Id = @JobReportSearchPreferenceId and IsSaved = 0 
+			and (J.ReceivedOn  >= DATEADD(M,-4,getdate())) --  >= DATEADD(M,-4,getdate()-- will  always get lessthan 3 months data..
 
+			
 END
 
 GO
