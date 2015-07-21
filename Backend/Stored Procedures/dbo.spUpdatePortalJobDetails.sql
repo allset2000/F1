@@ -14,7 +14,6 @@
 CREATE PROCEDURE [dbo].[spUpdatePortalJobDetails]  
 (  
  @vvcrJobNumber VARCHAR(20),  
- @vdtAppointmentDate DATETIME,
  @vvcrJobType VARCHAR(100) ,
  @vbitStat BIT,
  @vintPatientId  INT,
@@ -43,20 +42,22 @@ AS
 BEGIN TRY 
 	DECLARE @currentDate DATETIME
 	DECLARE @jobID INT
+	DECLARE @UserID INT
 	SET @currentDate = GETDATE()
 	BEGIN TRANSACTION 
 		
 		-- Updating Patient Details
-		IF @vintPatientId <> 0 
+		IF @vvcrMRN <> '' 
 		BEGIN
 			EXEC dbo.writePatient @vintPatientId,@vvcrJobNumber,@vvcrAlternateID,@vvcrMRN, @vvcrFirstName, @vvcrMI,@vvcrLastName,@vvcrSuffix,@vvcrDOB,
 									  @vvcrSSN,@vvcrAddress1,@vvcrAddress2,@vvcrCity,@vvcrState,@vvcrZip,@vvcrPhone,@vvcrSex,@vintAppointmentId  
+
 		END 
 
 		-- Updating JobType and stat details into jobs table
 		IF @vvcrJobType <> ''
 		BEGIN
-			UPDATE Jobs SET AppointmentDate = @vdtAppointmentDate ,JobType = @vvcrJobType , Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
+			UPDATE Jobs SET JobType = @vvcrJobType , Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
 
 			EXEC dbo.doUpdateJobDueDate @vvcrJobNumber, 'SaveJob'
 			
@@ -82,6 +83,10 @@ BEGIN TRY
 				UPDATE JobEditingSummary SET LastQANote = @vvcrLastQANote WHERE JobId= @jobID
 			END
 		END
+
+		SELECT @UserID = contactid from Contacts where UserID = @vvcrUsername
+
+		EXEC spInsertJobHistory @vvcrJobNumber,@vintPatientId,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUsername,@UserID
 
 	COMMIT TRANSACTION
 END TRY
