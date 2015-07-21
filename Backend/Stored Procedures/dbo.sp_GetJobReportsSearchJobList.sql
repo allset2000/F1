@@ -44,7 +44,7 @@ BEGIN
 			return -1 -- this condition is to make sure that we get a valid filter record, not to try to get a record which was deleted
 
 		SELECT J.JobNumber, J.DictatorID, J.JobType, J.IsGenericJob as DeviceGenerated,J.AppointmentDate,J.CC,J.Stat, JP.MRN, (JP.FirstName + ' '+ JP.LastName) AS Patient,
-				js.JobStatus,JTI.StatusDate AS 'In Process',jta.StatusDate AS 'Awaiting Delivery'
+				js.JobStatus, Convert(datetime,JTI.StatusDate) AS 'InProcess', Convert(datetime,jta.StatusDate) AS 'AwaitingDelevery'
 		FROM	dbo.Jobs J INNER JOIN dbo.Jobs_Patients JP ON J.JobNumber = JP.JobNumber 
 			OUTER APPLY(SELECT JT.JobNumber,MAX(jt.StatusDate) StatusDate,jg.Id,JG.StatusGroup
 			   FROM dbo.JobTracking JT  
