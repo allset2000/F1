@@ -11,7 +11,7 @@
 * --   --------   -------   ------------------------------------       
 *******************************/      
       
-Create PROCEDURE [dbo].[spGetSREMonitorBBNjobs] 
+CREATE PROCEDURE [dbo].[spGetSREMonitorBBNjobs] 
 (          
  @vintstatusCode  INT,        
  @vintrowsCount INT,  
@@ -45,7 +45,7 @@ BEGIN
   WHERE  js.Status = @vintstatusCode and jb.Jobstatus <> 135    
   AND jb.IsLockedForProcessing = 1      
   AND ((d.SRETypeId IS NOT NULL AND d.SRETypeId = 2) or (d.SRETypeId is NULL AND C.SRETypeId IS NOT NULL AND C.SRETypeID=2))  
-  AND DATEDIFF(HOUR, js.StatusDate, GETDATE()) > @vintProcessDuration  
+  AND DATEDIFF(minute, js.StatusDate, GETDATE()) > @vintProcessDuration  
  END          
      
  --update the jobs to IsProcessed       
