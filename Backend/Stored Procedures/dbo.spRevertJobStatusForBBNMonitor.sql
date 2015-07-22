@@ -17,20 +17,20 @@ CREATE PROCEDURE [dbo].[spRevertJobStatusForBBNMonitor]
 )     
 AS    
 BEGIN TRANSACTION  
-	
+	BEGIN TRY
 	UPDATE jobs SET JobStatus = 130 WHERE JobNumber =  @vvcrJobNumber AND JobStatus=135
 
 	IF EXISTS(select JobNumber from  RecognitionFailedJobs WHERE JobNumber =  @vvcrJobNumber)
 		UPDATE	RecognitionFailedJobs SET NumTries = @vintNumTries WHERE JobNumber =  @vvcrJobNumber
-	else
+	ELSE
 		INSERT INTO RecognitionFailedJobs(JobNumber,NumTries)  VALUES(@vvcrJobNumber,@vintNumTries)  
-
-IF @@ERROR <> 0  
- BEGIN  
-    -- Rollback the transaction  
+	
+	COMMIT
+END TRY
+BEGIN CATCH
+	-- Rollback the transaction  
     ROLLBACK  
     -- Raise an error and return  
-    RAISERROR ('Error in Inser or Update Job Status.', 16, 1)  
+    RAISERROR ('Error in Insert or Update Status.', 16, 1)  
     RETURN  
- END  
-COMMIT
+END CATCH
