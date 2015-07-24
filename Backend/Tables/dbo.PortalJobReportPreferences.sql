@@ -34,6 +34,8 @@ CREATE TABLE [dbo].[PortalJobReportPreferences](
 	[CreatedDate] [datetime] NULL,
 	[UpdatedDate] [datetime] NULL,
 	[JobNumber] [varchar](20) NULL,
+	[DictatorFirstName] [varchar](20) NULL,
+	[DictatorLastName] [varchar](20) NULL,
  CONSTRAINT [PK_UserSearchPreferences] PRIMARY KEY CLUSTERED 
 (
 	[Id] ASC

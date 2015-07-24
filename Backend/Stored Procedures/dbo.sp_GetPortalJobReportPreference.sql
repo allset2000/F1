@@ -33,7 +33,9 @@ CREATE PROCEDURE [dbo].[sp_GetPortalJobReportPreference]
 @SortType varchar(20) output,
 @ClinicID smallint output,
 @IsSaved bit output,
-@JobNumber varchar(20) output
+@JobNumber varchar(20) output,
+@DictatorFirstName varchar(20) output,
+@DictatorLastName varchar(20) output
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -43,7 +45,7 @@ BEGIN
     Select	@DateField = USP.DateField, @Range = USP.[Range],@From = USP.[From], @To = USP.[To], @JobType= USP.JobType, @JobStatus= USP.JobStatus,
 			@DictatorID = USP.DictatorID, @MRN = USP.MRN, @FirstName = USP.FirstName, @LastName = USP.LastName, @DeviceGenerated = USP.IsDeviceGenerated, @CC = USP.CC,
 			@STAT = USP.STAT, @SelectedColumns = USP.SelectedColumns, @GroupBy = USP.GroupBy, @ResultsPerPage = USP.ResultsPerPage, @SortBy = USP.SortBy, @SortType = USP.SortType,
-			@ClinicID = USP.ClinicID, @IsSaved= USP.IsSaved, @JobNumber = JobNumber from PortalJobReportPreferences USP 
+			@ClinicID = USP.ClinicID, @IsSaved= USP.IsSaved, @JobNumber = JobNumber, @DictatorFirstName = DictatorFirstName, @DictatorLastName = DictatorLastName from PortalJobReportPreferences USP 
 		where USP.ID = @preferenceId
 	
 	if(@Range is not null)

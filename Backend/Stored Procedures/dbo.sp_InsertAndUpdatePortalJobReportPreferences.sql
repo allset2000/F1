@@ -37,6 +37,8 @@ CREATE PROCEDURE [dbo].[sp_InsertAndUpdatePortalJobReportPreferences]
   @clinicId smallint= null,
   @isSaved BIT,
   @jobNumber VARCHAR(20) = null,
+  @dictatorFirstName VARCHAR(20) = null,
+  @dictatorLastName VARCHAR(20) = null,
   @newPrefID int output
 )
 AS
@@ -47,9 +49,9 @@ BEGIN TRY
 		BEGIN
 			--Insert the Record into PortalJobReportPreferences table
 			INSERT INTO PortalJobReportPreferences(UserID, DateField, [Range], [From], [To], JobType, JobStatus, DictatorID, MRN, FirstName, LastName,
-			isDeviceGenerated, CC, STAT, SelectedColumns, GroupBy, ResultsPerPage, SortBy, SortType, ReportName, ClinicId, IsSaved,CreatedDate, UpdatedDate,JobNumber )
+			isDeviceGenerated, CC, STAT, SelectedColumns, GroupBy, ResultsPerPage, SortBy, SortType, ReportName, ClinicId, IsSaved,CreatedDate, UpdatedDate, JobNumber, DictatorFirstName, DictatorLastName )
 			VALUES (@userName, @dateField, @range, @from, @to, @jobType, @jobStatus, @dictatorID, @mrn, @firstName, @lastName, @isDeviceGenerated,
-			@cc, @stat, @selectedColumns, @groupBy, @resultsPerPage, @sortBy, @sortType, @reportName, @clinicId, @isSaved, GetDate(), GetDate(),@jobNumber)
+			@cc, @stat, @selectedColumns, @groupBy, @resultsPerPage, @sortBy, @sortType, @reportName, @clinicId, @isSaved, GetDate(), GetDate(), @jobNumber, @dictatorFirstName, @dictatorLastName)
 
 			-- this is to deleted all the temporarily saved reports of this user
 			if(@isSaved =1 )
