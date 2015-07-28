@@ -13,7 +13,7 @@
 *******************************/  
 CREATE PROCEDURE [dbo].[spUpdatePortalJobDetails]  
 (  
- @vvcrJobNumber VARCHAR(20),  
+ @vvcrJobNumber VARCHAR(20),
  @vvcrJobType VARCHAR(100) ,
  @vbitStat BIT,
  @vintPatientId  INT,
@@ -42,7 +42,9 @@ AS
 BEGIN TRY 
 	DECLARE @currentDate DATETIME
 	DECLARE @jobID INT
-	DECLARE @UserID INT
+	DECLARE @documentId INT = NULL
+	DECLARE @Status INT
+	DECLARE @UserId INT
 	SET @currentDate = GETDATE()
 	BEGIN TRANSACTION 
 		
@@ -72,6 +74,8 @@ BEGIN TRY
 				EXEC doUpdateJobDocument @vvcrJobNumber, @vbinDocumnet,@vvcrUsername,@currentDate
 			ELSE IF @vnitIsApproved = 1 
 				EXEC doApproveDocumentByCR @vvcrJobNumber, @vbinDocumnet,@vvcrUsername,@currentDate
+
+			SELECT @documentID = DocumentId FROM Jobs_Documents_History WHERE jobnumber=@vvcrJobNumber AND Username=@vvcrUsername AND DocDate = @currentDate
 		END 
 
 		-- updating QA Notes into jobEditingsummery table
@@ -80,13 +84,17 @@ BEGIN TRY
 			IF NOT EXISTS(SELECT * FROM [dbo].[JobEditingSummary] WHERE ([JobId] = @JobId))
 			BEGIN 
 				SELECT @jobID=JobId FROM jobs WHERE JobNumber = @vvcrJobNumber
-				UPDATE JobEditingSummary SET LastQANote = @vvcrLastQANote WHERE JobId= @jobID
+				UPDATE JobEditingSummary SET LastQANote = @vvcrLastQANote WHERE JobId= @jobID 
 			END
 		END
 
-		SELECT @UserID = contactid from Contacts where UserID = @vvcrUsername
+		select @Status = status from JobStatusA where jobnumber=@vvcrJobNumber
+		if(@Status = '' )
+			select @Status = status from JobStatusB where jobnumber=@vvcrJobNumber
 
-		EXEC spInsertJobHistory @vvcrJobNumber,@vintPatientId,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUsername,@UserID
+		select @UserId = ContactId from Contacts where UserID=@vvcrUsername
+
+		EXEC spInsertJobHistory @vvcrJobNumber,@vvcrMRN,@vvcrJobType,@Status,@documentID,@UserId
 
 	COMMIT TRANSACTION
 END TRY
