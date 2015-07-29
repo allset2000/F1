@@ -67,23 +67,23 @@ BEGIN TRY
 
 	--Insert hosted data into backend Jobs_Custom table   
 	INSERT INTO Jobs_Custom 
-	SELECT Custom.value('JobNumber[1]','VARCHAR(20)') AS JobNumber,Custom.value('Custom1[1]','VARCHAR(100)') AS Custom1,Custom.value('Custom2[1]','VARCHAR(100)') AS Custom2,
-		Custom.value('Custom3[1]','VARCHAR(100)') AS Custom3,Custom.value('Custom4[1]','VARCHAR(100)') AS Custom4,Custom.value('Custom5[1]','VARCHAR(100)') AS Custom5,
-		Custom.value('Custom6[1]','VARCHAR(100)') AS Custom6,Custom.value('Custom7[1]','VARCHAR(100)') AS Custom7,Custom.value('Custom8[1]','VARCHAR(100)') AS Custom8,
-		Custom.value('Custom9[1]','VARCHAR(100)') AS Custom9,Custom.value('Custom10[1]','VARCHAR(100)') AS Custom10,Custom.value('Custom11[1]','VARCHAR(100)') AS Custom11,
-		Custom.value('Custom12[1]','VARCHAR(100)') AS Custom12,Custom.value('Custom13[1]','VARCHAR(100)') AS Custom13,Custom.value('Custom14[1]','VARCHAR(100)') AS Custom14,
-		Custom.value('Custom15[1]','VARCHAR(100)') AS Custom15,Custom.value('Custom16[1]','VARCHAR(100)') AS Custom16,Custom.value('Custom17[1]','VARCHAR(100)') AS Custom17,
-		Custom.value('Custom18[1]','VARCHAR(100)') AS Custom18,Custom.value('Custom19[1]','VARCHAR(100)') AS Custom19,Custom.value('Custom20[1]','VARCHAR(100)') AS Custom20,
-		Custom.value('Custom21[1]','VARCHAR(100)') AS Custom21,Custom.value('Custom22[1]','VARCHAR(100)') AS Custom22,Custom.value('Custom23[1]','VARCHAR(100)') AS Custom23,
-		Custom.value('Custom24[1]','VARCHAR(100)') AS Custom24,Custom.value('Custom25[1]','VARCHAR(100)') AS Custom25,Custom.value('Custom26[1]','VARCHAR(100)') AS Custom26,
-		Custom.value('Custom27[1]','VARCHAR(100)') AS Custom27,Custom.value('Custom28[1]','VARCHAR(100)') AS Custom28,Custom.value('Custom29[1]','VARCHAR(100)') AS Custom29,
-		Custom.value('Custom30[1]','VARCHAR(100)') AS Custom30,Custom.value('Custom31[1]','VARCHAR(100)') AS Custom31,Custom.value('Custom32[1]','VARCHAR(100)') AS Custom32,
-		Custom.value('Custom33[1]','VARCHAR(100)') AS Custom33,Custom.value('Custom34[1]','VARCHAR(100)') AS Custom34,Custom.value('Custom35[1]','VARCHAR(100)') AS Custom35,
-		Custom.value('Custom36[1]','VARCHAR(100)') AS Custom36,Custom.value('Custom37[1]','VARCHAR(100)') AS Custom37,Custom.value('Custom38[1]','VARCHAR(100)') AS Custom38,    
-		Custom.value('Custom39[1]','VARCHAR(100)') AS Custom39,Custom.value('Custom40[1]','VARCHAR(100)') AS Custom40,Custom.value('Custom41[1]','VARCHAR(100)') AS Custom41,
-		Custom.value('Custom42[1]','VARCHAR(100)') AS Custom42,Custom.value('Custom43[1]','VARCHAR(100)') AS Custom43,Custom.value('Custom44[1]','VARCHAR(100)') AS Custom44,
-		Custom.value('Custom45[1]','VARCHAR(100)') AS Custom45,Custom.value('Custom46[1]','VARCHAR(100)') AS Custom46,Custom.value('Custom47[1]','VARCHAR(100)') AS Custom47,
-		Custom.value('Custom48[1]','VARCHAR(100)') AS Custom48,Custom.value('Custom49[1]','VARCHAR(100)') AS Custom49,Custom.value('Custom50[1]','VARCHAR(100)') AS Custom50
+	SELECT Custom.value('JobNumber[1]','VARCHAR(20)') AS JobNumber,Custom.value('custom1[1]','VARCHAR(100)') AS Custom1,Custom.value('custom2[1]','VARCHAR(100)') AS Custom2,
+		Custom.value('custom3[1]','VARCHAR(100)') AS Custom3,Custom.value('custom4[1]','VARCHAR(100)') AS Custom4,Custom.value('custom5[1]','VARCHAR(100)') AS Custom5,
+		Custom.value('custom6[1]','VARCHAR(100)') AS Custom6,Custom.value('custom7[1]','VARCHAR(100)') AS Custom7,Custom.value('custom8[1]','VARCHAR(100)') AS Custom8,
+		Custom.value('custom9[1]','VARCHAR(100)') AS Custom9,Custom.value('custom10[1]','VARCHAR(100)') AS Custom10,Custom.value('custom11[1]','VARCHAR(100)') AS Custom11,
+		Custom.value('custom12[1]','VARCHAR(100)') AS Custom12,Custom.value('custom13[1]','VARCHAR(100)') AS Custom13,Custom.value('custom14[1]','VARCHAR(100)') AS Custom14,
+		Custom.value('custom15[1]','VARCHAR(100)') AS Custom15,Custom.value('custom16[1]','VARCHAR(100)') AS Custom16,Custom.value('custom17[1]','VARCHAR(100)') AS Custom17,
+		Custom.value('custom18[1]','VARCHAR(100)') AS Custom18,Custom.value('custom19[1]','VARCHAR(100)') AS Custom19,Custom.value('custom20[1]','VARCHAR(100)') AS Custom20,
+		Custom.value('custom21[1]','VARCHAR(100)') AS Custom21,Custom.value('custom22[1]','VARCHAR(100)') AS Custom22,Custom.value('custom23[1]','VARCHAR(100)') AS Custom23,
+		Custom.value('custom24[1]','VARCHAR(100)') AS Custom24,Custom.value('custom25[1]','VARCHAR(100)') AS Custom25,Custom.value('custom26[1]','VARCHAR(100)') AS Custom26,
+		Custom.value('custom27[1]','VARCHAR(100)') AS Custom27,Custom.value('custom28[1]','VARCHAR(100)') AS Custom28,Custom.value('custom29[1]','VARCHAR(100)') AS Custom29,
+		Custom.value('custom30[1]','VARCHAR(100)') AS Custom30,Custom.value('custom31[1]','VARCHAR(100)') AS Custom31,Custom.value('custom32[1]','VARCHAR(100)') AS Custom32,
+		Custom.value('custom33[1]','VARCHAR(100)') AS Custom33,Custom.value('custom34[1]','VARCHAR(100)') AS Custom34,Custom.value('custom35[1]','VARCHAR(100)') AS Custom35,
+		Custom.value('custom36[1]','VARCHAR(100)') AS Custom36,Custom.value('custom37[1]','VARCHAR(100)') AS Custom37,Custom.value('custom38[1]','VARCHAR(100)') AS Custom38,    
+		Custom.value('custom39[1]','VARCHAR(100)') AS Custom39,Custom.value('custom40[1]','VARCHAR(100)') AS Custom40,Custom.value('custom41[1]','VARCHAR(100)') AS Custom41,
+		Custom.value('custom42[1]','VARCHAR(100)') AS Custom42,Custom.value('custom43[1]','VARCHAR(100)') AS Custom43,Custom.value('custom44[1]','VARCHAR(100)') AS Custom44,
+		Custom.value('custom45[1]','VARCHAR(100)') AS Custom45,Custom.value('custom46[1]','VARCHAR(100)') AS Custom46,Custom.value('custom47[1]','VARCHAR(100)') AS Custom47,
+		Custom.value('custom48[1]','VARCHAR(100)') AS Custom48,Custom.value('custom49[1]','VARCHAR(100)') AS Custom49,Custom.value('custom50[1]','VARCHAR(100)') AS Custom50
 	FROM @xmlJobsCustom.nodes('JobsCustom')Catalog(Custom)
 
 	--Insert hosted data into backend Jobs_Images table 
