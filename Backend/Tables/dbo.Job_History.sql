@@ -5,7 +5,7 @@ CREATE TABLE [dbo].[Job_History](
 	[JobType] [varchar](100) NULL,
 	[CurrentStatus] [smallint] NOT NULL,
 	[DocumentID] [int] NULL,
-	[UserId] [int] NOT NULL,
+	[UserId] [varchar](100) NOT NULL,
 	[HistoryDateTime] [datetime] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -26,12 +26,5 @@ ALTER TABLE [dbo].[Job_History]  WITH CHECK ADD FOREIGN KEY([JobNumber])
 REFERENCES [dbo].[Jobs] ([JobNumber])
 GO
 
-ALTER TABLE [dbo].[Job_History]  WITH CHECK ADD FOREIGN KEY([PatientId])
-REFERENCES [dbo].[Jobs_Patients] ([JobNumber])
-GO
-
-ALTER TABLE [dbo].[Job_History]  WITH CHECK ADD FOREIGN KEY([UserId])
-REFERENCES [dbo].[Contacts] ([ContactId])
-GO
 
 
