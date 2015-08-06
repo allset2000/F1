@@ -37,7 +37,7 @@ BEGIN TRY
 	SELECT @OldJobStatus = status FROM Jobs WHERE jobID = @bgintJobID 
 	
 	UPDATE Dictations SET FileName = @vvcrFileName,status=@vintStatus,JobID=@bgintJobID,DictationTypeID=@vintDictationTypeID,DictatorID=@vintDictatorID,
-	QueueID=@vintQueueID,Duration=@smintDuration,MachineName=@vvcrMachineName WHERE DictationID = @bgintDictationID  
+	QueueID=@vintQueueID,Duration=@smintDuration,MachineName=@vvcrMachineName,ClientVersion=@vvcrClientVersion WHERE DictationID = @bgintDictationID  
 	
 	-- Only update if the status changed
 	IF (@OldDictationStatus <> @vintStatus)
