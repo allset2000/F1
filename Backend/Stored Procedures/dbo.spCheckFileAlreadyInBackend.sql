@@ -14,12 +14,11 @@
 CREATE PROCEDURE [dbo].[spCheckFileAlreadyInBackend] 
 (  
  @vvcrDictatorID VARCHAR(50),
- @vvcrFileName  VARCHAR(100),
- @vvcrMD5   VARCHAR(100)
+ @vvcrFileName  VARCHAR(100)
 )  
 AS 
 BEGIN
 	SELECT COUNT(*) 
 	FROM Jobs_Client
-	WHERE DictatorID = @vvcrDictatorID AND FileName = @vvcrFileName AND MD5 = @vvcrMD5
+	WHERE DictatorID = @vvcrDictatorID AND FileName = @vvcrFileName
 END  
