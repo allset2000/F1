@@ -58,11 +58,19 @@ BEGIN TRY
 		-- Updating JobType and stat details into jobs table
 		IF @vvcrJobType <> ''
 		BEGIN
-			UPDATE Jobs SET JobType = @vvcrJobType , Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
+			UPDATE Jobs SET JobType = @vvcrJobType  WHERE ([JobNumber] = @vvcrJobNumber)
 			EXEC dbo.doUpdateJobDueDate @vvcrJobNumber, 'SaveJob'
 			IF (@vvcrJobType = 'no delivery')
 				exec writeJ2D @vvcrJobNumber
 		END
+
+		IF NOT EXISTS(SELECT * FROM Jobs WHERE JobNumber = @vvcrJobNumber and Stat = @vbitStat) 
+		BEGIN
+			UPDATE Jobs SET Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
+		END
+
+
+
 		--updating document into jobs_documents table
 		IF @vbinDocumnet IS NOT Null
 			BEGIN
