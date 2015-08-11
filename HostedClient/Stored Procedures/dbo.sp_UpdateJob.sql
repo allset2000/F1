@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -23,12 +24,11 @@ BEGIN TRY
 	DECLARE @OldStatus smallint,
 			@OldStat bit,
 			@OldPriority smallint,
-			@OldAdditionalData varchar(max),
-			@OldProcessFailureCount smallint
+			@OldAdditionalData varchar(max)
 
 	BEGIN TRANSACTION 
 	
-	SELECT @OldStatus = Status, @OldStat = Stat, @OldPriority = Priority, @OldAdditionalData = AdditionalData, @OldProcessFailureCount = ProcessFailureCount from Jobs where JobID = @JobId
+	SELECT @OldStatus = Status, @OldStat = Stat, @OldPriority = Priority, @OldAdditionalData = AdditionalData from Jobs where JobID = @JobId
 
 	IF (@Status <> @OldStatus)
 	BEGIN
