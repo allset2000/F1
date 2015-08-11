@@ -57,7 +57,9 @@ BEGIN
  END        
  --update the jobs to IsProcessed     
  UPDATE Jobs Set Status = 350 FROM Jobs JB           
- INNER JOIN @TempJobs TJ on JB.JobNumber = TJ.JobNumber      
+ INNER JOIN @TempJobs TJ on JB.JobNumber = TJ.JobNumber   
+ WHERE JB.Status <> 350
+    
  SET @UpdatedJobCount = @@ROWCOUNT          
  SELECT @SelectedJobCount = COUNT(*) FROM @TempJobs         
  --In case when this proc is executed in parallel by multiple instances of the SRE App we need          
@@ -66,7 +68,7 @@ BEGIN
   BEGIN          
    ROLLBACK TRANSACTION          
    DECLARE @ErrorMsg varchar(200)          
-   SET @ErrorMsg = '[spGetJobsByStatus] - Job Count mismatch: @JobCount =' + convert(varchar, @SelectedJobCount) + ' @@RowCount =' + convert(varchar, @UpdatedJobCount)          
+   SET @ErrorMsg = '[spGetJobsForSRETranscoding] - Job Count mismatch: @JobCount =' + convert(varchar, @SelectedJobCount) + ' @@RowCount =' + convert(varchar, @UpdatedJobCount)          
    RAISERROR (@ErrorMsg, 16, 1)     
    RETURN;          
   END         
