@@ -11,12 +11,14 @@
 * --   --------   -------   ------------------------------------       
 *******************************/      
       
-Alter PROCEDURE [dbo].[spGetPortalJobDetails] 
+CREATE PROCEDURE [dbo].[spGetPortalJobDetails] 
 (          
- @vvcrJobNumber VARCHAR(20)      
+ @vvcrJobNumber VARCHAR(20),
+ @vvcrUser VARCHAR(48)      
 )           
 AS          
-BEGIN       
+BEGIN     
+
 	SELECT JB.jobnumber, 
 		JP.PatientId,
 		JP.MRN,
@@ -41,7 +43,8 @@ BEGIN
 		D.LastName AS DictatorLastName,
 		ISNULL(JR.FirstName, '') AS ReferringFirstName, 
 		ISNULL(JR.MI, '') AS ReferringMI, 
-		ISNULL(JR.LastName, '') ReferringLastName
+		ISNULL(JR.LastName, '') ReferringLastName,
+		JB.LokedbyUserForJobDetailsView
 	FROM jobs JB
 	INNER JOIN Jobs_Patients JP
 	ON JB.jobnumber = JP.jobnumber
@@ -50,4 +53,11 @@ BEGIN
 	INNER JOIN Jobs_Referring JR
 	ON JB.jobnumber = JR.jobnumber
 	WHERE JB.JobNumber=@vvcrJobNumber
+
+ --In case when this proc is executed in parallel by multiple instances of the SRE App we need  
+ --to make sure we don't return the same job twice  
+ 
+ UPDATE jobs SET LokedbyUserForJobDetailsView=@vvcrUser WHERE jobnumber=@vvcrJobNumber AND LokedbyUserForJobDetailsView IS NULL
+
+
 END   

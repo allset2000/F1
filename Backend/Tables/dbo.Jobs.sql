@@ -39,7 +39,8 @@ CREATE TABLE [dbo].[Jobs]
 [IsNewSchema] [bit] NULL,
 [ProcessFailureCount] [smallint] NULL,
 [IsLockedForProcessing] [bit] NOT NULL CONSTRAINT [DF__Jobs__IsProcesse__274FAE79] DEFAULT ((0)),
-[FinaldocSentToBBN] [bit] NOT NULL CONSTRAINT [DF__Jobs__FinaldocSe__186270A4] DEFAULT ((0))
+[FinaldocSentToBBN] [bit] NOT NULL CONSTRAINT [DF__Jobs__FinaldocSe__186270A4] DEFAULT ((0)),
+[LokedbyUserForJobDetailsView] [varchar](48) NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) WITH (FILLFACTOR=80) ON [PRIMARY]
