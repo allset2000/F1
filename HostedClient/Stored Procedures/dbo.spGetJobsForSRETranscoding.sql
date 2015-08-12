@@ -35,12 +35,16 @@ BEGIN
   Stat bit,        
   Status smallint,         
   ClinicID smallint,  
-  ProcessTypeId smallint        
+  AdditionalData varchar(max),
+  OwnerDictatorID INT,
+  Priority smallint,   
+  RuleID smallint,
+  ProcessTypeId smallint
  )    
  IF (@IncludeErrors = 1)         
  BEGIN          
   INSERT INTO @TempJobs      
-  SELECT TOP (@vintrowsCount) J.JobID,J.JobNumber,J.JobTypeID,J.EncounterID,J.Stat,J.Status,J.ClinicID,1 as ProcessTypeId  FROM Jobs J        
+  SELECT TOP (@vintrowsCount) J.JobID,J.JobNumber,J.JobTypeID,J.EncounterID,J.Stat,J.Status,J.ClinicID,J.AdditionalData,J.OwnerDictatorID,J.Priority,J.RuleID,1 as ProcessTypeId  FROM Jobs J        
    inner join Dictations D on D.JobId = J.JobId        
    inner join DictationsTracking DT on DT.DictationId = D.DictationId and DT.Status = 250        
   WHERE ((J.Status = @statusCode) AND (J.ProcessFailureCount is null or J.ProcessFailureCount <= @ProcessFailureCount) and (J.JobId NOT IN (SELECT JobId FROM Errors)))        
@@ -49,7 +53,7 @@ BEGIN
  ELSE      
  BEGIN     
  INSERT INTO @TempJobs      
-  SELECT TOP (@vintrowsCount) J.JobID,J.JobNumber,J.JobTypeID,J.EncounterID,J.Stat,J.Status,J.ClinicID,1 as ProcessTypeId  FROM Jobs J       
+  SELECT TOP (@vintrowsCount) J.JobID,J.JobNumber,J.JobTypeID,J.EncounterID,J.Stat,J.Status,J.ClinicID,J.AdditionalData,J.OwnerDictatorID,J.Priority,J.RuleID,1 as ProcessTypeId  FROM Jobs J       
    inner join Dictations D on D.JobId = J.JobId        
    inner join DictationsTracking DT on DT.DictationId = D.DictationId and DT.Status = 250        
   WHERE (J.Status = @StatusCode) AND (J.ProcessFailureCount is null or J.ProcessFailureCount <= @ProcessFailureCount)        
