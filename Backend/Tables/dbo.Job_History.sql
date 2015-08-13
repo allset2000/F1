@@ -1,11 +1,11 @@
 CREATE TABLE [dbo].[Job_History](
 	[JobHistoryID] [int] IDENTITY(1,1) NOT NULL,
 	[JobNumber] [varchar](20) NOT NULL,
-	[PatientId] [varchar](20) NULL,
+	[MRN] INT NULL,
 	[JobType] [varchar](100) NULL,
 	[CurrentStatus] [smallint] NOT NULL,
 	[DocumentID] [int] NULL,
-	[UserId] [varchar](100) NOT NULL,
+	[UserId] [varchar](48) NULL,
 	[HistoryDateTime] [datetime] NOT NULL,
 PRIMARY KEY CLUSTERED 
 (
