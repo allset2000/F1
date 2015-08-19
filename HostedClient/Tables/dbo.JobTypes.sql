@@ -13,7 +13,9 @@ CREATE TABLE [dbo].[JobTypes]
 [DisableGenericJobs] [bit] NOT NULL CONSTRAINT [DF__JobTypes__Disabl__4D2A7347] DEFAULT ((0)),
 [AllowEncounterSearch] [bit] NOT NULL CONSTRAINT [DF_JobTypes_AllowEncounterSearch] DEFAULT ((0)),
 [AllowNotifications] [bit] NOT NULL CONSTRAINT [DF_JobTypes_AllowNotifications] DEFAULT ((0)),
-[DocumentType] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_JobTypes_DocumentType] DEFAULT ('')
+[DocumentType] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_JobTypes_DocumentType] DEFAULT (''),
+[ROWTemplateId] [int] NULL,
+[ACKTemplateId] [int] NULL
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[JobTypes] ADD 
 CONSTRAINT [PK_JobTypes] PRIMARY KEY CLUSTERED  ([JobTypeID]) ON [PRIMARY]

@@ -23,6 +23,7 @@ BEGIN
 				 ELSE 'none' END AS 'RowColor' 
 	FROM ExpressLinkConfigurations EL 
 		INNER JOIN Clinics C on C.ClinicId = EL.ClinicId 
+	WHERE ISNULL(EL.Deleted,0) = 0
 	order by EL.APIKey,C.ClinicCode
 
 END

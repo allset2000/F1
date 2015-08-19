@@ -8,7 +8,8 @@ CREATE TABLE [dbo].[JobsDeliveryTracking]
 [DeliveryMessage] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [DeliveryResponse] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [AdditionalData] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[DeliveryDate] [datetime] NOT NULL
+[DeliveryDate] [datetime] NOT NULL,
+[ResponseDate] [datetime] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [idx_JDT_JobIDDelTypeID] ON [dbo].[JobsDeliveryTracking] ([JobId], [DeliveryTypeId], [Section], [DeliveryTrackingId]) ON [PRIMARY]
 

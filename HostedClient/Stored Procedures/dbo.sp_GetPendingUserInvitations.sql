@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -15,7 +16,7 @@ BEGIN
 
 	SELECT UserInvitationId, FirstName, MI, LastName, EmailAddress, PhoneNumber, ClinicId, SecurityToken, DateTimeRequested, DateTimeInvitationSent 
 	FROM UserInvitations 
-	WHERE RequestingUserId = @UserId and RegisteredUserId is null
+	WHERE RequestingUserId = @UserId and RegisteredUserId is null and Deleted = 0
 
 END
 GO

@@ -15,8 +15,8 @@ CREATE PROCEDURE [dbo].[sp_RegisterNewUser]
 	@LastName varchar(100),
 	@MI varchar(100),
 	@EmailAddress varchar(100),
-	@Password varchar(64),
-	@Salt varchar(32),
+	@Password varchar(300),
+	@Salt varchar(300),
 	@PhoneNumber varchar(20)
 )
 AS

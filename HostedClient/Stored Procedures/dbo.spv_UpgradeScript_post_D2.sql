@@ -120,6 +120,93 @@ IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-SECUREMESSENGER') BEG
 	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('MNU-SECUREMESSENGER','Menu Item - Secure Messenger Page',null,27)
 END
 -- #0000# - End of adding new data
+-- #230# Adding new fields / data for HL7 Delivery
+UPDATE ExpressLinkConfigurations SET EnableAthenaACK = 0
+IF NOT EXISTS (SELECT 1 FROM ROWVariableTypes WHERE Description = 'ColumnName') BEGIN
+	INSERT INTO ROWVariableTypes(Description) VALUES('ColumnName')
+END
+IF NOT EXISTS (SELECT 1 FROM ROWVariableTypes WHERE Description = 'Function') BEGIN
+	INSERT INTO ROWVariableTypes(Description) VALUES('Function')
+END
+IF NOT EXISTS (SELECT 1 FROM ROWVariableTypes WHERE Description = 'CustomValue') BEGIN
+	INSERT INTO ROWVariableTypes(Description) VALUES('CustomValue')
+END
+IF NOT EXISTS (SELECT 1 FROM ROWVariableTypes WHERE Description = 'CustomQuery') BEGIN
+	INSERT INTO ROWVariableTypes(Description) VALUES('CustomQuery')
+END
+IF NOT EXISTS (SELECT 1 FROM DeliveryTypes WHERE Description = 'Expresslink HL7') BEGIN
+	INSERT INTO DeliveryTypes (Description) VALUES('Expresslink HL7')
+END
+IF NOT EXISTS (SELECT 1 FROM DeliveryTypes WHERE Description = 'Expresslink HL7 ACK') BEGIN
+	INSERT INTO deliverytypes (description) VALUES('Expresslink HL7 ACK')
+END
+IF NOT EXISTS (SELECT 1 FROM DeliveryErrorCodes WHERE ErrorCode = 101) BEGIN
+	INSERT INTO DeliveryErrorCodes(DeliveryTypeId,ErrorCode,Description) VALUES(6,101,'Template variable ##athenaclinic## - Missing Data: EHRClinicId Missing from Clinics Table')
+END
+IF NOT EXISTS (SELECT 1 FROM DeliveryErrorCodes WHERE ErrorCode = 102) BEGIN
+	INSERT INTO DeliveryErrorCodes(DeliveryTypeId,ErrorCode,Description) VALUES(6,102,'Template variable ##encnbr## - Missing Data: EHR EncounterId missing from Schedules Table')
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##EHRClinicId##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required,ErrorCodeId) VALUES('##EHRClinicId##',1,'EHRClinicId','Athena Hosted ClinicId',1,1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##JobNumber##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required,ErrorCodeId) VALUES('##JobNumber##',1,'JobNumber','Backend JobNumber',1,1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##ClientJobNbr##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##ClientJobNbr##',1,'ClientJobNumber','Hosted Database JobNumber',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##PatMRN##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##PatMRN##',1,'MRN','Patient MRN from backend DB',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##PatLastName##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##PatLastName##',1,'FirstName','Patient Lastname from backend db',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##PatFirstName##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##PatFirstName##',1,'LastName','Patient Firstname from backend db',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##PatMI##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##PatMI##',1,'MI','Patient MI from backend db',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##PatDOB##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##PatDOB##',1,'HL7DOB','Patient DOB from backend db',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##PatAlternateId##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##PatAlternateId##',1,'AlternateID','Patient DOB from backend db',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##encnbr##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required,ErrorCodeId) VALUES('##encnbr##',1,'EHREncounterID','EncounterId for the Checked in Appointment',1,2)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##Sections##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##Sections##',1,'EHRFieldName','Fieldname for current section / dictation',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##TemplateDocument##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##TemplateDocument##',1,'Content','Dictation content for the current section',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##Now##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##Now##',2,'DateTime','Current Datetime',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##BEGIN_REPEAT##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##BEGIN_REPEAT##',2,'','Start section of the repeating message for sections',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##END_REPEAT##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##END_REPEAT##',2,'','End section of the repeating message for sections',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##msg_number##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##msg_number##',2,'','Current section in the list of sections on the dictation',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##msg_total##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##msg_total##',2,'','Total number of sectoins for the dictation',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##EHRProviderId##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##EHRProviderId##',1,'EHRProviderId','EHRProvider Id from Hosted db',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##EHRProviderAlias##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##EHRProviderAlias##',1,'EHRProviderAlias','EHRProvider Alias from Hosted db',1)
+END
+IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##ProviderSignature##') BEGIN
+	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##ProviderSignature##',1,'Signature','Provider Signature from hosted db',1)
+END
+-- #230# - End
 END
 
 GO

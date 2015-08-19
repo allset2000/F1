@@ -3,7 +3,7 @@ CREATE TABLE [dbo].[AuditLogExpressLinkApi]
 [LogID] [bigint] NOT NULL IDENTITY(1, 1),
 [ApiKey] [uniqueidentifier] NULL,
 [ConfigID] [int] NULL,
-[Operation] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+[Operation] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Parameters] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [OperationTime] [datetime] NOT NULL CONSTRAINT [DF_AuditLogExpressLinkApi_OperationTime] DEFAULT (getdate()),
 [ExecutionTime] [int] NOT NULL,

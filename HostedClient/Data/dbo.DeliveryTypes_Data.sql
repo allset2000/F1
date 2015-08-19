@@ -1,4 +1,8 @@
 SET IDENTITY_INSERT [dbo].[DeliveryTypes] ON
+INSERT INTO [dbo].[DeliveryTypes] ([DeliveryTypeId], [Description]) VALUES (6, 'Expresslink HL7')
+INSERT INTO [dbo].[DeliveryTypes] ([DeliveryTypeId], [Description]) VALUES (7, 'Expresslink HL7 ACK')
+SET IDENTITY_INSERT [dbo].[DeliveryTypes] OFF
+SET IDENTITY_INSERT [dbo].[DeliveryTypes] ON
 INSERT INTO [dbo].[DeliveryTypes] ([DeliveryTypeId], [Description]) VALUES (1, 'HL7 EncId ACK')
 INSERT INTO [dbo].[DeliveryTypes] ([DeliveryTypeId], [Description]) VALUES (2, 'HL7 ExpressNote')
 INSERT INTO [dbo].[DeliveryTypes] ([DeliveryTypeId], [Description]) VALUES (3, 'HL7 Letter')
