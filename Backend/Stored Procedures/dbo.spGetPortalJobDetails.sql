@@ -18,6 +18,11 @@ CREATE PROCEDURE [dbo].[spGetPortalJobDetails]
 )           
 AS          
 BEGIN     
+DECLARE @Status INT
+	SELECT @Status = status FROM JobStatusA WHERE jobnumber=@vvcrJobNumber
+	IF(@Status is NULL )
+		SELECT @Status = status FROM JobStatusB WHERE jobnumber=@vvcrJobNumber
+
 
 	SELECT JB.jobnumber, 
 		JP.PatientId,
@@ -44,7 +49,8 @@ BEGIN
 		ISNULL(JR.FirstName, '') AS ReferringFirstName, 
 		ISNULL(JR.MI, '') AS ReferringMI, 
 		ISNULL(JR.LastName, '') ReferringLastName,
-		JB.LokedbyUserForJobDetailsView
+		JB.LokedbyUserForJobDetailsView,
+		@Status Status
 	FROM jobs JB
 	INNER JOIN Jobs_Patients JP
 	ON JB.jobnumber = JP.jobnumber
