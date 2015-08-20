@@ -13,32 +13,7 @@ CREATE TABLE [dbo].[Jobs]
 [AdditionalData] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ProcessFailureCount] [smallint] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-SET ANSI_NULLS ON
-GO
--- =============================================
--- Author:		<Michael Cardwell>
--- Create date: <7/29/2013>
--- Description:	<Adds an entry into Jobs_row for notifying clinics when a job had been dictated.>
--- =============================================
-CREATE TRIGGER [dbo].[Jobs_Row_Add]
-   ON  [dbo].[Jobs]
-   AFTER INSERT, UPDATE
-AS 
-BEGIN
 
-DECLARE @jobid bigint
-
-INSERT INTO Jobs_ROW (Jobid) 
-SELECT JOBID FROM INSERTED 
-WHERE Status = 400 
-AND jobid NOT IN 
-	(SELECT jobid FROM jobs_row WHERE jobid IN (SELECT JOBID FROM INSERTED))
-
-
-END
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobID]) ON [PRIMARY]
 GO
