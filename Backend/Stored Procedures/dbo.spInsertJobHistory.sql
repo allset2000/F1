@@ -11,18 +11,26 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-CREATE PROCEDURE [dbo].[spInsertJobHistory]
+CREATE PROCEDURE [dbo].[spInsertJobHistory] 
 (
 	@vvcrJobNumber VARCHAR(20),
-	@vvcrPatientId VARCHAR(20) = NULL,
+	@vvcrMRN INT = NULL,
 	@vvcrJobType VARCHAR(100) = NULL,
-	@vsintCurrentStatus SMALLINT = NULL,
-	@vintDocumentID INT,
-	@vintUserId INT
+	@vsintCurrentStatus SMALLINT,
+	@vintDocumentID INT=NULL,
+	@vvcrUserId VARCHAR(48) = NULL
 ) AS 
 	BEGIN 
-		INSERT INTO Job_History (JobNumber,PatientId,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime)
-		VALUES(@vvcrJobNumber,@vvcrPatientId,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vintUserId,GETDATE())
+		IF @vvcrUserId IS NULL OR  @vvcrUserId = ''
+		BEGIN
+			SELECT @vvcrUserId = LastEditedById FROM JobEditingSummary JE
+			INNER JOIN Jobs J
+			ON J.jobid=JE.jobid
+			WHERE J.JobNumber =@vvcrJobNumber
+		END
+
+		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime)
+		VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUserId,GETDATE())
 	END
 GO
 
