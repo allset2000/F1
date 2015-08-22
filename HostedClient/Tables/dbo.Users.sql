@@ -22,7 +22,8 @@ CREATE TABLE [dbo].[Users]
 [TimeZoneId] [int] NULL,
 [FirstTimeLogin] [bit] NOT NULL CONSTRAINT [DF_Users_FirstTimeLogin] DEFAULT ((1)),
 [IsUserValidated] [bit] NULL CONSTRAINT [DF_Users_IsUserValidated] DEFAULT ((0)),
-[DowntimeAlertIDToHide] [int] NULL
+[DowntimeAlertIDToHide] [int] NULL,
+[PhoneExtension] [int] NULL,
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Users] ADD CONSTRAINT [PK_Users] PRIMARY KEY CLUSTERED  ([UserID]) ON [PRIMARY]

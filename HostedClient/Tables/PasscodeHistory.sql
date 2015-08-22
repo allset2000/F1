@@ -18,6 +18,7 @@ CREATE TABLE [dbo].[PasscodeHistory](
 	[DateCreated] [datetime] NOT NULL CONSTRAINT [DF_PasscodeHistory_DateCreated]  DEFAULT (getdate()),
 	[UserId] [int] NOT NULL,
 	[Salt] [varchar](500) NOT NULL,
+	[PasswordIterationNumber] [int] NOT NULL,
  CONSTRAINT [PK_PasscodeHistory] PRIMARY KEY CLUSTERED 
 (
 	[PwdId] ASC
