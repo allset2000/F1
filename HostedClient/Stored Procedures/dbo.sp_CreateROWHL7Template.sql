@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -22,6 +23,14 @@ BEGIN
 	SET @ClientJobNumber = (select filename from EN_Jobs_Client where JobNumber = @JobNumber)
 	SET @HL7Template = (select Template from ROWTemplates where ROWTemplateId = @TemplateId)
 	SET @Errors = ''
+
+	IF (@ClientJobNumber is null)
+	BEGIN
+		IF EXISTS(SELECT 1 from Jobs where JobNumber = @JobNumber)
+		BEGIN
+			SET @ClientJobNumber = @JobNumber
+		END
+	END
 
 	CREATE TABLE #Var_Replacement
 	(
@@ -50,6 +59,12 @@ BEGIN
 			DECLARE @sql varchar(1000)
 			SET @sql = 'select ' + @cur_Field + ' from vw_GetROWJobDetails WHERE JobNumber = ''' + @JobNumber + ''''
 			INSERT INTO #ret exec (@sql)
+
+			IF (SELECT count(*) FROM #ret) = 0
+			BEGIN
+				SET @sql = 'select ' + @cur_Field + ' from vw_GetHostedROWJobDetails WHERE JobNumber = ''' + @JobNumber + ''''
+				INSERT INTO #ret exec (@sql)
+			END
 
 			-- validate if the data returned
 			IF EXISTS (select 1 from #ret)
