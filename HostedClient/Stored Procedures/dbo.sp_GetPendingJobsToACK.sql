@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -21,6 +22,7 @@ BEGIN
 		EHREncounterId varchar(50),
 		EHRPracticeId varchar(50),
 		AckTemplateId int,
+		ChangedDate datetime,
 		HL7Message varchar(max),
 		HL7Errors varchar(max),
 		Processed int
@@ -39,7 +41,7 @@ BEGIN
 	select FieldName,VariableName,Required,ErrorCodeId,0 From ROWTemplateVariables where VariableTypeId = 1
 
 	INSERT INTO #tmp_hl7ack
-	SELECT TOP 100 J.JobID, J.JobNumber, S.AppointmentId, S.EHREncounterId, C.EHRClinicId, JT.ACKTemplateId, '', '', 0
+	SELECT TOP 100 J.JobID, J.JobNumber, S.AppointmentId, S.EHREncounterId, C.EHRClinicId, JT.ACKTemplateId, JR.ChangedDate, '', '', 0
 	FROM Jobs_Row JR
 		INNER JOIN Jobs J on J.JobID = JR.JobId
 		INNER JOIN JobTypes JT on JT.JobTypeId = J.JobTypeId
@@ -47,6 +49,7 @@ BEGIN
 		INNER JOIN Schedules S on S.ScheduleId = E.ScheduleId
 		INNER JOIN Clinics C on C.Clinicid = J.ClinicId
 	WHERE ACKStatus = 150
+	ORDER BY JR.ChangedDate
 
 	WHILE EXISTS(select 1 from #tmp_hl7ack where Processed = 0)
 	BEGIN
@@ -71,7 +74,7 @@ BEGIN
 			IF (CHARINDEX(@cur_Var, @Hl7Template) > 0)
 			BEGIN
 				DECLARE @sql varchar(1000)
-				SET @sql = 'select ' + @cur_Field + ' from vw_GetHostedROWJobDetails WHERE JobNumber = ''' + @cur_jobnumber + ''''
+				SET @sql = 'select ' + @cur_Field + ' from vw_GetHostedACKJobDetails WHERE JobNumber = ''' + @cur_jobnumber + ''''
 				INSERT INTO #ret exec (@sql)
 
 				-- validate if the data returned

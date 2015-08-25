@@ -1,18 +1,19 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
 CREATE VIEW [dbo].[vw_GetROWJobDetails]
 AS
-SELECT        JCL.FileName AS ClientJobNumber, cS.EHREncounterID, J.JobNumber, J.DictatorID, J.ClinicID, J.JobType, J.ContextName, J.EditorID, JP.AlternateID, JP.MRN, 
-                         JP.FirstName, JP.MI, JP.LastName, JP.Suffix, JP.DOB, CONVERT(varchar(8), CAST(JP.DOB AS DATETIME), 112) AS HL7DOB, JP.SSN, JP.Address1, JP.Address2, 
-                         JP.City, JP.State, JP.Zip, JP.Phone, JP.Sex, JP.PatientId, JP.AppointmentId, C.EHRClinicID, C.ClinicCode, C.ClinicName, cP.Signature, 
-                         cP.LastName AS ProviderLastName, cP.FirstName AS ProviderFirstName, cP.MI AS ProviderMI, cP.EHRProviderID, cP.EHRProviderAlias, JC.Custom1, JC.Custom2, 
-                         JC.Custom3, JC.Custom4, JC.Custom5, JC.Custom6, JC.Custom7, JC.Custom8, JC.Custom9, JC.Custom10, JC.Custom11, JC.Custom12, JC.Custom13, JC.Custom14, 
-                         JC.Custom15, JC.Custom16, JC.Custom17, JC.Custom18, JC.Custom19, JC.Custom20, JC.Custom21, JC.Custom22, JC.Custom23, JC.Custom24, JC.Custom25, 
-                         JC.Custom26, JC.Custom27, JC.Custom28, JC.Custom29, JC.Custom30, JC.Custom31, JC.Custom32, JC.Custom33, JC.Custom34, JC.Custom35, JC.Custom36, 
-                         JC.Custom37, JC.Custom38, JC.Custom39, JC.Custom40, JC.Custom41, JC.Custom42, JC.Custom43, JC.Custom44, JC.Custom45, JC.Custom46, JC.Custom47, 
-                         JC.Custom48, JC.Custom49, JC.Custom50
+SELECT        JCL.FileName AS ClientJobNumber, cS.EHREncounterID, cS.AppointmentID, J.JobNumber, J.DictatorID, J.ClinicID, J.JobType, J.ContextName, J.EditorID, 
+                         JP.AlternateID, JP.MRN, JP.FirstName, JP.MI, JP.LastName, JP.Suffix, JP.DOB, CONVERT(varchar(8), CAST(JP.DOB AS DATETIME), 112) AS HL7DOB, JP.SSN, 
+                         JP.Address1, JP.Address2, JP.City, JP.State, JP.Zip, JP.Phone, JP.Sex, JP.PatientId, JP.AppointmentId AS Expr1, C.EHRClinicID, C.ClinicCode, C.ClinicName, 
+                         cP.Signature, cP.LastName AS ProviderLastName, cP.FirstName AS ProviderFirstName, cP.MI AS ProviderMI, cP.EHRProviderID, cP.EHRProviderAlias, JC.Custom1, 
+                         JC.Custom2, JC.Custom3, JC.Custom4, JC.Custom5, JC.Custom6, JC.Custom7, JC.Custom8, JC.Custom9, JC.Custom10, JC.Custom11, JC.Custom12, JC.Custom13, 
+                         JC.Custom14, JC.Custom15, JC.Custom16, JC.Custom17, JC.Custom18, JC.Custom19, JC.Custom20, JC.Custom21, JC.Custom22, JC.Custom23, JC.Custom24, 
+                         JC.Custom25, JC.Custom26, JC.Custom27, JC.Custom28, JC.Custom29, JC.Custom30, JC.Custom31, JC.Custom32, JC.Custom33, JC.Custom34, JC.Custom35, 
+                         JC.Custom36, JC.Custom37, JC.Custom38, JC.Custom39, JC.Custom40, JC.Custom41, JC.Custom42, JC.Custom43, JC.Custom44, JC.Custom45, JC.Custom46, 
+                         JC.Custom47, JC.Custom48, JC.Custom49, JC.Custom50
 FROM            dbo.EN_Jobs AS J INNER JOIN
                          dbo.EN_Jobs_Patients AS JP ON JP.JobNumber = J.JobNumber INNER JOIN
                          dbo.EN_Jobs_Custom AS JC ON JC.JobNumber = J.JobNumber INNER JOIN
@@ -24,6 +25,7 @@ FROM            dbo.EN_Jobs AS J INNER JOIN
                          dbo.Dictations AS cD ON cD.JobID = cJ.JobID INNER JOIN
                          dbo.Dictators AS cP ON cP.DictatorID = cD.DictatorID
 GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
