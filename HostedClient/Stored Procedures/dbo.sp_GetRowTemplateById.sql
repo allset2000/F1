@@ -1,7 +1,11 @@
-SET QUOTED_IDENTIFIER ON
-GO
+
+/****** Object:  StoredProcedure [dbo].[sp_GetRowTemplateById]    Script Date: 8/17/2015 12:08:47 PM ******/
 SET ANSI_NULLS ON
 GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
 
 -- =============================================
 -- Author: Sam Shoultz
@@ -19,4 +23,7 @@ BEGIN
 	FROM ROWTemplates
 	WHERE ROWTemplateID = @TemplateId
 END
+
 GO
+
+
