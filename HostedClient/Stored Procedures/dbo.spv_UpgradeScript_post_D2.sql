@@ -120,6 +120,82 @@ IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-SECUREMESSENGER') BEG
 	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('MNU-SECUREMESSENGER','Menu Item - Secure Messenger Page',null,27)
 END
 -- #0000# - End of adding new data
+
+-- #214# - Clinic Job Delivery Rules
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-BACKENDLEGACYROWRULE-ADD') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-BACKENDLEGACYROWRULE-ADD', 'Function - Add Backend Legacy ROWRule', NULL, 23)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-BACKENDLEGACYROWRULE-EDIT') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-BACKENDLEGACYROWRULE-EDIT', 'Function - Edit Backend Legacy ROWRule', NULL, 23)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-BACKENDLEGACYROWRULE-CONFIGURE') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-BACKENDLEGACYROWRULE-CONFIGURE', 'Function - Configure Backend Legacy ROWRule', NULL, 23)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-BACKENDLEGACYROWRULE-DELETE') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-BACKENDLEGACYROWRULE-DELETE', 'Function - Delete Backend Legacy ROWRule', NULL, 23)
+END
+
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-BACKENDLEGACYROWLOOKUP-ADD') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-BACKENDLEGACYROWLOOKUP-ADD', 'Function - Add Backend Legacy ROWLookup', NULL, 23)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-BACKENDLEGACYROWLOOKUP-EDIT') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-BACKENDLEGACYROWLOOKUP-EDIT', 'Function - Edit Backend Legacy ROWLookup', NULL, 23)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-BACKENDLEGACYROWLOOKUP-DELETE') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-BACKENDLEGACYROWLOOKUP-DELETE', 'Function - Delete Backend Legacy ROWLookup', NULL, 23)
+END
+-- #214# - End of adding new data
+
+-- #230# - HL7 Templates
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-ROWTEMPLATE-ADD') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-ROWTEMPLATE-ADD', 'Function - Add ROWTemplate', NULL, 23)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-ROWTEMPLATE-EDIT') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-ROWTEMPLATE-EDIT', 'Function - Edit ROWTemplate', NULL, 23)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-ROWTEMPLATE-DELETE') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-ROWTEMPLATE-DELETE', 'Function - Delete ROWTemplate', NULL, 23)
+END
+-- #230# - End of adding new data
+
+-- #460# - NCP - User Mgmt - Restrict User permissions
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-ADMINCONSOLE-ACCESS') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-ADMINCONSOLE-ACCESS', 'Function - Allow Admin Console Access and Roles', NULL, 21)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-USER-ADD') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-USER-ADD', 'Function - Add User', NULL, 21)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-USER-EDIT') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-USER-EDIT', 'Function - Edit User', NULL, 21)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-USER-VIEW') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-USER-VIEW', 'Function - View User', NULL, 21)
+END
+
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-ROLE-ADD') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-ROLE-ADD', 'Function - Add Role', NULL, 21)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-ROLE-EDIT') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-ROLE-EDIT', 'Function - Edit Role', NULL, 21)
+END
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-ROLE-VIEW') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-ROLE-VIEW', 'Function - View Role', NULL, 21)
+END
+-- #460# - End of adding new data
+
+-- #216# - Ability to Delete ExpressLink Configuration
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-EXPLINK-DELETE') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-EXPLINK-DELETE', 'Function - Delete Express Link', NULL, 10)
+END
+-- #216# - End of adding new data
+
+-- #215# - Remove Jobs HostedClient J2D
+IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-HostedJ2D-REMOVE') BEGIN
+	INSERT INTO Permissions VALUES ('FNC-HostedJ2D-REMOVE', 'Function - Hosted J2D  Remove jobs', NULL, 13)
+END
+-- #215# - End of adding new data
+
+
 -- #230# Adding new fields / data for HL7 Delivery
 UPDATE ExpressLinkConfigurations SET EnableAthenaACK = 0
 IF NOT EXISTS (SELECT 1 FROM ROWVariableTypes WHERE Description = 'ColumnName') BEGIN
