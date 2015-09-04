@@ -27,14 +27,12 @@ BEGIN
 		  ,UI.[RoleId]
 		  ,[SecurityToken]		  
 		  ,[DateTimeRequested] AS [DateTimeInvitationSent]
-		  ,R.RoleName
 		  ,ISNULL(C.Name,'') AS 'ClinicName'
 		  ,InvitationMessage,
 		  InvitationTypeId,
 		  UI.Deleted
 	  FROM [dbo].[UserInvitations] UI 
 		LEFT JOIN Clinics C ON C.ClinicID = UI.ClinicId AND C.Deleted = 0
-		LEFT JOIN Roles R ON R.RoleID = UI.RoleId AND R.ClinicID = 0
 	WHERE [UserInvitationId] = @UserInvitationId
   END
 
