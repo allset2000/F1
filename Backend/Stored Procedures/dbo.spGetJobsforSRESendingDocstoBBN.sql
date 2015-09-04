@@ -43,14 +43,16 @@ SELECT top (@vintrowsCount) jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabula
   INNER JOIN Clinics c on jb.ClinicID = c.ClinicID      
   INNER JOIN JobStatusB js ON jb.JobNumber = js.JobNumber
   INNER JOIN jobs_documents jd on jb.jobnumber = jd.jobnumber 
-  WHERE  js.Status = @vintstatusCode and jb.Jobstatus <> 365
+  WHERE  js.Status = @vintstatusCode and jb.Jobstatus <> 365 AND jb.FinaldocSentToBBN <> 1
   AND jb.IsLockedForProcessing = 1      
   AND ((d.SRETypeId IS NOT NULL AND d.SRETypeId = 2) or (d.SRETypeId is NULL AND C.SRETypeId IS NOT NULL AND C.SRETypeID=2))  
  END          
      
- --update the jobs to jobstatus       
+ --update the jobs to jobs table       
  UPDATE Jobs Set Jobstatus = 365 FROM Jobs JB             
- INNER JOIN @TempJobs TJ on JB.JobNumber = TJ.JobNumber        
+ INNER JOIN @TempJobs TJ on JB.JobNumber = TJ.JobNumber
+ WHERE JB.Jobstatus <> 365 AND jb.FinaldocSentToBBN <> 1      
+
  SET @UpdatedJobCount = @@ROWCOUNT            
  SELECT @SelectedJobCount = COUNT(*) FROM @TempJobs           
  --In case when this proc is executed in parallel by multiple instances of the SRE App we need            
