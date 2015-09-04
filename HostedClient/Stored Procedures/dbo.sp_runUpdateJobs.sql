@@ -82,11 +82,11 @@ BEGIN
 	BEGIN
 		SET @SQL_STRING = @SQL_STRING + ' and Jobs.JobTypeID = ' + CAST(@JobTypeId as varchar(10))
 	END
-	IF(LEN(@Status) > 0)
+	IF(@Status != '-1')
 	BEGIN
 		SET @SQL_STRING = @SQL_STRING + ' and Jobs.Status = ' + @Status
 	END
-	IF(LEN(@StatJob) > 0)
+	IF(@StatJob = 'True')
 	BEGIN
 		SET @SQL_STRING = @SQL_STRING + ' and Stat = ''' + @StatJob + ''''
 	END
