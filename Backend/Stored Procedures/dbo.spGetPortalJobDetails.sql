@@ -50,7 +50,8 @@ DECLARE @Status INT
 		ISNULL(JR.MI, '') AS ReferringMI, 
 		ISNULL(JR.LastName, '') ReferringLastName,
 		JB.LokedbyUserForJobDetailsView,
-		@Status Status
+		@Status Status,
+		JA.FileArchivedOn
 	FROM jobs JB
 	INNER JOIN Jobs_Patients JP
 	ON JB.jobnumber = JP.jobnumber
@@ -58,6 +59,8 @@ DECLARE @Status INT
 	ON JB.DictatorID = D.DictatorID
 	INNER JOIN Jobs_Referring JR
 	ON JB.jobnumber = JR.jobnumber
+	INNER JOIN Jobs_ArchiveDetails JA
+	ON JB.jobnumber = JA.jobnumber
 	WHERE JB.JobNumber=@vvcrJobNumber
 
  --In case when this proc is executed in parallel by multiple instances of the SRE App we need  
