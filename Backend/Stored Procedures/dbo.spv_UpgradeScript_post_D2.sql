@@ -63,9 +63,9 @@ BEGIN
 		BEGIN
 			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'Job Type', N'', NULL)
 		END
-	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 8 and Name = N'User')
+	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 8 and Name = N'Dictator ID')
 		BEGIN
-			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'User', N'', NULL)
+			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'Dictator ID', N'', NULL)
 		END
 	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 9 and Name = N'Editing Complete')
 		BEGIN
