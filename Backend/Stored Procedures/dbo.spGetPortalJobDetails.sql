@@ -60,7 +60,7 @@ DECLARE @Status INT
 	ON JB.DictatorID = D.DictatorID
 	INNER JOIN Jobs_Referring JR
 	ON JB.jobnumber = JR.jobnumber
-	INNER JOIN Jobs_ArchiveDetails JA
+	LEFT OUTER JOIN Jobs_ArchiveDetails JA
 	ON JB.jobnumber = JA.jobnumber
 	LEFT OUTER JOIN JobEditingSummary JE
 	ON JB.JobId = JE.JobId
@@ -73,3 +73,5 @@ DECLARE @Status INT
 
 
 END   
+
+	
