@@ -92,9 +92,9 @@ BEGIN TRY
 		-- updating QA Notes into jobEditingsummery table
 		IF @vvcrLastQANote <> ''
 		BEGIN 
+			SELECT @jobID=JobId FROM jobs WHERE JobNumber = @vvcrJobNumber
 			IF NOT EXISTS(SELECT * FROM [dbo].[JobEditingSummary] WHERE ([JobId] = @JobId))
 			BEGIN 
-				SELECT @jobID=JobId FROM jobs WHERE JobNumber = @vvcrJobNumber
 				UPDATE JobEditingSummary SET LastQANote = @vvcrLastQANote WHERE JobId= @jobID 
 			END
 		END

@@ -51,7 +51,8 @@ DECLARE @Status INT
 		ISNULL(JR.LastName, '') ReferringLastName,
 		JB.LokedbyUserForJobDetailsView,
 		@Status Status,
-		JA.FileArchivedOn
+		JA.FileArchivedOn,
+		JE.LastQANote
 	FROM jobs JB
 	INNER JOIN Jobs_Patients JP
 	ON JB.jobnumber = JP.jobnumber
@@ -61,6 +62,8 @@ DECLARE @Status INT
 	ON JB.jobnumber = JR.jobnumber
 	INNER JOIN Jobs_ArchiveDetails JA
 	ON JB.jobnumber = JA.jobnumber
+	LEFT OUTER JOIN JobEditingSummary JE
+	ON JB.JobId = JE.JobId
 	WHERE JB.JobNumber=@vvcrJobNumber
 
  --In case when this proc is executed in parallel by multiple instances of the SRE App we need  
