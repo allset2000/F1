@@ -17,10 +17,20 @@ CREATE PROCEDURE [dbo].[sp_LinkInvitationToUser]
 )
 AS
 BEGIN
+	IF EXISTS(SELECT * FROM UserInvitations WHERE ISNULL(RegisteredUserId,-1) = -1 AND SecurityToken = @RegistrationCode)
+	BEGIN
 	UPDATE UserInvitations
 	SET RegisteredUserId = @UserId
 	WHERE SecurityToken = @RegistrationCode
+
+		SELECT 1
+	END
+	ELSE
+	BEGIN
+		SELECT 0
+	END
 END
+
 
 
 GO
