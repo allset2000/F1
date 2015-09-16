@@ -8,6 +8,7 @@ GO
 -- Create date: 8/11/2015
 -- Description: SP used to update a job record
 -- Application Usage: DictateAPI
+-- Note : Modified on 9/9/2015 for updating the jobtypeid
 -- =============================================
   
 CREATE PROCEDURE [dbo].[sp_UpdateJob]  
@@ -17,18 +18,20 @@ CREATE PROCEDURE [dbo].[sp_UpdateJob]
 	@Stat bit,
 	@Priority smallint,
 	@ChangedBy varchar(200),
-	@AdditonalData varchar(max) = ''
+	@AdditonalData varchar(max) = '',
+	@JobTypeID int
 )  
 AS  
 BEGIN TRY 
 	DECLARE @OldStatus smallint,
 			@OldStat bit,
 			@OldPriority smallint,
-			@OldAdditionalData varchar(max)
+			@OldAdditionalData varchar(max),
+			@OldJobTypeID int
 
 	BEGIN TRANSACTION 
 	
-	SELECT @OldStatus = Status, @OldStat = Stat, @OldPriority = Priority, @OldAdditionalData = AdditionalData from Jobs where JobID = @JobId
+	SELECT @OldStatus = Status, @OldStat = Stat, @OldPriority = Priority, @OldAdditionalData = AdditionalData, @OldJobTypeID = JobTypeID  from Jobs where JobID = @JobId
 
 	IF (@Status <> @OldStatus)
 	BEGIN
@@ -50,6 +53,11 @@ BEGIN TRY
 	IF (@OldAdditionalData is null or @AdditonalData <> @OldAdditionalData)
 	BEGIN
 		UPDATE Jobs SET AdditionalData = @AdditonalData where JobId = @JobId
+	END
+
+	IF (@JobTypeID  <> @OldJobTypeID)
+	BEGIN
+		UPDATE Jobs SET JobTypeID = @JobTypeID where JobId = @JobId
 	END
 
 	COMMIT TRANSACTION
