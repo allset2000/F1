@@ -1,4 +1,4 @@
-CREATE TABLE [dbo].[Dictators]
+/*CREATE TABLE [dbo].[Dictators]
 (
 [ClinicID] [smallint] NOT NULL,
 [DictatorID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
@@ -63,3 +63,4 @@ GRANT UPDATE ON  [dbo].[Dictators] TO [ENTRADAHEALTH\SQLImplementation]
 GO
 EXEC sp_addextendedproperty N'MS_Description', N'Top / Bottom', 'SCHEMA', N'dbo', 'TABLE', N'Dictators', 'COLUMN', N'ESignatureLocation'
 GO
+*/
