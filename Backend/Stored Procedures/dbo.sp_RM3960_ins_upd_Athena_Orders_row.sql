@@ -35,8 +35,8 @@ BEGIN
          RETURN-1
 END
 
-DECLARE @message VARCHAR(1000)
-DECLARE @fielData VARCHAR(1000)
+DECLARE @message VARCHAR(3000)
+DECLARE @fielData VARCHAR(3000)
 DECLARE @ruleName VARCHAR(40)
 
 SET @ruleName ='OrderInterpretation'

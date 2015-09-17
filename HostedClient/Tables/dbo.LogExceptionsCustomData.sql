@@ -33,8 +33,38 @@ CREATE TABLE [dbo].[LogExceptionsCustomData]
 [UserAgent] [varchar] (300) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ApiKey] [varchar] (300) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [DeliveryID] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[ImageID] [bigint] NULL
+[ImageID] [bigint] NULL,
+[Macro] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[TemplateName] [varchar] (40) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[NewEditorId] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[JobStage] [varchar] (5) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[SendingQALevel] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ClinicName] [varchar] (150) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[BackendCompanyId] [int] NULL,
+[BackendDictatorName] [varchar] (150) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[BackendEditorId] [int] NULL,
+[SearchQuery] [varchar] (1550) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[BackendDeliveryId] [int] NULL,
+[DeletedBy] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[SplitRuleId] [int] NULL,
+[TddTagId] [int] NULL,
+[TddTagName] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ROWAdminId] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ROWUserId] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[DictatorId_str] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[QueueId] [int] NULL,
+[EHRClinicId] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ChangedData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[ClinicDocumentId] [int] NULL,
+[RoleId] [int] NULL,
+[ActionId] [int] NULL,
+[ErrorId] [int] NULL,
+[ConfigurationId] [int] NULL,
+[ConnectionString] [varchar] (1000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[InvitationId] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_LogExceptions_LogExceptionID] ON [dbo].[LogExceptionsCustomData] ([LogExceptionID] DESC) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[LogExceptionsCustomData] ADD CONSTRAINT [PK_LogExceptionsCustomData] PRIMARY KEY CLUSTERED  ([LogExceptionsCustomDataID]) ON [PRIMARY]
 GO
