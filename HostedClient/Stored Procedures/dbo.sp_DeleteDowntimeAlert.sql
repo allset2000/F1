@@ -1,6 +1,3 @@
-USE [EntradaHostedClient]
-GO
-
 /****** Object:  StoredProcedure [dbo].[sp_AddDowntimeAlert]    Script Date: 9/22/2015 8:16:37 AM ******/
 SET ANSI_NULLS ON
 GO
