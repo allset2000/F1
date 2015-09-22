@@ -107,7 +107,7 @@ BEGIN
 		  CASE WHEN @SortTypeFromGrid = 'Ascending' THEN 
 					CASE @SortColumnFromGrid 
 					WHEN 'MRN'   THEN MRN 
-					WHEN 'Job Number' THEN JobNumber 
+					WHEN 'JobNumber' THEN JobNumber 
 					WHEN 'JobStatus' THEN JobStatus 
 					WHEN 'User' THEN DictatorID 
 					WHEN 'JobType' THEN JobType 
@@ -117,7 +117,7 @@ BEGIN
 				CASE WHEN @SortTypeFromGrid = 'Descending' THEN
 					CASE @SortColumnFromGrid 
 					WHEN 'MRN'   THEN MRN 
-					WHEN 'Job Number' THEN JobNumber 
+					WHEN 'JobNumber' THEN JobNumber 
 					WHEN 'JobStatus' THEN JobStatus 
 					WHEN 'User' THEN DictatorID 
 					WHEN 'JobType' THEN JobType 
