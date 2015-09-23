@@ -11,7 +11,7 @@
 * --   --------   -------   ------------------------------------       
 *******************************/      
       
-CREATE PROCEDURE [dbo].[spGetPortalJobHistory] 
+CREATE PROCEDURE [dbo].[spGetPortalJobHistory]  
 (          
  @vvcrJobnumber VARCHAR(20)        
 )           
@@ -57,6 +57,15 @@ SELECT jg.Id,MAX(JH.JobHistoryID) JobHistoryID,JG.StatusGroup,MAX(JH.HistoryDate
 		WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=2 -- Available for CR Status 
 		GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup
 
+IF NOT EXISTS(SELECT * FROM @TempJobsHostory WHERE SgId = 2)
+	BEGIN
+	INSERT INTO @TempJobsHostory
+	SELECT jg.Id,null JobHistoryID, JG.StatusGroup,MAX(JH.StatusDate) StatusDate,JH.jobnumber,0  from JobTracking JH  
+		INNER JOIN dbo.StatusCodes SC ON JH.Status= SC.StatusID
+		INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
+		WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=2 -- Editing Complete Status
+		GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup
+	END
 -- Corrected By CR Status 
 INSERT INTO @TempJobsHostory
 SELECT jg.Id,MAX(JH.JobHistoryID) JobHistoryID,JG.StatusGroup,MAX(JH.HistoryDateTime) StatusDate,JH.jobnumber,1  from job_history JH  
@@ -64,6 +73,16 @@ SELECT jg.Id,MAX(JH.JobHistoryID) JobHistoryID,JG.StatusGroup,MAX(JH.HistoryDate
 		INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 		WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=3 -- Corrected By CR Status 
 		GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup
+
+IF NOT EXISTS(SELECT * FROM @TempJobsHostory WHERE SgId = 3)
+	BEGIN
+	INSERT INTO @TempJobsHostory
+	SELECT jg.Id,null JobHistoryID, JG.StatusGroup,MAX(JH.StatusDate) StatusDate,JH.jobnumber,0  from JobTracking JH  
+		INNER JOIN dbo.StatusCodes SC ON JH.Status= SC.StatusID
+		INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
+		WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=3 -- Editing Complete Status
+		GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup
+	END
 
 -- Editing Complete Status
 INSERT INTO @TempJobsHostory
