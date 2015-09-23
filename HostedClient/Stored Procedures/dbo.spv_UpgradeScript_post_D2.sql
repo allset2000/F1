@@ -35,19 +35,19 @@ IF NOT EXISTS (SELECT 1 FROM dbo.SystemConfiguration WHERE ConfigKey = 'DEF_Port
 	insert into SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('DEF_PortalTimeout','20','Default value for Portal Timeout setting',GETDATE(),GETDATE())
 END
 IF NOT EXISTS (SELECT 1 FROM dbo.SystemConfiguration WHERE ConfigKey = 'DEF_DaysToResetPassword') BEGIN
-	insert into SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('DEF_DaysToResetPassword','90','Default value for Days to reset a users password',GETDATE(),GETDATE())
+	insert into SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('DEF_DaysToResetPassword','180','Default value for Days to reset a users password',GETDATE(),GETDATE())
 END
 IF NOT EXISTS (SELECT 1 FROM dbo.SystemConfiguration WHERE ConfigKey = 'DEF_PreviousPasswordCount') BEGIN
-	insert into SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('DEF_PreviousPasswordCount','3','Default value of number of password itterations before a password can be re-used',GETDATE(),GETDATE())
+	insert into SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('DEF_PreviousPasswordCount','5','Default value of number of password itterations before a password can be re-used',GETDATE(),GETDATE())
 END
 IF NOT EXISTS (SELECT 1 FROM dbo.SystemConfiguration WHERE ConfigKey = 'DEF_PasswordMinCharacter') BEGIN
 	insert into SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('DEF_PasswordMinCharacter','8','Default value for minimum allowed characters in a password',GETDATE(),GETDATE())
 END
 IF NOT EXISTS (SELECT 1 FROM dbo.SystemConfiguration WHERE ConfigKey = 'DEF_FailedPasswordLockoutCount') BEGIN
-	insert into SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('DEF_FailedPasswordLockoutCount','5','Default value for how many failed login attempts locks an account',GETDATE(),GETDATE())
+	insert into SystemConfiguration(ConfigKey,ConfigValue,Description,DateCreated,DateUpdated) values('DEF_FailedPasswordLockoutCount','10','Default value for how many failed login attempts locks an account',GETDATE(),GETDATE())
 END
 -- Update all clinic standard values
-UPDATE Clinics SET PortalTimeout = 20, DaysToResetPassword = 90, PreviousPasswordCount = 3, PasswordMinCharacters = 8, FailedPasswordLockoutCount = 5
+UPDATE Clinics SET PortalTimeout = 20, DaysToResetPassword = 180, PreviousPasswordCount = 5, PasswordMinCharacters = 8, FailedPasswordLockoutCount = 10
 -- #4355 - End of config adds
 -- #4355 - UserInvitaion Types and migration
 IF NOT EXISTS (SELECT 1 FROM dbo.UserInvitationTypes WHERE InvitationTypeName = 'Portal') BEGIN
@@ -101,9 +101,6 @@ END
 IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-JOBREPORTS') BEGIN
 	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('MNU-JOBREPORTS','Menu Item - Job Reports Page',null,25)
 END
-IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-JOBDETAILSVIEWER') BEGIN
-	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('MNU-JOBDETAILSVIEWER','Menu Item - Job Details Page',null,26)
-END
 IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBDETAILSVIEWER-EDITDOCUMENT') BEGIN
 	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-JOBDETAILSVIEWER-EDITDOCUMENT','Function - Edit Document',null,26)
 END
@@ -112,9 +109,6 @@ IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBDETAILSVIEWER-APPR
 END
 IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBDETAILSVIEWER-EDITDEMOGRAPHICS') BEGIN
 	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-JOBDETAILSVIEWER-EDITDEMOGRAPHICS','Function - Edit Demographics',null,26)
-END
-IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBDETAILSVIEWER-VIEWONLY') BEGIN
-	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('FNC-JOBDETAILSVIEWER-VIEWONLY','Function - View Only',null,26)
 END
 IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-SECUREMESSENGER') BEGIN
 	INSERT INTO Permissions(Code,Name,ParentPermissionID,ModuleId) VALUES('MNU-SECUREMESSENGER','Menu Item - Secure Messenger Page',null,27)
