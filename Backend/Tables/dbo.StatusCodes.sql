@@ -10,8 +10,11 @@ CREATE TABLE [dbo].[StatusCodes]
 [SpeechFolderTag] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [IsActiveJobStatus] [bit] NOT NULL,
 [IsJobSearchStatus] [bit] NOT NULL,
-[IsSpecialCaseStatus] [bit] NOT NULL
+[IsSpecialCaseStatus] [bit] NOT NULL,
+[StatusGroupId] [smallint] NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[StatusCodes] ADD CONSTRAINT [PK_StatusCodes] PRIMARY KEY CLUSTERED  ([StatusID]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_StatusCodes_GroupID] ON [dbo].[StatusCodes] ([StatusGroupId], [StatusID]) ON [PRIMARY]
 GO
