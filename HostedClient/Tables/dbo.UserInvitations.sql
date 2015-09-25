@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[UserInvitations]
 [RequestingUserId] [int] NOT NULL,
 [ClinicId] [int] NOT NULL,
 [InvitationMethod] [int] NOT NULL,
-[RoleId] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[RoleId] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [SecurityToken] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [DateTimeRequested] [datetime] NOT NULL,
 [DateTimeInvitationSent] [datetime] NULL,
