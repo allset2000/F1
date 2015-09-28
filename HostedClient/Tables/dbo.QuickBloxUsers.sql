@@ -9,6 +9,9 @@ CREATE TABLE [dbo].[QuickBloxUsers]
 [UpdatedDate] [datetime] NULL
 ) ON [PRIMARY]
 GO
+ALTER TABLE [dbo].[QuickBloxUsers] ADD CONSTRAINT [CK_UserID] UNIQUE NONCLUSTERED  ([UserID]) ON [PRIMARY]
+
+GO
 ALTER TABLE [dbo].[QuickBloxUsers] ADD CONSTRAINT [PK_QuickBloxUsers] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[QuickBloxUsers] ADD CONSTRAINT [FK_QuickBloxUsers_Users] FOREIGN KEY ([UserID]) REFERENCES [dbo].[Users] ([UserID])
