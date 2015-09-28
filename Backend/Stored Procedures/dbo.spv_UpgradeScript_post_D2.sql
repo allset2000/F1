@@ -37,9 +37,9 @@ BEGIN
 	-- End of Data for [JobStatusGroup]
 
 	-- Data for [PortalJobReportAvailableColumns]
-	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 1 and Name = N'MRN')
+	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 1 and Name = N'Job Number')
 		BEGIN
-			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'MRN', N'', NULL)
+			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'Job Number', N'150px', NULL)
 		END
 	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 2 and Name = N'Patient')
 		BEGIN
@@ -53,9 +53,9 @@ BEGIN
 		BEGIN
 			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'Appointment Date', N'130px', N'{0:dd-MMM-yyyy hh:mm:ss tt}')
 		END
-	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 5 and Name = N'Job Number')
+	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 5 and Name = N'MRN')
 		BEGIN
-			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'Job Number', N'150px', NULL)
+			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'MRN', N'', NULL)
 		END
 	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 6 and Name = N'Job Status')
 		BEGIN
