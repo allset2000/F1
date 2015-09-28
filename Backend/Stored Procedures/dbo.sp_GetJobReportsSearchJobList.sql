@@ -112,6 +112,8 @@ BEGIN
 					WHEN 'User' THEN DictatorID 
 					WHEN 'JobType' THEN JobType 
 					WHEN 'Patient' THEN FirstName 
+					WHEN 'InProcess' THEN InProcess
+					WHEN 'AppointmentDate' THEN AppointmentDate
 					END
 				END,
 				CASE WHEN @SortTypeFromGrid = 'Descending' THEN
@@ -122,6 +124,8 @@ BEGIN
 					WHEN 'User' THEN DictatorID 
 					WHEN 'JobType' THEN JobType 
 					WHEN 'Patient' THEN FirstName 
+					WHEN 'InProcess' THEN InProcess
+					WHEN 'AppointmentDate' THEN AppointmentDate
 					END
 				END DESC,
 		    CASE WHEN @SortType = 'Ascending' THEN
