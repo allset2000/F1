@@ -35,6 +35,7 @@ DECLARE @TempJobsHostory1 TABLE(
 							INNER JOIN dbo.StatusCodes SC ON JH.CurrentStatus= SC.StatusID and sc.StatusGroupId=@StatusGroupId 
 							INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId WHERE JobNumber=@vvcrJobnumber)
 		BEGIN
+		-- Get the max datetime history based on group by status 
 		INSERT INTO @TempJobsHostory1
 			SELECT JH.JobNumber,JH.DocumentID,JG.StatusGroup,JH.HistoryDateTime,JH.JobType,UserId,JH.MRN,JH.JobHistoryID,jg.id from 
 							(SELECT h3.JobNumber, h3.JobHistoryID, h3.MRN, h3.JobType,h3.CurrentStatus,h3.DocumentID,h3.UserId, h3.HistoryDateTime 
@@ -50,6 +51,7 @@ DECLARE @TempJobsHostory1 TABLE(
 		END
 	ELSE
 		BEGIN
+		-- get the history from jobtracking table if history not avalable in job_history table
 		INSERT INTO @TempJobsHostory1
 			SELECT JH.JobNumber,null DocumentID,JG.StatusGroup,MAX(JH.StatusDate),null JobType,null UserId,null MRN,1 JobHistoryID,jg.id from JobTracking JH  
 			INNER JOIN dbo.StatusCodes SC ON JH.Status= SC.StatusID
@@ -58,7 +60,7 @@ DECLARE @TempJobsHostory1 TABLE(
 			GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup
 		END
 
-
+-- Get the jobtype, documentid and MRN from previous record in that group or get it from jobs and patient table.
 SELECT TOP 1 JH.JobNumber,
 	doc.DocumentID,
 	JH.StatusGroup,JH.StatusDate,
