@@ -12,7 +12,7 @@
 *******************************/      
       
 CREATE PROCEDURE [dbo].[spGetPortalJobHistory]  
-(          
+(
  @vvcrJobnumber VARCHAR(20)        
 )           
 AS          
@@ -33,15 +33,15 @@ DECLARE @TempJobsHostory1 TABLE(
  )  
 
  INSERT INTO @TempJobsHostory1
- EXEC [spGetPortalJobHistoryByStatusGroupId] '2015081100000086',1 -- In Process Status 
+ EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,1 -- In Process Status 
  INSERT INTO @TempJobsHostory1
- EXEC [spGetPortalJobHistoryByStatusGroupId] '2015081100000086',2 -- Available for CR Status 
+ EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,2 -- Available for CR Status 
  INSERT INTO @TempJobsHostory1
- EXEC [spGetPortalJobHistoryByStatusGroupId] '2015081100000086',3 -- Corrected By CR Status 
+ EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,3 -- Corrected By CR Status 
  INSERT INTO @TempJobsHostory1
- EXEC [spGetPortalJobHistoryByStatusGroupId] '2015081100000086',4 -- Editing Complete Status
+ EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,4 -- Editing Complete Status
  INSERT INTO @TempJobsHostory1
- EXEC [spGetPortalJobHistoryByStatusGroupId] '2015081100000086',5 -- Delivered Status
+ EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,5 -- Delivered Status
 
  SELECT * FROM @TempJobsHostory1 order by SgId asc
 

@@ -31,7 +31,9 @@ DECLARE @TempJobsHostory1 TABLE(
 	JgId int
  )  
 
-	IF EXISTS(SELECT * FROM job_history WHERE JobNumber=@vvcrJobnumber)
+	IF EXISTS(SELECT * FROM job_history JH
+							INNER JOIN dbo.StatusCodes SC ON JH.CurrentStatus= SC.StatusID and sc.StatusGroupId=@StatusGroupId 
+							INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId WHERE JobNumber=@vvcrJobnumber)
 		BEGIN
 		INSERT INTO @TempJobsHostory1
 			SELECT JH.JobNumber,JH.DocumentID,JG.StatusGroup,JH.HistoryDateTime,JH.JobType,UserId,JH.MRN,JH.JobHistoryID,jg.id from 
