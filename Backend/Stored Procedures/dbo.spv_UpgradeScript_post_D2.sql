@@ -51,7 +51,7 @@ BEGIN
 		END
 	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 4 and Name = N'Appointment Date')
 		BEGIN
-			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'Appointment Date', N'130px', N'{0:dd-MMM-yyyy hh:mm:ss tt}')
+			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'Appointment Date', N'130px', N'{0:dd-MMM-yyyy}')
 		END
 	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 5 and Name = N'MRN')
 		BEGIN
