@@ -3,6 +3,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+
 -- =============================================
 -- Author: Sam Shoultz
 -- Create date: 5/20/2015
@@ -277,6 +278,19 @@ IF NOT EXISTS (SELECT 1 FROM ROWTemplateVariables WHERE VariableName = '##Provid
 	INSERT INTO ROWTemplateVariables(VariableName,VariableTypeId,FieldName,VariableDescription,Required) VALUES('##ProviderSignature##',1,'Signature','Provider Signature from hosted db',1)
 END
 -- #230# - End
+
+--SM contacts now work based on UserClinicXref table
+--So all the existing dictators associated with user account should
+--have an entry in the UserClinicXref table
+--AC should populate this table going forward for new dictators
+insert into UserClinicXref (userid, clinicid)
+select userid, clinicid from dictators 
+where userid is not null and dictatorid not in 
+(select d.dictatorid from dictators D inner join 
+	userclinicxref x on d.userid=x.userid and d.clinicid=x.clinicid)
+	and userid in (select userid from users) -- remove invalid userids
+	and clinicid in (select clinicid from clinics) -- remove invalid clinics
 END
+
 
 GO
