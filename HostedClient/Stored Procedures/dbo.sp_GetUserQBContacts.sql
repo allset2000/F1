@@ -50,7 +50,6 @@ BEGIN
 	WHERE UI.RequestingUserId = @UserId
 	and UI.RegisteredUserId is null and UI.FirstName is not null and UI.InvitationSent = 1
 
-	--if admin/support invites from AC that person will show up in the contact for the user. 
-	--No way to distinguish this now. Need to see how to filter this out.
+
 END
 GO
