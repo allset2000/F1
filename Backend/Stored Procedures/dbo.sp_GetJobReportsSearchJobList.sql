@@ -112,8 +112,6 @@ BEGIN
 					WHEN 'User' THEN DictatorID 
 					WHEN 'JobType' THEN JobType 
 					WHEN 'Patient' THEN FirstName 
-					WHEN 'InProcess' THEN InProcess
-					WHEN 'AppointmentDate' THEN AppointmentDate
 					END
 				END,
 				CASE WHEN @SortTypeFromGrid = 'Descending' THEN
@@ -124,8 +122,28 @@ BEGIN
 					WHEN 'User' THEN DictatorID 
 					WHEN 'JobType' THEN JobType 
 					WHEN 'Patient' THEN FirstName 
+					END
+				END DESC,
+				CASE WHEN @SortTypeFromGrid = 'Ascending' THEN
+					CASE @SortColumnFromGrid 
 					WHEN 'InProcess' THEN InProcess
 					WHEN 'AppointmentDate' THEN AppointmentDate
+					END
+				END,
+				CASE WHEN @SortTypeFromGrid = 'Descending' THEN
+					CASE @SortColumnFromGrid 
+					WHEN 'InProcess' THEN InProcess
+					WHEN 'AppointmentDate' THEN AppointmentDate
+				END
+				END DESC,
+				CASE WHEN @SortTypeFromGrid = 'Ascending' THEN
+					CASE @SortColumnFromGrid 
+					WHEN 'DeviceGenerated' THEN IsGenericJob
+					END
+				END,
+				CASE WHEN @SortTypeFromGrid = 'Descending' THEN
+					CASE @SortColumnFromGrid 
+					WHEN 'DeviceGenerated' THEN IsGenericJob
 					END
 				END DESC,
 		    CASE WHEN @SortType = 'Ascending' THEN
