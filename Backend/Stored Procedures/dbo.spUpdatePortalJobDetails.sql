@@ -50,7 +50,7 @@ BEGIN TRY
 	SET @vbinDocumnet =  CAST(@vnvcrDocumnet as varbinary(MAX))
 	BEGIN TRANSACTION 
 		-- Updating Patient Details
-		IF @vvcrMRN <> '' and @vvcrMRN <> 0 
+		IF @vvcrMRN <> '' and @vvcrMRN <> '0' and @vvcrMRN is not null
 		BEGIN
 			EXEC dbo.writePatient @vintPatientId,@vvcrJobNumber,@vvcrAlternateID,@vvcrMRN, @vvcrFirstName, @vvcrMI,@vvcrLastName,@vvcrSuffix,@vvcrDOB,
 									  @vvcrSSN,@vvcrAddress1,@vvcrAddress2,@vvcrCity,@vvcrState,@vvcrZip,@vvcrPhone,@vvcrSex,@vintAppointmentId  

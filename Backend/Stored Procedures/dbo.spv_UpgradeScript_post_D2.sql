@@ -45,9 +45,9 @@ BEGIN
 		BEGIN
 			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES (N'Patient', N'', NULL)
 		END
-	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 3 and Name = N'In Process')
+	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 3 and Name = N'In Process-Start')
 		BEGIN
-			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'In Process', N'120px', N'{0:dd-MMM-yyyy hh:mm:ss tt}')
+			INSERT [dbo].[PortalJobReportAvailableColumns] ([Name], [Width], [DisplayFormat]) VALUES ( N'In Process-Start', N'120px', N'{0:dd-MMM-yyyy hh:mm:ss tt}')
 		END
 	IF NOT EXISTS(select * from PortalJobReportAvailableColumns where Id = 4 and Name = N'Appointment Date')
 		BEGIN

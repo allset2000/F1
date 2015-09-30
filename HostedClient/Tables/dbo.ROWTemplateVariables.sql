@@ -9,6 +9,8 @@ CREATE TABLE [dbo].[ROWTemplateVariables]
 [ErrorCodeId] [int] NULL,
 [PickList] [int] NULL
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[ROWTemplateVariables] ADD
+CONSTRAINT [FK_ROWTemplateVariables_ROWVariableTypes] FOREIGN KEY ([VariableTypeId]) REFERENCES [dbo].[ROWVariableTypes] ([ROWVariableTypeId])
 GO
 ALTER TABLE [dbo].[ROWTemplateVariables] ADD CONSTRAINT [PK_ROWTemplateVariables] PRIMARY KEY CLUSTERED  ([ROWTemplateVariableId]) ON [PRIMARY]
 GO

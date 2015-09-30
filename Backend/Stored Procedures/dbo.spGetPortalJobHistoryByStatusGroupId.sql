@@ -10,7 +10,7 @@
 * PR   Date     Author  Description           
 * --   --------   -------   ------------------------------------       
 *******************************/      
-      
+ 
 CREATE PROCEDURE [dbo].[spGetPortalJobHistoryByStatusGroupId]  
 (          
  @vvcrJobnumber VARCHAR(20),
@@ -19,6 +19,8 @@ CREATE PROCEDURE [dbo].[spGetPortalJobHistoryByStatusGroupId]
 AS          
 BEGIN       
 
+DECLARE @oldStatusDate DATETIME
+ 
 DECLARE @TempJobsHostory1 TABLE(  
 	JobNumber VARCHAR(20),
 	DocumentID int,  
@@ -28,32 +30,34 @@ DECLARE @TempJobsHostory1 TABLE(
 	UserId VARCHAR(48),
 	MRN int,
 	JobHistoryID int,
-	JgId int
+	JgId int,
+	CurrentStatus int
  )  
 
 	IF EXISTS(SELECT * FROM job_history JH
 							INNER JOIN dbo.StatusCodes SC ON JH.CurrentStatus= SC.StatusID and sc.StatusGroupId=@StatusGroupId 
 							INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId WHERE JobNumber=@vvcrJobnumber)
 		BEGIN
-		-- Get the max datetime history based on group by status 
+		-- Get the history based status group id 
 		INSERT INTO @TempJobsHostory1
-			SELECT JH.JobNumber,JH.DocumentID,JG.StatusGroup,JH.HistoryDateTime,JH.JobType,UserId,JH.MRN,JH.JobHistoryID,jg.id from 
-							(SELECT h3.JobNumber, h3.JobHistoryID, h3.MRN, h3.JobType,h3.CurrentStatus,h3.DocumentID,h3.UserId, h3.HistoryDateTime 
-							FROM (
-								SELECT h.CurrentStatus, MAX(h.HistoryDateTime) AS StatusDate
-								FROM dbo.job_history h
-								WHERE h.JobNumber=@vvcrJobnumber
-								GROUP BY h.CurrentStatus
-								) h2 JOIN dbo.job_history h3
-									ON h2.CurrentStatus = h3.CurrentStatus AND h2.StatusDate = h3.HistoryDateTime) JH
-							INNER JOIN dbo.StatusCodes SC ON JH.CurrentStatus= SC.StatusID and sc.StatusGroupId=@StatusGroupId 
-							INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
-		END
+			SELECT JH.JobNumber,JH.DocumentID,JG.StatusGroup,JH.HistoryDateTime,JH.JobType,UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus 
+			FROM dbo.job_history JH
+			INNER JOIN dbo.StatusCodes SC ON JH.CurrentStatus= SC.StatusID and sc.StatusGroupId=@StatusGroupId 
+			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
+			WHERE jh.jobnumber=@vvcrJobnumber
+
+			-- getting actual statusdate for available CR
+			IF @StatusGroupId=2
+				BEGIN
+					SELECT @oldStatusDate=Max(StatusDate) FROM jobtracking WHERE jobnumber=@vvcrJobnumber and status=240 GROUP BY status
+					UPDATE @TempJobsHostory1 SET StatusDate=@oldStatusDate WHERE CurrentStatus=240
+				END
+			END
 	ELSE
 		BEGIN
 		-- get the history from jobtracking table if history not avalable in job_history table
 		INSERT INTO @TempJobsHostory1
-			SELECT JH.JobNumber,null DocumentID,JG.StatusGroup,MAX(JH.StatusDate),null JobType,null UserId,null MRN,1 JobHistoryID,jg.id from JobTracking JH  
+			SELECT JH.JobNumber,null DocumentID,JG.StatusGroup,MAX(JH.StatusDate),null JobType,null UserId,null MRN,1 JobHistoryID,jg.id,null CurrentStatus  from JobTracking JH  
 			INNER JOIN dbo.StatusCodes SC ON JH.Status= SC.StatusID
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 			WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=@StatusGroupId -- Editing Complete Status
@@ -64,8 +68,8 @@ DECLARE @TempJobsHostory1 TABLE(
 SELECT TOP 1 JH.JobNumber,
 	doc.DocumentID,
 	JH.StatusGroup,JH.StatusDate,
-	CASE WHEN jh.JobType IS NULL THEN jb.JobType ELSE jh.JobType END JobType,
-	UserId,
+	CASE WHEN jh.JobType IS NULL or jh.JobType ='' THEN jb.JobType ELSE jh.JobType END JobType,
+	un.UserId,
 	CASE WHEN mr.MRN IS NULL THEN JP.MRN ELSE  mr.MRN END MRN,JP.FirstName,JP.MI,JP.LastName,jb.ClinicID,JH.JgId  FROM @TempJobsHostory1 as JH 
 	OUTER APPLY  
         (SELECT TOP 1 DocumentID FROM @TempJobsHostory1 as b WHERE b.DocumentID IS NOT NULL ORDER BY b.JobHistoryID DESC) doc
@@ -73,6 +77,8 @@ SELECT TOP 1 JH.JobNumber,
        (SELECT TOP 1 MRN FROM @TempJobsHostory1 as b WHERE  b.MRN IS NOT NULL ORDER BY b.JobHistoryID DESC) mr
 	OUTER APPLY 
        (SELECT TOP 1 JobType FROM @TempJobsHostory1 as b WHERE b.JobType IS NOT NULL ORDER BY b.JobHistoryID DESC) jt
+	OUTER Apply
+		(SELECT TOP 1 UserId FROM @TempJobsHostory1 as b WHERE b.UserId IS NOT NULL ORDER BY b.JobHistoryID DESC) un
 	INNER JOIN jobs jb 
 		ON jh.JobNumber=jb.JobNumber
 	LEFT OUTER JOIN [dbo].[Jobs_Patients] JP
