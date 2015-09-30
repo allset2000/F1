@@ -9,22 +9,16 @@ CREATE PROCEDURE [dbo].[doUpdateJobDocument] (
 	@DocDate    [datetime] 
 ) AS
 BEGIN
-	 DECLARE @DocumentId INT
-	 DECLARE @Status INT 
-	 DECLARE @oldUsername VARCHAR(48)
 	BEGIN TRY
 		BEGIN TRANSACTION
 			--SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-			SELECT @Status=Status,@oldUsername=Username FROM Jobs_Documents WHERE (JobNumber = @JobNumber);			
+
 			/* Insert Job History */
 			INSERT INTO [dbo].[Jobs_Documents_History] (
 				[JobNumber], [Doc], [XmlData], [Username], [DocDate]
 			) SELECT JobNumber, Doc, XmlData, Username, DocDate 
 				FROM Jobs_Documents WHERE (JobNumber = @JobNumber);
 			
-			/* Tracking into job history table */
-			SELECT @DocumentId = IDENT_CURRENT('Jobs_Documents_History')
-			exec spInsertJobHistory @JobNumber,null,null,@Status,@documentID,@oldUsername
 
 			/* Update Job Document */							
 			UPDATE Jobs_Documents
