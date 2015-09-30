@@ -57,6 +57,11 @@ BEGIN
 	SET @status = 200
 END
 
+IF ISNULL(@additionalData,'')=''
+BEGIN
+	SET @additionalData = '<custom1>'+@encounterID+'</custom1><custom5>'+@locationName+'</custom5>'
+END
+
 -- If the EHR isn't providing us the attending first/last name, pull it from the Dictators table
 IF @attendingFirst = 'xref'
 BEGIN
