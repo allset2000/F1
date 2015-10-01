@@ -32,6 +32,12 @@ BEGIN
 	SET @StartDate = DATEADD(day,@DaysPast,@AppointmentDate)
 	SET @EndApptDate = DATEADD(day,@DaysForward,@AppointmentDate)
 
+	/* schedules.status values
+	100 - booked appointments, not checked in
+	200 - checked-in
+	300 - cancelled
+	500 - deleted
+	*/
 	CREATE TABLE #tmp_resourceids
 	(
 		ResourceId VARCHAR(100)
@@ -71,7 +77,7 @@ BEGIN
 			WHERE S.Clinicid = @ClinicId
 				  and S.AppointmentDate >= @StartDate
 				  and S.AppointmentDate <= @EndApptDate
-				  and S.Status in (0,100,200)
+				  --and S.Status in (0,100,200) don't filter any status
 			Order By S.Changedon DESC
 			OFFSET @CurrentPlace ROWS
 			FETCH NEXT @SelectAmount ROWS ONLY
@@ -97,7 +103,7 @@ BEGIN
 		WHERE S.Clinicid = @ClinicId
 				and S.AppointmentDate >= @StartDate
 				and S.AppointmentDate <= @EndApptDate
-				and S.Status in (0,100,200)
+				--and S.Status in (0,100,200) don't filter any status
 		Order By S.AppointmentDate,S.Changedon DESC
 		OFFSET @CurrentPlace ROWS
 		FETCH NEXT @SelectAmount ROWS ONLY
