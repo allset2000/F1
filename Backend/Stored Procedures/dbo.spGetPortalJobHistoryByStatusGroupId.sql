@@ -83,5 +83,5 @@ SELECT TOP 1 JH.JobNumber,
 		ON jh.JobNumber=jb.JobNumber
 	LEFT OUTER JOIN [dbo].[Jobs_Patients] JP
 		ON JH.JobNumber = jp.JobNumber
-	ORDER BY JH.JobHistoryID desc
+	ORDER BY JH.CurrentStatus desc
 END
