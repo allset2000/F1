@@ -34,7 +34,7 @@ DECLARE @TempJobsHostory1 TABLE(
 	CurrentStatus int
  )  
 
-	IF EXISTS(SELECT 1 FROM job_history JH
+	IF EXISTS(SELECT * FROM job_history JH
 							INNER JOIN dbo.StatusCodes SC ON JH.CurrentStatus= SC.StatusID and sc.StatusGroupId=@StatusGroupId 
 							INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId WHERE JobNumber=@vvcrJobnumber)
 		BEGIN
@@ -46,7 +46,7 @@ DECLARE @TempJobsHostory1 TABLE(
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 			WHERE jh.jobnumber=@vvcrJobnumber
 
-			-- getting actual statusdate for available CR from jobtracking
+			-- getting actual statusdate for available CR
 			IF @StatusGroupId=2
 				BEGIN
 					SELECT @oldStatusDate=Max(StatusDate) FROM jobtracking WHERE jobnumber=@vvcrJobnumber and status=240 GROUP BY status
@@ -83,5 +83,5 @@ SELECT TOP 1 JH.JobNumber,
 		ON jh.JobNumber=jb.JobNumber
 	LEFT OUTER JOIN [dbo].[Jobs_Patients] JP
 		ON JH.JobNumber = jp.JobNumber
-	ORDER BY JH.JobHistoryID desc
+	ORDER BY JH.JobHistoryID
 END
