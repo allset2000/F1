@@ -26,7 +26,7 @@ BEGIN
 		END as 'IsFavorite'
 	FROM Users U
 		INNER JOIN QuickBloxUsers QBU on U.UserID = QBU.UserID
-		LEFT JOIN SMContactFavorites F on U.UserID = F.FavUserId
+		LEFT JOIN SMContactFavorites F on U.UserID = F.FavUserId and F.UserID = @UserId AND F.IsDeleted=0
 	WHERE
 		(F.UserID IS NULL OR (F.UserID = @UserId AND F.IsDeleted=0)) AND 
 		 (

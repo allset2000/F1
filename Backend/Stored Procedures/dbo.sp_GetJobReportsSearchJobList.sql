@@ -47,7 +47,7 @@ BEGIN
 			return -1 -- this condition is to make sure that we get a valid filter record, not to try to get a record which was deleted
 
 	IF OBJECT_ID('tempdb..#SearchItems') IS NOT NULL
-    DROP TABLE #Results
+    DROP TABLE #SearchItems
 
 	CREATE TABLE #SearchItems (
 	Jobnumber varchar(20) NULL, DictatorID varchar(50) NULL, JobType varchar(100) NULL, 
@@ -100,8 +100,8 @@ BEGIN
 			and (@DictatorLastName is null or D.LastName like '%'+@DictatorLastName+'%')  
 			and (J.ReceivedOn  >= DATEADD(M,-3,getdate())) --  >= DATEADD(M,-4,getdate()-- will  always get lessthan 3 months data..
 	
-          Select Jobnumber, DictatorID, JobType, IsGenericJob, AppointmentDate, CC, Stat, MRN, 
-	      Patient, JobStatus, InProcess, AwaitingDelivery
+          Select Jobnumber, DictatorID, JobType, case when IsGenericJob is not null and IsGenericJob=1 then 'Y' else 'N' end DeviceGenerated,
+		  AppointmentDate, CC, Stat, MRN, Patient, JobStatus, InProcess, AwaitingDelivery
 		  from #SearchItems
 		  Order by
 		  CASE WHEN @SortTypeFromGrid = 'Ascending' THEN 
