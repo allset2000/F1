@@ -104,8 +104,8 @@ BEGIN TRY
 		select @Status = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@Status is NULL )
 			select @Status = status from JobStatusB where jobnumber=@vvcrJobNumber
-		select @UserId = ContactId from Contacts where UserID=@vvcrUsername
-		EXEC spInsertJobHistory @vvcrJobNumber,@vvcrMRN,@vvcrJobType,@Status,@documentID,@UserId
+		EXEC spInsertJobHistory @vvcrJobNumber,@vvcrMRN,@vvcrJobType,@Status,@documentID,@vvcrUsername
+		Update Jobs set LokedbyUserForJobDetailsView = null where JobNumber = @vvcrJobNumber
 	COMMIT TRANSACTION
 END TRY
 BEGIN CATCH
