@@ -12,10 +12,11 @@
 *******************************/
 CREATE PROCEDURE [dbo].[spReleaseJobForJobdetailsView] 
 (    
-@vvcrJobNumber VARCHAR(20)
+@vvcrJobNumber VARCHAR(20),
+@vvcrUserId VARCHAR(48)
 )     
 AS    
 BEGIN 
-	UPDATE jobs SET LokedbyUserForJobDetailsView=null WHERE jobnumber=@vvcrJobNumber
+	UPDATE jobs SET LokedbyUserForJobDetailsView=null WHERE jobnumber=@vvcrJobNumber and LokedbyUserForJobDetailsView = @vvcrUserId
 END 
 GO

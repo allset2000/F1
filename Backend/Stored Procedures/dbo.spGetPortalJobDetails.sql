@@ -69,7 +69,7 @@ DECLARE @Status INT
  --In case when this proc is executed in parallel by multiple instances of the SRE App we need  
  --to make sure we don't return the same job twice  
  
- UPDATE jobs SET LokedbyUserForJobDetailsView=@vvcrUser WHERE jobnumber=@vvcrJobNumber AND LokedbyUserForJobDetailsView IS NULL
+ UPDATE jobs SET LokedbyUserForJobDetailsView=@vvcrUser WHERE jobnumber=@vvcrJobNumber AND @Status = 240 AND LokedbyUserForJobDetailsView  IS NULL OR LokedbyUserForJobDetailsView = '' 
 
 
 END   
