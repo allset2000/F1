@@ -72,7 +72,7 @@ SELECT TOP 1 JH.JobNumber,
 	un.UserId,
 	CASE WHEN mr.MRN IS NULL THEN JP.MRN ELSE  mr.MRN END MRN,JP.FirstName,JP.MI,JP.LastName,jb.ClinicID,JH.JgId  FROM @TempJobsHostory1 as JH 
 	OUTER APPLY  
-        (SELECT TOP 1 DocumentID FROM @TempJobsHostory1 as b WHERE b.DocumentID IS NOT NULL ORDER BY b.JobHistoryID DESC) doc
+        (SELECT TOP 1 DocumentID FROM @TempJobsHostory1 as b WHERE b.DocumentID IS NOT NULL ORDER BY b.JobHistoryID ASC) doc
 	OUTER APPLY 
        (SELECT TOP 1 MRN FROM @TempJobsHostory1 as b WHERE  b.MRN IS NOT NULL ORDER BY b.JobHistoryID DESC) mr
 	OUTER APPLY 
