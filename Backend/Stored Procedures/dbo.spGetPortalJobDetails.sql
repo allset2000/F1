@@ -14,7 +14,8 @@
 CREATE PROCEDURE [dbo].[spGetPortalJobDetails] 
 (          
  @vvcrJobNumber VARCHAR(20),
- @vvcrUser VARCHAR(48)      
+ @vvcrUser VARCHAR(48),
+ @vvcrIsJobLockable bit = null 
 )           
 AS          
 BEGIN     
@@ -23,6 +24,8 @@ DECLARE @Status INT
 	IF(@Status is NULL )
 		SELECT @Status = status FROM JobStatusB WHERE jobnumber=@vvcrJobNumber
 
+	IF EXISTS( SELECT 1 FROM jobs WHERE jobnumber=@vvcrJobNumber and DATEDIFF(MINUTE, LockbyUserTimeStamp, GETDATE())  > 30 AND (LokedbyUserForJobDetailsView IS NOT NULL OR LokedbyUserForJobDetailsView = ''))
+	UPDATE jobs SET LokedbyUserForJobDetailsView = null, LockbyUserTimeStamp=null WHERE jobnumber=@vvcrJobNumber
 
 	SELECT JB.jobnumber, 
 		JP.PatientId,
@@ -69,8 +72,7 @@ DECLARE @Status INT
  --In case when this proc is executed in parallel by multiple instances of the SRE App we need  
  --to make sure we don't return the same job twice  
  
- UPDATE jobs SET LokedbyUserForJobDetailsView=@vvcrUser WHERE jobnumber=@vvcrJobNumber AND @Status = 240 AND LokedbyUserForJobDetailsView  IS NULL OR LokedbyUserForJobDetailsView = '' 
-
+ UPDATE jobs SET LokedbyUserForJobDetailsView=@vvcrUser, LockbyUserTimeStamp = getdate() WHERE jobnumber=@vvcrJobNumber AND (@Status = 240 AND @vvcrIsJobLockable = 1) AND (LokedbyUserForJobDetailsView  IS NULL OR LokedbyUserForJobDetailsView = '')
 
 END   
 

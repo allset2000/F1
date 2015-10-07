@@ -40,7 +40,8 @@ CREATE TABLE [dbo].[Jobs]
 [ProcessFailureCount] [smallint] NULL,
 [IsLockedForProcessing] [bit] NOT NULL CONSTRAINT [DF__Jobs__IsProcesse__274FAE79] DEFAULT ((0)),
 [FinaldocSentToBBN] [bit] NOT NULL CONSTRAINT [DF__Jobs__FinaldocSe__186270A4] DEFAULT ((0)),
-[LokedbyUserForJobDetailsView] [varchar] (48) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[LokedbyUserForJobDetailsView] [varchar] (48) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[LockbyUserTimeStamp] [datetime] NULL,
 ) ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_ReceivedOn_INC_JobNumber_DictatorID_ClinicID_Location...] ON [dbo].[Jobs] ([ReceivedOn]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [ClinicID], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [IsGenericJob], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [Stat]) ON [PRIMARY]
 
