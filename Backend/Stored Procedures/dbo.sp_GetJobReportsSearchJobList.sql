@@ -56,7 +56,7 @@ BEGIN
 
 	INSERT INTO #SearchItems 
 	SELECT J.JobNumber, J.DictatorID, J.JobType, J.IsGenericJob as DeviceGenerated,J.AppointmentDate,J.CC,J.Stat, JP.MRN, (JP.FirstName + ' '+ JP.LastName) AS Patient, 
-	JP.FirstName, JP.LastName, js.JobStatus, JTI.StatusDate AS 'InProcess', jta.StatusDate AS 'AwaitingDelevery'
+	JP.FirstName, JP.LastName, , CASE WHEN JD.ID=5 THEN JD.JobDeliveredOn ELSE js.JobStatus end JobStatus, JTI.StatusDate AS 'InProcess', jta.StatusDate AS 'AwaitingDelevery'
 		FROM	dbo.Jobs J 
 		INNER JOIN dbo.Jobs_Patients JP ON J.JobNumber = JP.JobNumber 
 		INNER JOIN dbo.Dictators D ON J.DictatorID = D.DictatorID
@@ -79,6 +79,13 @@ BEGIN
 			   LEFT OUTER JOIN dbo.JobStatusB JSB on JSB.JobNumber = J.JobNumber
 			   INNER JOIN dbo.StatusCodes SC on JSA.Status= SC.StatusID OR JSB.Status= SC.StatusID
 			   WHERE JG.Id = SC.StatusGroupId ) JS
+			OUTER APPLY(SELECT JG.StatusGroup + ': '+ CONVERT(varchar(75), max(JD.DeliveredOn), 100) JobDeliveredOn, JG.StatusGroup,JG.Id 
+				FROM  dbo.JobStatusGroup JG 
+				LEFT OUTER JOIN dbo.JobStatusB JSB on JSB.JobNumber = J.JobNumber
+				INNER JOIN dbo.StatusCodes SC on JSB.Status= SC.StatusID
+				INNER JOIN dbo.JobDeliveryHistory JD on JD.jobnumber=j.jobnumber
+				WHERE JG.Id = SC.StatusGroupId 
+				group by JD.jobnumber,JG.StatusGroup,JG.Id ) JD
 		WHERE 
 			(@DateField is null or JTI.Id= @DateField) 
 			and (@From is null or JTI.StatusDate  >= @From)
