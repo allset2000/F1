@@ -35,13 +35,13 @@ BEGIN
 	/*
 	--Modification: #001
 	If role id is:
-		1) negative number or zero (this value can be set from Dictate API),
+		1) negative number (this value can be set from Dictate API),
 		2) is null
 		3) empty
 	then it is interpreted as no role.
 	In this case get the default role RUDefualtRole.
 	*/
-	IF(@RoleId <= 0 OR @RoleId IS NULL OR LEN(LTRIM(RTRIM(@RoleId))) <= 0) BEGIN
+	IF(ISNULL(@RoleId, '-1') = '-1' OR LEN(LTRIM(RTRIM(@RoleId))) <= 0) BEGIN
 		IF EXISTS(select 1 from SystemConfiguration where ConfigKey = 'RUDefualtRole') BEGIN
 			SET @RoleId = (select ConfigValue from SystemConfiguration where ConfigKey = 'RUDefualtRole')
 		END
