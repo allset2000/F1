@@ -1,7 +1,7 @@
-SET ANSI_NULLS ON
-GO
 
 SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
 GO
 
 -- =============================================
@@ -56,7 +56,7 @@ BEGIN
 
 	INSERT INTO #SearchItems 
 	SELECT J.JobNumber, J.DictatorID, J.JobType, J.IsGenericJob as DeviceGenerated,J.AppointmentDate,J.CC,J.Stat, JP.MRN, (JP.FirstName + ' '+ JP.LastName) AS Patient, 
-	JP.FirstName, JP.LastName, , CASE WHEN JD.ID=5 THEN JD.JobDeliveredOn ELSE js.JobStatus end JobStatus, JTI.StatusDate AS 'InProcess', jta.StatusDate AS 'AwaitingDelevery'
+	JP.FirstName, JP.LastName, CASE WHEN JD.ID=5 THEN JD.JobDeliveredOn ELSE js.JobStatus end JobStatus, JTI.StatusDate AS 'InProcess', jta.StatusDate AS 'AwaitingDelevery'
 		FROM	dbo.Jobs J 
 		INNER JOIN dbo.Jobs_Patients JP ON J.JobNumber = JP.JobNumber 
 		INNER JOIN dbo.Dictators D ON J.DictatorID = D.DictatorID
@@ -211,5 +211,3 @@ END
 
 
 GO
-
-
