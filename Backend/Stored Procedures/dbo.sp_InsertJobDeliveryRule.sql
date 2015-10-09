@@ -1,5 +1,4 @@
-
-/****** Object:  StoredProcedure [dbo].[sp_InsertJobDeliveryRule]    Script Date: 8/19/2015 3:41:48 AM ******/
+/****** Object:  StoredProcedure [dbo].[sp_InsertJobDeliveryRule]    Script Date: 10/8/2015 2:13:20 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -40,24 +39,35 @@ BEGIN
 		SET RuleName = @RuleName, AvoidRedelivery = @AvoidRedelivery
 		WHERE RuleID = @RuleID
 
-		DECLARE @Tbl VARCHAR(30)
-		DECLARE @Value VARCHAR(MAX)
-		DECLARE @Sql VARCHAR(MAX)
+		IF @Method = 1100
+		BEGIN		
+			INSERT INTO ROW_ImageRules VALUES (@ClinicID, @LocationID, @DictatorName, @RenamingRule, @RuleName)			
+		END
+		ELSE IF @Method = 100
+		BEGIN
+			INSERT INTO ROW_DocumentRules VALUES (@ClinicID, @LocationID, @DictatorName, @RenamingRule, @RuleName)			
+		END
+		ELSE IF @Method = 300
+		BEGIN
+			INSERT INTO ROW_NextGenDoc VALUES (@ClinicID, @LocationID, @DictatorName, @FieldData, @RuleName)			
+		END
+		ELSE IF @Method = 600
+		BEGIN
+			INSERT INTO ROW_NextGenNote VALUES (@ClinicID, @LocationID, @DictatorName, @FieldData, @RuleName)			
+		END
+		ELSE IF @Method = 400
+		BEGIN
+			INSERT INTO ROW_NextGenDD VALUES (@ClinicID, @LocationID, @DictatorName, @FieldData, @RuleName)			
+		END
+		ELSE IF @Method = 1000
+		BEGIN
+			INSERT INTO ROW_NextGenImage VALUES (@ClinicID, @LocationID, @DictatorName, @FieldData, @RuleName)			
+		END
+		ELSE IF @Method = 200
+		BEGIN
+			INSERT INTO ROW_HL7Rules VALUES (@ClinicID, @LocationID, @DictatorName, @Message, @FieldData, @RuleName)			
+		END
 
-		SET @Tbl = (SELECT (CASE WHEN @Method = 1100 THEN 'ROW_ImageRules'
-								WHEN @Method = 100 THEN 'ROW_DocumentRules'
-								WHEN @Method = 300 THEN 'ROW_NextGenDoc'
-								WHEN @Method = 600 THEN 'ROW_NextGenNote'
-								WHEN @Method = 400 THEN 'ROW_NextGenDD'
-								WHEN @Method = 1000 THEN 'ROW_NextGenImage'
-								WHEN @Method = 200 THEN 'ROW_HL7Rules' END))
-
-		SET @Value = (SELECT (CASE WHEN CHARINDEX('Nextgen', @Tbl) > 0 THEN '('+CONVERT(VARCHAR,@ClinicID)+','+CONVERT(VARCHAR,@LocationID)+','''+@DictatorName+''','''+@FieldData+''','''+@RuleName+''')'
-						WHEN (@Tbl = 'ROW_ImageRules' OR @Tbl = 'ROW_DocumentRules') THEN '('+CONVERT(VARCHAR,@ClinicID)+','+CONVERT(VARCHAR,@LocationID)+','''+@DictatorName+''','''+@RenamingRule+''','''+@RuleName+''')'
-						WHEN @Tbl = 'ROW_HL7Rules' THEN '('+CONVERT(VARCHAR,@ClinicID)+','+CONVERT(VARCHAR,@LocationID)+','''+@DictatorName+''','''+@Message+''','''+@FieldData+''','''+@RuleName+''')' END))
-
-		SET @Sql = 'INSERT INTO ' + @Tbl + ' VALUES ' + @Value
-		EXECUTE(@Sql)
 	END
 END
 

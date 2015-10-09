@@ -1,17 +1,16 @@
-/****** Object:  StoredProcedure [dbo].[sp_GetAllRuleNames]    Script Date: 9/3/2015 3:49:42 AM ******/
+/****** Object:  StoredProcedure [dbo].[sp_GetAllRuleNames]    Script Date: 10/8/2015 9:16:52 AM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
 
-
 -- =============================================  
 -- Author: Santhosh 
 -- Create date: 07/17/2015  
 -- Description: SP used to get Rule Names from respective table
 -- =============================================  
-CREATE PROCEDURE [dbo].[sp_GetAllRuleNames] 
+CREATE PROCEDURE [dbo].[sp_GetAllRuleNames] --57,'enajsteidinger',300,'1'
 (
 	@ClinicID INT 	
 	, @DictatorName VARCHAR(50)	
@@ -39,7 +38,6 @@ BEGIN
 	PRINT @Sql
 	EXECUTE(@Sql)	
 END
-
 
 
 

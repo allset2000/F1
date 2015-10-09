@@ -1,4 +1,4 @@
-/****** Object:  StoredProcedure [dbo].[sp_GetJobDeliveryRule]    Script Date: 8/19/2015 3:33:46 AM ******/
+/****** Object:  StoredProcedure [dbo].[sp_GetJobDeliveryRule]    Script Date: 10/8/2015 5:12:52 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -10,7 +10,7 @@ GO
 -- Create date: 07/07/2015  
 -- Description: SP used to get Job Delivery Rule from respective table
 -- =============================================  
-CREATE PROCEDURE [dbo].[sp_GetJobDeliveryRule] --71
+CREATE PROCEDURE [dbo].[sp_GetJobDeliveryRule] 
 (
 	@RuleID INT	
 )
@@ -24,8 +24,8 @@ BEGIN
 	SELECT  @Method = Method			
 	FROM JobDeliveryRules WHERE RuleID = @RuleID
 
-	-- As there is no configuration data for EL Hosted (900), Directly pulling data from JobDeliveryRules table
-	IF(@Method = 900)
+	-- As there is no configuration data for EL Hosted (900) and No Delivery, Directly pulling data from JobDeliveryRules table
+	IF(@Method = 900 OR CONVERT(VARCHAR,@Method) = '0')
 	BEGIN
 		SELECT
 			J.RuleID AS DeliveryRuleID, 
@@ -49,9 +49,9 @@ BEGIN
 								WHEN @Method = 1000 THEN 'ROW_NextGenImage'
 								WHEN @Method = 200 THEN 'ROW_HL7Rules' END))	
 
-		SET @Value = (SELECT (CASE WHEN CHARINDEX('Nextgen', @Tbl) > 0 THEN 'J.AvoidRedelivery, J.RuleID AS DeliveryRuleID, J.ClinicID AS RuleClinicID, J.LocationID AS RuleLocationID, J.DictatorName AS RuleDictator, J.JobType, J.Method, J.RuleName AS DeliveryRuleName, R.RuleId AS RuleTypeId, R.FieldData, ''0'' AS RenamingRule'
-							WHEN (@Tbl = 'ROW_ImageRules' OR @Tbl = 'ROW_DocumentRules') THEN 'J.AvoidRedelivery, J.RuleID AS DeliveryRuleID, J.ClinicID AS RuleClinicID, J.LocationID AS RuleLocationID, J.DictatorName AS RuleDictator, J.JobType, J.Method, J.RuleName AS DeliveryRuleName, R.RuleId AS RuleTypeId, ''0'' AS FieldData, R.RenamingRule'
-							WHEN @Tbl = 'ROW_HL7Rules' THEN 'J.AvoidRedelivery, J.RuleID AS DeliveryRuleID, J.ClinicID AS RuleClinicID, J.LocationID AS RuleLocationID, J.DictatorName AS RuleDictator, J.JobType, J.Method, J.RuleName AS DeliveryRuleName, R.RuleId AS RuleTypeId, R.FieldData, ''0'' AS RenamingRule, R.Message' END))
+		SET @Value = (SELECT (CASE WHEN CHARINDEX('Nextgen', @Tbl) > 0 THEN 'J.AvoidRedelivery, J.RuleID AS DeliveryRuleID, J.ClinicID AS RuleClinicID, ISNULL(J.LocationID,''0'') AS RuleLocationID, J.DictatorName AS RuleDictator, J.JobType, J.Method, J.RuleName AS DeliveryRuleName, R.RuleId AS RuleTypeId, R.FieldData, ''0'' AS RenamingRule'
+							WHEN (@Tbl = 'ROW_ImageRules' OR @Tbl = 'ROW_DocumentRules') THEN 'J.AvoidRedelivery, J.RuleID AS DeliveryRuleID, J.ClinicID AS RuleClinicID, ISNULL(J.LocationID,''0'') AS RuleLocationID, J.DictatorName AS RuleDictator, J.JobType, J.Method, J.RuleName AS DeliveryRuleName, R.RuleId AS RuleTypeId, ''0'' AS FieldData, R.RenamingRule'
+							WHEN @Tbl = 'ROW_HL7Rules' THEN 'J.AvoidRedelivery, J.RuleID AS DeliveryRuleID, J.ClinicID AS RuleClinicID, ISNULL(J.LocationID,''0'') AS RuleLocationID, J.DictatorName AS RuleDictator, J.JobType, J.Method, J.RuleName AS DeliveryRuleName, R.RuleId AS RuleTypeId, R.FieldData, ''0'' AS RenamingRule, R.Message' END))
 
 		SET @Sql = 'SELECT ' + @Value + ' FROM JobDeliveryRules J LEFT JOIN ' + @Tbl + ' R
 					ON R.ClinicID = J.ClinicID
