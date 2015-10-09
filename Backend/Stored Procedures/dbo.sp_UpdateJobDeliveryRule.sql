@@ -1,4 +1,4 @@
-/****** Object:  StoredProcedure [dbo].[sp_UpdateJobDeliveryRule]    Script Date: 8/19/2015 3:35:49 AM ******/
+/****** Object:  StoredProcedure [dbo].[sp_UpdateJobDeliveryRule]    Script Date: 10/8/2015 4:35:20 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -43,29 +43,39 @@ BEGIN
 	ELSE
 	BEGIN
 		-- Updating Child Rules table along with JobDEliveryRules table
-		DECLARE @Tbl VARCHAR(30)
-		DECLARE @Value VARCHAR(MAX)
-		DECLARE @Sql VARCHAR(MAX)
-
 		Update JobDeliveryRules
 		SET RuleName = @RuleName, AvoidRedelivery = @AvoidRedelivery
 		WHERE RuleID = @RuleID
 
-		SET @Tbl = (SELECT (CASE WHEN @Method = 1100 THEN 'ROW_ImageRules'
-								WHEN @Method = 100 THEN 'ROW_DocumentRules'
-								WHEN @Method = 300 THEN 'ROW_NextGenDoc'
-								WHEN @Method = 600 THEN 'ROW_NextGenNote'
-								WHEN @Method = 400 THEN 'ROW_NextGenDD'
-								WHEN @Method = 1000 THEN 'ROW_NextGenImage'
-								WHEN @Method = 200 THEN 'ROW_HL7Rules' END))
+		IF @Method = 1100
+		BEGIN		
+			UPDATE ROW_ImageRules SET ClinicID = @ClinicID, LocationID = @LocationID, DictatorName = @DictatorName, RenamingRule = @RenamingRule, RuleName = @RuleName WHERE RuleId = @RuleTypeID
+		END
+		ELSE IF @Method = 100
+		BEGIN
+			UPDATE ROW_DocumentRules SET ClinicID = @ClinicID, LocationID = @LocationID, DictatorName = @DictatorName, RenamingRule = @RenamingRule, RuleName = @RuleName WHERE RuleId = @RuleTypeID			
+		END
+		ELSE IF @Method = 300
+		BEGIN
+			UPDATE ROW_NextGenDoc SET ClinicID = @ClinicID, LocationID = @LocationID, DictatorName = @DictatorName, FieldData = @FieldData, RuleName = @RuleName WHERE RuleId = @RuleTypeID			
+		END
+		ELSE IF @Method = 600
+		BEGIN
+			UPDATE ROW_NextGenNote SET ClinicID = @ClinicID, LocationID = @LocationID, DictatorName = @DictatorName, FieldData = @FieldData, RuleName = @RuleName WHERE RuleId = @RuleTypeID						
+		END
+		ELSE IF @Method = 400
+		BEGIN
+			UPDATE ROW_NextGenDD SET ClinicID = @ClinicID, LocationID = @LocationID, DictatorName = @DictatorName, FieldData = @FieldData, RuleName = @RuleName WHERE RuleId = @RuleTypeID						
+		END
+		ELSE IF @Method = 1000
+		BEGIN
+			UPDATE ROW_NextGenImage SET ClinicID = @ClinicID, LocationID = @LocationID, DictatorName = @DictatorName, FieldData = @FieldData, RuleName = @RuleName WHERE RuleId = @RuleTypeID						
+		END
+		ELSE IF @Method = 200
+		BEGIN
+			UPDATE ROW_HL7Rules SET ClinicID = @ClinicID, LocationID = @LocationID, DictatorName = @DictatorName, Message = @Message, FieldData = @FieldData, RuleName = @RuleName WHERE RuleId = @RuleTypeID						
+		END
 
-		SET @Value = (SELECT (CASE WHEN CHARINDEX('Nextgen', @Tbl) > 0 THEN 'ClinicID = '+CONVERT(VARCHAR,@ClinicID)+', LocationID = '+CONVERT(VARCHAR,@LocationID)+', DictatorName = '''+@DictatorName+''', FieldData = '''+@FieldData+''', RuleName = '''+@RuleName+''''
-						WHEN (@Tbl = 'ROW_ImageRules' OR @Tbl = 'ROW_DocumentRules') THEN 'ClinicID = '+CONVERT(VARCHAR,@ClinicID)+', LocationID = '+CONVERT(VARCHAR,@LocationID)+', DictatorName = '''+@DictatorName+''', RenamingRule = '''+@RenamingRule+''', RuleName = '''+@RuleName+''''
-						WHEN @Tbl = 'ROW_HL7Rules' THEN 'ClinicID = '+CONVERT(VARCHAR,@ClinicID)+', LocationID = '+CONVERT(VARCHAR,@LocationID)+', DictatorName = '''+@DictatorName+''', Message = '''+@Message+''', FieldData = '''+@FieldData+''', RuleName = '''+@RuleName+'''' END))
-
-		SET @Sql = 'UPDATE ' + @Tbl + ' SET ' + @Value + ' WHERE RuleId = '+ CONVERT(VARCHAR,@RuleTypeID) +''
-		--ClinicID = ' + CONVERT(VARCHAR,@ClinicID) + ' AND ISNULL(RuleName,'''') = ''' + @RuleName + ''' AND ISNULL(DictatorName,'''') = ''' + @DictatorName + ''''
-		EXECUTE(@Sql)
 	END
 END
 

@@ -1,4 +1,4 @@
-/****** Object:  StoredProcedure [dbo].[sp_GetAllJobDeliveryRules]    Script Date: 8/19/2015 3:55:53 AM ******/
+/****** Object:  StoredProcedure [dbo].[sp_GetAllJobDeliveryRules]    Script Date: 10/8/2015 1:53:05 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -16,7 +16,7 @@ BEGIN
 	SELECT 
 		D.RuleID AS 'DeliveryRuleID'
 		, D.ClinicID AS 'RuleClinicID'
-		, D.LocationID AS 'RuleLocationID'
+		, ISNULL(D.LocationID,0) AS 'RuleLocationID'
 		, ISNULL(D.DictatorName,'') AS 'RuleDictator'
 		, ISNULL(D.JobType,'') AS JobType
 		, D.Method
@@ -27,7 +27,8 @@ BEGIN
 							WHEN D.Method = 400 THEN 'NextGenDD'
 							WHEN D.Method = 1000 THEN 'NextGen Image'
 							WHEN D.Method = 200 THEN 'HL7'
-							WHEN D.Method = 900 THEN 'EL Hosted(900)' END) AS 'MethodName'
+							WHEN D.Method = 900 THEN 'EL Hosted(900)'
+							WHEN D.Method = 0 THEN 'No Delivery' END) AS 'MethodName'
 		, D.RuleName AS 'DeliveryRuleName'
 		, D.AvoidRedelivery
 		, C.ClinicName
