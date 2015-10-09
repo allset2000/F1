@@ -1,7 +1,8 @@
 
-SET QUOTED_IDENTIFIER ON
-GO
+/****** Object:  StoredProcedure [dbo].[sp_RegisterNewUser]    Script Date: 10/9/2015 1:55:00 AM ******/
 SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author: Sam Shoultz
@@ -57,9 +58,10 @@ BEGIN
 		END
 
 		-- Create User entry in the DB
+		-- Added new field while creating a new user, The name of the field added in the insert statement below is  LastPasswordReset. Ticket#3237 modified by Tamojit Chakraborty
 		IF NOT EXISTS (SELECT 1 from Users where UserName = @EmailAddress)
 		BEGIN
-			INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt) VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt)
+			INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt,LastPasswordReset) VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt,getdate())
 			SET @UserId = (SELECT UserId from Users where UserName = @EmailAddress)
 		END
 		ELSE
@@ -194,4 +196,3 @@ BEGIN
 END
 
 
-GO
