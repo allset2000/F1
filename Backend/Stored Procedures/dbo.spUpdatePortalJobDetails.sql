@@ -50,22 +50,27 @@ BEGIN TRY
 	SET @vbinDocumnet =  CAST(@vnvcrDocumnet as varbinary(MAX))
 	DECLARE @oldMRN INT =null
 	DECLARE @oldJobType VARCHAR(100) =null
+	DECLARE @oldStatus INT
 
 	BEGIN TRANSACTION 
 		-- Updating Patient Details
 		IF @vvcrMRN = '' OR @vvcrMRN = '0'
 			set @vvcrMRN =null
 
+		-- For tracking the MRN and Jobtype history we need previous status
+		select @oldStatus = status from JobStatusA where jobnumber=@vvcrJobNumber
+		if(@oldStatus is NULL )
+			select @oldStatus = status from JobStatusB where jobnumber=@vvcrJobNumber
 
-
-
-
+		-- Update the Patient		
 		IF @vvcrMRN is not null
 		BEGIN
 			SELECT @oldMRN=MRN FROM Jobs_Patients where jobnumber=@vvcrJobNumber
 			EXEC dbo.writePatient @vintPatientId,@vvcrJobNumber,@vvcrAlternateID,@vvcrMRN, @vvcrFirstName, @vvcrMI,@vvcrLastName,@vvcrSuffix,@vvcrDOB,
 									  @vvcrSSN,@vvcrAddress1,@vvcrAddress2,@vvcrCity,@vvcrState,@vvcrZip,@vvcrPhone,@vvcrSex,@vintAppointmentId  
+			EXEC spInsertJobHistory @vvcrJobNumber,@oldMRN,null,@oldStatus,null,@vvcrUsername
 		END 
+
 		-- Updating JobType and stat details into jobs table
 		IF @vvcrJobType <> ''
 		BEGIN
@@ -74,8 +79,10 @@ BEGIN TRY
 			EXEC dbo.doUpdateJobDueDate @vvcrJobNumber, 'SaveJob'
 			IF (@vvcrJobType = 'no delivery')
 				exec writeJ2D @vvcrJobNumber
+			EXEC spInsertJobHistory @vvcrJobNumber,null,@oldJobType,@oldStatus,null,@vvcrUsername
 		END
 
+		-- Update the Stat value
 		IF NOT EXISTS(SELECT * FROM Jobs WHERE JobNumber = @vvcrJobNumber and Stat = @vbitStat) 
 		BEGIN
 			UPDATE Jobs SET Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
@@ -110,11 +117,14 @@ BEGIN TRY
 				UPDATE JobEditingSummary SET LastQANote = @vvcrLastQANote WHERE JobId= @jobID 
 			END
 		END
+
+		--Get the Current Status 
 		select @Status = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@Status is NULL )
 			select @Status = status from JobStatusB where jobnumber=@vvcrJobNumber
-		EXEC spInsertJobHistory @vvcrJobNumber,@oldMRN,@oldJobType,@Status,@documentID,@vvcrUsername
+		EXEC spInsertJobHistory @vvcrJobNumber,@vvcrMRN,@vvcrJobType,@Status,@documentID,@vvcrUsername
 		Update Jobs set LokedbyUserForJobDetailsView = null where JobNumber = @vvcrJobNumber
+
 	COMMIT TRANSACTION
 END TRY
 BEGIN CATCH
@@ -126,3 +136,5 @@ BEGIN CATCH
 			RAISERROR(@ErrMsg, @ErrSeverity, 1)
 		END
 END CATCH 
+
+

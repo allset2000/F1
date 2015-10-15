@@ -33,7 +33,7 @@ DECLARE @TempJobsHostory TABLE(
 	JgId int,
 	CurrentStatus int
  )  
-	--Get the history based status group id , if data exist in job_history table
+
 	IF EXISTS(SELECT 1 FROM job_history JH
 							INNER JOIN dbo.StatusCodes SC ON JH.CurrentStatus= SC.StatusID and sc.StatusGroupId=@StatusGroupId 
 							INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId WHERE JobNumber=@vvcrJobnumber)
@@ -85,9 +85,9 @@ SELECT TOP 1 JH.JobNumber,
 	OUTER APPLY  
         (SELECT TOP 1 DocumentID FROM @TempJobsHostory as b WHERE b.DocumentID IS NOT NULL ORDER BY b.JobHistoryID ASC) doc
 	OUTER APPLY 
-       (SELECT TOP 1 MRN FROM @TempJobsHostory as b WHERE  b.MRN IS NOT NULL ORDER BY b.JobHistoryID DESC) mr
+       (SELECT TOP 1 MRN FROM @TempJobsHostory as b WHERE  b.MRN IS NOT NULL ORDER BY case when @StatusGroupId =2 then b.JobHistoryID end asc, case when @StatusGroupId <> 2 then b.JobHistoryID end desc ) mr
 	OUTER APPLY 
-       (SELECT TOP 1 JobType FROM @TempJobsHostory as b WHERE b.JobType IS NOT NULL ORDER BY b.JobHistoryID DESC) jt
+       (SELECT TOP 1 JobType FROM @TempJobsHostory as b WHERE b.JobType IS NOT NULL ORDER BY case when @StatusGroupId =2 then b.JobHistoryID end asc, case when @StatusGroupId <> 2 then b.JobHistoryID end DESC  ) jt
 	OUTER Apply
 		(SELECT TOP 1 UserId FROM @TempJobsHostory as b WHERE b.UserId IS NOT NULL ORDER BY b.JobHistoryID DESC) un
 	INNER JOIN jobs jb 
@@ -96,4 +96,3 @@ SELECT TOP 1 JH.JobNumber,
 		ON JH.JobNumber = jp.JobNumber  and (mr.mrn=jp.mrn or mr.mrn is null)
 	ORDER BY JH.CurrentStatus desc
 END
-
