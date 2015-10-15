@@ -48,19 +48,28 @@ BEGIN TRY
 	DECLARE @vbinDocumnet VARBINARY(MAX)
 	SET @currentDate = GETDATE()
 	SET @vbinDocumnet =  CAST(@vnvcrDocumnet as varbinary(MAX))
+	DECLARE @oldMRN INT =null
+	DECLARE @oldJobType VARCHAR(100) =null
+
 	BEGIN TRANSACTION 
 		-- Updating Patient Details
 		IF @vvcrMRN = '' OR @vvcrMRN = '0'
 			set @vvcrMRN =null
 
+
+
+
+
 		IF @vvcrMRN is not null
 		BEGIN
+			SELECT @oldMRN=MRN FROM Jobs_Patients where jobnumber=@vvcrJobNumber
 			EXEC dbo.writePatient @vintPatientId,@vvcrJobNumber,@vvcrAlternateID,@vvcrMRN, @vvcrFirstName, @vvcrMI,@vvcrLastName,@vvcrSuffix,@vvcrDOB,
 									  @vvcrSSN,@vvcrAddress1,@vvcrAddress2,@vvcrCity,@vvcrState,@vvcrZip,@vvcrPhone,@vvcrSex,@vintAppointmentId  
 		END 
 		-- Updating JobType and stat details into jobs table
 		IF @vvcrJobType <> ''
 		BEGIN
+			select @oldJobType=JobType from jobs WHERE ([JobNumber] = @vvcrJobNumber)
 			UPDATE Jobs SET JobType = @vvcrJobType  WHERE ([JobNumber] = @vvcrJobNumber)
 			EXEC dbo.doUpdateJobDueDate @vvcrJobNumber, 'SaveJob'
 			IF (@vvcrJobType = 'no delivery')
@@ -104,7 +113,7 @@ BEGIN TRY
 		select @Status = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@Status is NULL )
 			select @Status = status from JobStatusB where jobnumber=@vvcrJobNumber
-		EXEC spInsertJobHistory @vvcrJobNumber,@vvcrMRN,@vvcrJobType,@Status,@documentID,@vvcrUsername
+		EXEC spInsertJobHistory @vvcrJobNumber,@oldMRN,@oldJobType,@Status,@documentID,@vvcrUsername
 		Update Jobs set LokedbyUserForJobDetailsView = null where JobNumber = @vvcrJobNumber
 	COMMIT TRANSACTION
 END TRY
@@ -117,5 +126,3 @@ BEGIN CATCH
 			RAISERROR(@ErrMsg, @ErrSeverity, 1)
 		END
 END CATCH 
-
-

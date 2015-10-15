@@ -79,7 +79,7 @@ DECLARE @TempJobsHostory TABLE(
 SELECT TOP 1 JH.JobNumber,
 	doc.DocumentID,
 	JH.StatusGroup,JH.StatusDate,
-	CASE WHEN jh.JobType IS NULL or jh.JobType ='' THEN jb.JobType ELSE jh.JobType END JobType,
+	CASE WHEN jt.JobType IS NULL or jt.JobType ='' THEN jb.JobType ELSE jt.JobType END JobType,
 	un.UserId,
 	CASE WHEN mr.MRN IS NULL THEN JP.MRN ELSE  mr.MRN END MRN,JP.FirstName,JP.MI,JP.LastName,jb.ClinicID,JH.JgId  FROM @TempJobsHostory as JH 
 	OUTER APPLY  
@@ -93,6 +93,7 @@ SELECT TOP 1 JH.JobNumber,
 	INNER JOIN jobs jb 
 		ON jh.JobNumber=jb.JobNumber
 	LEFT OUTER JOIN [dbo].[Jobs_Patients] JP
-		ON JH.JobNumber = jp.JobNumber
+		ON JH.JobNumber = jp.JobNumber  and (mr.mrn=jp.mrn or mr.mrn is null)
 	ORDER BY JH.CurrentStatus desc
 END
+
