@@ -1,6 +1,4 @@
-USE [Entrada]
-GO
-/****** Object:  StoredProcedure [dbo].[proc_fetchdashboardactivitydetails_V1]    Script Date: 10/14/2015 12:25:23 ******/
+/****** Object:  StoredProcedure [dbo].[proc_fetchdashboardactivitydetails]    Script Date: 10/15/2015 12:47:10 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -11,7 +9,7 @@ GO
 -- Create date: <12-10-2015>
 -- Description:	<Description,,>
 -- =============================================
---exec [proc_fetchdashboardactivitydetails] 'elccharlesqa', 'Inprocess',1,10,'','Ascending'
+--exec [proc_fetchdashboardactivitydetails] 'ELCaniprasad', 'CustomerReview',1,10,'JobStatus','Ascending'
 ALTER PROCEDURE [dbo].[proc_fetchdashboardactivitydetails]
 	
 	 @dictatorid  varchar(150),
@@ -57,8 +55,8 @@ BEGIN
 												j.JobNumber, J.DictatorId, J.JobType,  
 												CASE WHEN J.IsGenericJob IS NOT NULL AND IsGenericJob=1 THEN ''Y'' ELSE ''N'' end DeviceGenerated, 			  
 												J.AppointmentDate,
-												''In Process: '' + Convert(varchar,IPD.StatusDate,100) AS InProcessWithDate ,  
-												''In Process: '' + Convert(varchar,IPD.StatusDate,100) AS JobStatus ,   
+												IPD.StatusDate AS InProcessWithDate ,  
+												IPD.StatusDate AS JobStatus ,   
 												JP.MRN,  
 												CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
 												COUNT(*) OVER()  as TotalCount
@@ -93,8 +91,9 @@ BEGIN
 					   SET @Sql=';WITH DashBoardDetails_CTE AS ( 				     		
 										 SELECT j.JobNumber, J.DictatorId, J.JobType,
 												CASE WHEN J.IsGenericJob IS NOT NULL AND IsGenericJob=1 THEN ''Y'' ELSE ''N'' END DeviceGenerated,
-												J.AppointmentDate, ''In Process: '' + Convert(varchar,IPD.StatusDate,100) AS InProcessWithDate , 
-												''Customer Review: ''+Convert(varchar,JSD.JobStatusDate,100) AS JobStatus ,
+												J.AppointmentDate,												
+												IPD.StatusDate AS InProcessWithDate , 
+												JSD.JobStatusDate AS JobStatus,												
 												JP.MRN,
 												CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
 												COUNT(*) OVER()  as TotalCount
@@ -131,8 +130,9 @@ BEGIN
 				     			
 											SELECT j.JobNumber, J.DictatorId, J.JobType,
 												   CASE WHEN J.IsGenericJob IS NOT NULL AND IsGenericJob=1 THEN ''Y'' ELSE ''N'' END DeviceGenerated,
-												   J.AppointmentDate, ''In Process: '' + CONVERT(VARCHAR,IPD.StatusDate,100) AS InProcessWithDate , 
-												   ''Delivered: ''+Convert(varchar,JDH.DeliveredOn,100) AS JObStatus,
+												   J.AppointmentDate, 
+												     IPD.StatusDate AS InProcessWithDate , 
+												     JDH.DeliveredOn AS JObStatus,
 													JP.MRN,
 													CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
 												COUNT(*) OVER()  as TotalCount
@@ -160,7 +160,12 @@ BEGIN
 
 
 
-      		SET @Sql=@Sql+'SELECT A.* 
+      		SET @Sql=@Sql+'SELECT A.JobNumber, A.DictatorId, A.JobType, A.DeviceGenerated, A.AppointmentDate,
+								  ''In Process: '' + Convert(varchar,InProcessWithDate,100) AS InProcessWithDate,
+								  (CASE WHEN '''+@statusgroupname+'''=''DeliveredToday'' THEN ''Delivered: ''
+									   WHEN '''+@statusgroupname+'''=''CustomerReview'' THEN ''Customer Review: ''
+									   ELSE ''In Process: '' END) +Convert(varchar,A.JObStatus,100) AS JObStatus,
+								A.MRN, A.Patient, A.TotalCount 
 							FROM
 								(SELECT ROW_NUMBER() OVER(ORDER BY '+@SortColumn +' '+@SortType+') as RowNumber,  
 									   CTE.*
@@ -170,7 +175,10 @@ BEGIN
 							OFFSET (('+CAST(@PageNumber AS VARCHAR)+'  - 1) * '+CAST(@RowspPage AS VARCHAR) +' ) ROWS
 							FETCH NEXT '+CAST(@RowspPage AS VARCHAR)+' ROWS ONLY
     
+						
 						  '
+
+			
 				EXEC (@Sql)
 
 	END TRY
