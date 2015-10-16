@@ -119,7 +119,7 @@ BEGIN
 				  INNER JOIN dbo.StatusCodes SC on (JSA.Status= SC.StatusID OR JSB.Status= SC.StatusID) and JG.Id = SC.StatusGroupId
 				  LEFT OUTER JOIN dbo.JobDeliveryHistory JD on JD.jobnumber=JH.JobNumber 
 				  WHERE (jg.id in (1,2,3,4) or (@jobStatus =4 or @jobStatus is null or @jobStatus =5 and JH.JobNumber  in (select jobnumber from JobDeliveryHistory where jobnumber=JH.JobNumber )))
-				  GROUP BY JG.StatusGroup,JG.Id,JSB.StatusDate,JSA.StatusDate,JD.DeliveredOn)  JSB
+				  GROUP BY JG.StatusGroup,JG.Id,JSB.StatusDate,JSA.StatusDate,JD.deliveryID)  JSB
 		WHERE	((@JobStatus is null or JSB.Id = @JobStatus) OR (JSB.DeliveredOn is null and JTA.id=@JobStatus))			
 				and (@MRN is null or JP.MRN = @MRN) 
 				and (@FirstName is null or JP.FirstName = @FirstName) 
