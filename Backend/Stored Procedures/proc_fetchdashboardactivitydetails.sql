@@ -1,4 +1,4 @@
-/****** Object:  StoredProcedure [dbo].[proc_fetchdashboardactivitydetails]    Script Date: 10/15/2015 12:47:10 ******/
+/****** Object:  StoredProcedure [dbo].[proc_fetchdashboardactivitydetails]    Script Date: 10/19/2015 17:29:15 ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -37,7 +37,7 @@ BEGIN
 		   BEGIN
 			  SET @SortType='ASC'
 		   END   
-   
+  
 		SELECT @SortColumn=CASE WHEN @SortBy='DictatorId' THEN 'DictatorId'
 								WHEN @SortBy='JobType' THEN 'JobType'	
 								WHEN @SortBy='DeviceGenerated' THEN 'DeviceGenerated'
@@ -52,7 +52,7 @@ BEGIN
 					BEGIN
 					   SET @Sql=';WITH DashBoardDetails_CTE AS ( 
 				     				SELECT 
-												j.JobNumber, J.DictatorId, J.JobType,  
+												j.JobNumber, J.DictatorId, J.JobType, J.Stat, 
 												CASE WHEN J.IsGenericJob IS NOT NULL AND IsGenericJob=1 THEN ''Y'' ELSE ''N'' end DeviceGenerated, 			  
 												J.AppointmentDate,
 												IPD.StatusDate AS InProcessWithDate ,  
@@ -89,7 +89,7 @@ BEGIN
 			ELSE IF(@statusgroupname='CustomerReview')
 					BEGIN
 					   SET @Sql=';WITH DashBoardDetails_CTE AS ( 				     		
-										 SELECT j.JobNumber, J.DictatorId, J.JobType,
+										 SELECT j.JobNumber, J.DictatorId, J.JobType,J.Stat,
 												CASE WHEN J.IsGenericJob IS NOT NULL AND IsGenericJob=1 THEN ''Y'' ELSE ''N'' END DeviceGenerated,
 												J.AppointmentDate,												
 												IPD.StatusDate AS InProcessWithDate , 
@@ -124,34 +124,33 @@ BEGIN
 									'
 					
 					END
-			  ELSE --(@statusgroupname='DeliveredToday')
+			  ELSE --(@statusgroupname='DeliveredToday') -- Delivered Today does not need any join with other tables Only JobDeliveryHistory should be enough Bug 3430
 				  BEGIN			
 					   SET @Sql=';WITH DashBoardDetails_CTE AS ( 
 				     			
-											SELECT j.JobNumber, J.DictatorId, J.JobType,
-												   CASE WHEN J.IsGenericJob IS NOT NULL AND IsGenericJob=1 THEN ''Y'' ELSE ''N'' END DeviceGenerated,
+													
+		SELECT j.JobNumber, J.DictatorId, J.JobType,J.Stat,
+												 CASE WHEN J.IsGenericJob IS NOT NULL AND IsGenericJob=1 THEN ''Y'' ELSE ''N'' END DeviceGenerated,
 												   J.AppointmentDate, 
-												     IPD.StatusDate AS InProcessWithDate , 
+												    IPD.StatusDate AS InProcessWithDate , 
 												     JDH.DeliveredOn AS JObStatus,
 													JP.MRN,
 													CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
 												COUNT(*) OVER()  as TotalCount
 												FROM jobs J WITH(NOLOCK) 
-												INNER JOIN jobstatusA JA WITH(NOLOCK)  on J.jobnumber = JA.JobNumber
-												INNER JOIN statuscodes SCA WITH(NOLOCK)  on JA.status = SCA.StatusID
+												--INNER JOIN jobstatusA JA WITH(NOLOCK)  on J.jobnumber = JA.JobNumber
+												INNER JOIN statuscodes SCA WITH(NOLOCK)  on J.JobStatus = SCA.StatusID
 												INNER JOIN Jobs_Patients JP WITH(NOLOCK)  on J.Jobnumber=JP.Jobnumber
 												INNER JOIN JobDeliveryHistory JDH WITH(NOLOCK)  ON J.jobnumber = JDH.jobnumber
 												INNER JOIN (
 																SELECT  JT.JobNumber,SC.StatusID,MAX(JT.StatusDate) AS StatusDate
 																FROM Jobtracking JT WITH(NOLOCK)    
 																INNER JOIN statuscodes SC WITH(NOLOCK)  ON JT.Status=SC.StatusID  
-																WHERE SC.statusgroupid=1 
 																GROUP BY JT.JobNumber,SC.StatusID
 															) AS IPD ON  IPD.JobNumber= J.Jobnumber AND IPD.StatusID=SCA.StatusID 
 											WHERE 
 												DATEDIFF(d, JDH.DeliveredOn, getdate())=0
 												AND J.dictatorid ='''+@dictatorid+'''
-												AND SCA.statusgroupid=1
 								  
 										) 					
 				
@@ -164,7 +163,7 @@ BEGIN
 								  ''In Process: '' + Convert(varchar,InProcessWithDate,100) AS InProcessWithDate,
 								  (CASE WHEN '''+@statusgroupname+'''=''DeliveredToday'' THEN ''Delivered: ''
 									   WHEN '''+@statusgroupname+'''=''CustomerReview'' THEN ''Customer Review: ''
-									   ELSE ''In Process: '' END) +Convert(varchar,A.JObStatus,100) AS JObStatus,
+									   ELSE ''In Process: '' END) +Convert(varchar,A.JObStatus,100) AS JObStatus,A.Stat,
 								A.MRN, A.Patient, A.TotalCount 
 							FROM
 								(SELECT ROW_NUMBER() OVER(ORDER BY '+@SortColumn +' '+@SortType+') as RowNumber,  
