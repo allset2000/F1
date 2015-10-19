@@ -46,7 +46,7 @@ BEGIN
 		INNER JOIN Jobs J on J.JobID = JR.JobId
 		INNER JOIN JobTypes JT on JT.JobTypeId = J.JobTypeId
 		INNER JOIN Encounters E on E.EncounterId = J.EncounterId
-		INNER JOIN Schedules S on S.ScheduleId = E.ScheduleId
+		LEFT  JOIN Schedules S on S.ScheduleId = E.ScheduleId
 		INNER JOIN Clinics C on C.Clinicid = J.ClinicId
 	WHERE ACKStatus = 150
 	ORDER BY JR.ChangedDate
