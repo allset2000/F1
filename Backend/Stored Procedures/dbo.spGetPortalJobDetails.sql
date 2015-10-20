@@ -71,8 +71,12 @@ DECLARE @Status INT
 
  --In case when this proc is executed in parallel by multiple instances of the SRE App we need  
  --to make sure we don't return the same job twice  
- 
- UPDATE jobs SET LokedbyUserForJobDetailsView=@vvcrUser, LockbyUserTimeStamp = getdate() WHERE jobnumber=@vvcrJobNumber AND (@Status = 240 AND @vvcrIsJobLockable = 1) AND (LokedbyUserForJobDetailsView  IS NULL OR LokedbyUserForJobDetailsView = '')
+	declare @isJobCanBeUpdatedFromPortal bit 
+	if((@Status >= 100 and @Status <= 140) or (@Status = 240) or (@Status >= 270 and @Status <= 360))
+		set @isJobCanBeUpdatedFromPortal = 1
+	else 
+		set @isJobCanBeUpdatedFromPortal = 0
+ UPDATE jobs SET LokedbyUserForJobDetailsView=@vvcrUser, LockbyUserTimeStamp = getdate() WHERE jobnumber=@vvcrJobNumber AND (@isJobCanBeUpdatedFromPortal = 1 AND @vvcrIsJobLockable = 1) AND (LokedbyUserForJobDetailsView  IS NULL OR LokedbyUserForJobDetailsView = '')
 
 END   
 

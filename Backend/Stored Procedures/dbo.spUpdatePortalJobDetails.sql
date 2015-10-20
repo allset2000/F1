@@ -77,7 +77,7 @@ BEGIN TRY
 			select @oldJobType=JobType from jobs WHERE ([JobNumber] = @vvcrJobNumber)
 			UPDATE Jobs SET JobType = @vvcrJobType  WHERE ([JobNumber] = @vvcrJobNumber)
 			EXEC dbo.doUpdateJobDueDate @vvcrJobNumber, 'SaveJob'
-			IF (@vvcrJobType = 'no delivery')
+			IF (LOWER(@vvcrJobType) = 'no delivery')
 				exec writeJ2D @vvcrJobNumber
 			EXEC spInsertJobHistory @vvcrJobNumber,null,@oldJobType,@oldStatus,null,@vvcrUsername
 		END
