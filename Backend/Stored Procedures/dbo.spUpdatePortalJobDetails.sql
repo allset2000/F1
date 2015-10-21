@@ -43,7 +43,7 @@ BEGIN TRY
 	DECLARE @currentDate DATETIME
 	DECLARE @jobID INT
 	DECLARE @documentId INT = NULL
-	DECLARE @Status INT
+	DECLARE @Status INT=NULL
 	DECLARE @UserId INT
 	DECLARE @vbinDocumnet VARBINARY(MAX)
 	SET @currentDate = GETDATE()
@@ -62,13 +62,15 @@ BEGIN TRY
 		if(@oldStatus is NULL )
 			select @oldStatus = status from JobStatusB where jobnumber=@vvcrJobNumber
 
+		select @oldJobType=JobType,@oldMRN=MRN from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber WHERE (j.[JobNumber] = @vvcrJobNumber)
+
 		-- Update the Patient		
 		IF @vvcrMRN is not null
 		BEGIN
 			SELECT @oldMRN=MRN FROM Jobs_Patients where jobnumber=@vvcrJobNumber
 			EXEC dbo.writePatient @vintPatientId,@vvcrJobNumber,@vvcrAlternateID,@vvcrMRN, @vvcrFirstName, @vvcrMI,@vvcrLastName,@vvcrSuffix,@vvcrDOB,
 									  @vvcrSSN,@vvcrAddress1,@vvcrAddress2,@vvcrCity,@vvcrState,@vvcrZip,@vvcrPhone,@vvcrSex,@vintAppointmentId  
-			EXEC spInsertJobHistory @vvcrJobNumber,@oldMRN,null,@oldStatus,null,@vvcrUsername
+			
 		END 
 
 		-- Updating JobType and stat details into jobs table
@@ -77,9 +79,8 @@ BEGIN TRY
 			select @oldJobType=JobType from jobs WHERE ([JobNumber] = @vvcrJobNumber)
 			UPDATE Jobs SET JobType = @vvcrJobType  WHERE ([JobNumber] = @vvcrJobNumber)
 			EXEC dbo.doUpdateJobDueDate @vvcrJobNumber, 'SaveJob'
-			IF (@vvcrJobType = 'no delivery')
-				exec writeJ2D @vvcrJobNumber
-			EXEC spInsertJobHistory @vvcrJobNumber,null,@oldJobType,@oldStatus,null,@vvcrUsername
+			IF (LOWER(@vvcrJobType) = 'no delivery')
+				Delete FROM  JobDeliveryHistory WHERE JobNumber = @vvcrJobNumber
 		END
 
 		-- Update the Stat value
@@ -88,10 +89,11 @@ BEGIN TRY
 			UPDATE Jobs SET Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
 		END
 
-
+		-- Tracking the previous status details
+		EXEC spInsertJobHistory @vvcrJobNumber,@oldMRN,@oldJobType,@oldStatus,null,@vvcrUsername
 
 		--updating document into jobs_documents table
-		IF @vbinDocumnet IS NOT Null
+		IF @vbinDocumnet IS NOT Null AND  @oldStatus < 250
 			BEGIN
 				IF @vnitIsApproved = 0 
 					EXEC doUpdateJobDocument @vvcrJobNumber, @vbinDocumnet,@vvcrUsername,@currentDate
@@ -136,5 +138,3 @@ BEGIN CATCH
 			RAISERROR(@ErrMsg, @ErrSeverity, 1)
 		END
 END CATCH 
-
-

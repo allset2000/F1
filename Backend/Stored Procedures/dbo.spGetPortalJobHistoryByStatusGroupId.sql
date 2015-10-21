@@ -34,9 +34,9 @@ DECLARE @TempJobsHostory TABLE(
 	CurrentStatus int
  )  
 
-	IF EXISTS(SELECT 1 FROM job_history JH
-							INNER JOIN dbo.StatusCodes SC ON JH.CurrentStatus= SC.StatusID and sc.StatusGroupId=@StatusGroupId 
-							INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId WHERE JobNumber=@vvcrJobnumber)
+ 	IF EXISTS (SELECT 1 FROM job_history JH
+			 				INNER JOIN dbo.StatusCodes SC ON JH.CurrentStatus= SC.StatusID and sc.StatusGroupId=@StatusGroupId 
+							INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId WHERE JobNumber=@vvcrJobnumber) AND @StatusGroupId <> 5
 		BEGIN
 		-- Get the history based status group id 
 		INSERT INTO @TempJobsHostory
@@ -53,16 +53,18 @@ DECLARE @TempJobsHostory TABLE(
 					UPDATE @TempJobsHostory SET StatusDate=@oldStatusDate WHERE CurrentStatus=240
 				END
 			END
-	ELSE IF @StatusGroupId =5 -- Delivered
+	ELSE IF @StatusGroupId = 5 -- Delivered
 		BEGIN
 		-- get the Delivered history from JobDeliveryHistory table, if job is deliverd to customer
 		INSERT INTO @TempJobsHostory
-			SELECT JH.JobNumber,null DocumentID,JG.StatusGroup,max(jd.DeliveredOn) StatusDate,null JobType,null UserId,null MRN,1 JobHistoryID,jg.id,null CurrentStatus  from JobTracking JH  
-			INNER JOIN dbo.StatusCodes SC ON JH.Status= SC.StatusID
+			SELECT JH.JobNumber,null DocumentID,JG.StatusGroup,max(jd.DeliveredOn) StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus  
+			FROM JobTracking JT 
+			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
-			INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JH.jobnumber
-			WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=@StatusGroupId 
-			GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup
+			INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
+			LEFT OUTER JOIN dbo.job_history JH ON JH.jobnumber=JT.jobnumber and JT.status=jh.CurrentStatus
+			WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=5 
+			GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus  
 		END
 	ELSE 
 		BEGIN
@@ -87,7 +89,7 @@ SELECT TOP 1 JH.JobNumber,
 	OUTER APPLY 
        (SELECT TOP 1 MRN FROM @TempJobsHostory as b WHERE  b.MRN IS NOT NULL ORDER BY case when @StatusGroupId =2 then b.JobHistoryID end asc, case when @StatusGroupId <> 2 then b.JobHistoryID end desc ) mr
 	OUTER APPLY 
-       (SELECT TOP 1 JobType FROM @TempJobsHostory as b WHERE b.JobType IS NOT NULL ORDER BY case when @StatusGroupId =2 then b.JobHistoryID end asc, case when @StatusGroupId <> 2 then b.JobHistoryID end DESC  ) jt
+       (SELECT TOP 1 JobType FROM @TempJobsHostory as b WHERE b.JobType IS NOT NULL AND  b.JobType <> '' ORDER BY case when @StatusGroupId =2 then b.JobHistoryID end asc, case when @StatusGroupId <> 2 then b.JobHistoryID end DESC  ) jt
 	OUTER Apply
 		(SELECT TOP 1 UserId FROM @TempJobsHostory as b WHERE b.UserId IS NOT NULL ORDER BY b.JobHistoryID DESC) un
 	INNER JOIN jobs jb 
