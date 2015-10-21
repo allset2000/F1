@@ -61,6 +61,10 @@ BEGIN TRY
 		select @oldStatus = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@oldStatus is NULL )
 			select @oldStatus = status from JobStatusB where jobnumber=@vvcrJobNumber
+		
+		-- track the Editing Complete stage 
+		if @oldStatus =360 AND Not Exists(select 1 from job_history where jobnumber=@vvcrJobNumber and CurrentStatus=360 ) 
+			set @oldStatus =350
 
 		select @oldJobType=JobType,@oldMRN=MRN from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber WHERE (j.[JobNumber] = @vvcrJobNumber)
 
