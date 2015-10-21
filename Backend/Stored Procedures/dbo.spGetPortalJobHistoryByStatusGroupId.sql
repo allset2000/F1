@@ -57,14 +57,19 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- get the Delivered history from JobDeliveryHistory table, if job is deliverd to customer
 		INSERT INTO @TempJobsHostory
-			SELECT JH.JobNumber,null DocumentID,JG.StatusGroup,max(jd.DeliveredOn) StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus  
+			SELECT JT.JobNumber,null DocumentID,JG.StatusGroup,JH.StatusDate ,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus  
 			FROM JobTracking JT 
-			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID
+			outer apply(SELECT max(jd.DeliveredOn) StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus
+						FROM dbo.job_history JH 
+						INNER JOIN dbo.StatusCodes SC ON JH.CurrentStatus= SC.StatusID and sc.StatusGroupId=5 
+						INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
+						INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JH.jobnumber
+							WHERE JH.jobnumber=@vvcrJobnumber
+							GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus ) JH
+			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId=5 
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
-			INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
-			LEFT OUTER JOIN dbo.job_history JH ON JH.jobnumber=JT.jobnumber and JT.status=jh.CurrentStatus
-			WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=5 
-			GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus  
+			WHERE JT.JobNumber=@vvcrJobnumber 
+
 		END
 	ELSE 
 		BEGIN

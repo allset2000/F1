@@ -57,6 +57,9 @@ BEGIN TRY
 		IF @vvcrMRN = '' OR @vvcrMRN = '0'
 			set @vvcrMRN =null
 
+
+		select @oldJobType=JobType,@oldMRN=MRN from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber WHERE (j.[JobNumber] = @vvcrJobNumber)
+
 		-- For tracking the MRN and Jobtype history we need previous status
 		select @oldStatus = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@oldStatus is NULL )
@@ -66,7 +69,7 @@ BEGIN TRY
 		if @oldStatus =360 AND Not Exists(select 1 from job_history where jobnumber=@vvcrJobNumber and CurrentStatus=360 ) 
 			set @oldStatus =350
 
-		select @oldJobType=JobType,@oldMRN=MRN from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber WHERE (j.[JobNumber] = @vvcrJobNumber)
+		
 
 		-- Update the Patient		
 		IF @vvcrMRN is not null
@@ -84,7 +87,7 @@ BEGIN TRY
 			UPDATE Jobs SET JobType = @vvcrJobType  WHERE ([JobNumber] = @vvcrJobNumber)
 			EXEC dbo.doUpdateJobDueDate @vvcrJobNumber, 'SaveJob'
 			IF (LOWER(@vvcrJobType) = 'no delivery')
-				Delete FROM  JobDeliveryHistory WHERE JobNumber = @vvcrJobNumber
+				Delete FROM  [dbo].[JobsToDeliver] WHERE JobNumber = @vvcrJobNumber
 		END
 
 		-- Update the Stat value
@@ -124,10 +127,17 @@ BEGIN TRY
 			END
 		END
 
+		
+
 		--Get the Current Status 
 		select @Status = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@Status is NULL )
 			select @Status = status from JobStatusB where jobnumber=@vvcrJobNumber
+		if  @Status=250 and (@vvcrJobType = null or @vvcrJobType = '') and (@vvcrMRN is null)
+			begin
+				set @vvcrJobType=@oldJobType
+				set @vvcrMRN=@oldMRN
+			end
 		EXEC spInsertJobHistory @vvcrJobNumber,@vvcrMRN,@vvcrJobType,@Status,@documentID,@vvcrUsername
 		Update Jobs set LokedbyUserForJobDetailsView = null where JobNumber = @vvcrJobNumber
 
