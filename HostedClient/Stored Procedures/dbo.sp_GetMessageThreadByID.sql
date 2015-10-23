@@ -14,7 +14,7 @@ GO
 ---Added patient Name 
 -- =============================================
 --exec sp_GetMessageThreadByID '56250cbd31c5595a82000b9a'
-ALTER PROCEDURE [dbo].[sp_GetMessageThreadByID]
+CREATE PROCEDURE [dbo].[sp_GetMessageThreadByID]
 	@ThreadId AS VARCHAR(100)
 AS 
 BEGIN
