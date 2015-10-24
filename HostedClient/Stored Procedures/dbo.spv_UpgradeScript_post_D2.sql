@@ -290,6 +290,12 @@ where userid is not null and dictatorid not in
 	userclinicxref x on d.userid=x.userid and d.clinicid=x.clinicid)
 	and userid in (select userid from users) -- remove invalid userids
 	and clinicid in (select clinicid from clinics) -- remove invalid clinics
+
+
+--add all missing/new permissions to the admin role "Entrada Administrators"
+insert into RolePermissionXref (RoleId, PermissionId) 
+(select 1, PermissionId from Permissions 
+where permissionId not in (select permissionId from RolePermissionXref where RoleId=1))
 END
 
 
