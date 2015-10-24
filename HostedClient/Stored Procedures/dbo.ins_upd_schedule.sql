@@ -59,7 +59,7 @@ END
 
 IF ISNULL(@additionalData,'')=''
 BEGIN
-	SET @additionalData = '<custom1>'+@encounterID+'</custom1><custom5>'+@locationName+'</custom5><custom6>'+@LocationID+'</custom6><custom10>'+@ReferringID+'</custom10><custom11>'+@referringName+'</custom11>'
+	SET @additionalData = '<custom1>'+isnull(@encounterID,'')+'</custom1><custom5>'+isnull(@locationName,'')+'</custom5><custom6>'+isnull(@LocationID,'')+'</custom6><custom10>'+isnull(@ReferringID,'')+'</custom10><custom11>'+isnull(@referringName,'')+'</custom11>'
 END
 
 -- If the EHR isn't providing us the attending first/last name, pull it from the Dictators table
