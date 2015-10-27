@@ -14,7 +14,7 @@
 CREATE PROCEDURE [dbo].[spInsertJobHistory] 
 (
 	@vvcrJobNumber VARCHAR(20),
-	@vvcrMRN INT = NULL,
+	@vvcrMRN VARCHAR(50) = NULL,
 	@vvcrJobType VARCHAR(100) = NULL,
 	@vsintCurrentStatus SMALLINT,
 	@vintDocumentID INT=NULL,

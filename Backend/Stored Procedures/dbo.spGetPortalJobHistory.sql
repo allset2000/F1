@@ -24,12 +24,12 @@ DECLARE @TempJobsHostory1 TABLE(
 	StatusDate datetime, 
 	JobType varchar(100),
 	UserId VARCHAR(48),
-	MRN int,
+	MRN VARCHAR(48),
 	FirstName VARCHAR(50),
-	 MI VARCHAR(50),
-	 LastName VARCHAR(50),
-	 ClinicID smallint,
-	 SgId int
+	MI VARCHAR(50),
+	LastName VARCHAR(50),
+	ClinicID smallint,
+	SgId int
  )  
 
  INSERT INTO @TempJobsHostory1

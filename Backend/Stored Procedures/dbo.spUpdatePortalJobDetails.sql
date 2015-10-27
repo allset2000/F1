@@ -48,7 +48,7 @@ BEGIN TRY
 	DECLARE @vbinDocumnet VARBINARY(MAX)
 	SET @currentDate = GETDATE()
 	SET @vbinDocumnet =  CAST(@vnvcrDocumnet as varbinary(MAX))
-	DECLARE @oldMRN INT =null
+	DECLARE @oldMRN VARCHAR(50) =null
 	DECLARE @oldJobType VARCHAR(100) =null
 	DECLARE @oldStatus INT
 

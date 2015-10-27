@@ -2,7 +2,7 @@ CREATE TABLE [dbo].[Job_History]
 (
 [JobHistoryID] [int] NOT NULL IDENTITY(1, 1),
 [JobNumber] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-[MRN] [int] NULL,
+[MRN] varchar(50) NULL,
 [JobType] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [CurrentStatus] [smallint] NOT NULL,
 [DocumentID] [int] NULL,
