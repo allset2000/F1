@@ -88,7 +88,7 @@ BEGIN
 
 
 	INSERT INTO #SearchItems 
-	SELECT J.JobNumber, J.DictatorID, J.JobType, J.IsGenericJob as DeviceGenerated,J.AppointmentDate,J.CC,J.Stat, JP.MRN, (JP.FirstName + ' '+JP.MI+' '+ JP.LastName) AS Patient, 
+	SELECT J.JobNumber, J.DictatorID, J.JobType, J.IsGenericJob as DeviceGenerated,J.AppointmentDate,J.CC,J.Stat, JP.MRN, (ISNULL(JP.FirstName, '') + ' '+ ISNULL(JP.MI, '') +' '+ ISNULL(JP.LastName, '')) AS Patient, 
 		 JP.FirstName, JP.LastName,
 		 CASE WHEN JSB.id = 5 THEN 
 				CASE WHEN JSB.DeliveredOn is null THEN 
