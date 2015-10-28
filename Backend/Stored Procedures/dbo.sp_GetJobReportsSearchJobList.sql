@@ -105,7 +105,7 @@ BEGIN
 		 INNER JOIN jobs j on j.jobnumber = jH.jobnumber  and j.clinicId=JH.ClinicID
 		 INNER JOIN dbo.Jobs_Patients JP ON JH.JobNumber = JP.JobNumber 
 		 INNER JOIN dbo.Dictators D ON J.DictatorID = D.DictatorID
-			OUTER APPLY(SELECT JT.JobNumber,MAX(jt.StatusDate) StatusDate,jg.Id,JG.StatusGroup
+			OUTER APPLY(SELECT JT.JobNumber,MIN(jt.StatusDate) StatusDate,jg.Id,JG.StatusGroup
 		  FROM dbo.JobTracking JT  
 		  INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
 		  INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId  

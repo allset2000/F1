@@ -50,31 +50,20 @@ BEGIN TRY
 	SET @vbinDocumnet =  CAST(@vnvcrDocumnet as varbinary(MAX))
 	DECLARE @oldMRN VARCHAR(50) =null
 	DECLARE @oldJobType VARCHAR(100) =null
-	DECLARE @oldStatus INT
+	DECLARE @oldStatus INT=null
 
 	BEGIN TRANSACTION 
 		-- Updating Patient Details
 		IF @vvcrMRN = '' OR @vvcrMRN = '0'
 			set @vvcrMRN =null
 
-
-		select @oldJobType=JobType,@oldMRN=MRN from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber WHERE (j.[JobNumber] = @vvcrJobNumber)
-
-		-- For tracking the MRN and Jobtype history we need previous status
-		select @oldStatus = status from JobStatusA where jobnumber=@vvcrJobNumber
-		if(@oldStatus is NULL )
-			select @oldStatus = status from JobStatusB where jobnumber=@vvcrJobNumber
-		
-		-- track the Editing Complete stage 
-		if @oldStatus =360 AND Not Exists(select 1 from job_history where jobnumber=@vvcrJobNumber and CurrentStatus=360 ) 
-			set @oldStatus =350
-
-		
+		-- Tracking the previous status details
+		EXEC [spInsertJobHistory] @vvcrJobNumber,null,null,null,null,@vvcrUsername
 
 		-- Update the Patient		
 		IF @vvcrMRN is not null
 		BEGIN
-			SELECT @oldMRN=MRN FROM Jobs_Patients where jobnumber=@vvcrJobNumber
+			--SELECT @oldMRN=MRN FROM Jobs_Patients where jobnumber=@vvcrJobNumber
 			EXEC dbo.writePatient @vintPatientId,@vvcrJobNumber,@vvcrAlternateID,@vvcrMRN, @vvcrFirstName, @vvcrMI,@vvcrLastName,@vvcrSuffix,@vvcrDOB,
 									  @vvcrSSN,@vvcrAddress1,@vvcrAddress2,@vvcrCity,@vvcrState,@vvcrZip,@vvcrPhone,@vvcrSex,@vintAppointmentId  
 			
@@ -83,7 +72,7 @@ BEGIN TRY
 		-- Updating JobType and stat details into jobs table
 		IF @vvcrJobType <> ''
 		BEGIN
-			select @oldJobType=JobType from jobs WHERE ([JobNumber] = @vvcrJobNumber)
+			--select @oldJobType=JobType from jobs WHERE ([JobNumber] = @vvcrJobNumber)
 			UPDATE Jobs SET JobType = @vvcrJobType  WHERE ([JobNumber] = @vvcrJobNumber)
 			EXEC dbo.doUpdateJobDueDate @vvcrJobNumber, 'SaveJob'
 			IF (LOWER(@vvcrJobType) = 'no delivery')
@@ -96,8 +85,7 @@ BEGIN TRY
 			UPDATE Jobs SET Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
 		END
 
-		-- Tracking the previous status details
-		EXEC spInsertJobHistory @vvcrJobNumber,@oldMRN,@oldJobType,@oldStatus,null,@vvcrUsername
+		
 
 		--updating document into jobs_documents table
 		IF @vbinDocumnet IS NOT Null AND  @oldStatus < 250
@@ -129,17 +117,16 @@ BEGIN TRY
 
 		
 
-		--Get the Current Status 
+	--Get the Current Status 
 		select @Status = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@Status is NULL )
 			select @Status = status from JobStatusB where jobnumber=@vvcrJobNumber
 		if  @Status=250 and (@vvcrJobType = null or @vvcrJobType = '') and (@vvcrMRN is null)
-			begin
-				set @vvcrJobType=@oldJobType
-				set @vvcrMRN=@oldMRN
-			end
-		EXEC spInsertJobHistory @vvcrJobNumber,@vvcrMRN,@vvcrJobType,@Status,@documentID,@vvcrUsername
-		Update Jobs set LokedbyUserForJobDetailsView = null where JobNumber = @vvcrJobNumber
+			BEGIN
+			INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime)
+			SELECT @vvcrJobNumber,MRN,JobType,250,null,@vvcrUsername,GETDATE() from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber 
+					WHERE (j.[JobNumber] = @vvcrJobNumber)
+			END
 
 	COMMIT TRANSACTION
 END TRY
