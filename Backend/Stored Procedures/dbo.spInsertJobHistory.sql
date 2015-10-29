@@ -11,7 +11,7 @@
 ** --   --------   -------   ------------------------------------  
 **   
 *******************************/  
-CREATE PROCEDURE [dbo].[spInsertJobHistory]
+CREATE PROCEDURE [dbo].[spInsertJobHistory] 
 (
 	@vvcrJobNumber VARCHAR(20),
 	@vvcrMRN VARCHAR(50) = NULL,
@@ -38,15 +38,14 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		
 		IF @vsintCurrentStatus is null or @oldStatus <> @vsintCurrentStatus 
 			SET @vsintCurrentStatus =@oldStatus
-
-		If @vsintCurrentStatus = 280
-			set @vsintCurrentStatus=250
 	
 		SELECT @vvcrMRN=MRN FROM Jobs_Patients WHERE jobnumber=@vvcrJobNumber
-		SELECT @vvcrJobType=JobType FROM jobs WHERE ([JobNumber] = @vvcrJobNumber)
+		SELECT @vvcrJobType=JobType FROM jobs WHERE JobNumber = @vvcrJobNumber	
 	
 
 		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime)
 		VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUserId,GETDATE())
 	END
 GO
+
+

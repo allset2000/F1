@@ -60,6 +60,10 @@ BEGIN TRY
 		-- Tracking the previous status details
 		EXEC [spInsertJobHistory] @vvcrJobNumber,null,null,null,null,@vvcrUsername
 
+		select @oldStatus = status from JobStatusA where jobnumber=@vvcrJobNumber
+		if(@oldStatus is NULL )
+			select @oldStatus = status from JobStatusB where jobnumber=@vvcrJobNumber
+
 		-- Update the Patient		
 		IF @vvcrMRN is not null
 		BEGIN
@@ -96,8 +100,9 @@ BEGIN TRY
 					EXEC doApproveDocumentByCR @vvcrJobNumber, @vbinDocumnet,@vvcrUsername,@currentDate
 				SELECT @documentID = DocumentId FROM Jobs_Documents_History WHERE jobnumber=@vvcrJobNumber AND Username=@vvcrUsername AND DocDate = @currentDate
 			END 
-		Else if  @vbinDocumnet IS Null AND @vnitIsApproved = 1 
+		Else if @vbinDocumnet is null and @vnitIsApproved = 1 
 			BEGIN
+					
 					UPDATE JobStatusA SET [Status] = 250,StatusDate = @currentDate WHERE JobNumber = @vvcrJobNumber;
 
 					INSERT INTO [dbo].[JobTracking]	([JobNumber], [Status], [StatusDate], [Path])		
@@ -121,7 +126,7 @@ BEGIN TRY
 		select @Status = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@Status is NULL )
 			select @Status = status from JobStatusB where jobnumber=@vvcrJobNumber
-		if  @Status=250 and (@vvcrJobType = null or @vvcrJobType = '') and (@vvcrMRN is null)
+		if  @Status=250 
 			BEGIN
 			INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime)
 			SELECT @vvcrJobNumber,MRN,JobType,250,null,@vvcrUsername,GETDATE() from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber 
@@ -139,3 +144,4 @@ BEGIN CATCH
 			RAISERROR(@ErrMsg, @ErrSeverity, 1)
 		END
 END CATCH 
+
