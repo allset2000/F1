@@ -63,8 +63,10 @@ BEGIN
 	Patient varchar(120) NULL, FirstName varchar(50) NULL, LastName varchar(50) NULL, JobStatus varchar(120) NULL, InProcess Datetime null, AwaitingDelivery datetime NULL)
 
 
-	
-	INSERT INTO @JobsToFilter 
+	-- the below condition was added to fetch Jobs for "Delivered" status selected in DateField option
+	IF(@DateField <>5)
+		BEGIN
+			INSERT INTO @JobsToFilter 
 					SELECT JT.JobNumber, MAX(jt.StatusDate) StatusDate,j.ClinicID
 						FROM dbo.JobTracking JT
 							INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
@@ -82,10 +84,33 @@ BEGIN
 							and (@STAT is null or J.Stat = @STAT) 
 							and (@ClinicID is null or J.ClinicID = @ClinicID)  
 							and (@JobNumber is null or J.JobNumber = @JobNumber) 
-							--and JT.StatusDate >= DATEADD(M,-3,getdate()) -- will  always get lessthan 3 months data..
 							and (J.ReceivedOn  >= DATEADD(M,-3,getdate()))
 						GROUP BY jg.Id,JG.StatusGroup, JT.JobNumber,j.ClinicID 
-
+		END
+	ELSE IF( @DateField =5)
+		BEGIN
+			INSERT INTO @JobsToFilter 
+					SELECT JT.JobNumber, MAX(JDH.DeliveredOn ) StatusDate,j.ClinicID
+						FROM dbo.JobTracking JT
+							INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
+							INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId
+							INNER JOIN JobDeliveryHistory JDH on JDH.JobNUmber = JT.JobNumber
+							INNER JOIN jobs j on j.jobnumber = jt.jobnumber 
+						WHERE	(@DateField is null or JG.Id= @DateField)
+							and (@From is null or JDH.DeliveredOn  >= @From)
+							and (@To is null or JDH.DeliveredOn  <= @To) 
+							and (@RangeOptionFromDate is null or JDH.DeliveredOn  >= @RangeOptionFromDate) 
+							and (@RangeOptionToDate is null or JDH.DeliveredOn  <= @RangeOptionToDate) 
+							and (@JobType is null or J.JobType = @JobType) 
+							and (@DictatorID is null or J.DictatorID = @DictatorID) 
+							and (@DeviceGenerated is null or J.IsGenericJob = @DeviceGenerated) 
+							and (@CC is null or J.CC = @CC) 
+							and (@STAT is null or J.Stat = @STAT) 
+							and (@ClinicID is null or J.ClinicID = @ClinicID)  
+							and (@JobNumber is null or J.JobNumber = @JobNumber) 
+							and (J.ReceivedOn  >= DATEADD(M,-3,getdate()))
+						GROUP BY jg.Id,JG.StatusGroup, JT.JobNumber,j.ClinicID 
+		END
 
 	INSERT INTO #SearchItems 
 	SELECT J.JobNumber, J.DictatorID, J.JobType, J.IsGenericJob as DeviceGenerated,J.AppointmentDate,J.CC,J.Stat, JP.MRN, (ISNULL(JP.FirstName, '') + ' '+ ISNULL(JP.MI, '') +' '+ ISNULL(JP.LastName, '')) AS Patient, 
