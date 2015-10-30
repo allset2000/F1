@@ -67,7 +67,7 @@ BEGIN
 	IF(@DateField <>5)
 		BEGIN
 			INSERT INTO @JobsToFilter 
-					SELECT JT.JobNumber, MAX(jt.StatusDate) StatusDate,j.ClinicID
+					SELECT JT.JobNumber, MIN(jt.StatusDate) StatusDate,j.ClinicID
 						FROM dbo.JobTracking JT
 							INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
 							INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId
@@ -84,13 +84,13 @@ BEGIN
 							and (@STAT is null or J.Stat = @STAT) 
 							and (@ClinicID is null or J.ClinicID = @ClinicID)  
 							and (@JobNumber is null or J.JobNumber = @JobNumber) 
-							and (J.ReceivedOn  >= DATEADD(M,-3,getdate()))
+							and (J.ReceivedOn  >= DATEADD(M,-3,GETDATE()))
 						GROUP BY jg.Id,JG.StatusGroup, JT.JobNumber,j.ClinicID 
 		END
 	ELSE IF( @DateField =5)
 		BEGIN
 			INSERT INTO @JobsToFilter 
-					SELECT JT.JobNumber, MAX(JDH.DeliveredOn ) StatusDate,j.ClinicID
+					SELECT JT.JobNumber, MIN(JDH.DeliveredOn ) StatusDate,j.ClinicID
 						FROM dbo.JobTracking JT
 							INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
 							INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId
@@ -108,7 +108,7 @@ BEGIN
 							and (@STAT is null or J.Stat = @STAT) 
 							and (@ClinicID is null or J.ClinicID = @ClinicID)  
 							and (@JobNumber is null or J.JobNumber = @JobNumber) 
-							and (J.ReceivedOn  >= DATEADD(M,-3,getdate()))
+							and (J.ReceivedOn  >= DATEADD(M,-3,GETDATE()))
 						GROUP BY jg.Id,JG.StatusGroup, JT.JobNumber,j.ClinicID 
 		END
 
@@ -124,27 +124,26 @@ BEGIN
 		ELSE 
 			JSB.JobStatus 
 		END JobStatus,
-		 JH.StatusDate AS 'InProcess', 
-		 JTA.StatusDate AS 'AwaitingDelevery'
-		 FROM @JobsToFilter JH 
-		 INNER JOIN jobs j on j.jobnumber = jH.jobnumber  and j.clinicId=JH.ClinicID
-		 INNER JOIN dbo.Jobs_Patients JP ON JH.JobNumber = JP.JobNumber 
-		 INNER JOIN dbo.Dictators D ON J.DictatorID = D.DictatorID
-			OUTER APPLY(SELECT JT.JobNumber,MIN(jt.StatusDate) StatusDate,jg.Id,JG.StatusGroup
-		  FROM dbo.JobTracking JT  
-		  INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
-		  INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId  
-		  WHERE  JT.JobNumber=JH.JobNumber AND jg.Id=4 and JT.StatusDate >= DATEADD(M,-3,getdate()) -- will  always get lessthan 3 months data..-- 4 is for status group for Awaiting Delivery
-		  GROUP BY jg.Id,jt.JobNumber,JG.StatusGroup) JTA
-		   CROSS APPLY(SELECT case when JSA.StatusDate is null then (JG.StatusGroup + ': '+ CONVERT(varchar(75), JSB.StatusDate, 100)) 
-				  ELSE (JG.StatusGroup + ': '+ CONVERT(varchar(75), JSA.StatusDate, 100)) end JobStatus, JG.StatusGroup,JG.Id,JG.StatusGroup + ': '+ CONVERT(varchar(75), max(JD.DeliveredOn), 100) DeliveredOn 
-				  FROM  dbo.JobStatusGroup JG 
-				  LEFT OUTER JOIN dbo.JobStatusA JSA on JSA.JobNumber = JH.JobNumber 
-				  LEFT OUTER JOIN dbo.JobStatusB JSB on JSB.JobNumber =JH.JobNumber 
-				  INNER JOIN dbo.StatusCodes SC on (JSA.Status= SC.StatusID OR JSB.Status= SC.StatusID) and JG.Id = SC.StatusGroupId
-				  LEFT OUTER JOIN dbo.JobDeliveryHistory JD on JD.jobnumber=JH.JobNumber 
-				  WHERE (jg.id in (1,2,3,4) or (@jobStatus =4 or @jobStatus is null or @jobStatus =5 and JH.JobNumber  in (select jobnumber from JobDeliveryHistory where jobnumber=JH.JobNumber )))
-				  GROUP BY JG.StatusGroup,JG.Id,JSB.StatusDate,JSA.StatusDate,JD.JobNumber)  JSB
+		JH.StatusDate AS 'InProcess', 
+		JTA.StatusDate AS 'AwaitingDelevery'
+		FROM @JobsToFilter JH 
+		INNER JOIN jobs j ON j.jobnumber = jH.jobnumber  and j.clinicId=JH.ClinicID
+		INNER JOIN dbo.Jobs_Patients JP ON JH.JobNumber = JP.JobNumber 
+		INNER JOIN dbo.Dictators D ON J.DictatorID = D.DictatorID
+		OUTER APPLY(SELECT JT.JobNumber,MIN(jt.StatusDate) StatusDate,jg.Id,JG.StatusGroup
+						FROM dbo.JobTracking JT  
+						INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
+						INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId  
+						WHERE  JT.JobNumber=JH.JobNumber AND jg.Id=4 and JT.StatusDate >= DATEADD(M,-3,getdate()) -- will  always get lessthan 3 months data..-- 4 is for status group for Awaiting Delivery
+						GROUP BY jg.Id,jt.JobNumber,JG.StatusGroup) JTA
+		CROSS APPLY(SELECT TOP 1 JG.StatusGroup + ': '+ CONVERT(VARCHAR(75), MIN(JT.StatusDate), 100) JobStatus, JG.StatusGroup,JG.ID,JG.StatusGroup + ': '+ CONVERT(VARCHAR(75), MAX(JD.DeliveredOn), 100) DeliveredOn 
+						FROM JobTracking JT 
+						INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID 
+						INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
+						LEFT OUTER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
+						WHERE JT.jobnumber = JH.jobnumber and (jg.id in (1,2,3,4) or (@jobStatus =4 or @jobStatus is null or @jobStatus =5 and JH.JobNumber  in (SELECT jobnumber FROM JobDeliveryHistory WHERE jobnumber=JH.JobNumber )))
+						GROUP BY JT.JobNumber,JG.StatusGroup,jg.id
+						ORDER BY JG.ID DESC)  JSB
 		WHERE	((@JobStatus is null or JSB.Id = @JobStatus) OR (JSB.DeliveredOn is null and JTA.id=@JobStatus))			
 				and (@MRN is null or JP.MRN = @MRN) 
 				and (@FirstName is null or JP.FirstName = @FirstName) 
@@ -152,10 +151,10 @@ BEGIN
 				and (@DictatorFirstName is null or D.FirstName like '%'+@DictatorFirstName+'%')  
 				and (@DictatorLastName is null or D.LastName like '%'+@DictatorLastName+'%')  
 
-          Select Jobnumber, DictatorID, JobType, case when IsGenericJob is not null and IsGenericJob=1 then 'Y' else 'N' end DeviceGenerated,
+          SELECT Jobnumber, DictatorID, JobType, CASE WHEN IsGenericJob is not null and IsGenericJob=1 THEN 'Y' ELSE 'N' END DeviceGenerated,
 		  AppointmentDate, CC, Stat, MRN, Patient, JobStatus, InProcess, AwaitingDelivery
-		  from #SearchItems
-		  Order by
+		  FROM #SearchItems
+		  ORDER BY
 		  CASE WHEN @SortTypeFromGrid = 'Ascending' THEN 
 					CASE @SortColumnFromGrid 
 					WHEN 'MRN'   THEN MRN 
@@ -246,7 +245,7 @@ BEGIN
 		  FETCH NEXT @PageSize ROWS ONLY
 
 		-- execute same SQL to get the total count
-		  Select @TotalCount = count(JobNumber)
+		  Select @TotalCount = COUNT(JobNumber)
 		FROM #SearchItems
 
 		DROP TABLE #SearchItems

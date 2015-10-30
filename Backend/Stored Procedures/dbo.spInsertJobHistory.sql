@@ -31,6 +31,17 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 			WHERE J.JobNumber =@vvcrJobNumber
 		END
 
+		SELECT @vvcrMRN=MRN FROM Jobs_Patients WHERE jobnumber=@vvcrJobNumber
+		SELECT @vvcrJobType=JobType FROM jobs WHERE JobNumber = @vvcrJobNumber	
+	
+		-- if job is sent to finsh in Editor stage then we need to track in process data and status
+		IF @vsintCurrentStatus=270 and not exists(SELECT 1 FROM JOB_HISTORY WHERE jobnumber=@vvcrJobNumber)
+			BEGIN
+				INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime)
+				VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,170,@vintDocumentID,@vvcrUserId,GETDATE())
+			END
+
+
 		-- For tracking the MRN and Jobtype history we need previous status
 		SELECT @oldStatus = STATUS FROM JobStatusA WHERE jobnumber=@vvcrJobNumber
 		IF(@oldStatus is NULL )
@@ -38,9 +49,6 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		
 		IF @vsintCurrentStatus is null or @oldStatus <> @vsintCurrentStatus 
 			SET @vsintCurrentStatus =@oldStatus
-	
-		SELECT @vvcrMRN=MRN FROM Jobs_Patients WHERE jobnumber=@vvcrJobNumber
-		SELECT @vvcrJobType=JobType FROM jobs WHERE JobNumber = @vvcrJobNumber	
 	
 
 		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime)
