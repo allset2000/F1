@@ -8,7 +8,8 @@ CREATE TABLE [dbo].[MessageThreads]
 [UpdatedDate] [datetime] NULL,
 [IsActive] [bit] NOT NULL CONSTRAINT [DF__MessageTh__IsAct__0603C947] DEFAULT ((1)),
 [PassPhrase] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_MessageThreads_PassPhrase] DEFAULT (''),
-[ThreadAdminUserID] [int] NULL
+[ThreadAdminUserID] [int] NULL,
+[ThreadDictatorID] [int] NULL
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[MessageThreads] ADD 
 CONSTRAINT [PK_MessageThreads] PRIMARY KEY CLUSTERED  ([MessageThreadID]) ON [PRIMARY]

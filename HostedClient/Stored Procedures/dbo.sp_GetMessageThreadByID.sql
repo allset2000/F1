@@ -1,7 +1,6 @@
-/****** Object:  StoredProcedure [dbo].[sp_GetMessageThreadByID]    Script Date: 10/16/2015 20:58:51 ******/
-SET ANSI_NULLS ON
-GO
 SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
 GO
 
 -- =============================================
@@ -27,10 +26,12 @@ BEGIN
 		   MH.PassPhrase,
 		   MH.ThreadAdminUserID,		  
 		   MH.CreatedDate,
-		   P.FirstName +' '+P.MI+' '+P.LastName AS PatientName
+		   P.FirstName +' '+P.MI+' '+P.LastName AS PatientName,
+		   MH.ThreadDictatorID
 	   FROM MessageThreads MH WITH(NOLOCK)	
 	   LEFT JOIN Patients p WITH(NOLOCK) ON P.PatientID=MH.PatientID
 	   WHERE MH.ThreadID = @ThreadId
 END
 
 
+GO
