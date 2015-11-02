@@ -23,7 +23,7 @@ BEGIN
 	SET NOCOUNT ON;
 
 		-- declare variable to hold the saved preferences from preferences table
-		Declare @DateField varchar(50) Declare @Range varchar(50) Declare @RangeOptionFromDate datetime Declare @RangeOptionToDate datetime  Declare @From datetime 
+		Declare @DateField varchar(50) Declare @Range varchar(50) Declare @RangeOptionFromDate varchar(20) Declare @RangeOptionToDate varchar(20)  Declare @From datetime 
 		Declare @To datetime Declare @JobType  varchar(50) Declare @JobStatus varchar(50) Declare @DictatorID varchar(50) Declare @MRN varchar(50) Declare @FirstName varchar(50) 
 		Declare @LastName  varchar(50) Declare @DeviceGenerated bit Declare @CC	bit Declare @STAT bit Declare @SelectedColumns varchar(300) Declare @GroupBy varchar(50)
 		Declare @ResultsPerPage smallint Declare @SortBy varchar(50) Declare @SortType varchar(20) Declare @ClinicID smallint Declare @IsSaved bit Declare @JobNumber varchar(20)
@@ -61,8 +61,18 @@ BEGIN
 	Jobnumber varchar(20) NULL, DictatorID varchar(50) NULL, JobType varchar(100) NULL, 
 	IsGenericJob bit NULL, AppointmentDate smalldatetime NULL, CC bit null, Stat bit NULL, MRN varchar(50), 
 	Patient varchar(120) NULL, FirstName varchar(50) NULL, LastName varchar(50) NULL, JobStatus varchar(120) NULL, InProcess Datetime null, AwaitingDelivery datetime NULL)
-
-
+	declare @dateRangeFrom varchar(20)
+	declare @dateRangeTo varchar(20)
+	IF(@From is null)
+		begin
+			SET @dateRangeFrom = @RangeOptionFromDate
+			SET @dateRangeTo = @RangeOptionToDate
+		end
+	ELSE
+		begin
+			SET @dateRangeFrom =@From+' 00:00:00'
+			SET @dateRangeTo = @To +' 23:59:59'
+		end
 	-- the below condition was added to fetch Jobs for "Delivered" status selected in DateField option
 	IF(@DateField <>5)
 		BEGIN
@@ -72,20 +82,19 @@ BEGIN
 							INNER JOIN dbo.StatusCodes SC on JT.Status= SC.StatusID
 							INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId
 							INNER JOIN jobs j on j.jobnumber = jt.jobnumber 
-						WHERE	(@DateField is null or JG.Id= @DateField)
-							and (@From is null or JT.StatusDate  >= @From)
-							and (@To is null or JT.StatusDate  <= @To) 
-							and (@RangeOptionFromDate is null or JT.StatusDate  >= @RangeOptionFromDate) 
-							and (@RangeOptionToDate is null or JT.StatusDate  <= @RangeOptionToDate) 
-							and (@JobType is null or J.JobType = @JobType) 
+						WHERE 
+							(@JobType is null or J.JobType = @JobType) 
 							and (@DictatorID is null or J.DictatorID = @DictatorID) 
 							and (@DeviceGenerated is null or J.IsGenericJob = @DeviceGenerated) 
 							and (@CC is null or J.CC = @CC) 
 							and (@STAT is null or J.Stat = @STAT) 
-							and (@ClinicID is null or J.ClinicID = @ClinicID)  
 							and (@JobNumber is null or J.JobNumber = @JobNumber) 
 							and (J.ReceivedOn  >= DATEADD(M,-3,GETDATE()))
 						GROUP BY jg.Id,JG.StatusGroup, JT.JobNumber,j.ClinicID 
+						HAVING (@DateField is null or JG.Id= @DateField)
+							and (@dateRangeFrom is null or (min(jt.StatusDate)  >= @dateRangeFrom))
+							and (@dateRangeTo is null or (min(jt.StatusDate)  <= @dateRangeTo))
+							and (J.ClinicID = @ClinicID)
 		END
 	ELSE IF( @DateField =5)
 		BEGIN
@@ -96,20 +105,20 @@ BEGIN
 							INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId
 							INNER JOIN JobDeliveryHistory JDH on JDH.JobNUmber = JT.JobNumber
 							INNER JOIN jobs j on j.jobnumber = jt.jobnumber 
-						WHERE	(@DateField is null or JG.Id= @DateField)
-							and (@From is null or JDH.DeliveredOn  >= @From)
-							and (@To is null or JDH.DeliveredOn  <= @To) 
-							and (@RangeOptionFromDate is null or JDH.DeliveredOn  >= @RangeOptionFromDate) 
-							and (@RangeOptionToDate is null or JDH.DeliveredOn  <= @RangeOptionToDate) 
-							and (@JobType is null or J.JobType = @JobType) 
+						WHERE	
+							(@JobType is null or J.JobType = @JobType) 
 							and (@DictatorID is null or J.DictatorID = @DictatorID) 
 							and (@DeviceGenerated is null or J.IsGenericJob = @DeviceGenerated) 
 							and (@CC is null or J.CC = @CC) 
 							and (@STAT is null or J.Stat = @STAT) 
-							and (@ClinicID is null or J.ClinicID = @ClinicID)  
 							and (@JobNumber is null or J.JobNumber = @JobNumber) 
 							and (J.ReceivedOn  >= DATEADD(M,-3,GETDATE()))
 						GROUP BY jg.Id,JG.StatusGroup, JT.JobNumber,j.ClinicID 
+						HAVING (@DateField is null or JG.Id= @DateField)
+							and (@dateRangeFrom is null or (min(jt.StatusDate)  >= @dateRangeFrom))
+							and (@dateRangeTo is null or (min(jt.StatusDate)  <= @dateRangeTo))
+							and (J.ClinicID = @ClinicID)
+
 		END
 
 	INSERT INTO #SearchItems 
