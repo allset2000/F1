@@ -105,19 +105,18 @@ BEGIN
 							INNER JOIN dbo.JobStatusGroup JG on JG.Id = SC.StatusGroupId
 							INNER JOIN JobDeliveryHistory JDH on JDH.JobNUmber = JT.JobNumber
 							INNER JOIN jobs j on j.jobnumber = jt.jobnumber 
-						WHERE	
-							(@JobType is null or J.JobType = @JobType) 
+						WHERE    (@DateField is null or JG.Id= @DateField)
+							and (@dateRangeFrom is null or JDH.DeliveredOn  >= @dateRangeFrom) 
+                            and (@dateRangeTo is null or JDH.DeliveredOn  <= @dateRangeTo) 
+                            and (@JobType is null or J.JobType = @JobType) 
 							and (@DictatorID is null or J.DictatorID = @DictatorID) 
 							and (@DeviceGenerated is null or J.IsGenericJob = @DeviceGenerated) 
 							and (@CC is null or J.CC = @CC) 
 							and (@STAT is null or J.Stat = @STAT) 
+							and (@ClinicID is null or J.ClinicID = @ClinicID)  
 							and (@JobNumber is null or J.JobNumber = @JobNumber) 
 							and (J.ReceivedOn  >= DATEADD(M,-3,GETDATE()))
-						GROUP BY jg.Id,JG.StatusGroup, JT.JobNumber,j.ClinicID 
-						HAVING (@DateField is null or JG.Id= @DateField)
-							and (@dateRangeFrom is null or (min(jt.StatusDate)  >= @dateRangeFrom))
-							and (@dateRangeTo is null or (min(jt.StatusDate)  <= @dateRangeTo))
-							and (J.ClinicID = @ClinicID)
+						GROUP BY jg.Id,JG.StatusGroup, JT.JobNumber,j.ClinicID  
 
 		END
 
