@@ -54,6 +54,7 @@
     </Prefixes>
     <DataWriteAllFilesInOneDirectory>True</DataWriteAllFilesInOneDirectory>
   </WriteToFileOptions>
+  <IsAzure>False</IsAzure>
   <DataFileSet>
     <Count>0</Count>
   </DataFileSet>

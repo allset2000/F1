@@ -39,8 +39,12 @@ CREATE TABLE [dbo].[Jobs]
 [IsNewSchema] [bit] NULL,
 [ProcessFailureCount] [smallint] NULL,
 [IsLockedForProcessing] [bit] NOT NULL CONSTRAINT [DF__Jobs__IsProcesse__274FAE79] DEFAULT ((0)),
-[FinaldocSentToBBN] [bit] NOT NULL CONSTRAINT [DF__Jobs__FinaldocSe__186270A4] DEFAULT ((0))
+[FinaldocSentToBBN] [bit] NOT NULL CONSTRAINT [DF__Jobs__FinaldocSe__186270A4] DEFAULT ((0)),
+[LokedbyUserForJobDetailsView] [varchar] (48) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[LockbyUserTimeStamp] [datetime] NULL,
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_ReceivedOn_INC_JobNumber_DictatorID_ClinicID_Location...] ON [dbo].[Jobs] ([ReceivedOn]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [ClinicID], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [IsGenericJob], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [Stat]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) WITH (FILLFACTOR=80) ON [PRIMARY]
 GO
@@ -54,8 +58,7 @@ CREATE NONCLUSTERED INDEX [IX_JobsJobEditingSummaryId] ON [dbo].[Jobs] ([JobEdit
 GO
 CREATE NONCLUSTERED INDEX [ix_Jobs_JobId] ON [dbo].[Jobs] ([JobId]) WITH (ALLOW_PAGE_LOCKS=OFF) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_ReceivedOn_INC_JobNumber_DictatorID_ClinicID_Location...] ON [dbo].[Jobs] ([ReceivedOn]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [ClinicID], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [Stat]) ON [PRIMARY]
-GO
+
 CREATE NONCLUSTERED INDEX [IX_Jobs_ReturnedOn] ON [dbo].[Jobs] ([ReturnedOn]) INCLUDE ([EditorID], [JobNumber]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_Dictators] FOREIGN KEY ([DictatorID]) REFERENCES [dbo].[Dictators] ([DictatorID])

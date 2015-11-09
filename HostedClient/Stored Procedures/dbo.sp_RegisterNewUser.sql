@@ -1,7 +1,8 @@
 
-SET QUOTED_IDENTIFIER ON
-GO
+/****** Object:  StoredProcedure [dbo].[sp_RegisterNewUser]    Script Date: 10/9/2015 1:55:00 AM ******/
 SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
 GO
 -- =============================================
 -- Author: Sam Shoultz
@@ -15,18 +16,18 @@ CREATE PROCEDURE [dbo].[sp_RegisterNewUser]
 	@LastName varchar(100),
 	@MI varchar(100),
 	@EmailAddress varchar(100),
-	@Password varchar(64),
-	@Salt varchar(32),
+	@Password varchar(300),
+	@Salt varchar(300),
 	@PhoneNumber varchar(20)
 )
 AS
 BEGIN
-	BEGIN TRANSACTION CreateUpdatePatientDataAccess
+	BEGIN TRANSACTION RegisterNewUser
 		BEGIN TRY
 		DECLARE @cur_clinicid INT
 		DECLARE @cur_requestuserid INT
-		DECLARE @cur_RoleId INT
-		DECLARE @cur_DemoUser bit
+		DECLARE @cur_RoleId VARCHAR(500)
+		DECLARE @cur_InvitationType INT
 		DECLARE @UserId INT
 		DECLARE @InviteId INT
 		DECLARE @ShortCode varchar(10)
@@ -35,7 +36,11 @@ BEGIN
 
 		SET @ShortCode = SUBSTRING(@RegistrationCode, 0, CHARINDEX('-',@RegistrationCode,0))
 	
-		SELECT @InviteId=UserInvitationId, @cur_clinicid=ClinicId, @cur_requestuserid=RequestingUserId, @cur_RoleId=RoleId, @cur_DemoUser=IsDemoUser
+		SELECT @InviteId=UserInvitationId, 
+			   @cur_clinicid=ClinicId, 
+			   @cur_requestuserid=RequestingUserId, 
+			   @cur_RoleId=RoleId, 
+			   @cur_InvitationType=InvitationTypeId
 		FROM UserInvitations
 		WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
 
@@ -53,9 +58,10 @@ BEGIN
 		END
 
 		-- Create User entry in the DB
+		-- Added new field while creating a new user, The name of the field added in the insert statement below is  LastPasswordReset. Ticket#3237 modified by Tamojit Chakraborty
 		IF NOT EXISTS (SELECT 1 from Users where UserName = @EmailAddress)
 		BEGIN
-			INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt) VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt)
+			INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt,LastPasswordReset) VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt,getdate())
 			SET @UserId = (SELECT UserId from Users where UserName = @EmailAddress)
 		END
 		ELSE
@@ -64,7 +70,7 @@ BEGIN
 		END
 
 		-- Add User Role Xref
-		IF(@cur_RoleId <= 0)
+		IF(LEN(@cur_RoleId) <= 0)
 		BEGIN
 			IF EXISTS(select 1 from SystemConfiguration where ConfigKey = 'RUDefualtRole')
 			BEGIN
@@ -75,12 +81,31 @@ BEGIN
 				RAISERROR ('Server Configuration not setup',16,1);
 			END
 		END
-		INSERT INTO UserRoleXref(UserId,RoleId,IsDeleted) VALUES(@UserId,@cur_RoleId,0)
+		ELSE
+		BEGIN
+				CREATE TABLE #tmp_roles
+				(
+					RoleId INT, 
+					Processed INT
+				)
+
+				INSERT INTO #tmp_roles (RoleId, Processed)
+				SELECT Value,0 FROM split (@cur_RoleId, ',')
+
+				WHILE EXISTS(SELECT 1 FROM #tmp_roles WHERE Processed = 0)
+				BEGIN
+					DECLARE @new_RoleId INT
+					SET @new_RoleId = (SELECT TOP 1 RoleId FROM #tmp_Roles WHERE Processed = 0)
+					INSERT INTO UserRoleXref(UserId,RoleId,IsDeleted) VALUES(@UserId,@new_RoleId,0)
+					UPDATE #tmp_roles SET Processed = 1 WHERE RoleId = @new_RoleId
+				END
+				DROP TABLE #tmp_roles
+		END
 
 		-- Set the UserId mapping in invitations table, this denotes the user has been registered
 		UPDATE UserInvitations SET RegisteredUserId = @UserId WHERE UserInvitationId = @InviteId
 
-		IF (@cur_DemoUser = 1)
+		IF (@cur_InvitationType = (SELECT InvitationTypeId FROM UserInvitationTypes WHERE InvitationTypeName = 'Mobile Demo'))
 		BEGIN
 			DECLARE @DictatorUserName VARCHAR(100)
 			DECLARE @QueueId INT
@@ -156,7 +181,7 @@ BEGIN
 		SELECT 1 from Users WHERE UserId = @UserId
 	END TRY
 	BEGIN CATCH
-		IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION CreateUpdatePatientDataAccess
+		IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION RegisterNewUser
 			
 		DECLARE @errorMessage AS VARCHAR(4000) = (SELECT ERROR_MESSAGE()),
 				@errorSeverity AS INT = (SELECT ERROR_SEVERITY()),
@@ -167,8 +192,7 @@ BEGIN
 		SELECT @errorMessage as 'ErrorMessage'
 	END CATCH
 
-	IF @@TRANCOUNT > 0 COMMIT TRANSACTION CreateUpdatePatientDataAccess
+	IF @@TRANCOUNT > 0 COMMIT TRANSACTION RegisterNewUser
 END
 
 
-GO

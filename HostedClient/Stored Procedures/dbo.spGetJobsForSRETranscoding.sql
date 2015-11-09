@@ -35,12 +35,16 @@ BEGIN
   Stat bit,        
   Status smallint,         
   ClinicID smallint,  
-  ProcessTypeId smallint        
+  AdditionalData varchar(max),
+  OwnerDictatorID INT,
+  Priority smallint,   
+  RuleID smallint,
+  ProcessTypeId smallint
  )    
  IF (@IncludeErrors = 1)         
  BEGIN          
   INSERT INTO @TempJobs      
-  SELECT TOP (@vintrowsCount) J.JobID,J.JobNumber,J.JobTypeID,J.EncounterID,J.Stat,J.Status,J.ClinicID,1 as ProcessTypeId  FROM Jobs J        
+  SELECT TOP (@vintrowsCount) J.JobID,J.JobNumber,J.JobTypeID,J.EncounterID,J.Stat,J.Status,J.ClinicID,J.AdditionalData,J.OwnerDictatorID,J.Priority,J.RuleID,1 as ProcessTypeId  FROM Jobs J        
    inner join Dictations D on D.JobId = J.JobId        
    inner join DictationsTracking DT on DT.DictationId = D.DictationId and DT.Status = 250        
   WHERE ((J.Status = @statusCode) AND (J.ProcessFailureCount is null or J.ProcessFailureCount <= @ProcessFailureCount) and (J.JobId NOT IN (SELECT JobId FROM Errors)))        
@@ -49,7 +53,7 @@ BEGIN
  ELSE      
  BEGIN     
  INSERT INTO @TempJobs      
-  SELECT TOP (@vintrowsCount) J.JobID,J.JobNumber,J.JobTypeID,J.EncounterID,J.Stat,J.Status,J.ClinicID,1 as ProcessTypeId  FROM Jobs J       
+  SELECT TOP (@vintrowsCount) J.JobID,J.JobNumber,J.JobTypeID,J.EncounterID,J.Stat,J.Status,J.ClinicID,J.AdditionalData,J.OwnerDictatorID,J.Priority,J.RuleID,1 as ProcessTypeId  FROM Jobs J       
    inner join Dictations D on D.JobId = J.JobId        
    inner join DictationsTracking DT on DT.DictationId = D.DictationId and DT.Status = 250        
   WHERE (J.Status = @StatusCode) AND (J.ProcessFailureCount is null or J.ProcessFailureCount <= @ProcessFailureCount)        
@@ -57,7 +61,9 @@ BEGIN
  END        
  --update the jobs to IsProcessed     
  UPDATE Jobs Set Status = 350 FROM Jobs JB           
- INNER JOIN @TempJobs TJ on JB.JobNumber = TJ.JobNumber      
+ INNER JOIN @TempJobs TJ on JB.JobNumber = TJ.JobNumber   
+ WHERE JB.Status <> 350
+    
  SET @UpdatedJobCount = @@ROWCOUNT          
  SELECT @SelectedJobCount = COUNT(*) FROM @TempJobs         
  --In case when this proc is executed in parallel by multiple instances of the SRE App we need          
@@ -66,7 +72,7 @@ BEGIN
   BEGIN          
    ROLLBACK TRANSACTION          
    DECLARE @ErrorMsg varchar(200)          
-   SET @ErrorMsg = '[spGetJobsByStatus] - Job Count mismatch: @JobCount =' + convert(varchar, @SelectedJobCount) + ' @@RowCount =' + convert(varchar, @UpdatedJobCount)          
+   SET @ErrorMsg = '[spGetJobsForSRETranscoding] - Job Count mismatch: @JobCount =' + convert(varchar, @SelectedJobCount) + ' @@RowCount =' + convert(varchar, @UpdatedJobCount)          
    RAISERROR (@ErrorMsg, 16, 1)     
    RETURN;          
   END         

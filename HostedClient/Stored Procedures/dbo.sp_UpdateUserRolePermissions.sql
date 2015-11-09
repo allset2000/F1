@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -5,7 +6,7 @@ GO
 -- =============================================
 -- Author: Sam Shoultz
 -- Create date: 02/20/2015
--- Description: SP used to return a list of users tied to a list of dictators
+-- Description: SP used to update the role permissions for a given user (add / del)
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_UpdateUserRolePermissions]
 (

@@ -1,8 +1,10 @@
+/****** Object:  StoredProcedure [dbo].[sp_GetAllExpressLinkConfigurations]    Script Date: 8/24/2015 5:08:19 AM ******/
+SET ANSI_NULLS ON
+GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-SET ANSI_NULLS ON
-GO
+
 -- =============================================
 -- Author: Sam Shoultz
 -- Create date: 10/31/2014
@@ -23,7 +25,11 @@ BEGIN
 				 ELSE 'none' END AS 'RowColor' 
 	FROM ExpressLinkConfigurations EL 
 		INNER JOIN Clinics C on C.ClinicId = EL.ClinicId 
+	WHERE ISNULL(EL.Deleted,0) = 0
 	order by EL.APIKey,C.ClinicCode
 
 END
+
 GO
+
+

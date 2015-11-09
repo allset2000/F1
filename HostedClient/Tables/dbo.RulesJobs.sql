@@ -6,6 +6,9 @@ CREATE TABLE [dbo].[RulesJobs]
 [QueueID] [int] NULL,
 [ProviderID] [bigint] NULL
 ) ON [PRIMARY]
+GO
+
+
 ALTER TABLE [dbo].[RulesJobs] ADD 
 CONSTRAINT [PK_Rules_Jobs] PRIMARY KEY CLUSTERED  ([RuleID], [ActionID]) ON [PRIMARY]
 

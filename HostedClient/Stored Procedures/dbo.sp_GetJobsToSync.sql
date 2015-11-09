@@ -14,16 +14,24 @@ GO
 -- Description: Moved the main select logic to the vw_GetJobsToSync view.
 --              The main select statment can be used by other sql objects. 
 --              Therefore, to easy the maintenability, we will keep it separate.
+
+--	Modified By: Mikayil Bayramov
+--	Modification Date: 5/29/2015
+--	Details: Performance improvement. Eliminating use of vw_GetJobsToSync view.
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobsToSync](
-	 @DictatorId int,
-	 @MaxFutureDays int
+	 @DictatorId INT,
+	 @MaxFutureDays INT
 ) AS 
 BEGIN
-	SELECT JobID, JobNumber, ClinicID, EncounterID, JobTypeID, OwnerDictatorID, [Status], Stat, Priority, RuleID, AdditionalData 
-	FROM dbo.vw_GetJobsToSync
-	WHERE (Dictations_DictatorID = @DictatorId OR Queue_Users_DictatorID = @DictatorId) AND 
-	      (@MaxFutureDays IS NULL OR (DATEDIFF (D, GETDATE(), AppointmentDate) <= @MaxFutureDays))
-
+	SELECT j.JobID, j.JobNumber, j.ClinicID, j.EncounterID, j.JobTypeID, j.OwnerDictatorID, j.[Status], j.Stat, j.[Priority], j.RuleID, j.AdditionalData 
+	FROM dbo.Dictations AS d INNER JOIN dbo.Jobs AS j ON d.JobID = j.JobID 
+						     INNER JOIN dbo.Encounters AS e ON j.EncounterID = e.EncounterID
+						     INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID
+						     INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
+	WHERE qu.DictatorID = @DictatorId AND 	       
+		  d.[Status] IN (100, 200) AND 
+		  q.Deleted = 0 AND 
+		  DATEDIFF (D, GETDATE(), e.AppointmentDate) <= @MaxFutureDays 
 END
 GO

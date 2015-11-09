@@ -82,11 +82,11 @@ BEGIN
 	BEGIN
 		SET @SQL_STRING = @SQL_STRING + ' and Jobs.JobTypeID = ' + CAST(@JobTypeId as varchar(10))
 	END
-	IF(LEN(@Status) > 0)
+	IF(@Status != '-1')
 	BEGIN
 		SET @SQL_STRING = @SQL_STRING + ' and Jobs.Status = ' + @Status
 	END
-	IF(LEN(@StatJob) > 0)
+	IF(@StatJob = 'True')
 	BEGIN
 		SET @SQL_STRING = @SQL_STRING + ' and Stat = ''' + @StatJob + ''''
 	END
@@ -115,6 +115,8 @@ BEGIN
 		SET @cur_jobid = (SELECT top 1 jobid from #tmp_data where Processed = 0)
 		SET @cur_dictid = (SELECT top 1 dictationid from Dictations where JobID = @cur_jobid and Status = @cur_status)
 		
+		IF EXISTS (SELECT JobNumber FROM Jobs WHERE JobID = @cur_jobid AND Status = @cur_status)
+		BEGIN
 		-- Delete Job
 		UPDATE Jobs SET Status = @new_status WHERE JobID = @cur_jobid
 		-- Insert into JobTracking
@@ -124,6 +126,7 @@ BEGIN
 		UPDATE Dictations SET Status = @new_status WHERE DictationID = @cur_dictid
 		-- Insert into DictationTracking
 		INSERT INTO DictationsTracking(DictationID, Status, ChangeDate, ChangedBy) VALUES(@cur_dictid, @new_status, GETDATE(), @UpdatedBy)
+		END
 			
 		UPDATE #tmp_data set Processed = 1 WHERE JobID = @cur_jobid
 	END

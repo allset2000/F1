@@ -26,6 +26,13 @@ CREATE PROCEDURE [dbo].[sp_CreateUpdateClinic] (
 	@ExcludeStat bit,
 	@AutoEnrollDevices bit,
 	@CRFlagType int,
+	@DisablePatientImages bit,
+	@PortalTimeOut int,
+	@DaysToRestPassword int,
+	@PreviousPasswordCount int,
+	@PasswordMinCharacters int,
+	@FailedPasswordLockCount int,
+	@TimeZoneId int,
 	@ForceCRStartDate datetime = null,
 	@ForceCREndDate datetime = null,
 	@SRETypeID int = -1,
@@ -37,8 +44,20 @@ BEGIN
 	
 	IF NOT EXISTS(SELECT * FROM Clinics where ClinicID = @ClinicID)
 	BEGIN
-		INSERT INTO Clinics(ClinicId,Name,MobileCode,AccountManagerID,ExpressQueuesEnabled,ImageCaptureEnabled,PatientClinicalsEnabled,Deleted,EHRVendorID,EHRClinicID,EHRLocationID,ClinicCode,DisableUpdateAlert,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,AutoEnrollDevices,SRETypeID,RealTimeClinicIP,RealTimeClinicPortNo,RealTimeEnabled)
-		VALUES(@ClinicId,@Name, @MobileCode, @AccountManagerID, @ExpressQueuesEnabled, @ImageCaptureEnabled, @PatientClinicalsEnabled, @Deleted, @EHRVendorID, @EHRClinicID, @EHRLocationID, @ClinicCode, @DisableUpdateAlert, @CRFlagType, @ForceCRStartDate, @ForceCREndDate, @ExcludeStat, @AutoEnrollDevices, @SRETypeID, @RealTimeClinicIP, @RealTimeClinicPortNo, @RealTimeEnabled)
+		DECLARE @DEF_PortalTimeout INT
+		DECLARE @DEF_DaysToResetPassword INT
+		DECLARE @DEF_PreviousPasswordCount INT
+		DECLARE @DEF_PasswordMinCharacter INT
+		DECLARE @DEF_FailedPasswordLockoutCount INT
+
+		SET @DEF_PortalTimeout = (select ConfigValue from systemconfiguration where ConfigKey = 'DEF_PortalTimeout')
+		SET @DEF_DaysToResetPassword = (select ConfigValue from systemconfiguration where ConfigKey = 'DEF_DaysToResetPassword')
+		SET @DEF_PreviousPasswordCount = (select ConfigValue from systemconfiguration where ConfigKey = 'DEF_PreviousPasswordCount')
+		SET @DEF_PasswordMinCharacter = (select ConfigValue from systemconfiguration where ConfigKey = 'DEF_PasswordMinCharacter')
+		SET @DEF_FailedPasswordLockoutCount = (select ConfigValue from systemconfiguration where ConfigKey = 'DEF_FailedPasswordLockoutCount')
+		
+		INSERT INTO Clinics(ClinicId,Name,MobileCode,AccountManagerID,ExpressQueuesEnabled,ImageCaptureEnabled,PatientClinicalsEnabled,Deleted,EHRVendorID,EHRClinicID,EHRLocationID,ClinicCode,DisableUpdateAlert,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,AutoEnrollDevices,SRETypeID,DisablePatientImages,PortalTimeout,DaysToResetPassword,PreviousPasswordCount,PasswordMinCharacters,FailedPasswordLockoutCount,TimeZoneId,RealTimeClinicIP,RealTimeClinicPortNo,RealTimeEnabled)
+		VALUES(@ClinicId,@Name, @MobileCode, @AccountManagerID, @ExpressQueuesEnabled, @ImageCaptureEnabled, @PatientClinicalsEnabled, @Deleted, @EHRVendorID, @EHRClinicID, @EHRLocationID, @ClinicCode, @DisableUpdateAlert, @CRFlagType, @ForceCRStartDate, @ForceCREndDate, @ExcludeStat, @AutoEnrollDevices, @SRETypeID, @DisablePatientImages, @DEF_PortalTimeout, @DEF_DaysToResetPassword, @DEF_PreviousPasswordCount, @DEF_PasswordMinCharacter, @DEF_FailedPasswordLockoutCount, @TimeZoneId, @RealTimeClinicIP, @RealTimeClinicPortNo, @RealTimeEnabled)
 
 		IF (@EHRVendorID = 2)
 		BEGIN
@@ -68,6 +87,13 @@ BEGIN
 						   ExcludeStat = @ExcludeStat, 
 						   AutoEnrollDevices = @AutoEnrollDevices,
 						   SRETypeID = @SRETypeID,
+						   DisablePatientImages = @DisablePatientImages,
+						   PortalTimeout = @PortalTimeOut,
+						   DaysToResetPassword = @DaysToRestPassword,
+						   PreviousPasswordCount = @PreviousPasswordCount,
+						   PasswordMinCharacters = @PasswordMinCharacters,
+						   FailedPasswordLockoutCount = @FailedPasswordLockCount,
+						   TimeZoneId = @TimeZoneId,
 						   RealTimeClinicIP = @RealTimeClinicIP,
 						   RealTimeClinicPortNo = @RealTimeClinicPortNo,
 						   RealTimeEnabled = @RealTimeEnabled
@@ -88,7 +114,6 @@ BEGIN
 	
 	SELECT ClinicID from Clinics where ClinicCode = @ClinicCode
 END
-
 
 
 

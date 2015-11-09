@@ -54,8 +54,9 @@
     </Prefixes>
     <DataWriteAllFilesInOneDirectory>True</DataWriteAllFilesInOneDirectory>
   </WriteToFileOptions>
+  <IsAzure>False</IsAzure>
   <DataFileSet>
-    <Count>7</Count>
+    <Count>14</Count>
     <DataFile>dbo.EHRVendors_Data.sql</DataFile>
     <DataFile>dbo.Permissions_Data.sql</DataFile>
     <DataFile>dbo.StatusCategories_Data.sql</DataFile>
@@ -63,5 +64,12 @@
     <DataFile>dbo.ROWOverrideFields_Data.sql</DataFile>
     <DataFile>dbo.CRFlagTypes_Data.sql</DataFile>
     <DataFile>dbo.DeliveryTypes_Data.sql</DataFile>
+    <DataFile>dbo.UserInvitationTypes_Data.sql</DataFile>
+    <DataFile>dbo.SREEngineType_Data.sql</DataFile>
+    <DataFile>dbo.DeliveryErrorCodes_Data.sql</DataFile>
+    <DataFile>dbo.ROWTemplateVariables_Data.sql</DataFile>
+    <DataFile>dbo.ROWVariableTypes_Data.sql</DataFile>
+    <DataFile>dbo.TimeZone_Data.sql</DataFile>
+    <DataFile>dbo.VariableTypes_Data.sql</DataFile>
   </DataFileSet>
 </DatabaseInformation>

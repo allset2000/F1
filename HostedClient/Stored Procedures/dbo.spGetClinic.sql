@@ -1,17 +1,22 @@
-/******************************  
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+/******************************
 ** File:  spGetClinic.sql  
 ** Name:  spGetClinic  
 ** Desc:  Get Clinic based on clinic ID 
 ** Auth:  Suresh  
 ** Date:  18/May/2015  
-**************************  
-** Change History  
-**************************  
-** PR   Date     Author  Description   
-** --   --------   -------   ------------------------------------  
-**   
-*******************************/  
-Create PROCEDURE [dbo].[spGetClinic] 
+**************************
+** Change History
+******************
+** Ticket       Date	    Author           Description	
+** --           --------    -------          ------------------------------------
+** D.2 - 4355   6/8         Sam Shoultz      Added new Clinic values / variables to the SP
+**
+*******************************/
+CREATE PROCEDURE [dbo].[spGetClinic] 
 (  
  @vintClinicID  INT  
 )  
@@ -50,16 +55,8 @@ BEGIN
 	EV.Name AS EHRVendorName,
 	CA.ConnectionString AS ApiConnectionString
 	FROM Clinics C 
-		INNER JOIN EHRVendors EV 
-		ON C.EHRVendorID = EV.EHRVendorID
-		LEFT OUTER JOIN ClinicApis CA
-		ON C.ClinicID = CA.ClinicID
+		INNER JOIN EHRVendors EV ON C.EHRVendorID = EV.EHRVendorID
+		LEFT OUTER JOIN ClinicApis CA ON C.ClinicID = CA.ClinicID
 	WHERE C.ClinicID = @vintClinicID
 END  
-GO  
-
-
-
-
-
-
+GO
