@@ -1,3 +1,7 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 /******************************      
 ** File:  spUpdateSREFinaldocSentToBBN.sql      
 ** Name:  spUpdateSREFinaldocSentToBBN      
@@ -10,27 +14,20 @@
 * PR   Date     Author  Description       
 * --   --------   -------   ------------------------------------      
 *******************************/
-alter PROCEDURE [dbo].[spUpdateSREFinaldocSentToBBN]  
+CREATE PROCEDURE [dbo].[spUpdateSREFinaldocSentToBBN]  
 (  
  @vvcrJobNumber VARCHAR(20),
  @bitIsSentToBBN bit
 )  
 AS  
-BEGIN TRANSACTION  
+BEGIN
 	IF @bitIsSentToBBN = 1 
 		BEGIN
-			UPDATE  jobs SET FinaldocSentToBBN = 1 WHERE JobNumber = @vvcrJobNumber 
+			UPDATE  jobs SET FinaldocSentToBBN = 1,IsLockedForProcessing=0 WHERE JobNumber = @vvcrJobNumber 
 		END 
 	ELSE
 		BEGIN
-			UPDATE  jobs SET jobstatus = 360 WHERE JobNumber = @vvcrJobNumber  
+			UPDATE  jobs SET IsLockedForProcessing=0 WHERE JobNumber = @vvcrJobNumber  
 		END
-IF @@ERROR <> 0  
- BEGIN  
-    -- Rollback the transaction  
-    ROLLBACK  
-    -- Raise an error and return  
-    RAISERROR ('Error in Insert or Update Status.', 16, 1)  
-    RETURN  
- END  
-COMMIT
+END
+GO

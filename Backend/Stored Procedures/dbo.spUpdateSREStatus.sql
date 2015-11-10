@@ -1,3 +1,7 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 /******************************      
 ** File:  spUpdateSREStatus.sql      
 ** Name:  spUpdateSREStatus      
@@ -24,11 +28,13 @@ BEGIN TRANSACTION
 
 		INSERT INTO JobTracking  
 		VALUES (@vvcrJobNumber,@vsintStatus,GETDATE(),@vvcrPath )  
-  
-		IF @vsintStatus = 110  
-		BEGIN  
+
 		UPDATE jobs SET IsLockedForProcessing=0 where jobNumber=@vvcrJobNumber  
-		END  
+
+		IF @vsintStatus =140
+			BEGIN 
+				DELETE FROM	RecognitionFailedJobs WHERE JobNumber=@vvcrJobNumber
+			END	
 		COMMIT
 	END TRY
 BEGIN CATCH
@@ -39,3 +45,4 @@ BEGIN CATCH
     RETURN  
 END CATCH
 
+GO
