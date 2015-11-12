@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -21,13 +22,21 @@ CREATE PROCEDURE [dbo].[spUpdateSREFinaldocSentToBBN]
 )  
 AS  
 BEGIN
+DECLARE @numTime INT 
+SET @numTime = 0 
+
 	IF @bitIsSentToBBN = 1 
 		BEGIN
 			UPDATE  jobs SET FinaldocSentToBBN = 1,IsLockedForProcessing=0 WHERE JobNumber = @vvcrJobNumber 
 		END 
 	ELSE
 		BEGIN
-			UPDATE  jobs SET IsLockedForProcessing=0 WHERE JobNumber = @vvcrJobNumber  
+			SELECT @numTime= ProcessFailureCount FROM dbo.Jobs WHERE JobNumber=@vvcrJobNumber
+			IF @numTime < 5
+				BEGIN	
+				SET @numTime = @numTime + 1
+				UPDATE  jobs SET IsLockedForProcessing=0,ProcessFailureCount=@numTime WHERE JobNumber = @vvcrJobNumber  
+				END	
 		END
 END
 GO

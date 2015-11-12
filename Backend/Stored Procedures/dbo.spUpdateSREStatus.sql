@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -33,7 +34,7 @@ BEGIN TRANSACTION
 
 		IF @vsintStatus =140
 			BEGIN 
-				DELETE FROM	RecognitionFailedJobs WHERE JobNumber=@vvcrJobNumber
+				UPDATE dbo.Jobs SET ProcessFailureCount=0 WHERE JobNumber=@vvcrJobNumber
 			END	
 		COMMIT
 	END TRY
@@ -44,5 +45,4 @@ BEGIN CATCH
     RAISERROR ('Error in Insert or Update Status.', 16, 1)  
     RETURN  
 END CATCH
-
 GO
