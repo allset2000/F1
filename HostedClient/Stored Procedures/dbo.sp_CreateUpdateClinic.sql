@@ -9,6 +9,16 @@ GO
 -- Create date: 12/5/2014
 -- Description: SP used to Create / Update Clinic Records from AC
 -- =============================================
+/*
+--x
+--x Revision history:
+--x_____________________________________________________________________________
+--x  ver   |    date     |  by                 |  comments - include Ticket#
+--x_____________________________________________________________________________
+--x   1    | 11/10/2015  | sharif shaik        | Bug 4669 - incresed size for the @EHRLocationID varchar(500) from varchar(50)
+--x
+--xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+*/
 CREATE PROCEDURE [dbo].[sp_CreateUpdateClinic] (
 	@ClinicID smallint,
 	@Name varchar(50),
@@ -20,7 +30,7 @@ CREATE PROCEDURE [dbo].[sp_CreateUpdateClinic] (
 	@Deleted bit,
 	@EHRVendorID smallint,
 	@EHRClinicID varchar(50),
-	@EHRLocationID varchar(50),
+	@EHRLocationID varchar(500),
 	@ClinicCode varchar(20),
 	@DisableUpdateAlert bit,
 	@ExcludeStat bit,
@@ -118,3 +128,4 @@ END
 
 
 GO
+

@@ -10,7 +10,7 @@ CREATE TABLE [dbo].[Clinics]
 [Deleted] [bit] NOT NULL CONSTRAINT [DF_Clinics_Active] DEFAULT ((0)),
 [EHRVendorID] [smallint] NOT NULL,
 [EHRClinicID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_EHRClinicID] DEFAULT (''),
-[EHRLocationID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_EHRLocationID] DEFAULT (''),
+[EHRLocationID] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_EHRLocationID] DEFAULT (''),
 [ClinicCode] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Clinics_ClinicCode] DEFAULT (''),
 [DisableUpdateAlert] [bit] NOT NULL CONSTRAINT [DF_Clinics_DisableUpdateAlert] DEFAULT ((0)),
 [CRFlagType] [int] NOT NULL CONSTRAINT [DF_Clinics_CRFlagType] DEFAULT ((0)),

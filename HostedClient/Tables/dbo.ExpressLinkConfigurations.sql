@@ -4,7 +4,7 @@ CREATE TABLE [dbo].[ExpressLinkConfigurations]
 [ApiKey] [uniqueidentifier] NOT NULL,
 [ClinicID] [smallint] NOT NULL,
 [EHRClinicID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-[EHRLocationID] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
+[EHRLocationID] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [EHRType] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [ConnectionString] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [Enabled] [bit] NOT NULL,
