@@ -1,13 +1,14 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
 
+
 -- =============================================
 -- Author: Sam Shoultz
 -- Create date: 3/11/2015
 -- Description: SP used by mirth to update jobs_row status column
+--11/17/2015 Mike Cardwell - Added logic to create an entry in Jobs_Row when one doesnt exist
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_MirthUpdateJobsRow] (
 	@JobId int = null,
@@ -21,6 +22,11 @@ BEGIN
 	IF (@JobId is null)
 	BEGIN
 		return
+	END
+
+	IF NOT EXISTS (Select jobid from Jobs_Row WHERE JobId = @JobID)
+	BEGIN
+		INSERT INTO Jobs_Row (JobID, CreateDate, ChangedDate) Values (@JobID, GETDATE(), GETDATE())
 	END
 
 	IF (@MessageTotal is not null)
@@ -49,5 +55,6 @@ BEGIN
 	END
 
 END
+
 
 GO
