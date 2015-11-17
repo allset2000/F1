@@ -19,7 +19,8 @@ CREATE PROCEDURE [dbo].[spUpdateSREStatus]
 (  
  @vvcrJobNumber VARCHAR(20),  
  @vsintStatus SMALLINT,  
- @vvcrPath  VARCHAR(255)  
+ @vvcrPath  VARCHAR(255),
+ @vvcrRecServer VARCHAR(50)  
 )  
 AS  
 BEGIN TRANSACTION  
@@ -30,11 +31,14 @@ BEGIN TRANSACTION
 		INSERT INTO JobTracking  
 		VALUES (@vvcrJobNumber,@vsintStatus,GETDATE(),@vvcrPath )  
 
-		UPDATE jobs SET IsLockedForProcessing=0 where jobNumber=@vvcrJobNumber  
+        IF @vsintStatus <> 130  
+			BEGIN 
+				UPDATE jobs SET IsLockedForProcessing=0 where jobNumber=@vvcrJobNumber  
+			END	
 
 		IF @vsintStatus =140
 			BEGIN 
-				UPDATE dbo.Jobs SET ProcessFailureCount=0 WHERE JobNumber=@vvcrJobNumber
+				UPDATE dbo.Jobs SET ProcessFailureCount=0,RecServer=@vvcrRecServer WHERE JobNumber=@vvcrJobNumber
 			END	
 		COMMIT
 	END TRY
