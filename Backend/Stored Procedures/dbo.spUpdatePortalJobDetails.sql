@@ -1,3 +1,7 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 /******************************  
 ** File:  spUpdatePortalJobDetails.sql  
 ** Name:  spUpdatePortalJobDetails  
@@ -6,6 +10,11 @@
 ** Date:  13/July/2015  
 **************************  
 ** Change History  
+	Modifiyed By: Mikayil Bayramov (Mika)
+	Midification Date: 11/17/2015
+	Modification Description: With previous implementation when job type was 'no delivery',
+	                          then it would be deleted form JobsToDeliver table. 
+							  In new implementation, the job is also deleted from JobsToDeliverErrors table.
 **************************  
 ** PR   Date     Author  Description   
 ** --   --------   -------   ------------------------------------  
@@ -79,8 +88,20 @@ BEGIN TRY
 			--select @oldJobType=JobType from jobs WHERE ([JobNumber] = @vvcrJobNumber)
 			UPDATE Jobs SET JobType = @vvcrJobType  WHERE ([JobNumber] = @vvcrJobNumber)
 			EXEC dbo.doUpdateJobDueDate @vvcrJobNumber, 'SaveJob'
-			IF (LOWER(@vvcrJobType) = 'no delivery')
-				Delete FROM  [dbo].[JobsToDeliver] WHERE JobNumber = @vvcrJobNumber
+
+			IF (LOWER(@vvcrJobType) like '%no delivery%') BEGIN
+				DECLARE @deliveryID AS INT
+
+				SELECT @deliveryID = DeliveryID 
+			    FROM [dbo].[JobsToDeliver] 
+				WHERE JobNumber = @vvcrJobNumber
+
+				DELETE FROM [dbo].[JobsToDeliver] 
+				WHERE JobNumber = @vvcrJobNumber
+
+			    DELETE FROM [dbo].[JobsToDeliverErrors]
+				WHERE DeliveryID = @deliveryID
+			END
 		END
 
 		-- Update the Stat value
@@ -145,3 +166,4 @@ BEGIN CATCH
 		END
 END CATCH 
 
+GO
