@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -35,29 +34,29 @@ BEGIN TRY
 
 	IF (@Status <> @OldStatus)
 	BEGIN
-		UPDATE Jobs SET Status = @Status where JobId = @JobId
+		UPDATE Jobs SET Status = @Status,UpdatedDateInUTC=GETUTCDATE() where JobId = @JobId
 
 		INSERT INTO Jobstracking(JobID,Status,ChangeDate,ChangedBy) VALUES(@JobId, @Status, GETDATE(), @ChangedBy)
 	END
 
 	IF (@Stat <> @OldStat)
 	BEGIN
-		UPDATE Jobs SET Stat = @Stat where JobId = @JobId
+		UPDATE Jobs SET Stat = @Stat,UpdatedDateInUTC=GETUTCDATE() where JobId = @JobId
 	END
 
 	IF (@Priority <> @OldPriority)
 	BEGIN
-		UPDATE Jobs SET Priority = @Priority where JobId = @JobId
+		UPDATE Jobs SET Priority = @Priority,UpdatedDateInUTC=GETUTCDATE() where JobId = @JobId
 	END
 			
 	IF (@OldAdditionalData is null or @AdditonalData <> @OldAdditionalData)
 	BEGIN
-		UPDATE Jobs SET AdditionalData = @AdditonalData where JobId = @JobId
+		UPDATE Jobs SET AdditionalData = @AdditonalData,UpdatedDateInUTC=GETUTCDATE() where JobId = @JobId
 	END
 
 	IF (@JobTypeID  <> @OldJobTypeID)
 	BEGIN
-		UPDATE Jobs SET JobTypeID = @JobTypeID where JobId = @JobId
+		UPDATE Jobs SET JobTypeID = @JobTypeID,UpdatedDateInUTC=GETUTCDATE() where JobId = @JobId
 	END
 
 	COMMIT TRANSACTION

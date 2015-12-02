@@ -1,3 +1,7 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 /******************************  
 ** File:  spUpdateDictation.sql  
 ** Name:  spUpdateDictation  
@@ -36,8 +40,9 @@ BEGIN TRY
 	SELECT @OldDictationStatus = status FROM Dictations WHERE DictationID = @bgintDictationID 
 	SELECT @OldJobStatus = status FROM Jobs WHERE jobID = @bgintJobID 
 	
-	UPDATE Dictations SET FileName = @vvcrFileName,status=@vintStatus,JobID=@bgintJobID,DictationTypeID=@vintDictationTypeID,DictatorID=@vintDictatorID,
-	QueueID=@vintQueueID,Duration=@smintDuration,MachineName=@vvcrMachineName,ClientVersion=@vvcrClientVersion WHERE DictationID = @bgintDictationID  
+	UPDATE Dictations SET [FileName] = @vvcrFileName,status=@vintStatus,JobID=@bgintJobID,DictationTypeID=@vintDictationTypeID,DictatorID=@vintDictatorID,
+		   QueueID=@vintQueueID,Duration=@smintDuration,MachineName=@vvcrMachineName,UpdatedDateInUTC=GETUTCDATE()
+	WHERE DictationID = @bgintDictationID  
 	
 	-- Only update if the status changed
 	IF (@OldDictationStatus <> @vintStatus)
@@ -65,3 +70,4 @@ BEGIN CATCH
 END CATCH 
 
   
+GO

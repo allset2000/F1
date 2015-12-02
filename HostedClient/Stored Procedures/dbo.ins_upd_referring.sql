@@ -46,14 +46,15 @@ SET
 	Phone1 = @Phone1,
 	Phone2 = @Phone2,
 	Fax1 = @Fax1,
-	Fax2 = @Fax2
+	Fax2 = @Fax2,
+	UpdatedDateInUTC=GETUTCDATE()
 WHERE ClinicID = @ClinicID and PhysicianID = @PhysicianID
 
 IF @@ROWCOUNT = 0
 	BEGIN
-		Insert into ReferringPhysicians (ClinicID, PhysicianID, FirstName, MI, LastName, Suffix, Gender, Address1, Address2, City, State, Zip, DOB, SSN, Phone1, Phone2, Fax1, Fax2)
+		Insert into ReferringPhysicians (ClinicID, PhysicianID, FirstName, MI, LastName, Suffix, Gender, Address1, Address2, City, State, Zip, DOB, SSN, Phone1, Phone2, Fax1, Fax2,UpdatedDateInUTC)
 		VALUES
-		(@ClinicID, @PhysicianID, @FirstName, @MI, @LastName, @Suffix, @Gender, @Address1, @Address2, @City, @State, @Zip, @DOB, @SSN, @Phone1, @Phone2, @Fax1, @Fax2)	
+		(@ClinicID, @PhysicianID, @FirstName, @MI, @LastName, @Suffix, @Gender, @Address1, @Address2, @City, @State, @Zip, @DOB, @SSN, @Phone1, @Phone2, @Fax1, @Fax2,GETUTCDATE())	
 	END
 
 

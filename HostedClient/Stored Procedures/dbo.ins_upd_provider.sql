@@ -15,13 +15,14 @@ AS
 BEGIN
 	UPDATE RulesProviders
 	SET
-		Description = @Description
+		Description = @Description,
+		UpdatedDateInUTC=GETUTCDATE()
 	WHERE ClinicID = @ClinicID AND EHRCode = @EHRCode
 
 	IF @@ROWCOUNT = 0
 	BEGIN
-		INSERT INTO RulesProviders (ClinicID, EHRCode, Description)
-		VALUES (@ClinicID, @EHRCode, @Description)
+		INSERT INTO RulesProviders (ClinicID, EHRCode, Description,UpdatedDateInUTC)
+		VALUES (@ClinicID, @EHRCode, @Description,GETUTCDATE())
 	END
 END
 GO

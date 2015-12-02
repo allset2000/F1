@@ -53,14 +53,15 @@ BEGIN
 		SET @NewJobNumber = @val + REPLICATE('0',6 - LEN(@MaxVal)) + CAST(@MaxVal as VARCHAR)
 
 		-- Create Encounter
-		INSERT INTO Encounters(AppointmentDate,PatientId,ScheduleId) VALUES(@AppointmentDate,@PatientId,null)
+		INSERT INTO Encounters(AppointmentDate,PatientId,ScheduleId,UpdatedDateInUTC) 
+		VALUES(@AppointmentDate,@PatientId,NULL,GETUTCDATE())
 		SET @EncounterId = (SELECT TOP 1 EncounterId FROM Encounters WHERE PatientId = @PatientId and AppointmentDate = @AppointmentDate ORDER BY EncounterId DESC)
 		-- Create Job
-		INSERT INTO Jobs(JobNumber,ClinicId,EncounterId,JobTypeId,OwnerDictatorId,Status,Stat,Priority,RuleId,AdditionalData)
-		VALUES(@NewJobNumber,@ClinicId,@EncounterId,@JobTypeId,@DictatorId,100,0,0,0,null)
+		INSERT INTO Jobs(JobNumber,ClinicId,EncounterId,JobTypeId,OwnerDictatorId,Status,Stat,Priority,RuleId,AdditionalData,UpdatedDateInUTC)
+		VALUES(@NewJobNumber,@ClinicId,@EncounterId,@JobTypeId,@DictatorId,100,0,0,0,NULL,GETUTCDATE())
 		SET @JobId = (SELECT JobId FROM Jobs WHERE JobNumber = @NewJobNumber)
 		-- Create Dictation
-		INSERT INTO Dictations(JobId,DictationTypeId,DictatorId,QueueId,Status,Duration,MachineName,FileName,ClientVersion)
-		VALUES(@JobId,@DictationTypeId,@DictatorId,@QueueId,100,0,'','','')
+		INSERT INTO Dictations(JobId,DictationTypeId,DictatorId,QueueId,Status,Duration,MachineName,FileName,ClientVersion,UpdatedDateInUTC)
+		VALUES(@JobId,@DictationTypeId,@DictatorId,@QueueId,100,0,'','','',GETUTCDATE())
 END
 GO

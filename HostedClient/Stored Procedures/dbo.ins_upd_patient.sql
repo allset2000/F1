@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -62,7 +61,8 @@ IF @PatientID IS NOT NULL AND NOT EXISTS (SELECT MRN FROM patients where ClinicI
 		Phone1 = @Phone1,
 		Phone2 = @Phone2,
 		Fax1 = @Fax1,
-		Fax2 = @Fax2
+		Fax2 = @Fax2,
+		UpdatedDateInUTC=GETUTCDATE()
 	WHERE ClinicID = @ClinicID AND patientID = @patientID
 ELSE
 	UPDATE Patients
@@ -83,14 +83,15 @@ ELSE
 		Phone1 = @Phone1,
 		Phone2 = @Phone2,
 		Fax1 = @Fax1,
-		Fax2 = @Fax2
+		Fax2 = @Fax2,
+		UpdatedDateInUTC=GETUTCDATE()
 	WHERE ClinicID = @ClinicID AND MRN = @MRN
 
 IF @@ROWCOUNT = 0
 	BEGIN
-		Insert into Patients (ClinicID, MRN, AlternateID, FirstName, MI, LastName, Suffix, Gender, Address1, Address2, City, State, Zip, DOB, Phone1, Phone2, Fax1, Fax2)
+		INSERT INTO Patients (ClinicID, MRN, AlternateID, FirstName, MI, LastName, Suffix, Gender, Address1, Address2, City, State, Zip, DOB, Phone1, Phone2, Fax1, Fax2,UpdatedDateInUTC)
 		VALUES
-		(@ClinicID, @MRN, @AlternateID, @FirstName, @MI, @LastName, @Suffix, @Gender, @Address1, @Address2, @City, @State, @Zip, @DOB, @Phone1, @Phone2, @Fax1, @Fax2)	
+		(@ClinicID, @MRN, @AlternateID, @FirstName, @MI, @LastName, @Suffix, @Gender, @Address1, @Address2, @City, @State, @Zip, @DOB, @Phone1, @Phone2, @Fax1, @Fax2,GETUTCDATE())	
 	END
 
 

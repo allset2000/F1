@@ -1,16 +1,7 @@
-/******************************  
-** File:  spUpdateJobStatus.sql  
-** Name:  spUpdateJobStatus  
-** Desc:  Update the Status in jobs table and if status changed then insert into Jobstraking table 
-** Auth:  Suresh  
-** Date:  18/May/2015  
-**************************  
-** Change History  
-**************************  
-** PR   Date     Author  Description   
-** --   --------   -------   ------------------------------------  
-**   
-*******************************/  
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 CREATE PROCEDURE [dbo].[spUpdateJobStatus]  
 (  
  @bgintjobId  BIGINT,  
@@ -24,7 +15,7 @@ BEGIN TRY
 	
 	SELECT @OldStatus = status FROM Jobs WHERE jobID = @bgintjobId
 	
-	UPDATE  Jobs SET Status = @vsintJobStatus WHERE jobID = @bgintjobId  
+	UPDATE  Jobs SET Status = @vsintJobStatus,UpdatedDateInUTC=GETUTCDATE() WHERE jobID = @bgintjobId  
 	
 	-- Only update if the status changed
 	IF (@OldStatus <> @vsintJobStatus)
@@ -44,3 +35,4 @@ BEGIN CATCH
 END CATCH 
 
   
+GO

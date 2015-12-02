@@ -106,28 +106,28 @@ BEGIN
 	
 	--SET @SQL_STRING  = 'UPDATE dbo.Schedules SET Rowprocessed = ' + CAST(@ReprocessType as varchar(1)) + ' WHERE ClinicId = ' + CAST(@ClinicId as varchar(10)) 
 	
-	WHILE EXISTS(SELECT top 1 JobId from #tmp_data where Processed = 0)
+	WHILE EXISTS(SELECT TOP 1 JobId from #tmp_data where Processed = 0)
 	BEGIN
 	
 		DECLARE @cur_jobid int
 		DECLARE @cur_dictid int
 
-		SET @cur_jobid = (SELECT top 1 jobid from #tmp_data where Processed = 0)
-		SET @cur_dictid = (SELECT top 1 dictationid from Dictations where JobID = @cur_jobid and Status = @cur_status)
+		SET @cur_jobid = (SELECT TOP 1 jobid from #tmp_data where Processed = 0)
+		SET @cur_dictid = (SELECT TOP 1 dictationid from Dictations where JobID = @cur_jobid and Status = @cur_status)
 		
 		IF EXISTS (SELECT JobNumber FROM Jobs WHERE JobID = @cur_jobid AND Status = @cur_status)
 		BEGIN
-		-- Delete Job
-		UPDATE Jobs SET Status = @new_status WHERE JobID = @cur_jobid
-		-- Insert into JobTracking
-		INSERT INTO JobsTracking(JobID, Status, ChangeDate, ChangedBy) VALUES(@cur_jobid, @new_status, GETDATE(), @UpdatedBy)
+			-- Delete Job
+			UPDATE Jobs SET Status = @new_status,UpdatedDateInUTC=GETUTCDATE() WHERE JobID = @cur_jobid
+			-- Insert into JobTracking
+			INSERT INTO JobsTracking(JobID, Status, ChangeDate, ChangedBy) VALUES(@cur_jobid, @new_status, GETDATE(), @UpdatedBy)
 		
-		-- Delete Dictation
-		UPDATE Dictations SET Status = @new_status WHERE DictationID = @cur_dictid
-		-- Insert into DictationTracking
-		INSERT INTO DictationsTracking(DictationID, Status, ChangeDate, ChangedBy) VALUES(@cur_dictid, @new_status, GETDATE(), @UpdatedBy)
+			-- Delete Dictation
+			UPDATE Dictations SET Status = @new_status,UpdatedDateInUTC=GETUTCDATE() WHERE DictationID = @cur_dictid
+			-- Insert into DictationTracking
+			INSERT INTO DictationsTracking(DictationID, Status, ChangeDate, ChangedBy) VALUES(@cur_dictid, @new_status, GETDATE(), @UpdatedBy)
 		END
-			
+
 		UPDATE #tmp_data set Processed = 1 WHERE JobID = @cur_jobid
 	END
 

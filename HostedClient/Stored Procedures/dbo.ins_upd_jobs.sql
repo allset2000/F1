@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -84,14 +83,14 @@ GOTO NO_RULE;
 DECLARE @enc_hold TABLE (encounterid BIGINT)
 DECLARE @encounterid BIGINT
 
-UPDATE Encounters SET AppointmentDate = @appointmentDate, PatientID = @patientID 
+UPDATE Encounters SET AppointmentDate = @appointmentDate, PatientID = @patientID,UpdatedDateInUTC=GETUTCDATE()
 OUTPUT inserted.EncounterID INTO @enc_hold
 WHERE ScheduleID = @schedule_id
 IF @@ROWCOUNT = 0 
 	BEGIN	
-		INSERT INTO Encounters (PatientID, ScheduleID, AppointmentDate)
+		INSERT INTO Encounters (PatientID, ScheduleID, AppointmentDate,UpdatedDateInUTC)
 		OUTPUT inserted.EncounterID INTO @enc_hold
-		VALUES (@patientID, @schedule_id, @appointmentDate)
+		VALUES (@patientID, @schedule_id, @appointmentDate,GETUTCDATE())
 	END
 
 SET @encounterid = (SELECT encounterid FROM @enc_hold)	
@@ -111,14 +110,22 @@ FROM @rule_hold R INNER JOIN Jobs J WITH(NOLOCK) ON ((J.RuleID=R.RuleID and J.Ru
 	 AND J.EncounterID = @encounterid
 
 --UPDATE CURRENT JOBS
-UPDATE Jobs SET OwnerDictatorID = @OwnerID, Status = @status, AdditionalData = @additionalData, RuleID=R.ruleid, JobTypeID=R.jobtypeid
-FROM @rule_hold R 
-INNER JOIN Jobs J on ((J.RuleID=R.RuleID and J.RuleID IS NOT NULL) or (J.RuleID IS NULL)) AND J.EncounterID = @encounterid
-INNER JOIN @current_jobs_hold JH ON J.JobID = JH.jobid
-WHERE enableUpdate = 1
+	UPDATE J 
+	SET 
+		J.OwnerDictatorID = @OwnerID, 
+		J.Status = @status, 
+		J.AdditionalData = @additionalData, 
+		J.RuleID=R.ruleid, 
+		J.JobTypeID=R.jobtypeid,
+		J.UpdatedDateInUTC=GETUTCDATE()
+	FROM Jobs J 	
+	INNER JOIN @current_jobs_hold JH ON J.JobID = JH.jobid
+	INNER JOIN @rule_hold R on ((J.RuleID=R.RuleID and J.RuleID IS NOT NULL) or (J.RuleID IS NULL)) 
+	WHERE enableUpdate = 1 AND J.EncounterID = @encounterid
 
 --UPDATE CURRENT DICTATIONS
-UPDATE Dictations SET Status = @status, DictatorID=R.Dictatorid, QueueID=R.QueueID 
+UPDATE Dictations SET Status = @status, DictatorID=R.Dictatorid, QueueID=R.QueueID,
+		UpdatedDateInUTC=GETUTCDATE()
 OUTPUT inserted.DictationID INTO @current_dictations_hold
 FROM Dictations D INNER JOIN Jobs J on D.JobID=J.JobID INNER JOIN @rule_hold R on J.RuleID=R.ruleid
 WHERE D.JobID IN (SELECT JobID FROM @current_jobs_hold WHERE enableUpdate=1 )
@@ -140,7 +147,8 @@ DECLARE @removed_jobs_hold TABLE (jobid BIGINT, ruleid BIGINT)
 DECLARE @removed_dictations_hold TABLE (dictationid BIGINT)
 
 
-UPDATE Jobs SET Status = 500 
+UPDATE Jobs SET Status = 500,
+		UpdatedDateInUTC=GETUTCDATE() 
 OUTPUT inserted.JobID, inserted.RuleID INTO @removed_jobs_hold
 WHERE EncounterID = @encounterid AND RuleID NOT IN (SELECT RuleID FROM @rule_hold) AND Status = 100
 UPDATE Dictations SET Status = 500 
@@ -169,9 +177,9 @@ BEGIN
 	DECLARE @jobid_hold TABLE (row int identity(1,1),Ruleid BIGINT,jobid BIGINT)
 	
 	--INSERT INTO JOBS
-	INSERT INTO Jobs (JobNumber, ClinicID, EncounterID, JobTypeID, OwnerDictatorID, Status, Stat, Priority, RuleID, AdditionalData)
+	INSERT INTO Jobs (JobNumber, ClinicID, EncounterID, JobTypeID, OwnerDictatorID, Status, Stat, Priority, RuleID, AdditionalData,UpdatedDateInUTC)
 	OUTPUT Inserted.RuleID, Inserted.JobID INTO @jobid_hold
-	SELECT cast(@jobnumber as BIGINT) + ROW, @clinicID, @encounterid, jobtypeid, @OwnerID, 100, 0, 0, ruleid, @additionalData 
+	SELECT cast(@jobnumber as BIGINT) + ROW, @clinicID, @encounterid, jobtypeid, @OwnerID, 100, 0, 0, ruleid, @additionalData,GETUTCDATE()
 	FROM @rule_hold 
 	WHERE ruleid NOT IN (SELECT ruleid FROM @current_jobs_hold)
 	ORDER BY ROW ASC
@@ -187,9 +195,9 @@ BEGIN
 						
 	--INSERT INTO DICTATIONS	
 	DECLARE @dictationid_hold TABLE (Dictationid BIGINT)
-	INSERT INTO Dictations (JobID, DictationTypeID, DictatorID, QueueID, Status, Duration, MachineName, FileName, ClientVersion)
+	INSERT INTO Dictations (JobID, DictationTypeID, DictatorID, QueueID, Status, Duration, MachineName, FileName, ClientVersion,UpdatedDateInUTC)
 	OUTPUT inserted.DictationID INTO @Dictationid_hold
-	SELECT jobid, DT.DictationTypeID,Dictatorid, queueid, 100, 0, '', '', ''
+	SELECT jobid, DT.DictationTypeID,Dictatorid, queueid, 100, 0, '', '', '',GETUTCDATE()
 	FROM @rule_hold RJ 
 	INNER JOIN DictationTypes DT ON RJ.JobTypeID=DT.JobTypeID 
 	INNER JOIN @jobid_hold JH ON RJ.ruleid=JH.Ruleid
@@ -210,7 +218,7 @@ NO_RULE:
 	INNER JOIN Encounters E ON J.Encounterid=E.encounterid 
 	WHERE E.ScheduleID = @schedule_id
 
-	UPDATE Jobs SET Status = 500
+	UPDATE Jobs SET Status = 500,UpdatedDateInUTC=GETUTCDATE()
 	FROM Jobs J INNER JOIN @job_id_delete JD ON J.JobID=JD.jobid
 	WHERE Status IN ('100','500') 
 	UPDATE Dictations SET Status = 500 

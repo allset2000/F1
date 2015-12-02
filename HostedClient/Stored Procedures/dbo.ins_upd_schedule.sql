@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -131,7 +130,8 @@ BEGIN
 			AttendingLast = @attendingLast,
 			RowProcessed = 0,
 			Type = @Type,
-			ChangedOn = GETDATE()
+			ChangedOn = GETDATE(),
+			UpdatedDateInUTC=GETUTCDATE()
 		OUTPUT Inserted.ScheduleID INTO @ScheduleID
 		WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID and ResourceID = @ResourceID
 	END
@@ -157,7 +157,8 @@ BEGIN
 			AttendingLast = @attendingLast,
 			RowProcessed = 0,
 			Type = @Type,
-			ChangedOn = GETDATE()
+			ChangedOn = GETDATE(),
+			UpdatedDateInUTC=GETUTCDATE()
 		OUTPUT Inserted.ScheduleID INTO @ScheduleID
 		WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID
 	END
@@ -165,16 +166,26 @@ BEGIN
 	IF @@ROWCOUNT = 0
 		BEGIN
 	
-		INSERT INTO Schedules (ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, referringID, ReferringName, AttendingFirst, AttendingLast, Type, CreateDate, ChangedOn)
+		INSERT INTO Schedules 
+			(ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID,
+			 LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, referringID,
+			 ReferringName, AttendingFirst, AttendingLast, Type, CreateDate, ChangedOn,UpdatedDateInUTC)
 		OUTPUT Inserted.ScheduleID INTO @ScheduleID	
 		VALUES 
-		(@ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, @ReferringID, @referringName, @attendingFirst, @attendingLast, @type, GETDATE(), GETDATE())
+			(@ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, 
+			ISNULL(@LocationName,''), @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, @ReferringID, 
+			@referringName, @attendingFirst, @attendingLast, @type, GETDATE(), GETDATE(),GETUTCDATE())
 	
 		END
 
-	INSERT INTO SchedulesTracking (ScheduleID, ClinicID, AppointmentDate, PatientID, AppointmentID, EncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, ChangedOn, ChangedBy, referringID, ReferringName, AttendingFirst, AttendingLast, Type)
-	SELECT ScheduleID, @ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, GETDATE(), 'HL7', @referringID, @referringname, @AttendingFirst, @attendingLast, @Type
-	FROM @ScheduleID
+		INSERT INTO SchedulesTracking 
+				(ScheduleID, ClinicID, AppointmentDate, PatientID, AppointmentID, EncounterID, Attending, LocationID, 
+				 LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, ChangedOn, ChangedBy, 
+				 referringID, ReferringName, AttendingFirst, AttendingLast, Type)
+		SELECT ScheduleID, @ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID,
+			   ISNULL(@LocationName,''), @ReasonID, @ReasonName, @ResourceID, @ResourceName, @Status, @AdditionalData, GETDATE(), 'HL7',
+				@referringID, @referringname, @AttendingFirst, @attendingLast, @Type
+		FROM @ScheduleID
 
 	-- Ensure the RulesReasons and RulesProviders tables are updated
 	EXEC dbo.ins_upd_rulesreasons @ClinicID, @ReasonID, @ReasonName, @Type
@@ -238,22 +249,29 @@ BEGIN
 				AttendingLast = @attendingLast,
 				RowProcessed = 0,
 				Type = @Type,
-				ChangedOn = GETDATE()
+				ChangedOn = GETDATE(),
+				UpdatedDateInUTC=GETUTCDATE()
 			OUTPUT Inserted.ScheduleID INTO @ScheduleID
 			WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID and ResourceID = @cur_Resource
 
 			IF @@ROWCOUNT = 0
 				BEGIN
 	
-				INSERT INTO Schedules (ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, referringID, ReferringName, AttendingFirst, AttendingLast, Type, CreateDate, ChangedOn)
+				INSERT INTO Schedules 
+					(ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID,
+					 ResourceName, Status, AdditionalData, referringID, ReferringName, AttendingFirst, AttendingLast, Type, CreateDate, ChangedOn,UpdatedDateInUTC)
 				OUTPUT Inserted.ScheduleID INTO @ScheduleID	
 				VALUES 
-				(@ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName, @cur_Resource, @cur_ResName, @Status, @AdditionalData, @ReferringID, @referringName, @attendingFirst, @attendingLast, @type, GETDATE(), GETDATE())
+					(@ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName, @cur_Resource, 
+					@cur_ResName, @Status, @AdditionalData, @ReferringID, @referringName, @attendingFirst, @attendingLast, @type, GETDATE(), GETDATE(),GETUTCDATE())
 	
 				END
 
-			INSERT INTO SchedulesTracking (ScheduleID, ClinicID, AppointmentDate, PatientID, AppointmentID, EncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, ChangedOn, ChangedBy, referringID, ReferringName, AttendingFirst, AttendingLast, Type)
-			SELECT ScheduleID, @ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName, @cur_Resource, @cur_ResName, @Status, @AdditionalData, GETDATE(), 'HL7', @referringID, @referringname, @AttendingFirst, @attendingLast, @Type
+			INSERT INTO SchedulesTracking
+					 (ScheduleID, ClinicID, AppointmentDate, PatientID, AppointmentID, EncounterID, Attending, LocationID, LocationName, ReasonID, ReasonName,
+					 ResourceID, ResourceName, Status, AdditionalData, ChangedOn, ChangedBy, referringID, ReferringName, AttendingFirst, AttendingLast, Type)
+			SELECT ScheduleID, @ClinicID, @AppointmentDate, @PatientID, @AppointmentID, @EncounterID, @Attending, @LocationID, ISNULL(@LocationName,''), @ReasonID, @ReasonName,
+					 @cur_Resource, @cur_ResName, @Status, @AdditionalData, GETDATE(), 'HL7', @referringID, @referringname, @AttendingFirst, @attendingLast, @Type
 			FROM @ScheduleID
 
 			-- Ensure the RulesReasons and RulesProviders tables are updated

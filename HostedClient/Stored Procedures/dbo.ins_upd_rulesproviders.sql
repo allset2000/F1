@@ -16,12 +16,12 @@ BEGIN
 
 	IF EXISTS(SELECT 1 FROM RulesProviders where ClinicId = @ClinicId and EHRCode = @ResourceID)
 	BEGIN
-		UPDATE RulesProviders SET Description = @ResourceName where ClinicId = @ClinicId and EHRCode = @ResourceID
+		UPDATE RulesProviders SET Description = @ResourceName,UpdatedDateInUTC=GETUTCDATE() where ClinicId = @ClinicId and EHRCode = @ResourceID
 	END
 	ELSE
 	BEGIN
-		INSERT INTO RulesProviders(ClinicId,EHRCode,Description)
-		VALUES(@ClinicID, @ResourceID, @ResourceName)
+		INSERT INTO RulesProviders(ClinicId,EHRCode,Description,UpdatedDateInUTC)
+		VALUES(@ClinicID, @ResourceID, @ResourceName,GETUTCDATE())
 	END
 
 END
