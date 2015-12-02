@@ -11,15 +11,15 @@ CREATE TABLE [dbo].[Jobs]
 [Priority] [smallint] NOT NULL CONSTRAINT [DF_Jobs_Priority] DEFAULT ((0)),
 [RuleID] [smallint] NULL,
 [AdditionalData] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[ProcessFailureCount] [smallint] NULL
+[ProcessFailureCount] [smallint] NULL,
+[UpdatedDateInUTC] [datetime] NULL CONSTRAINT [DF_JOBS_UpdatedDateInUTC] DEFAULT (getutcdate())
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_ClinicID] ON [dbo].[Jobs] ([ClinicID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [UNQ_ClinicID_Jobnumber] ON [dbo].[Jobs] ([ClinicID], [JobNumber]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [UNQ_ClinicID_Jobnumber] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([JobNumber], [OwnerDictatorID], [Stat], [Priority], [RuleID], [AdditionalData]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [FK_EncounterID_Status] ON [dbo].[Jobs] ([EncounterID], [Status]) ON [PRIMARY]
 GO

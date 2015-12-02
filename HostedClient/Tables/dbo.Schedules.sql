@@ -22,7 +22,8 @@ CREATE TABLE [dbo].[Schedules]
 [AttendingLast] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ChangedOn] [datetime] NULL CONSTRAINT [DF_Schedules_ChangedOn] DEFAULT (getdate()),
 [Type] [varchar] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF__Schedules__Type__544C7222] DEFAULT ('S'),
-[CreateDate] [datetime] NULL
+[CreateDate] [datetime] NULL,
+[UpdatedDateInUTC] [datetime] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Schedules] ADD CONSTRAINT [PK_Schedules] PRIMARY KEY CLUSTERED  ([ScheduleID]) ON [PRIMARY]

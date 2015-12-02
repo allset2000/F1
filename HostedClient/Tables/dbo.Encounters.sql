@@ -3,7 +3,8 @@ CREATE TABLE [dbo].[Encounters]
 [EncounterID] [bigint] NOT NULL IDENTITY(1, 1),
 [AppointmentDate] [datetime] NOT NULL,
 [PatientID] [int] NOT NULL,
-[ScheduleID] [bigint] NULL
+[ScheduleID] [bigint] NULL,
+[UpdatedDateInUTC] [datetime] NULL CONSTRAINT [DF_Encounters_UpdatedDateInUTC] DEFAULT (getutcdate())
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Encounters] ADD CONSTRAINT [PK_Appointments] PRIMARY KEY CLUSTERED  ([EncounterID]) ON [PRIMARY]

@@ -19,24 +19,19 @@ CREATE TABLE [dbo].[Patients]
 [Phone2] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Patients_Phone2] DEFAULT (''),
 [Fax1] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Patients_Fax1] DEFAULT (''),
 [Fax2] [varchar] (25) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF_Patients_Fax2] DEFAULT (''),
-[PrimaryCareProviderID] [int] NULL
+[PrimaryCareProviderID] [int] NULL,
+[UpdatedDateInUTC] [datetime] NULL CONSTRAINT [DF_Patients_UpdatedDateInUTC] DEFAULT (getutcdate())
 ) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_ClinicID_INC_MRN_FirstName_MI_LastName] ON [dbo].[Patients] ([ClinicID], [AlternateID]) INCLUDE ([FirstName], [LastName], [MI], [MRN]) ON [PRIMARY]
-
-
-
-
-
-ALTER TABLE [dbo].[Patients] ADD
-CONSTRAINT [FK_Patients_ReferringPhysicians] FOREIGN KEY ([PrimaryCareProviderID]) REFERENCES [dbo].[ReferringPhysicians] ([ReferringID])
-
-
-CREATE NONCLUSTERED INDEX [IX_Patients] ON [dbo].[Patients] ([AlternateID]) ON [PRIMARY]
-
 GO
 ALTER TABLE [dbo].[Patients] ADD CONSTRAINT [PK_Patients] PRIMARY KEY CLUSTERED  ([PatientID]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Patients] ADD CONSTRAINT [UNQ__Patients__MRN] UNIQUE NONCLUSTERED  ([ClinicID], [MRN]) ON [PRIMARY]
 GO
+CREATE NONCLUSTERED INDEX [IX_Patients] ON [dbo].[Patients] ([AlternateID]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_ClinicID_INC_MRN_FirstName_MI_LastName] ON [dbo].[Patients] ([ClinicID], [AlternateID]) INCLUDE ([FirstName], [LastName], [MI], [MRN]) ON [PRIMARY]
+GO
 ALTER TABLE [dbo].[Patients] ADD CONSTRAINT [FK_Patients_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID]) ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Patients] ADD CONSTRAINT [FK_Patients_ReferringPhysicians] FOREIGN KEY ([PrimaryCareProviderID]) REFERENCES [dbo].[ReferringPhysicians] ([ReferringID])
 GO
