@@ -19,7 +19,7 @@ AS
 
 Begin Tran
 
-update schedules set EHREncounterID = @EHREncounterID where ScheduleID = @ScheduleID
+UPDATE schedules set EHREncounterID = @EHREncounterID,UpdatedDateInUTC=GETUTCDATE() where ScheduleID = @ScheduleID
 
 Commit tran
 

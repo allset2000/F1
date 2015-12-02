@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -26,19 +25,20 @@ AS
 Begin Tran
 
 update D
-set D.dictatorid = @dictatorid
+set D.dictatorid = @dictatorid,UpdatedDateInUTC=GETUTCDATE()
 FROM dictations  D
 inner join Jobs J on D.jobid = J.jobid
 where D.dictationid = @dictationid and J.jobid = @JobID
 
 update D
-set D.Status = 250, D.FileName= 'C:\AudioIn\' + CONVERT(varchar(50), @dictationid) + '.' + @Extension
+set D.Status = 250, D.FileName= 'C:\AudioIn\' + CONVERT(varchar(50), @dictationid) + '.' + @Extension,
+UpdatedDateInUTC=GETUTCDATE()
 FROM Dictations D
 inner join Jobs J on d.jobid = J.jobid 
 where D.DictationID = @dictationid and J.jobid = @JobID
 
 update J
-set J.Status = 300
+set J.Status = 300, UpdatedDateInUTC=GETUTCDATE()
 from jobs J
 inner join dictations D on D.jobid = J.jobid
 where D.dictationid = @dictationid and J.jobid = @JobID

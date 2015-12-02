@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -210,8 +209,8 @@ IF NOT EXISTS (SELECT 1 FROM SystemConfiguration WHERE ConfigKey = 'SMDefaultCli
 
 	INSERT INTO Entrada.dbo.Locations(ClinicId,LocationID,LocationName) VALUES(@ClinicId,1,'Main')
 
-	INSERT INTO Patients(ClinicId,MRN,AlternateId,FirstName,MI,LastName,Suffix,Gender,Address1,Address2,City,State,Zip,DOB,Phone1,Phone2,Fax1,Fax2)
-	VALUES(@ClinicId,'999999','','GENERIC','','PATIENT','','','','','','','','','','','','')
+	INSERT INTO Patients(ClinicId,MRN,AlternateId,FirstName,MI,LastName,Suffix,Gender,Address1,Address2,City,State,Zip,DOB,Phone1,Phone2,Fax1,Fax2,UpdatedDateInUTC)
+	VALUES(@ClinicId,'999999','','GENERIC','','PATIENT','','','','','','','','','','','','',GETUTCDATE())
 
 	SET @PatientId = @@IDENTITY
 

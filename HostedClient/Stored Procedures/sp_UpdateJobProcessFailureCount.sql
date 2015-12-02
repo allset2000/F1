@@ -1,7 +1,7 @@
-SET ANSI_NULLS ON
-GO
 
 SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
 GO
 -- =============================================
 -- Author: Narender
@@ -15,11 +15,8 @@ BEGIN
  declare @ProcessFailureCount smallint
 
  IF(( select ProcessFailureCount from Jobs where JobNumber = @jobNumber) is NOT NULL)
-		UPDATE Jobs SET @ProcessFailureCount = ProcessFailureCount = ProcessFailureCount + 1 WHERE (JobNumber = @jobNumber)
+		UPDATE Jobs SET @ProcessFailureCount = ProcessFailureCount = ProcessFailureCount + 1,UpdatedDateInUTC=GETUTCDATE() WHERE (JobNumber = @jobNumber)
  ELSE
-		UPDATE Jobs SET  ProcessFailureCount = 1 WHERE (JobNumber = @jobNumber)
+		UPDATE Jobs SET  ProcessFailureCount = 1,UpdatedDateInUTC=GETUTCDATE() WHERE (JobNumber = @jobNumber)
 END
-
 GO
-
-
