@@ -18,7 +18,7 @@ BEGIN
 			DATEDIFF(SECOND,{D '1970-01-01'}, s.AppointmentDate) AS AppointmentDate, --Unix Timestamp
 			s.ReasonName,
 			s.PatientID,
-			e.EncounterID,
+			s.EHREncounterID AS EncounterID,
 			s.ReasonName,
 			s.ResourceID,
 			s.[Status] AS AppointmentStatus 

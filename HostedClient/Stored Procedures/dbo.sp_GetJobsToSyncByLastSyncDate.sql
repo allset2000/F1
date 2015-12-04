@@ -18,7 +18,7 @@ BEGIN
 	 SELECT j.JobID, 
 			j.JobNumber,
 			j.JobTypeID, 
-			CASE WHEN q.Deleted = 1 THEN 500 ELSE 100 END AS [State],			
+			j.[Status] AS [State],			
 			j.Stat AS IsStat,
 			q.QueueID		
 	FROM dbo.Dictations AS d 
@@ -27,8 +27,8 @@ BEGIN
 		INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID AND d.DictatorID=qu.DictatorID
 		INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
 	WHERE e.EncounterID = @EncounterId AND 	       
-		  d.[Status] IN (100, 200) AND 
-		  q.Deleted = 0 AND 
+		  d.[Status] IN (100, 200) AND 	
+		  q.Deleted=0 AND
 		   ISNULL(j.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
 END
 
