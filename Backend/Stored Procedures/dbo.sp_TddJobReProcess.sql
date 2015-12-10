@@ -1,7 +1,10 @@
-SET QUOTED_IDENTIFIER ON
-GO
+/****** Object:  StoredProcedure [dbo].[sp_TddJobReProcess]    Script Date: 12/4/2015 6:54:05 AM ******/
 SET ANSI_NULLS ON
 GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
 CREATE PROCEDURE [dbo].[sp_TddJobReProcess] 
 	-- Add the parameters for the stored procedure here
 	@JobNumber varchar(20)
@@ -13,7 +16,14 @@ BEGIN
 	BEGIN
 		BEGIN TRY
 			BEGIN TRANSACTION
+				IF EXISTS(SELECT * FROM [dbo].[DocumentsToProcess] WHERE [JobNumber] = @JobNumber)
+				BEGIN
+					UPDATE DocumentsToProcess SET ProcessFailureCount = 0 WHERE [JobNumber] = @JobNumber
+				END
+				ELSE
+				BEGIN
 				INSERT INTO DocumentsToProcess ([JobNumber]) VALUES (@JobNumber)
+				END
 				INSERT INTO JobsTddReProcess VALUES(@JobNumber, SUSER_NAME(), GETDATE())
 			COMMIT TRANSACTION
 		END TRY
@@ -33,4 +43,7 @@ BEGIN
 	END
 	RETURN
 END
+
 GO
+
+

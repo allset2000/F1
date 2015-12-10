@@ -1,4 +1,4 @@
-/****** Object:  StoredProcedure [dbo].[sp_GetAllRuleNames]    Script Date: 11/12/2015 5:29:43 AM ******/
+/****** Object:  StoredProcedure [dbo].[sp_GetAllRuleNames]    Script Date: 10/8/2015 9:16:52 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -31,10 +31,11 @@ BEGIN
 							WHEN @Method = 1000 THEN 'ROW_NextGenImage'
 							WHEN @Method = 200 THEN 'ROW_HL7Rules' END))	
 
-	SET @Sql = 'SELECT CONVERT(VARCHAR,RuleId) AS DeliveryRuleID, RuleName AS DeliveryRuleName FROM ' + @Tbl + ' R
-				WHERE R.ClinicID = ' + CONVERT(VARCHAR,@ClinicID) + ''
-				
-	--PRINT @Sql
+	SET @Sql = 'SELECT RuleName AS DeliveryRuleID, RuleName AS DeliveryRuleName FROM ' + @Tbl + ' R
+				WHERE R.ClinicID = ' + CONVERT(VARCHAR,@ClinicID) + '
+				AND ISNULL(R.DictatorName,'''') = ''' + CONVERT(VARCHAR,@DictatorName) + '''
+				AND ISNULL(R.LocationID,''0'') = ' + ISNULL(CONVERT(VARCHAR,@LocationID),0) + ''
+	PRINT @Sql
 	EXECUTE(@Sql)	
 END
 
