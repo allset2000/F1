@@ -27,13 +27,6 @@ BEGIN TRY
 	BEGIN TRANSACTION  
 	DECLARE @JobNumber  VARCHAR(20)
 	DECLARE @Status  INT
-	DECLARE @vvcrMRN INT 
-	DECLARE @vvcrJobType VARCHAR(100)
-	DECLARE @vintDocumentID INT
-	DECLARE @vvcrFirstName VARCHAR(50)
-	DECLARE @vvcrMI VARCHAR(50)
-	DECLARE @vvcrLastName VARCHAR(50)
-	DECLARE @vvcrDOB VARCHAR(50)
 
 	SELECT @JobNumber =  Client.value('JobNumber[1]','VARCHAR(20)') 
 	FROM @xmlJobsClient.nodes('JobsClient')Catalog(Client)
@@ -132,22 +125,6 @@ BEGIN TRY
 	--Insert data into OrphanJobs table	
 	INSERT INTO OrphanJobsToProcess(JobNumber,CreatedOn)
 	VALUES(@JobNumber,getdate())
-
-
-	-- INITIAL JOB HISTORY TRACKING STARTS GERE 
-		-- get demographics information from xml string
-		SELECT @vvcrMRN = Patients.value('MRN[1]','VARCHAR(50)'),@vvcrFirstName = Patients.value('FirstName[1]','VARCHAR(50)'),
-			   @vvcrMI = Patients.value('MI[1]','VARCHAR(50)'),@vvcrLastName=Patients.value('LastName[1]','VARCHAR(50)'),
-			   @vvcrDOB = Patients.value('DOB[1]','VARCHAR(50)') 
-		FROM @xmlJobsPatients.nodes('JobsPatients')Catalog(Patients)
-	
-		-- get jobtype value from jobs xnl string
-		SELECT @vvcrJobType = Jobs.value('JobType[1]','VARCHAR(100)')
-		FROM @xmlJobs.nodes('Jobs')Catalog(Jobs)
-
-		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,FirstName,MI,LastName,DOB)
-		VALUES(@JobNumber,@vvcrMRN,@vvcrJobType,100,null,null,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB)
-	-- END
 
 	COMMIT TRANSACTION  
  END TRY
