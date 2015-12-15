@@ -23,7 +23,7 @@ SELECT     dbo.Jobs.JobNumber, dbo.Jobs.DictatorID, dbo.Jobs.ClinicID, dbo.Jobs.
                       JR.Suffix AS RefSuffix, JR.DOB AS RefDOB, JR.SSN AS RefSSN, JR.Sex AS RefSex, JR.Address1 AS RefAddress1, JR.Address2 AS RefAddress2, JR.City AS RefCity, JR.State AS RefState, 
                       JR.Zip AS RefZip, JR.Phone AS RefPhone, JR.Fax AS RefFax, JR.ClinicName AS RefClinicName, dbo.Jobs_Client.FileName AS ClientJobNumber, dbo.JobsToDeliver.DeliveryID, 
                       dbo.JobsToDeliver.Method, dbo.JobsToDeliver.LastUpdatedOn, dbo.Dictators.FirstName AS DictatorFirstName, dbo.Dictators.MI AS DictatorMI, dbo.Dictators.LastName AS DictatorLastName, 
-                      dbo.Dictators.Suffix AS DictatorSuffix, dbo.Dictators.Initials AS DictatorInitials, dbo.Dictators.Signature AS DictatorSignature, dbo.Dictators.User_Code AS DictatorUserCode, 
+                      dbo.Dictators.Suffix AS DictatorSuffix, dbo.Dictators.Initials AS DictatorInitials, RTRIM(dbo.Dictators.FirstName) + ' ' + RTRIM(dbo.Dictators.MI) + ' ' + RTRIM(dbo.Dictators.LastName) + ', ' + RTRIM(dbo.Dictators.Suffix) AS DictatorSignature, dbo.Dictators.User_Code AS DictatorUserCode, 
                       dbo.Dictators.EHRProviderID, dbo.Dictators.EHRAliasID, dbo.Clinics.EHRClinicID
 FROM         dbo.JobsToDeliver INNER JOIN
                       dbo.Jobs ON dbo.JobsToDeliver.JobNumber = dbo.Jobs.JobNumber INNER JOIN
