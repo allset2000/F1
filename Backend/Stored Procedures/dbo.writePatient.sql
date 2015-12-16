@@ -36,6 +36,36 @@ IF NOT EXISTS(SELECT * FROM [dbo].[Jobs_Patients] WHERE ([JobNumber] = @JobNumbe
    END
 ELSE 
    BEGIN
+		-- **This block is to save record in Job_History table**		
+		DECLARE @CurrentStatus INT
+		DECLARE @PreviousMRN VARCHAR(50)
+		DECLARE @PreviousFirstName VARCHAR(50)
+		DECLARE @PreviousMI VARCHAR(50)
+		DECLARE @PreviousLastName VARCHAR(50)
+		DECLARE @PreviousDOB VARCHAR(50)		
+
+		-- Getting Job Status		
+		SELECT @CurrentStatus = STATUS FROM JobStatusA WHERE jobnumber = @JobNumber
+		IF(@CurrentStatus is NULL )
+			SELECT @CurrentStatus = STATUS FROM JobStatusB WHERE jobnumber = @JobNumber
+
+		-- if any demographics value is changed then track that previous value. 
+		SELECT 
+			@PreviousMRN = CASE WHEN MRN <> @MRN THEN MRN ELSE NULL END,
+			@PreviousFirstName = CASE WHEN FirstName <> @FirstName THEN FirstName ELSE NULL END,
+			@PreviousMI = CASE WHEN MI <> @MI THEN MI ELSE NULL END,
+			@PreviousLastName = CASE WHEN LastName <> @LastName THEN LastName ELSE NULL END,
+			@PreviousDOB = CASE WHEN DOB <> @DOB THEN DOB ELSE NULL END
+		FROM jobs_patients
+		WHERE JOBNUMBER = @JobNumber
+		IF (@PreviousMRN IS NOT NULL OR @PreviousFirstName IS NOT NULL OR @PreviousMI IS NOT NULL OR @PreviousLastName IS NOT NULL OR @PreviousDOB IS NOT NULL)
+		BEGIN
+			INSERT INTO Job_History
+			(JobNumber, MRN, CurrentStatus, FirstName, MI, LastName, DOB, HistoryDateTime)
+			VALUES
+			(@JobNumber, @PreviousMRN, @CurrentStatus, @PreviousFirstName, @PreviousMI, @PreviousLastName, @PreviousDOB, GETDATE())
+		END
+		-- ****
 	UPDATE [dbo].[Jobs_Patients] 
 	 SET
 		 [PatientId] = @PatientId , 
