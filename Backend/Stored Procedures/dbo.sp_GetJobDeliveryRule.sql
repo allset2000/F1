@@ -1,10 +1,9 @@
-/****** Object:  StoredProcedure [dbo].[sp_GetJobDeliveryRule]    Script Date: 11/12/2015 5:27:51 AM ******/
+/****** Object:  StoredProcedure [dbo].[sp_GetJobDeliveryRule]    Script Date: 10/8/2015 5:12:52 AM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
-
 
 -- =============================================  
 -- Author: Santhosh 
@@ -14,7 +13,6 @@ GO
 CREATE PROCEDURE [dbo].[sp_GetJobDeliveryRule] 
 (
 	@RuleID INT	
-	, @RuleTypeID INT	
 )
 AS
 BEGIN
@@ -57,16 +55,14 @@ BEGIN
 
 		SET @Sql = 'SELECT ' + @Value + ' FROM JobDeliveryRules J LEFT JOIN ' + @Tbl + ' R
 					ON R.ClinicID = J.ClinicID
-					AND ((' + CONVERT(VARCHAR,@RuleTypeID) + ' <> ''0'' AND R.RuleId = ' + CONVERT(VARCHAR,@RuleTypeID) + ') OR
-					(' + CONVERT(VARCHAR,@RuleTypeID) + ' = ''0'' AND ISNULL(R.DictatorName,'''') = ISNULL(J.DictatorName,'''') 
+					AND ISNULL(R.DictatorName,'''') = ISNULL(J.DictatorName,'''') 
 					AND ISNULL(R.RuleName,'''') = ISNULL(J.RuleName,'''')
-					AND ISNULL(R.LocationID,''0'') = ISNULL(J.LocationID,''0'')))
+					AND ISNULL(R.LocationID,''0'') = ISNULL(J.LocationID,''0'')
 					WHERE J.RuleId = ' + CONVERT(VARCHAR,@RuleID) + ''
-		PRINT @Sql
+		--PRINT @Sql
 		EXECUTE(@Sql)
 	END
 END
-
 
 
 GO

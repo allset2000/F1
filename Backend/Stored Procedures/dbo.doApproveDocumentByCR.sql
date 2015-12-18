@@ -27,7 +27,7 @@ BEGIN
 	
 			/* Tracking into job history table */
 			SELECT @DocumentId = IDENT_CURRENT('Jobs_Documents_History')
-			exec spInsertJobHistory @JobNumber,null,null,@Status,@documentID,@oldUsername
+			exec spInsertJobHistory @JobNumber,null,null,@Status,@documentID,@oldUsername,null,null,null,null
 
 		/* Update Job Document */							
 		UPDATE Jobs_Documents
