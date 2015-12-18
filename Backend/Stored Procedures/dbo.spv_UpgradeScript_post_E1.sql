@@ -9,7 +9,7 @@ GO
 -- Create date: 24/11/2015
 -- Description: SP Used to store Backend data changes in the E.1 release
 -- =============================================
-CREATE PROCEDURE [dbo].[spv_UpgradeScript_post_D2]
+CREATE PROCEDURE [dbo].[spv_UpgradeScript_post_E1]
 AS
 BEGIN
 --BEGIN #746
