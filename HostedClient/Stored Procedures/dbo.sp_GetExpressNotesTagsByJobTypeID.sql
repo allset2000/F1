@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -16,7 +17,7 @@ BEGIN
 
 		SET NOCOUNT ON;
 
-		SELECT TagID,
+		SELECT TagID as ID,
 		        Name,
 				[Required]
 		 FROM dbo.[ExpressNotesTags]
@@ -26,3 +27,4 @@ END
 
 
 GO
+

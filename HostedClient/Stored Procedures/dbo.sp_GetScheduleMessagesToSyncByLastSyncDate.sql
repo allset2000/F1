@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -14,7 +15,7 @@ CREATE PROCEDURE [dbo].[sp_GetScheduleMessagesToSyncByLastSyncDate](
 )
 AS
 BEGIN
-	 SELECT  s.ScheduleID, 
+	 SELECT  s.ScheduleID AS ID, 
 			DATEDIFF(SECOND,{D '1970-01-01'}, s.AppointmentDate) AS AppointmentDate, --Unix Timestamp
 			s.ReasonName,
 			s.PatientID,
@@ -26,7 +27,7 @@ BEGIN
 	 INNER JOIN dbo.Encounters AS e ON S.ScheduleID = e.ScheduleID
 	 INNER JOIN dbo.Jobs AS j ON E.EncounterID = j.EncounterID 
 	 INNER JOIN dbo.Dictations D ON D.JobID=J.JobID
-	 INNER JOIN Queue_Users qu ON  qu.QueueID = d.QueueID AND d.DictatorID=qu.DictatorID
+	 INNER JOIN Queue_Users qu ON  qu.QueueID = d.QueueID 
 	 INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID	
 	WHERE qu.DictatorID = @DictatorId AND 	       
 		  d.[Status] IN (100, 200) AND 		
