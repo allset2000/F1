@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -16,7 +17,7 @@ CREATE PROCEDURE [dbo].[sp_GetJobTypesToSyncByLastSyncDate](
 BEGIN
 
 		SET NOCOUNT ON;
-		SELECT JobTypeID,
+		SELECT JobTypeID AS ID,
 		     CASE WHEN Deleted = 1 THEN 500 ELSE 100 END AS [State]
 		 FROM dbo.JobTypes
 		 WHERE ClinicID=@ClinicId
@@ -25,3 +26,4 @@ END
 
 
 GO
+

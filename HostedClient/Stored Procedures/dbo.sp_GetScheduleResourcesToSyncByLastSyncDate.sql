@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -14,7 +15,7 @@ CREATE PROCEDURE [dbo].[sp_GetScheduleResourcesToSyncByLastSyncDate] (
 AS
 BEGIN
 
-	SELECT EHRCode as 'ResourceId',
+	SELECT EHRCode as 'ID',
 		   Description as 'ResourceName' 
      FROM RulesProviders 
 	 WHERE ClinicID = @ClinicId AND
@@ -23,3 +24,4 @@ END
 
 
 GO
+

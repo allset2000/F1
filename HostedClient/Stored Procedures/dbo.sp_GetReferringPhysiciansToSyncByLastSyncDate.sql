@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -15,10 +16,10 @@ CREATE PROCEDURE [dbo].[sp_GetReferringPhysiciansToSyncByLastSyncDate] (
 ) AS 
 BEGIN
 
-		SELECT DISTINCT ReferringID, [State], FirstName, LastName, 
+		SELECT DISTINCT ReferringID AS ID, [State], FirstName, LastName, 
 			   [Address], Phone1
 		FROM(    
-				SELECT rp.ReferringID,
+				SELECT rp.ReferringID ,
 						CASE WHEN q.Deleted = 1 THEN 500 ELSE 100 END AS [State],
 						rp.FirstName,
 						rp.LastName,						
@@ -45,7 +46,7 @@ BEGIN
 						INNER JOIN dbo.Encounters AS e ON p.PatientID = e.PatientID
 						INNER JOIN dbo.Jobs AS j ON e.EncounterID = j.EncounterID
 						INNER JOIN dbo.Dictations AS d ON d.JobID = j.JobID 
-						INNER JOIN dbo.Queue_Users AS qu ON d.QueueID = qu.QueueID AND D.DictatorID=QU.DictatorID
+						INNER JOIN dbo.Queue_Users AS qu ON d.QueueID = qu.QueueID 
 						INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID 
 						INNER JOIN dbo.ReferringPhysicians rp ON rp.ReferringID=p.PrimaryCareProviderID 
 					WHERE qu.DictatorID = @DictatorId AND 	       
@@ -60,3 +61,4 @@ BEGIN
 
 END
 GO
+
