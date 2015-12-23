@@ -1,0 +1,31 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
+
+--Create Stored procedure
+
+/*
+	Created By: Mikayil Bayramov
+	Created Date: 03/21/2015
+	Version: 1.0
+	Details: Gets log configuration per application code
+	
+	Revised Date: Insert revised date here
+	Revised By: Insert name of developer this scrip was modified.
+	Revision Details: Why this script was changed?
+	Revision Version: What version is this?
+*/
+CREATE PROCEDURE [dbo].[sp_GetLogConfigurationByApplicationCode](
+	@ApplicationCode VARCHAR(50)
+)
+AS
+BEGIN
+	SELECT LogConfigurationID, ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject
+		   ,EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb
+		   ,PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate
+	FROM [dbo].[LogConfiguration]
+	WHERE [ApplicationCode] = @ApplicationCode
+END
+
+GO
