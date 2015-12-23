@@ -1,10 +1,16 @@
+/****** Object:  StoredProcedure [dbo].[sp_IsJobTypeNameUnique]    Script Date: 12/21/2015 7:52:51 AM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
 
 -- =============================================
 -- Author:		Tamojit Chakraborty
 -- Create date: 12/3/2015
 -- Description:	Check if the job type name already exist
 -- =============================================
-Create PROCEDURE [dbo].[sp_IsJobTypeNameUnique] 
+CREATE PROCEDURE [dbo].[sp_IsJobTypeNameUnique] 
 	-- Add the parameters for the stored procedure here
 	@jobtypename varchar(100) , 
 
@@ -25,3 +31,6 @@ SELECT @isjobtypenameunique=0
 	  select @isjobtypenameunique as IsJobTypeNameUnique
 	
 END
+GO
+
+
