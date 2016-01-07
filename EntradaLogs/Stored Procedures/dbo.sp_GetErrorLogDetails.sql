@@ -34,7 +34,7 @@ BEGIN
 			LC.TddTagId, LC.TddTagName, LC.ROWAdminId, LC.ROWUserId, LC.DictatorId_str, LC.QueueId, LC.EHRClinicId, LC.ChangedData, LC.ClinicDocumentId, LC.RoleId, LC.ActionId,
 			LC.ErrorId, LC.ConfigurationId, LC.ConnectionString, LC.InvitationId
 	FROM DBO.LogExceptions LE
-	INNER JOIN [dbo].[LogExceptionsCustomData] LC ON LC.LogExceptionID=LE.LogExceptionID
+	LEFT JOIN [dbo].[LogExceptionsCustomData] LC ON LC.LogExceptionID=LE.LogExceptionID
 	WHERE CONVERT(DATE,LE.ErrorCreatedDate)>='''+CONVERT(VARCHAR(10),@FromDate,101)+''' AND CONVERT(DATE,LE.ErrorCreatedDate)<='''+CONVERT(VARCHAR(10),@ToDate,101)+''''
 
 	IF(ISNULL(@LogConfigurationID,0)>0)
