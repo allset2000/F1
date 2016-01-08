@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -18,12 +19,10 @@ BEGIN
 	 
 	SET @FromDate=ISNULL(@FromDate,DATEADD(DAY,-7,GETDATE()))
 
-
-
 	SELECT  SUBSTRING(exceptionmessage, 1, @SubStringLength) AS [ExceptionMessage], 
 	        COUNT(*) AS Total
-	FROM logexceptions LE 
-	INNER JOIN logconfiguration LC ON LE.logconfigurationid = lc.logconfigurationid
+	FROM dbo.logexceptions LE 
+	INNER JOIN dbo.logconfiguration LC ON LE.logconfigurationid = lc.logconfigurationid
 	WHERE CONVERT(DATE,LE.ErrorCreatedDate)>=CONVERT(DATE,@FromDate) 
 				AND CONVERT(DATE,LE.ErrorCreatedDate)<=CONVERT(DATE,ISNULL(@ToDate,GETDATE())
 				)

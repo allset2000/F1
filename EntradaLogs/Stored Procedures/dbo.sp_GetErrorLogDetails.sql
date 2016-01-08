@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -7,7 +8,6 @@ GO
 -- Create date: 01/04/2016
 -- Description:	Error log details
 -- =============================================
---exec sp_GetErrorLogDetails 0,0,@LogExceptionMessage='System.AggregateException: One or more errors occurred. ---> System.Data.SqlClient.SqlException:'
 CREATE PROCEDURE [dbo].[sp_GetErrorLogDetails]	
 @LogConfigurationID INT=0,
 @LogExceptionID INT=0,
@@ -39,8 +39,7 @@ BEGIN
 
 	IF(ISNULL(@LogConfigurationID,0)>0)
 		SET @SqlStatement=@SqlStatement+' AND LE.LogConfigurationID='+CAST(@LogConfigurationID AS VARCHAR)
-
-	IF(ISNULL(@LogExceptionID,0)>0)
+	ELSE IF(ISNULL(@LogExceptionID,0)>0)
 		 SET @SqlStatement=@SqlStatement+' AND LE.LogExceptionID='+CAST(@LogExceptionID AS VARCHAR)
     
 	EXEC (@SqlStatement)
