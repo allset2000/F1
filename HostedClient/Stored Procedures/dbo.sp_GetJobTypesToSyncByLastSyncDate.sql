@@ -18,6 +18,7 @@ BEGIN
 
 		SET NOCOUNT ON;
 		SELECT JobTypeID AS ID,
+		     Name,
 		     CASE WHEN Deleted = 1 THEN 500 ELSE 100 END AS [State]
 		 FROM dbo.JobTypes
 		 WHERE ClinicID=@ClinicId
@@ -26,4 +27,3 @@ END
 
 
 GO
-
