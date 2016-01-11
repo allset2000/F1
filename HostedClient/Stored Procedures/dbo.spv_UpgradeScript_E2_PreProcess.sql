@@ -15,7 +15,7 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_E2_PreProcess]
 --X
 --X AUTHOR: Sharif Shaik
 --X
---X DESCRIPTION: This script updateds/deletes the data to enable the constraints to be deployed without any issues.
+--X DESCRIPTION: This script updates/deletes the data to enable the constraints to be deployed without any issues.
 --X				 This is a pre-installation script, this procedure should be executed before taking the latest schema
 --X
 --X ASSUMPTIONS: 
