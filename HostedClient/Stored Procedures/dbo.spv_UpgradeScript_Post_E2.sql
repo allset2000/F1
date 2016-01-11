@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -64,9 +65,10 @@ BEGIN
 		INNER JOIN Applications ON Applications.ApplicationId = Modules.ApplicationId
 
 
+	Delete from [Permissions] where code ='MOBILE-SECURE-MESSAGING-DELETE-MESSAGE'
 	IF NOT EXISTS(select 1 from [Permissions] where code ='MOBILE-SECURE-MESSAGING-DELETE-MESSAGE')
 	BEGIN
-		INSERT INTO  [dbo].[Permissions] SELECT 'MOBILE-SECURE-MESSAGING-DELETE-MESSAGE','Allows user to delete message locally from a chat', NULL,3
+		INSERT INTO  [dbo].[Permissions] SELECT 'MOBILE-SECURE-MESSAGING-DELETE-MESSAGE','Function - Delete Message locally from a chat', NULL,3
 	END
 
 	Update [Permissions]
