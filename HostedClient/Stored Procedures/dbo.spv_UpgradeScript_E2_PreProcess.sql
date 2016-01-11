@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -40,7 +41,7 @@ BEGIN
 
 	SET NOCOUNT ON;
 	
-	/* BEGIN - #4459 - Adding New column to Applications and Module table */
+		/* BEGIN - #4459 - Adding New column to Applications and Module table */
 		IF NOT EXISTS( SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS		
 					WHERE TABLE_NAME = 'Applications'
 					AND COLUMN_NAME = 'AppCode' 
@@ -56,6 +57,7 @@ BEGIN
 		BEGIN
 			ALTER TABLE [dbo].[Modules] ADD ModuleCode varchar(100) NOT NULL CONSTRAINT DF_Modules_ModuleCode DEFAULT 'UNKNOWN'
 		END
+		/* END - #4459 */
 	
 	
 END  -- End of PRoc
