@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -26,7 +27,8 @@ BEGIN
 		   R.RoleId,
 		   R.RoleName,
 		   R.Description as 'RoleDescription',
-		   U.UserName
+		   U.UserName,
+		   M.ModuleCode
 	FROM UserRoleXref URX
 		INNER JOIN RolePerMissionXref RPX on RPX.RoleId = URX.RoleId
 		INNER JOIN Permissions P on P.PermissionId = RPX.PermissionId
@@ -40,3 +42,4 @@ END
 
 
 GO
+
