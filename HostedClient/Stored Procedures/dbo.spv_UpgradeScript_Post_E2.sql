@@ -29,6 +29,7 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X_____________________________________________________________________________
 --X   0    | 08-Jan-2016  | Sharif Shaik			| Initial Design
 --X   1    | 11-Jan-2016  | Sharif Shaik			| #4459 - Adding Data to New column of Applications and Module table
+--X   2    | 12-Jan-2016  | Santhosh                | #365 - Adding Job Delivery Error Codes
 
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
@@ -64,9 +65,10 @@ BEGIN
 		INNER JOIN Applications ON Applications.ApplicationId = Modules.ApplicationId
 
 
+	Delete from [Permissions] where code ='MOBILE-SECURE-MESSAGING-DELETE-MESSAGE'
 	IF NOT EXISTS(select 1 from [Permissions] where code ='MOBILE-SECURE-MESSAGING-DELETE-MESSAGE')
 	BEGIN
-		INSERT INTO  [dbo].[Permissions] SELECT 'MOBILE-SECURE-MESSAGING-DELETE-MESSAGE','Allows user to delete message locally from a chat', NULL,3
+		INSERT INTO  [dbo].[Permissions] SELECT 'MOBILE-SECURE-MESSAGING-DELETE-MESSAGE','Function - Delete Message locally from a chat', NULL,3
 	END
 
 	Update [Permissions]
@@ -81,6 +83,30 @@ BEGIN
 	SET Code = 'MOBILE-SECURE-MESSAGING-VIEW'
 	Where [Code] =  'MOBILE-SECURE-MESSAGING'
 
+	/*365*/
+	IF NOT EXISTS(SELECT 1 FROM ErrorSourceTypes WHERE ErrorSourceType = 'Client')
+	BEGIN
+		INSERT INTO ErrorSourceTypes (ErrorSourceType) VALUES ('Client')
+	END
+	IF NOT EXISTS(SELECT 1 FROM ErrorSourceTypes WHERE ErrorSourceType = 'Editing')
+	BEGIN
+		INSERT INTO ErrorSourceTypes (ErrorSourceType) VALUES ('Editing')
+	END
+	IF NOT EXISTS(SELECT 1 FROM ErrorSourceTypes WHERE ErrorSourceType = 'System')
+	BEGIN
+		INSERT INTO ErrorSourceTypes (ErrorSourceType) VALUES ('System')
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-ERRORDEFINITION-ADD') BEGIN
+		INSERT INTO Permissions (Code,Name,ParentPermissionID,ModuleId) VALUES ('FNC-ERRORDEFINITION-ADD','Function - Add ErrorDefinition',null,23)
+	END
+	IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-ERRORDEFINITION-EDIT') BEGIN
+		INSERT INTO Permissions (Code,Name,ParentPermissionID,ModuleId) VALUES ('FNC-ERRORDEFINITION-EDIT','Function - Edit ErrorDefinition',null,23)
+	END
+	IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-ERRORDEFINITION-DELETE') BEGIN
+		INSERT INTO Permissions (Code,Name,ParentPermissionID,ModuleId) VALUES ('FNC-ERRORDEFINITION-DELETE','Function - Delete ErrorDefinition',null,23)
+	END
+	/*365*/
 
 END
 
