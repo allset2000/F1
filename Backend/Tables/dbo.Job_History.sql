@@ -13,10 +13,14 @@ CREATE TABLE [dbo].[Job_History]
 [LastName] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [DOB] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[Job_History] ADD CONSTRAINT [PK__Job_Hist__A809D914EF8C2E5A] PRIMARY KEY CLUSTERED  ([JobHistoryID]) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[Job_History] ADD CONSTRAINT [FK__Job_Histo__Docum__051A9206] FOREIGN KEY ([DocumentID]) REFERENCES [dbo].[Jobs_Documents_History] ([DocumentID])
-GO
-ALTER TABLE [dbo].[Job_History] ADD CONSTRAINT [FK__Job_Histo__JobNu__04266DCD] FOREIGN KEY ([JobNumber]) REFERENCES [dbo].[Jobs] ([JobNumber])
+ALTER TABLE [dbo].[Job_History] ADD 
+CONSTRAINT [PK_Job_History] PRIMARY KEY CLUSTERED  ([JobHistoryID]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Job_History_DocumentId] ON [dbo].[Job_History] ([DocumentID]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_Job_History_JobNumber] ON [dbo].[Job_History] ([JobNumber]) ON [PRIMARY]
+
+ALTER TABLE [dbo].[Job_History] ADD
+CONSTRAINT [FK_Job_History_DocumentID] FOREIGN KEY ([DocumentID]) REFERENCES [dbo].[Jobs_Documents_History] ([DocumentID])
+ALTER TABLE [dbo].[Job_History] ADD
+CONSTRAINT [FK_Job_History_JobNumber] FOREIGN KEY ([JobNumber]) REFERENCES [dbo].[Jobs] ([JobNumber])
 GO
