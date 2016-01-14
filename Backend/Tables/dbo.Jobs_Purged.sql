@@ -5,6 +5,10 @@ CREATE TABLE [dbo].[Jobs_Purged]
 [JobID] [bigint] NOT NULL,
 [DateMarked] [datetime] NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_Purged_JobID] ON [dbo].[Jobs_Purged] ([JobID] DESC) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_Jobs_Purged_Jobnumber] ON [dbo].[Jobs_Purged] ([Jobnumber] DESC) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[Jobs_Purged] ADD CONSTRAINT [PK_PurgeID] PRIMARY KEY CLUSTERED  ([PurgeID]) ON [PRIMARY]
 GO
