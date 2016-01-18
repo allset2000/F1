@@ -1,0 +1,2 @@
+CREATE USER [app_AudioProcessor] WITHOUT LOGIN
+GO

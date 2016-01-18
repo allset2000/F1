@@ -1,0 +1,2 @@
+CREATE USER [app_portal] WITHOUT LOGIN
+GO

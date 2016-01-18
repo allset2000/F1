@@ -1,0 +1,2 @@
+CREATE USER [app_row] WITHOUT LOGIN
+GO
