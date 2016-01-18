@@ -1,2 +1,0 @@
-CREATE USER [app_atools] WITHOUT LOGIN
-GO

@@ -1,5 +1,0 @@
-IF NOT EXISTS (SELECT * FROM master.dbo.syslogins WHERE loginname = N'ENTRADA-DEV\qa_apps')
-CREATE LOGIN [ENTRADA-DEV\qa_apps] FROM WINDOWS
-GO
-CREATE USER [ENTRADA-DEV\qa_apps] FOR LOGIN [ENTRADA-DEV\qa_apps]
-GO

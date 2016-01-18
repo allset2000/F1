@@ -1,2 +1,0 @@
-CREATE USER [app_Mirth] WITHOUT LOGIN
-GO
