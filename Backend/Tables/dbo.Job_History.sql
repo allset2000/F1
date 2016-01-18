@@ -12,10 +12,11 @@ CREATE TABLE [dbo].[Job_History]
 [MI] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [LastName] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [DOB] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[IsHistory] [bit] NOT NULL CONSTRAINT [DF__Job_Histo__IsHis__48FB865E] DEFAULT ((0))
+[IsHistory] [bit] NOT NULL CONSTRAINT [DF_Job_History_IsHistory] DEFAULT ((0))
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[Job_History] ADD 
-CONSTRAINT [PK__Job_Hist__A809D914EF8C2E5A] PRIMARY KEY CLUSTERED  ([JobHistoryID]) ON [PRIMARY]
+CONSTRAINT [PK_Job_History] PRIMARY KEY CLUSTERED  ([JobHistoryID]) ON [PRIMARY]
+
 
 
 
