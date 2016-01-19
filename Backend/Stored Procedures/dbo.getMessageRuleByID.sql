@@ -1,8 +1,14 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 -- =============================================
 -- Author: Santhosh
 -- Create date: 03/24/2015
 -- Description: SP used to get Clinic Message Rule
-CREATE PROCEDURE [dbo].[getMessageRuleByID]
+-- Modified date: 01/19/2016
+-- Description: Pulling Dictators, JobTypes, Users as comma separated values
+CREATE PROCEDURE [dbo].[getMessageRuleByID] 
 (
 	@MessageRuleId INT = -1
 )
@@ -12,8 +18,8 @@ BEGIN
 		  ,[ClinicsMessagesRules].[MessageTypeId]
 		  ,[ClinicsMessagesRules].[ClinicID]
 		  ,[ClinicsMessagesRules].[LocationID]
-		  ,[ClinicsMessagesRules].[DictatorID]
-		  ,[ClinicsMessagesRules].[JobType]
+		  ,(SELECT STUFF((SELECT ',' + DictatorId FROM ClinicMessageRuleDictators WHERE MessageRuleId = [ClinicsMessagesRules].[MessageRuleId] FOR XML PATH('')),1,1,'')) AS DictatorID
+		  ,(SELECT STUFF((SELECT ',' + JobType FROM ClinicMessageRuleJobtypes WHERE MessageRuleId = [ClinicsMessagesRules].[MessageRuleId] FOR XML PATH('')),1,1,'')) AS JobType
 		  ,[ClinicsMessagesRules].[StatJobSubjectPattern]
 		  ,[ClinicsMessagesRules].[StatJobContentPattern]
 		  ,[ClinicsMessagesRules].[NoStatJobSubjectPattern]
@@ -21,19 +27,16 @@ BEGIN
 		  ,[ClinicsMessagesRules].[SendTo]
 		  ,[ClinicsMessagesRules].[StatJobFrequency]
 		  ,[ClinicsMessagesRules].[NoStatJobFrequency]
-		  ,[ClinicsMessagesRules].[UserID]
+		  ,(SELECT STUFF((SELECT ',' + CONVERT(VARCHAR,UserId) FROM ClinicMessageRuleUsers WHERE MessageRuleId = [ClinicsMessagesRules].[MessageRuleId] FOR XML PATH('')),1,1,'')) AS UserId
 		  ,CASE WHEN [MessageTypeId] = 1 THEN 'CRJobAvailable'
 				WHEN [MessageTypeId] = 2 THEN 'OrphanJobAvailable' END AS [NotificationType]
-		  ,[Contacts].FullName AS [User]
+		  ,(SELECT STUFF((SELECT ',' + [Contacts].FullName FROM [Contacts] WHERE [Contacts].ContactId IN (SELECT UserId FROM ClinicMessageRuleUsers WHERE MessageRuleId = [ClinicsMessagesRules].[MessageRuleId]) FOR XML PATH('')),1,1,'')) AS [User]
 		  ,[Locations].[LocationName]
 		  ,[Clinics].[ClinicName]
 	  FROM [dbo].[ClinicsMessagesRules]
 	  INNER JOIN [Clinics] ON [Clinics].ClinicID = [ClinicsMessagesRules].ClinicID
 	  INNER JOIN [Locations] ON [Locations].LocationID = [ClinicsMessagesRules].LocationID
-					AND [Locations].ClinicID = [ClinicsMessagesRules].ClinicID
-	  LEFT JOIN [Contacts] ON [Contacts].ContactId = [ClinicsMessagesRules].[UserID]
+					AND [Locations].ClinicID = [ClinicsMessagesRules].ClinicID	  
 	  WHERE [ClinicsMessagesRules].[MessageRuleId] = @MessageRuleId
 END
 GO
-
-
