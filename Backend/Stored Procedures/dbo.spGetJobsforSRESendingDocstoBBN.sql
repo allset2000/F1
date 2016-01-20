@@ -54,7 +54,7 @@ BEGIN
  --update the jobs to jobstatus       
  UPDATE Jobs Set IsLockedForProcessing=1 FROM Jobs JB             
  INNER JOIN @TempJobs TJ on JB.JobNumber = TJ.JobNumber
- WHERE JB.IsLockedForProcessing=0
+ WHERE JB.IsLockedForProcessing=0 AND jb.FinaldocSentToBBN <> 1
          
  SET @UpdatedJobCount = @@ROWCOUNT            
  SELECT @SelectedJobCount = COUNT(*) FROM @TempJobs           
