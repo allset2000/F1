@@ -13,7 +13,7 @@ GO
 **************************  
 ** PR   Date     Author  Description   
 ** --   --------   -------   ------------------------------------  
-**   
+** #358 01/18/2016 Santhosh  Deleting jobs which have same encounterid and ruleid after dictation 
 *******************************/
   
 CREATE PROCEDURE [dbo].[spUpdateDictation]  
@@ -43,6 +43,29 @@ BEGIN TRY
 	UPDATE Dictations SET [FileName] = @vvcrFileName,status=@vintStatus,JobID=@bgintJobID,DictationTypeID=@vintDictationTypeID,DictatorID=@vintDictatorID,
 		   QueueID=@vintQueueID,Duration=@smintDuration,MachineName=@vvcrMachineName,UpdatedDateInUTC=GETUTCDATE()
 	WHERE DictationID = @bgintDictationID  
+
+	-- Only for NextGen Vendor
+	DECLARE @EncounterID BIGINT
+	DECLARE @JobNumber VARCHAR(20)
+	DECLARE @RuleId SMALLINT
+
+	SELECT @EncounterID = J.EncounterID, @JobNumber = J.JobNumber, @RuleId = J.RuleID 
+	FROM Dictations D
+		INNER JOIN Jobs J ON J.JobID = D.JobID
+		INNER JOIN Clinics C ON C.ClinicID = J.ClinicID AND C.EHRVendorID = 3
+		INNER JOIN Rules R ON R.RuleID = J.RuleID AND R.RemoveAppointments = 1
+	WHERE D.DictationID = @bgintDictationID
+	
+	UPDATE Jobs
+	SET Status = 500
+	FROM Jobs J INNER JOIN Dictations D ON D.JobID = J.JobID AND D.Status = 100
+	WHERE J.EncounterID = @EncounterID AND J.RuleID = @RuleId AND J.JobNumber <> @JobNumber
+
+	UPDATE Dictations
+	SET Status = 500
+	FROM Dictations D INNER JOIN Jobs J ON D.JobID = J.JobID AND D.Status = 100
+	WHERE J.EncounterID = @EncounterID AND J.RuleID = @RuleId AND J.JobNumber <> @JobNumber
+	-- Only for NextGen Vendor
 	
 	-- Only update if the status changed
 	IF (@OldDictationStatus <> @vintStatus)
