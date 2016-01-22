@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -60,11 +59,11 @@ BEGIN
 			SET @sql = 'select ' + @cur_Field + ' from vw_GetROWJobDetails WHERE JobNumber = ''' + @JobNumber + ''''
 			INSERT INTO #ret exec (@sql)
 
-			IF (SELECT count(*) FROM #ret) = 0
-			BEGIN
-				SET @sql = 'select ' + @cur_Field + ' from vw_GetHostedROWJobDetails WHERE JobNumber = ''' + @JobNumber + ''''
-				INSERT INTO #ret exec (@sql)
-			END
+			--IF (SELECT count(*) FROM #ret) = 0
+			--BEGIN
+			--	SET @sql = 'select ' + @cur_Field + ' from vw_GetHostedROWJobDetails WHERE JobNumber = ''' + @JobNumber + ''''
+			--	INSERT INTO #ret exec (@sql)
+			--END
 
 			-- validate if the data returned
 			IF EXISTS (select 1 from #ret)
@@ -89,12 +88,12 @@ BEGIN
 
 			TRUNCATE TABLE #ret
 		END
-		ELSE
-		BEGIN
-			print('var not found')
-			print @cur_Field
+		--ELSE
+		--BEGIN
+			--print('var not found')
+			--print @cur_Field
 			
-		END
+		--END
 
 		UPDATE #Var_Replacement set Processed = 1 where VariableName = @cur_var
 	END
