@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -30,7 +31,13 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 ) AS 
 	BEGIN 
 	DECLARE @oldStatus INT
-	DECLARE @IsHistory bit 
+	DECLARE @IsHistory BIT 
+	DECLARE @newMRN VARCHAR(50)
+	DECLARE @newJobType VARCHAR(100)
+
+	SET @newMRN = @vvcrMRN
+	SET @newJobType = @vvcrJobType
+
 	set @IsHistory =0
 		IF @vvcrUserId IS NULL OR  @vvcrUserId = ''
 		BEGIN
@@ -39,7 +46,8 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 			ON J.jobid=JE.jobid
 			WHERE J.JobNumber =@vvcrJobNumber
 		END
-
+		
+		
 		-- if any jobtype value is changed then track that previous value.
 		SELECT  @vvcrJobType = CASE WHEN JobType <> @vvcrJobType THEN JobType ELSE NULL END  FROM jobs WHERE JobNumber = @vvcrJobNumber	
 		
@@ -51,17 +59,20 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		@vvcrDOB = CASE WHEN DOB <> @vvcrDOB THEN DOB ELSE NULL END
 		FROM jobs_patients
 		WHERE JOBNUMBER = @vvcrJobNumber
+		
+		
+				
 
-		if @vvcrMRN is null
+		if @vvcrMRN is null 
 			BEGIN 
 			SELECT @vvcrMRN =  MRN, @vvcrFirstName = FirstName,	@vvcrMI = MI,@vvcrLastName = LastName,@vvcrDOB =  DOB 
 			FROM jobs_patients WHERE JOBNUMBER = @vvcrJobNumber
-			set @IsHistory =1
+			SET @IsHistory =1
 			END
-		if @vvcrJobType is null
+		if @vvcrJobType is null 
 			BEGIN
 			SELECT @vvcrJobType=JobType FROM jobs WHERE JobNumber = @vvcrJobNumber	
-			set @IsHistory =1
+			SET @IsHistory =1
 			END
 
 		-- if job is sent to finsh in Editor stage then we need to track in process data and status
@@ -71,7 +82,6 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 				VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,170,@vintDocumentID,@vvcrUserId,GETDATE(),@IsHistory)
 			END
 
-
 		-- For tracking the MRN and Jobtype history we need previous status
 		SELECT @oldStatus = STATUS FROM JobStatusA WHERE jobnumber=@vvcrJobNumber
 		IF(@oldStatus is NULL )
@@ -80,8 +90,11 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		IF @vsintCurrentStatus is null or @oldStatus <> @vsintCurrentStatus 
 			SET @vsintCurrentStatus =@oldStatus
 	
-	
-
+		IF @vsintCurrentStatus = 260
+		BEGIN
+			SET @vvcrMRN = @newMRN
+			SET @vvcrJobType = @newJobType
+		END
 		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,FirstName,MI,LastName,DOB,IsHistory)
 		VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUserId,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,@IsHistory)
 	END
