@@ -67,7 +67,7 @@ BEGIN TRY
 			set @vvcrMRN =null
 
 		-- Tracking the previous status details
-		EXEC [spInsertJobHistory] @vvcrJobNumber,null,null,null,null,@vvcrUsername,null,null,null,null
+		EXEC [spInsertJobHistory] @vvcrJobNumber,null,@vvcrJobType,null,null,@vvcrUsername,null,null,null,null
 
 		select @oldStatus = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@oldStatus is NULL )
