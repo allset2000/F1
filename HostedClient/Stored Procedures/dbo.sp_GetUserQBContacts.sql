@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -45,12 +46,11 @@ BEGIN
 		--I must be added...
 		OR U.UserId = @UserId
 	UNION ALL
-
-	-- Users who're invited by me but not registered yet...
-	SELECT null, UI.FirstName, UI.MI, UI.LastName, CONCAT(UI.FirstName,' ', UI.MI,' ', UI.LastName) as FullName, UI.EmailAddress as Email, UI.PhoneNumber, null, null, null, null, 0 as 'IsFavorite'
-	FROM UserInvitations UI
-	WHERE UI.RequestingUserId = @UserId
-	and UI.RegisteredUserId is null and UI.FirstName is not null and UI.InvitationSent = 1
+	-- Users who're invited by me but not registered yet...	  
+		SELECT NULL, UI.FirstName, UI.MI, UI.LastName, CONCAT(UI.FirstName,' ', UI.MI,' ', UI.LastName) as FullName, UI.EmailAddress as Email, UI.PhoneNumber, null, null, null, null, 0 as 'IsFavorite'
+		FROM UserInvitations UI
+		WHERE UI.RequestingUserId = @UserId
+		AND (UI.RegisteredUserId is NULL OR UI.PendingRegStatus=1)  and UI.FirstName is not null and UI.InvitationSent = 1
 
 
 END

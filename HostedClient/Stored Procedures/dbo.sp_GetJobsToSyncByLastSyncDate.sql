@@ -16,7 +16,8 @@ CREATE PROCEDURE [dbo].[sp_GetJobsToSyncByLastSyncDate](
 ) AS 
 BEGIN
 
-	 SELECT j.JobID AS ID, 
+	 SELECT j.JobID AS ID,
+			d.DictationID,
 			j.JobNumber,
 			j.JobTypeID, 
 			j.[Status] AS [State],			

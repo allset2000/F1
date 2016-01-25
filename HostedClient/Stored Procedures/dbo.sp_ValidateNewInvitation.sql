@@ -25,7 +25,7 @@ BEGIN
 	SELECT TOP 1 UserInvitationId, FirstName, MI, LastName, EmailAddress, PhoneNumber, InvitationSent, RequestingUserId, ClinicId,
 		         InvitationMethod, RoleId, SecurityToken, DateTimeRequested, DateTimeInvitationSent, IsDemoUSer, RegisteredUserId, InvitationMessage
 	FROM UserInvitations
-	WHERE RegisteredUserId IS NULL AND 
+	WHERE (RegisteredUserId IS NULL OR PendingRegStatus=1) AND 
 	     PhoneNumber = COALESCE(@PhoneNumber, PhoneNumber) AND
 		 EmailAddress = COALESCE(@EmailAddress, EmailAddress)
 END

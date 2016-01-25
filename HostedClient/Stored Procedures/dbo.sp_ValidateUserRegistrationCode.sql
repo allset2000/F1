@@ -10,25 +10,29 @@ GO
 -- Create date: 1/20/2015
 -- Description: SP Used to validate the Registration Code sent in from mobile
 
--- Modified By: Sam Shoultz
--- Modified On: 6/5/2015
+-- Modified By: Sam Shoultz, Raghu A
+-- Modified On: 6/5/2015, 08/01/2016
 -- Release: D.2
--- Modifications: Added UI.Deleted = 0 on where clause (introduced deleting invitations in this release)
+-- Modifications: Added UI.Deleted = 0 on where clause (introduced deleting invitations in this release),
+-- Get Records based on new invitation pending status
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_ValidateUserRegistrationCode] (
-	@RegCode varchar(20)
+	@RegCode VARCHAR(20)
 ) AS 
 BEGIN
-	DECLARE @ShortCode varchar(10)
+
+    SET NOCOUNT ON;
+
+	DECLARE @ShortCode VARCHAR(10)
 
 	SET @ShortCode = SUBSTRING(@RegCode, 0, CHARINDEX('-',@RegCode,0))
 
 	SELECT UI.PhoneNumber, UI.EmailAddress, UI.ClinicId, UI.FirstName, UI.LastName, C.MobileCode , UI.MI
-	FROM UserInvitations UI
-		LEFT OUTER JOIN Clinics C on C.ClinicId = UI.ClinicId
+	FROM DBO.UserInvitations UI
+		LEFT OUTER JOIN DBO.Clinics C ON C.ClinicId = UI.ClinicId
 	WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
-	and UI.RegisteredUserId is null
-	and UI.Deleted = 0
+		AND (UI.RegisteredUserId IS NULL OR PendingRegStatus=1)
+		AND UI.Deleted = 0
 
 END
 

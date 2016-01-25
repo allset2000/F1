@@ -8,11 +8,10 @@ GO
 -- Author: Santhosh Mukk
 -- Create date: 01/14/2015
 -- Description: SP used to Create new Invitation
-
-
--- Modified By: Mikayil Bayramov
--- Modified On: 9/25/2015
--- Modification Details: Added validation for User Role(s) and Clinic
+-- Modified By: Mikayil Bayramov,Raghu A
+-- Modified On: 9/25/2015,07/01/2015
+-- Modification Details: Added validation for User Role(s) and Clinic,
+-- PendingRegStatus flag value added  and @IsMobileSMUser=1 means it is coming from mobile or other web application
 -- Modification Code: #001
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_CreateUserInvitation]
@@ -28,7 +27,9 @@ CREATE PROCEDURE [dbo].[sp_CreateUserInvitation]
 	@SecurityToken VARCHAR(50),
 	@InvitationTypeId INT,
 	@RequestingUserId INT,
-	@InvitationMessage VARCHAR(1500)
+	@InvitationMessage VARCHAR(1500),
+	@IsMobileSMUser BIT=0 --1 
+
 )
 AS
 BEGIN
@@ -41,6 +42,9 @@ BEGIN
 	then it is interpreted as no role.
 	In this case get the default role RUDefualtRole.
 	*/
+	DECLARE @UserId INT
+	DECLARE @UserInvitationId INT
+
 	IF(ISNULL(@RoleId, '-1') = '-1' OR LEN(LTRIM(RTRIM(@RoleId))) <= 0) BEGIN
 		IF EXISTS(select 1 from SystemConfiguration where ConfigKey = 'RUDefualtRole') BEGIN
 			SET @RoleId = (select ConfigValue from SystemConfiguration where ConfigKey = 'RUDefualtRole')
@@ -79,7 +83,9 @@ BEGIN
 			   ,[InvitationTypeId]
 			   ,[RequestingUserId]
 			   ,[DateTimeRequested]
-			   ,[InvitationMessage])
+			   ,[InvitationMessage]
+			   ,[PendingRegStatus]
+			   )
 		 VALUES
 			   (@FirstName
 			   ,@MI
@@ -95,6 +101,28 @@ BEGIN
 			   ,@InvitationTypeId
 			   ,@RequestingUserId
 			   ,GETDATE()
-			   ,@InvitationMessage)
+			   ,@InvitationMessage
+			   ,1)    
+
+	
+			--BEGIN START Added for invite new user with message #5518#
+			 SET @UserInvitationId= SCOPE_IDENTITY()
+
+			 IF(@IsMobileSMUser=1)
+			   BEGIN
+
+						INSERT INTO dbo.Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt) 
+							   VALUES(@EmailAddress, @FirstName, @MI, @LastName, @ClinicId, @EmailAddress, @FirstName + ' ' + @LastName, NEWID(), NEWID())
+
+						   SET @UserId = SCOPE_IDENTITY()	
+						   
+						   INSERT INTO UserClinicXref
+									   (UserId, ClinicId, IsDeleted)
+								 VALUES(@UserId,@ClinicId,0)
+					
+				  UPDATE dbo.UserInvitations SET RegisteredUserId = @UserId WHERE UserInvitationId = @UserInvitationId 
+
+			END
+	    --END START
 END
 GO

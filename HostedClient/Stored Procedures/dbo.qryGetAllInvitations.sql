@@ -35,7 +35,7 @@ BEGIN
 	  FROM [dbo].[UserInvitations] UI
 		  LEFT JOIN Clinics C ON C.ClinicID = UI.ClinicId AND C.Deleted = 0
 		  INNER JOIN UserInvitationTypes UIT on UIT.InvitationTypeId = UI.InvitationTypeId
-	WHERE ISNULL(UI.RegisteredUserId,'0') = 0 and UI.Deleted = 0
+	WHERE  (ISNULL(UI.RegisteredUserId,'0') = 0 or PendingRegStatus=1) and UI.Deleted = 0
   END
 
   
