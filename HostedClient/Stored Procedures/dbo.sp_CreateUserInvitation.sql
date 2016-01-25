@@ -110,6 +110,12 @@ BEGIN
 
 			 IF(@IsMobileSMUser=1)
 			   BEGIN
+			         IF EXISTS(SELECT '*' FROM dbo.Users WHERE LoginEmail=@EmailAddress)
+					   BEGIN
+					        DECLARE @COUNT INT
+							SELECT @COUNT=COUNT(*)+1 FROM dbo.Users WHERE LoginEmail=@EmailAddress
+							SET @EmailAddress=CAST(@COUNT AS VARCHAR)+'_'+@EmailAddress
+					   END
 
 						INSERT INTO dbo.Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt) 
 							   VALUES(@EmailAddress, @FirstName, @MI, @LastName, @ClinicId, @EmailAddress, @FirstName + ' ' + @LastName, NEWID(), NEWID())
@@ -120,7 +126,7 @@ BEGIN
 									   (UserId, ClinicId, IsDeleted)
 								 VALUES(@UserId,@ClinicId,0)
 					
-				  UPDATE dbo.UserInvitations SET RegisteredUserId = @UserId WHERE UserInvitationId = @UserInvitationId 
+				    UPDATE dbo.UserInvitations SET RegisteredUserId = @UserId WHERE UserInvitationId = @UserInvitationId 
 
 			END
 	    --END START
