@@ -1,0 +1,2 @@
+CREATE USER [app_rec] WITHOUT LOGIN
+GO

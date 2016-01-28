@@ -1,0 +1,2 @@
+CREATE USER [app_reporting] WITHOUT LOGIN
+GO

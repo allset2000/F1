@@ -2,6 +2,9 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+
+
+
 CREATE VIEW [dbo].[qryROWJobList]
 AS
 SELECT     dbo.Jobs.JobNumber, dbo.Jobs.DictatorID, dbo.Jobs.ClinicID, dbo.Jobs.Location, dbo.Jobs.AppointmentDate, dbo.Jobs.AppointmentTime, dbo.Jobs.JobType, dbo.Jobs.ContextName, 
@@ -25,7 +28,7 @@ SELECT     dbo.Jobs.JobNumber, dbo.Jobs.DictatorID, dbo.Jobs.ClinicID, dbo.Jobs.
                       dbo.JobsToDeliver.Method, dbo.JobsToDeliver.LastUpdatedOn, dbo.Dictators.FirstName AS DictatorFirstName, dbo.Dictators.MI AS DictatorMI, dbo.Dictators.LastName AS DictatorLastName, 
                       dbo.Dictators.Suffix AS DictatorSuffix, dbo.Dictators.Initials AS DictatorInitials, RTRIM(dbo.Dictators.FirstName) + ' ' + RTRIM(dbo.Dictators.MI) + ' ' + RTRIM(dbo.Dictators.LastName) + ', ' + RTRIM(dbo.Dictators.Suffix) AS DictatorSignature, dbo.Dictators.User_Code AS DictatorUserCode, 
                       dbo.Dictators.EHRProviderID, dbo.Dictators.EHRAliasID, dbo.Clinics.EHRClinicID
-					  , CASE WHEN (SELECT COUNT(*) FROM Job_History WHERE (MRN IS NOT NULL OR FirstName IS NOT NULL OR MI IS NOT NULL OR LastName IS NOT NULL OR DOB IS NOT NULL) AND JobNumber = Jobs_Patients.JobNumber) > 0 THEN 1 ELSE 0 END AS 'DemographicsUpdated'
+					  , CASE WHEN (SELECT COUNT(*) FROM Job_History WHERE (MRN IS NOT NULL OR FirstName IS NOT NULL OR MI IS NOT NULL OR LastName IS NOT NULL OR DOB IS NOT NULL) AND JobNumber = Jobs_Patients.JobNumber AND IsHistory = 0) > 0 THEN 1 ELSE 0 END AS 'DemographicsUpdated'
 FROM         dbo.JobsToDeliver INNER JOIN
                       dbo.Jobs ON dbo.JobsToDeliver.JobNumber = dbo.Jobs.JobNumber INNER JOIN
                       dbo.Jobs_Patients ON dbo.Jobs.JobNumber = dbo.Jobs_Patients.JobNumber INNER JOIN
@@ -34,4 +37,7 @@ FROM         dbo.JobsToDeliver INNER JOIN
                       dbo.Dictators ON dbo.Jobs.DictatorID = dbo.Dictators.DictatorID INNER JOIN
                       dbo.Clinics ON dbo.Jobs.ClinicID = dbo.Clinics.ClinicID LEFT OUTER JOIN
                       dbo.Jobs_Client ON dbo.Jobs.JobNumber = dbo.Jobs_Client.JobNumber
+
+
+
 GO

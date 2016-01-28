@@ -1,17 +1,18 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
 
 
+
 -- =============================================
 -- Author: Dustin Dorsey
 -- Create date: 4/30/15
 -- Description: Temp SP used to update values in ExpressLinkConfiguration Table
+-- 1/19/2016 - ddorsey - Added EHRClinicID \ Changed name of stored proc to reflect TFS number
 -- =============================================
 
-CREATE PROCEDURE [dbo].[sp_RM2682_UpdateExpressLinkConnString] 
+CREATE PROCEDURE [dbo].[sp_TFS5444_UpdateExpressLinkConnString] 
 (
 @ID int,
 @ConnectionString Varchar(MAX) = NULL,
@@ -19,7 +20,8 @@ CREATE PROCEDURE [dbo].[sp_RM2682_UpdateExpressLinkConnString]
 @DaysBack smallint = NULL,
 @LastScheduleSync datetime = NULL,
 @LastPatientSync datetime = NULL,
-@LastClinicalsSync datetime = NULL
+@LastClinicalsSync datetime = NULL,
+@EHRClinicID varchar(50) = NULL
 ) 
 
 AS 
@@ -56,7 +58,13 @@ BEGIN
 	UPDATE expressLinkConfigurations SET LastClinicalsSync = @LastClinicalsSync where ID = @ID 
 	END
 
+	IF (@EHRClinicID is not null)
+	BEGIN
+	UPDATE expressLinkConfigurations SET EHRClinicID = @EHRClinicID where ID = @ID 
+	END
+
 END
+
 
 
 GO

@@ -1,0 +1,6 @@
+IF NOT EXISTS (SELECT * FROM master.dbo.syslogins WHERE loginname = N'ENTRADAHEALTH\PROD_App_JobCreateRS')
+CREATE LOGIN [ENTRADAHEALTH\PROD_App_JobCreateRS] FROM WINDOWS
+GO
+CREATE USER [entradahealth\PROD_App_JobCreateRS] FOR LOGIN [ENTRADAHEALTH\PROD_App_JobCreateRS]
+GO
+GRANT EXECUTE TO [entradahealth\PROD_App_JobCreateRS]

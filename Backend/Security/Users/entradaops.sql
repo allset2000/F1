@@ -1,0 +1,2 @@
+CREATE USER [entradaops] WITHOUT LOGIN
+GO
