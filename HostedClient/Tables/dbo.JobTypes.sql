@@ -16,7 +16,8 @@ CREATE TABLE [dbo].[JobTypes]
 [DocumentType] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL CONSTRAINT [DF_JobTypes_DocumentType] DEFAULT (''),
 [ROWTemplateId] [int] NULL,
 [ACKTemplateId] [int] NULL,
-[UpdatedDateInUTC] [datetime] NULL CONSTRAINT [DF_JobTypes_UpdatedDateInUTC] DEFAULT (getutcdate())
+[UpdatedDateInUTC] [datetime] NULL CONSTRAINT [DF_JobTypes_UpdatedDateInUTC] DEFAULT (getutcdate()),
+[JobTypeCategoryId] [int] NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[JobTypes] ADD CONSTRAINT [PK_JobTypes] PRIMARY KEY CLUSTERED  ([JobTypeID]) ON [PRIMARY]
