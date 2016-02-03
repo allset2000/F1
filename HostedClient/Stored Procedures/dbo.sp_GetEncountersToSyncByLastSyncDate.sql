@@ -12,7 +12,8 @@ GO
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetEncountersToSyncByLastSyncDate](
 	 @DictatorId INT,
-	 @LastSyncDate DATETIME
+	 @LastSyncDate DATETIME,
+	 @appointmentDate DATETIME
 ) AS 
 BEGIN
      SET NOCOUNT ON;
@@ -31,7 +32,8 @@ BEGIN
 				INNER JOIN dbo.Dictations d ON d.JobID=j.JobID	
 				INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID 
 				INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
-		WHERE qu.DictatorID = @DictatorId AND 	       
+		WHERE qu.DictatorID = @DictatorId AND 
+		      e.AppointmentDate=(CASE WHEN @appointmentDate IS NOT NULL THEN @appointmentDate ELSE e.AppointmentDate END) AND 	       
 			  d.[Status] IN (100, 200) AND 			  
 			  ISNULL(e.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
 END
@@ -39,4 +41,3 @@ END
 
 
 GO
-
