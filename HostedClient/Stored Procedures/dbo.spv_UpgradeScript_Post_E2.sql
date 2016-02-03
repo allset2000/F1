@@ -31,6 +31,7 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X   0    | 08-Jan-2016  | Sharif Shaik			| Initial Design
 --X   1    | 11-Jan-2016  | Sharif Shaik			| #4459 - Adding Data to New column of Applications and Module table
 --X   2    | 12-Jan-2016  | Santhosh                | #365 - Adding Job Delivery Error Codes
+--X   3    | 03-Feb-2016  | Santhosh                | #5478 - Image Only - Admin Console changes.
 
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
@@ -109,6 +110,20 @@ BEGIN
 	END
 	/*365*/
 
+	/*5478*/
+	IF NOT EXISTS(SELECT 1 FROM JobTypeCategory WHERE JobTypeCategory = 'Dictation')
+	BEGIN
+		INSERT INTO JobTypeCategory VALUES (1, 'Dictation')
+	END
+	IF NOT EXISTS(SELECT 1 FROM JobTypeCategory WHERE JobTypeCategory = 'Image Only')
+	BEGIN
+		INSERT INTO JobTypeCategory VALUES (2, 'Image Only')
+	END
+	IF NOT EXISTS(SELECT 1 FROM JobTypeCategory WHERE JobTypeCategory = 'Chat Upload')
+	BEGIN
+		INSERT INTO JobTypeCategory VALUES (3, 'Chat Upload')
+	END
+	/*5478*/
 END
 
 GO
