@@ -18,7 +18,8 @@ GO
       
 CREATE PROCEDURE [dbo].[spGetJobsforSRESendingDocstoBBN] 
 (          
- @vintrowsCount INT       
+ @vintrowsCount INT,
+ @vintFaileCount INT       
 )           
 AS          
 BEGIN       
@@ -48,7 +49,7 @@ BEGIN
   INNER JOIN JobStatusB js ON jb.JobNumber = js.JobNumber
   INNER JOIN jobs_documents jd on jb.jobnumber = jd.jobnumber
   CROSS APPLY (SELECT TOP 1 JOBNUMBER FROM JobDeliveryHistory jh WHERE jb.jobnumber=jh.jobnumber) jh 
-  WHERE  jb.IsLockedForProcessing=0 AND jb.FinaldocSentToBBN <> 1
+  WHERE  jb.IsLockedForProcessing=0 AND jb.FinaldocSentToBBN <> 1 ANd jb.ProcessFailureCount < @vintFaileCount
   AND ((d.SRETypeId IS NOT NULL AND d.SRETypeId = 2) or (d.SRETypeId is NULL AND C.SRETypeId IS NOT NULL AND C.SRETypeID=2))  
 
  --update the jobs to jobstatus       

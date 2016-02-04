@@ -32,11 +32,8 @@ SET @numTime = 0
 	ELSE
 		BEGIN
 			SELECT @numTime= ProcessFailureCount FROM dbo.Jobs WHERE JobNumber=@vvcrJobNumber
-			IF @numTime < 5
-				BEGIN	
-				SET @numTime = @numTime + 1
-				UPDATE  jobs SET IsLockedForProcessing=0,ProcessFailureCount=@numTime WHERE JobNumber = @vvcrJobNumber  
-				END	
+			SET @numTime = @numTime + 1
+			UPDATE  jobs SET IsLockedForProcessing=0,ProcessFailureCount=@numTime WHERE JobNumber = @vvcrJobNumber  
 		END
 END
 GO
