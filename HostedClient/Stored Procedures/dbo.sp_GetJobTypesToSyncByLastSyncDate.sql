@@ -17,12 +17,16 @@ CREATE PROCEDURE [dbo].[sp_GetJobTypesToSyncByLastSyncDate](
 BEGIN
 
 		SET NOCOUNT ON;
-		SELECT JobTypeID AS ID,
-		     Name,
-		     CASE WHEN Deleted = 1 THEN 500 ELSE 100 END AS [State]
-		 FROM dbo.JobTypes
-		 WHERE ClinicID=@ClinicId
-		 AND ISNULL(UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate 
+		SELECT JT.JobTypeID AS ID,
+		     JT.Name,
+			 JT.DisableGenericJobs AS DisabledForMobile,
+		     CASE WHEN JT.Deleted = 1 THEN 500 ELSE 100 END AS [State],
+			 JTC.JobTypeCategoryId,
+			 JTC.JobTypeCategory
+		 FROM dbo.JobTypes JT
+		 LEFT JOIN	dbo.JobTypeCategory JTC ON JT.JobTypeCategoryId=JTC.JobTypeCategoryId
+		 WHERE JT.ClinicID=@ClinicId
+		 AND ISNULL(JT.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate 
 END
 
 
