@@ -8,7 +8,7 @@ GO
 -- Author: Raghu A
 -- Create date: 11/18/2014
 -- Description: SP called from DictateAPI to pull Jobs to sync on mobile
-
+--EXEC sp_GetJobsToSyncByLastSyncDate 3514,0,'2014-11-20 10:15:02.970'
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobsToSyncByLastSyncDate](
 	 @DictatorID INT,
@@ -30,7 +30,7 @@ BEGIN
 		INNER JOIN dbo.Encounters AS e ON j.EncounterID = e.EncounterID
 		INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID 
 		INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
-	WHERE d.DictatorID=@DictatorID AND
+	WHERE qu.DictatorID=@DictatorID AND
 		  @EncounterId=(CASE WHEN @EncounterId=0 THEN @EncounterId ELSE e.EncounterID END) AND 	       
 		  d.[Status] IN (100, 200) AND 	
 		  q.Deleted=0 AND
