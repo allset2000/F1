@@ -27,16 +27,16 @@ BEGIN
 					p.Gender, 
 					p.Address1+', '+p.City+', '+p.State+', '+p.Zip AS [Address],
 					p.Phone1,
-					p.PrimaryCareProviderID 
+					p.PrimaryCareProviderID ,
+					e.EncounterID
 			FROM dbo.Patients AS p 
 				INNER JOIN dbo.Encounters AS e ON p.PatientID = e.PatientID
 				INNER JOIN dbo.Jobs AS j ON e.EncounterID = j.EncounterID
 				INNER JOIN dbo.Dictations AS d ON d.JobID = j.JobID 
 				INNER JOIN dbo.Queue_Users AS qu ON d.QueueID = qu.QueueID 
 				INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID 
-			WHERE qu.DictatorID = @DictatorId AND 	       
+			WHERE qu.DictatorID = @DictatorId AND 
 				  d.[Status] IN (100, 200) AND 				
 				  ISNULL(p.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
 END
 GO
-
