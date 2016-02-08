@@ -28,7 +28,9 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	SET NOCOUNT ON;
 
-	Declare @JobTypeID int
+	DECLARE @JobTypeID int
+	DECLARE @RangeOptionFromDate datetime
+	DECLARE @RangeOptionToDate datetime
 
     IF OBJECT_ID('tempdb..#WorkListSearchItems') IS NOT NULL
 		DROP TABLE #WorkListSearchItems
@@ -43,6 +45,16 @@ BEGIN
 			ChangedBy varchar(50) null,
 			Status smallint null)
 
+	IF(@From is not null OR @To is not null)
+		BEGIN
+			SELECT @RangeOptionFromDate = CONVERT(varchar, @From, 101)+' 00:00:00'
+			SELECT @RangeOptionToDate = CONVERT(varchar, @To, 101) +' 23:59:59'
+		END
+	ELSE
+		BEGIN
+			SELECT @RangeOptionFromDate =  CONVERT(varchar, @From, 120)
+			SELECT @RangeOptionToDate =  CONVERT(varchar, @To, 120)
+		END	
 
 	INSERT INTO #WorkListSearchItems
 		SELECT 
@@ -67,8 +79,8 @@ BEGIN
 			AND (CAST(@JobType as BIGINT)  is null or J.JobTypeID = CAST(@JobType as BIGINT))
 			AND (CAST(@Status as SMALLINT) is null or J.Status = CAST(@Status as SMALLINT)) 
 			AND (J.Status IN(100,500))
-			AND (CONVERT(DateTime, @from) is null or E.AppointmentDate >= CONVERT(DateTime, @from)) -- need to confirm whether to get less than 3 months data
-			AND (CONVERT(DateTime, @to) is null or E.AppointmentDate <= CONVERT(DateTime, @to))
+			AND (CONVERT(DateTime, @RangeOptionFromDate) is null or E.AppointmentDate >= CONVERT(DateTime, @RangeOptionFromDate)) -- need to confirm whether to get less than 3 months data
+			AND (CONVERT(DateTime, @RangeOptionToDate) is null or E.AppointmentDate <= CONVERT(DateTime, @RangeOptionToDate))
 			AND (@MRN is null or P.MRN = @MRN)
 			AND (@FirstName is null or P.FirstName LIKE '%' + @FirstName + '%')
 			AND (@LastName is null or P.LastName LIKE '%' + @LastName + '%')
