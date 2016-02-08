@@ -36,30 +36,20 @@ BEGIN
 	select @JobTypeID = JobTypeID from JobTypes where Name = @JobType and clinicID = @clinicID
 
 	CREATE TABLE #WorkListSearchItems (
-			--JobNumber varchar(20),
 			QueueName varchar(50) NULL,
 			JobType varchar(100) NULL,
-			MRN varchar(50) NULL,
-			FirstName varchar(100),
-			LastName varchar(100),
 			Patient varchar(100),
 			Appointment DateTime null,
-			--changeDate DateTime,
 			ChangedBy varchar(50) null,
 			Status smallint null)
 
 
 	INSERT INTO #WorkListSearchItems
 		SELECT 
-		--J.JobNumber,
 		Q.Name AS QueueName,
 		JobTypes.Name AS JobType,
-		P.MRN AS MRN, 
-		P.FirstName AS FirstName, 
-		P.LastName AS LastName,
 		(P.MRN + ' - ' + P.FirstName + ' ' + P.LastName) AS Patient,
 		E.AppointmentDate AS Appointment,
-		--JT.ChangeDate,
 		JT.ChangedBy AS ChangedBy,
 		J.Status AS Status
 			FROM Jobs J 
@@ -69,12 +59,14 @@ BEGIN
 			INNER JOIN Dictations D ON D.JobID = J.JobId 
 			LEFT JOIN Queues Q ON D.QueueID = Q.QueueID 
 			LEFT JOIN Dictators DI ON D.DictatorID = DI.DictatorID
-			INNER JOIN JobsTracking JT ON JT.jobid = J.jobID 
+			LEFT OUTER JOIN (Select JobID,Status,MAX(ChangeDate) AS MAX_ChangeDate,ChangedBy FROM JobsTracking GROUP BY JobID,Status,ChangedBy) JT 
+						ON J.jobid = JT.jobID AND J.status = JT.status
 			WHERE 
 			(@ClinicID is null or J.ClinicID = @ClinicID)
 			AND (CAST(@QueueID as int) is null or D.QueueID = CAST(@QueueID as int))
 			AND (CAST(@JobType as BIGINT)  is null or J.JobTypeID = CAST(@JobType as BIGINT))
-			AND (CAST(@Status as SMALLINT) is null or (JT.Status = CAST(@Status as SMALLINT) AND (J.Status IN(100,500))))
+			AND (CAST(@Status as SMALLINT) is null or J.Status = CAST(@Status as SMALLINT)) 
+			AND (J.Status IN(100,500))
 			AND (CONVERT(DateTime, @from) is null or E.AppointmentDate >= CONVERT(DateTime, @from)) -- need to confirm whether to get less than 3 months data
 			AND (CONVERT(DateTime, @to) is null or E.AppointmentDate <= CONVERT(DateTime, @to))
 			AND (@MRN is null or P.MRN = @MRN)
@@ -82,7 +74,8 @@ BEGIN
 			AND (@LastName is null or P.LastName LIKE '%' + @LastName + '%')
 
 			
-	SELECT QueueName,JobType,MRN,FirstName,LastName, Patient,Appointment,ChangedBy, 
+	SELECT QueueName,JobType,
+	 Patient,Appointment,ChangedBy, 
 		CASE WHEN Status is not null and Status = 100 THEN 'Available' ELSE 'Deleted' END Status FROM #WorkListSearchItems
 	ORDER BY 
 	CASE WHEN @SortTypeFromGrid = 'Ascending' THEN 
