@@ -110,6 +110,11 @@ BEGIN
 
 			 IF(@IsMobileSMUser=1)
 			   BEGIN
+			        IF(ISNULL(@EmailAddress,'')='')
+					  BEGIN
+					    SET @EmailAddress=ISNULL(@FirstName,@LastName)
+					  END					
+                    			         
 			         IF EXISTS(SELECT '*' FROM dbo.Users WHERE LoginEmail=@EmailAddress)
 					   BEGIN
 					        DECLARE @COUNT INT
