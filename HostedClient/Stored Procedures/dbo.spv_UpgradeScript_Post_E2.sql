@@ -31,8 +31,9 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X   0    | 08-Jan-2016  | Sharif Shaik			| Initial Design
 --X   1    | 11-Jan-2016  | Sharif Shaik			| #4459 - Adding Data to New column of Applications and Module table
 --X   2    | 12-Jan-2016  | Santhosh                | #365 - Adding Job Delivery Error Codes
---X   3    | 09-Feb-2016  | Narender                | #392 - Added New entry into Module and Permission tables for WorkList feature in NCP
---X   4    | 09-Feb-2016  | Baswaraj				| #393 - Added New entry into Module and Permission tables for Delivery ErrorManagement
+--X   3    | 03-Feb-2016  | Santhosh                | #5478 - Image Only - Admin Console changes.
+--X   4    | 09-Feb-2016  | Narender                | #392 - Added New entry into Module and Permission tables for WorkList feature in NCP
+--X   5    | 09-Feb-2016  | Baswaraj				| #393 - Added New entry into Module and Permission tables for Delivery ErrorManagement
 
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
@@ -110,7 +111,24 @@ BEGIN
 		INSERT INTO Permissions (Code,Name,ParentPermissionID,ModuleId) VALUES ('FNC-ERRORDEFINITION-DELETE','Function - Delete ErrorDefinition',null,23)
 	END
 	/*365*/
-	
+
+	/*5478*/
+	IF NOT EXISTS(SELECT 1 FROM JobTypeCategory WHERE JobTypeCategory = 'Dictation')
+	BEGIN
+		INSERT INTO JobTypeCategory VALUES (1, 'Dictation')
+	END
+	IF NOT EXISTS(SELECT 1 FROM JobTypeCategory WHERE JobTypeCategory = 'Image Only')
+	BEGIN
+		INSERT INTO JobTypeCategory VALUES (2, 'Image Only')
+	END
+	IF NOT EXISTS(SELECT 1 FROM JobTypeCategory WHERE JobTypeCategory = 'Chat Upload')
+	BEGIN
+		INSERT INTO JobTypeCategory VALUES (3, 'Chat Upload')
+	END
+
+	Update JobTypes SET JobTypeCategoryId = 1
+	/*5478*/
+
 	/* #392 WORKLIST in NCP */
 	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 6 and ModuleName = 'Work List')
 	BEGIN
@@ -122,9 +140,9 @@ BEGIN
 	BEGIN
 		INSERT INTO Permissions (Code,Name,ParentPermissionID,ModuleId) VALUES ('MNU-WORKLIST','Menu Item - Work List',null,28)
 	END
-	/* #392 WORKLIST in NCP */	
- 
-   /* Start #393 Error Management */
+	/* #392 WORKLIST in NCP */
+
+	/* Start #393 Error Management */
      
 -- INSERT RECORD INTO MODULES TABLE 
 	IF NOT EXISTS (SELECT '*' FROM [DBO].[MODULES] WHERE MODULEID=31)
