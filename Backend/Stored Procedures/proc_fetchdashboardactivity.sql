@@ -5,13 +5,15 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+--EXEC proc_fetchdashboardactivity 'gitqtesting',1
 -- =============================================
 -- Author:		EntradaDev
 -- Updated:     Baswaraj on 02-Feb-2016 for #393 
 -- =============================================
 CREATE PROCEDURE [dbo].[proc_fetchdashboardactivity]
 	
-             @dictatirid varchar(5000)
+             @dictatirid varchar(5000),
+			 @ShowErrors int 
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
@@ -29,7 +31,8 @@ create table #tmpoutput
 	totalinprocess int null,
 	totalinprocesstoday int null,
 	delivered int null,
-	customerreviewed int null
+	customerreviewed int null,
+	errors INT NULL
 )
 
 --splitting the comma separated dictators to inser into a temp table as we can not use user id in the backend database
@@ -107,6 +110,8 @@ when matched then
 
  -- Added for to get JOB Errors -- Writtend by Baswaraj
 -- Search the error flag in Entrada and/or EntradaHostedClient DBs
+	IF(@ShowErrors = 1)
+		BEGIN
 		MERGE #tmpoutput AS T
 			USING
 			(
@@ -139,6 +144,7 @@ when matched then
 			WHEN NOT MATCHED BY TARGET THEN
 				INSERT(dictatorid,errors) 
 				VALUES (S.DictatorId,S.ErrorCount); 
+   END
 
  --final Output
  Select 
