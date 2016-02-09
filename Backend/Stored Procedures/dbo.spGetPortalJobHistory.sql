@@ -1,3 +1,7 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 /******************************          
 ** File:  spGetPortalJobHistory.sql          
 ** Name:  spGetPortalJobHistory          
@@ -7,8 +11,9 @@
 **************************          
 ** Change History          
 *************************          
-* PR   Date     Author  Description           
-* --   --------   -------   ------------------------------------       
+* PR   Date       Author    Description           
+* --   --------   -------   ------------------------------------
+*      2-Feb-2016  Baswaraj #393 Added a Column for ErrorHistoryIdentification     
 *******************************/      
       
 CREATE PROCEDURE [dbo].[spGetPortalJobHistory]  
@@ -24,12 +29,13 @@ DECLARE @TempJobsHostory1 TABLE(
 	StatusDate datetime, 
 	JobType varchar(100),
 	UserId VARCHAR(48),
-	MRN VARCHAR(48),
+	MRN int,
 	FirstName VARCHAR(50),
-	MI VARCHAR(50),
-	LastName VARCHAR(50),
-	ClinicID smallint,
-	SgId int
+	 MI VARCHAR(50),
+	 LastName VARCHAR(50),
+	 ClinicID smallint,
+	 SgId int,
+	 IsError int -- To Identify the error existence in the job history page
  )  
 
  INSERT INTO @TempJobsHostory1
@@ -42,8 +48,13 @@ DECLARE @TempJobsHostory1 TABLE(
  EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,4 -- Editing Complete Status
  INSERT INTO @TempJobsHostory1
  EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,5 -- Delivered Status
+ INSERT INTO @TempJobsHostory1
+ EXEC [spGetPortalJobErrorHistoryByJobNumber] @vvcrJobnumber --  Error Message
 
- SELECT * FROM @TempJobsHostory1 order by SgId asc
+
+ SELECT * FROM @TempJobsHostory1 order by IsError,SgId asc
 
 
 END
+
+GO
