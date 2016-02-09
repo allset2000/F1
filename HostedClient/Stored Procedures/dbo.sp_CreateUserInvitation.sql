@@ -117,9 +117,7 @@ BEGIN
                     			         
 			         IF EXISTS(SELECT '*' FROM dbo.Users WHERE LoginEmail=@EmailAddress)
 					   BEGIN
-					        DECLARE @COUNT INT
-							SELECT @COUNT=COUNT(*)+1 FROM dbo.Users WHERE LoginEmail=@EmailAddress
-							SET @EmailAddress=CAST(@COUNT AS VARCHAR)+'_'+@EmailAddress
+					          SET @EmailAddress=CAST(@UserInvitationId AS VARCHAR)+'_'+@EmailAddress
 					   END
 
 						INSERT INTO dbo.Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt) 
