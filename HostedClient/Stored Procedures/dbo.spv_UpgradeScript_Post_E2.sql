@@ -34,7 +34,7 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X   3    | 03-Feb-2016  | Santhosh                | #5478 - Image Only - Admin Console changes.
 --X   4    | 09-Feb-2016  | Narender                | #392 - Added New entry into Module and Permission tables for WorkList feature in NCP
 --X   5    | 09-Feb-2016  | Baswaraj				| #393 - Added New entry into Module and Permission tables for Delivery ErrorManagement
-
+--X   6    | 10-Feb-2016  | Sharif Shaik			| #5477 - Added new record "Image Only" to table DeliveryTypes 
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
@@ -170,6 +170,16 @@ BEGIN
 	SET IDENTITY_INSERT [DBO].[PERMISSIONS] OFF
 	END
 	/* End #393 Error Management */
+
+	/* 5477 Image only ExpressLink */
+	IF NOT EXISTS(SELECT 1 FROM DeliveryTypes WHERE [Description] = 'Image Only')
+	BEGIN
+		SET IDENTITY_INSERT [dbo].[DeliveryTypes] ON
+		INSERT INTO DeliveryTypes ([DeliveryTypeId], [Description]) VALUES (8,'Image Only')
+		SET IDENTITY_INSERT [DBO].[DeliveryTypes] OFF
+	END
+	/* 5477 Image only ExpressLink */
+
 END
 
 GO
