@@ -34,39 +34,40 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X   3    | 03-Feb-2016  | Santhosh                | #5478 - Image Only - Admin Console changes.
 --X   4    | 09-Feb-2016  | Narender                | #392 - Added New entry into Module and Permission tables for WorkList feature in NCP
 --X   5    | 09-Feb-2016  | Baswaraj				| #393 - Added New entry into Module and Permission tables for Delivery ErrorManagement
---X   6    | 10-Feb-2016  | Sharif Shaik			| #5477 - Added new record "Image Only" to table DeliveryTypes 
+--X   6    | 10-Feb-2016  | Sharif Shaik			| #5477 - Added new record "Image Only" to table DeliveryTypes
+--X   7    | 11-Feb-2016  | Sharif Shaik			| #5477 - Removed above added record and uncommented the commented code
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
-	--Update Applications
-	--SET AppCode = 'EXPRESS_LINK'
-	--Where [Description] =  'ExpressLink'
+	Update Applications
+	SET AppCode = 'EXPRESS_LINK'
+	Where [Description] =  'ExpressLink'
 
-	--Update Applications
-	--SET AppCode = 'MIRTH_CONNECT'
-	--Where [Description] =  'MirthConnect'
+	Update Applications
+	SET AppCode = 'MIRTH_CONNECT'
+	Where [Description] =  'MirthConnect'
 
-	--Update Applications
-	--SET AppCode = 'DOWNLOADER'
-	--Where [Description] =  'Downloader'
+	Update Applications
+	SET AppCode = 'DOWNLOADER'
+	Where [Description] =  'Downloader'
 
-	--Update Applications
-	--SET AppCode = 'MOBILE'
-	--Where [Description] =  'Entrada Mobile'
+	Update Applications
+	SET AppCode = 'MOBILE'
+	Where [Description] =  'Entrada Mobile'
 
-	--Update Applications
-	--SET AppCode = 'ADMIN_CONSOLE'
-	--Where [Description] =  'Admin Console'
+	Update Applications
+	SET AppCode = 'ADMIN_CONSOLE'
+	Where [Description] =  'Admin Console'
 
-	--Update Applications
-	--SET AppCode = 'CUSTOMER_PORTAL'
-	--Where [Description] =  'Customer Portal'
+	Update Applications
+	SET AppCode = 'CUSTOMER_PORTAL'
+	Where [Description] =  'Customer Portal'
 
 			
-	--Update Modules
-	--SET ModuleCode = upper(AppCode + '_' + replace(ModuleName,' ','_')) 
-	--From Modules
-	--	INNER JOIN Applications ON Applications.ApplicationId = Modules.ApplicationId
+	Update Modules
+	SET ModuleCode = upper(AppCode + '_' + replace(ModuleName,' ','_')) 
+	From Modules
+		INNER JOIN Applications ON Applications.ApplicationId = Modules.ApplicationId
 
 
 	Delete from [Permissions] where code ='MOBILE-SECURE-MESSAGING-DELETE-MESSAGE'
@@ -170,15 +171,6 @@ BEGIN
 	SET IDENTITY_INSERT [DBO].[PERMISSIONS] OFF
 	END
 	/* End #393 Error Management */
-
-	/* 5477 Image only ExpressLink */
-	IF NOT EXISTS(SELECT 1 FROM DeliveryTypes WHERE [Description] = 'Image Only')
-	BEGIN
-		SET IDENTITY_INSERT [dbo].[DeliveryTypes] ON
-		INSERT INTO DeliveryTypes ([DeliveryTypeId], [Description]) VALUES (8,'Image Only')
-		SET IDENTITY_INSERT [DBO].[DeliveryTypes] OFF
-	END
-	/* 5477 Image only ExpressLink */
 
 END
 
