@@ -85,6 +85,13 @@ BEGIN
 				Print 'Creating new column ImageID, table JobsDeliveryTracking...'
 				ALTER TABLE [dbo].[JobsDeliveryTracking] ADD ImageID bigint NULL CONSTRAINT DF_JobsDeliveryTracking_ImageID DEFAULT NULL
 			END
+
+			IF NOT EXISTS (SELECT * FROM INFORMATION_SCHEMA.CONSTRAINT_COLUMN_USAGE WHERE TABLE_NAME = 'JobsDeliveryTracking' 
+				AND CONSTRAINT_NAME = 'FK_JobsDeliveryTracking_JobImages' )
+			BEGIN
+				Print 'Creating foreign key on ImageID, table JobsDeliveryTracking...'
+				ALTER TABLE [dbo].[JobsDeliveryTracking] ADD CONSTRAINT [FK_JobsDeliveryTracking_JobImages] FOREIGN KEY ([ImageID]) REFERENCES [dbo].[JobImages] ([ImageID])
+			END
 		/* #5477 */ 
 	
 END  -- End of Proc
