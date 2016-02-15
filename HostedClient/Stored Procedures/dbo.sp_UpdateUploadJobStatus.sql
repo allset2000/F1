@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -48,6 +49,8 @@ BEGIN TRY
 					HasImages=@HasImages,
 					HasChatHistory=@HasChatHistory,
 					HasTagMetaData=@HasTagMetaData,
+					TagMetaData=@TagMetaData,
+					DictationText=@DictationText,
 					MessageThreadID=CASE WHEN ISNULL(@MessageThreadID,'')='' THEN NULL ELSE CAST(@MessageThreadID AS INT) END,
 					UpdatedDateInUTC=GETUTCDATE() 
 			WHERE JobId = @JobId

@@ -12,7 +12,15 @@ CREATE TABLE [dbo].[Jobs]
 [RuleID] [smallint] NULL,
 [AdditionalData] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ProcessFailureCount] [smallint] NULL,
-[UpdatedDateInUTC] [datetime] NULL CONSTRAINT [DF_JOBS_UpdatedDateInUTC] DEFAULT (getutcdate())
+[UpdatedDateInUTC] [datetime] NULL CONSTRAINT [DF_JOBS_UpdatedDateInUTC] DEFAULT (getutcdate()),
+[HasDictation] [bit] NULL CONSTRAINT [DF_Jobs_HasDictation] DEFAULT ((0)),
+[HasImages] [bit] NULL CONSTRAINT [DF_Jobs_HasImages] DEFAULT ((0)),
+[HasTagMetaData] [bit] NULL CONSTRAINT [DF_Jobs_HasTagMetaData] DEFAULT ((0)),
+[HasChatHistory] [bit] NULL CONSTRAINT [DF_Jobs_HasChatHistory] DEFAULT ((0)),
+[OwnerUserID] [int] NULL,
+[TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[MessageThreadID] [int] NULL,
+[DictationText] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobID]) ON [PRIMARY]
