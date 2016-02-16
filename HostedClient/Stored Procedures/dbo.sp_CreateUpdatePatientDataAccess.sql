@@ -26,11 +26,20 @@ SET XACT_ABORT ON
 BEGIN
 	BEGIN TRANSACTION CreateUpdatePatientDataAccess
 		BEGIN TRY
+
 			DECLARE @PatientDataAccessID AS INT = -1,
 					@PreviousPermissionCode AS INT = -1,
 					@CreateUpdateDate AS DATETIME = GETDATE(),
 					@PatientDataAccessPermissionID AS INT,
 					@PreviousPatientDataAccessPermissionID AS INT
+		
+
+		--temp user need provide only Demographic permissions
+		   IF EXISTS (SELECT '*' FROM dbo.UserInvitations WHERE PendingRegStatus=1 AND RegisteredUserId=@UserID AND @PermissionCode=2)
+				BEGIN	
+				   SET @PermissionCode=1
+				END	
+			
 
 			--Get PatientDataAccessPermissionID 
 			SELECT @PatientDataAccessPermissionID  = PatientDataAccessPermissionID 
@@ -42,18 +51,24 @@ BEGIN
 			FROM [dbo].[PatientDataAccess]
 			WHERE MessageThreadID = @MessageThreadID AND UserID = @UserID 
 
+
 			--Check if the permission record for this thread/user is found
-			IF (SELECT @PatientDataAccessID) != -1  BEGIN
+			IF ( @PatientDataAccessID != -1 )
+			BEGIN
 				--Collect the previous PermissionCode and PatientDataAccessPermissionID values. We will need it, later.
 				SELECT @PreviousPermissionCode = pdap.PermissionCode, @PreviousPatientDataAccessPermissionID = pda.PatientDataAccessPermissionID 
-				FROM [dbo].[PatientDataAccessPermissions] AS pdap INNER JOIN [dbo].[PatientDataAccess] AS pda ON pda.PatientDataAccessPermissionID = pdap.PatientDataAccessPermissionID
+				FROM [dbo].[PatientDataAccessPermissions] AS pdap 
+				INNER JOIN [dbo].[PatientDataAccess] AS pda ON pda.PatientDataAccessPermissionID = pdap.PatientDataAccessPermissionID
 				WHERE pda.PatientDataAccessID = @PatientDataAccessID
 
 				--If the patient info sharing was changed for the current user, 
 				--then copy this record from [dbo].[PatientDataAccess] to [dbo].[PatientDataAccessHistory]
-				IF (SELECT @PermissionCode) != (SELECT @PreviousPermissionCode)BEGIN
-					INSERT INTO [dbo].[PatientDataAccessHistory] (PatientDataAccessID, MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, UpdatedDate)
-					SELECT PatientDataAccessID, MessageThreadID, UserID, @PreviousPatientDataAccessPermissionID, CreatedDate, @CreateUpdateDate
+				IF (@PermissionCode<>@PreviousPermissionCode)
+				BEGIN
+
+					INSERT INTO [dbo].[PatientDataAccessHistory] 
+							(PatientDataAccessID, MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, UpdatedDate)
+					SELECT   PatientDataAccessID, MessageThreadID, UserID, @PreviousPatientDataAccessPermissionID, CreatedDate, @CreateUpdateDate
 					FROM [dbo].[PatientDataAccess]
 					WHERE PatientDataAccessID = @PatientDataAccessID
 
@@ -66,7 +81,8 @@ BEGIN
 			END
 			ELSE BEGIN
 				--Else, insert new one     
-				INSERT INTO [dbo].[PatientDataAccess] (MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, UpdatedDate)
+				INSERT INTO [dbo].[PatientDataAccess] 
+				        (MessageThreadID, UserID, PatientDataAccessPermissionID, CreatedDate, UpdatedDate)
 				VALUES (@MessageThreadID, @UserID, @PatientDataAccessPermissionID, @CreateUpdateDate, NULL)
 
 				--Reload @PatientDataAccessID
@@ -79,10 +95,9 @@ BEGIN
 		BEGIN CATCH
 		    IF @@TRANCOUNT > 0 ROLLBACK TRANSACTION CreateUpdatePatientDataAccess
 			
-			DECLARE @errorMessage AS VARCHAR(4000) = (SELECT ERROR_MESSAGE()),
-					@errorSeverity AS INT = (SELECT ERROR_SEVERITY()),
-					@errorState AS INT = (SELECT ERROR_STATE())
-				 
+			DECLARE @errorMessage AS VARCHAR(4000) =ERROR_MESSAGE(),
+					@errorSeverity AS INT =  ERROR_SEVERITY(),
+					@errorState AS INT =  ERROR_STATE()				 
 			RAISERROR (@errorMessage, @errorSeverity, @errorState)
 		END CATCH
 	IF @@TRANCOUNT > 0 COMMIT TRANSACTION CreateUpdatePatientDataAccess
