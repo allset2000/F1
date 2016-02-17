@@ -36,6 +36,7 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X   5    | 09-Feb-2016  | Baswaraj				| #393 - Added New entry into Module and Permission tables for Delivery ErrorManagement
 --X   6    | 10-Feb-2016  | Sharif Shaik			| #5477 - Added new record "Image Only" to table DeliveryTypes
 --X   7    | 11-Feb-2016  | Sharif Shaik			| #5477 - Removed above added record and uncommented the commented code
+--X   8    | 09-Feb-2016  | Santhosh       			| #000 - Added Permission for Mobile
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
@@ -172,6 +173,13 @@ BEGIN
 	END
 	/* End #393 Error Management */
 
+	/* #000 */
+	IF NOT EXISTS(SELECT * FROM Permissions WHERE Code = 'MOBILE-SECURE-MESSAGING-INVITE-CONTACTS')
+	BEGIN
+		INSERT INTO Permissions
+		(Code, Name, ModuleId) VALUES ('MOBILE-SECURE-MESSAGING-INVITE-CONTACTS', 'Function - Mobile Secure Messaging Invite Contacts', 3)
+	END
+	/* #000 */
 END
 
 GO
