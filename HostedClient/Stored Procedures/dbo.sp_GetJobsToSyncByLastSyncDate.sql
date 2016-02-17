@@ -24,12 +24,15 @@ BEGIN
 			j.[Status] AS [State],			
 			j.Stat AS IsStat,
 			q.QueueID,
-			e.EncounterID		
+			e.EncounterID,
+			jr.ReferringID AS ReferringPhysicianID		
 	FROM dbo.Dictations AS d 
 		INNER JOIN dbo.Jobs AS j ON d.JobID = j.JobID 
 		INNER JOIN dbo.Encounters AS e ON j.EncounterID = e.EncounterID
 		INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID 
 		INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
+		LEFT JOIN dbo.Jobs_Referring jr ON jr.JobID=j.JobID
+		
 	WHERE qu.DictatorID=@DictatorID AND
 		  @EncounterId=(CASE WHEN @EncounterId=0 THEN @EncounterId ELSE e.EncounterID END) AND 	       
 		  d.[Status] IN (100, 200) AND 	

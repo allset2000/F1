@@ -16,8 +16,7 @@ CREATE PROCEDURE [dbo].[sp_UpdateUploadJobStatus]
 	@Stat BIT,
 	@JobTypeID INT,
 	@OwnerUserID INT,
-	@MessageThreadID VARCHAR(100),
-	@DictationText VARCHAR(MAX),
+	@MessageThreadID VARCHAR(10),
 	@TagMetaData VARCHAR(2000),
 	@HasTagMetaData SMALLINT,
 	@HasImages SMALLINT,
@@ -49,9 +48,8 @@ BEGIN TRY
 					HasImages=@HasImages,
 					HasChatHistory=@HasChatHistory,
 					HasTagMetaData=@HasTagMetaData,
-					TagMetaData=@TagMetaData,
-					DictationText=@DictationText,
-					MessageThreadID=CASE WHEN ISNULL(@MessageThreadID,'')='' THEN NULL ELSE CAST(@MessageThreadID AS INT) END,
+					TagMetaData=@TagMetaData,				
+					ChatHistory_ThreadID=CASE WHEN ISNULL(@MessageThreadID,'')='' THEN NULL ELSE CAST(@MessageThreadID AS INT) END,
 					UpdatedDateInUTC=GETUTCDATE() 
 			WHERE JobId = @JobId
 
