@@ -72,7 +72,7 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 			END
 
 		-- if job is sent to finsh in Editor stage then we need to track in process data and status
-		IF @vsintCurrentStatus > 250 and not exists(SELECT 1 FROM JOB_HISTORY WHERE jobnumber=@vvcrJobNumber)
+		IF @vsintCurrentStatus >= 250 and not exists(SELECT 1 FROM JOB_HISTORY WHERE jobnumber=@vvcrJobNumber)
 			BEGIN
 				INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,IsHistory)
 				VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,170,@vintDocumentID,@vvcrUserId,GETDATE(),@IsHistory)
