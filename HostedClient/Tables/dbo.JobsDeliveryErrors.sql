@@ -8,7 +8,8 @@ CREATE TABLE [dbo].[JobsDeliveryErrors]
 [ExceptionMessage] [varchar] (250) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [FirstAttempt] [datetime] NOT NULL,
 [ChangedOn] [datetime] NOT NULL,
-[ErrorCode] [int] NULL
+[ErrorCode] [int] NULL,
+[ImageID] [bigint] NULL CONSTRAINT [DF_JobsDeliveryErrors_ImageID] DEFAULT (NULL)
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[JobsDeliveryErrors] ADD CONSTRAINT [PK_JobsDeliveryErrors] PRIMARY KEY CLUSTERED  ([DeliveryErrorId]) ON [PRIMARY]

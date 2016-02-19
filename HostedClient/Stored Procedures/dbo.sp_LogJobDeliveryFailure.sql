@@ -11,7 +11,8 @@ CREATE PROCEDURE [dbo].[sp_LogJobDeliveryFailure](
       @ErrorStatus smallint,
       @ErrorMessage varchar(250)= NULL,
       @ExceptionMessage varchar(250)= NULL,
-      @DeliveryRuleId int = NULL
+      @DeliveryRuleId int = NULL,
+	  @ImageID bigint = NULL
       
 )AS 
 BEGIN		
@@ -36,11 +37,11 @@ BEGIN
       END
       ELSE
       BEGIN
-            INSERT INTO JobsDeliveryErrors(JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode)
-            VALUES(@JobId,@DeliveryRuleId,@ErrorStatus,@ErrorMessage,@ExceptionMessage,GETDATE(),GETDATE(),@ErrorCode)
+            INSERT INTO JobsDeliveryErrors(JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode,ImageID)
+            VALUES(@JobId,@DeliveryRuleId,@ErrorStatus,@ErrorMessage,@ExceptionMessage,GETDATE(),GETDATE(),@ErrorCode,@ImageID)
  
-			INSERT INTO JobsDeliveryErrorsTracking(DeliveryErrorId,JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode)
-            SELECT @@IDENTITY,JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode FROM JobsDeliveryErrors where JobId = @JobId
+			INSERT INTO JobsDeliveryErrorsTracking(DeliveryErrorId,JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode,ImageID)
+            SELECT @@IDENTITY,JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode,ImageID FROM JobsDeliveryErrors where JobId = @JobId
       END
 END
  
