@@ -215,7 +215,7 @@ BEGIN
 		END
 
 		-- pass back to the ws (true/false) for user create
-		SELECT 1 from Users WHERE UserId = @UserId
+		SELECT '1' from Users WHERE UserId = @UserId
 
 	END TRY
 	BEGIN CATCH
