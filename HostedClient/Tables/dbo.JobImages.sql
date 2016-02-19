@@ -5,8 +5,8 @@ CREATE TABLE [dbo].[JobImages]
 [ImageID] [bigint] NOT NULL IDENTITY(1, 1),
 [ImageDescription] [varchar] (1000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
-ALTER TABLE [dbo].[JobImages] ADD 
-CONSTRAINT [PK_JobImages_ImageID] PRIMARY KEY CLUSTERED  ([ImageID]) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[JobImages] ADD CONSTRAINT [PK_JobImages_ImageID] PRIMARY KEY CLUSTERED  ([ImageID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_JobImages] ON [dbo].[JobImages] ([JobID]) ON [PRIMARY]
 GO
