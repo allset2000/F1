@@ -7,7 +7,7 @@ GO
 -- Author:		Narender
 -- Create date: 01/27/2016
 -- Description:	This SP will return WorkList for selected search filter
---EXEC sp_GetWorklistSearchReport @clinicID=1,@PageNo=1,@SortColumnFromGrid='Patient',@SortTypeFromGrid='Descending',@PageSize=30,@TotalCount out
+--EXEC sp_GetWorklistSearchReport @clinicID=353,@PageNo=1,@SortColumnFromGrid='Patient',@SortTypeFromGrid='Descending',@PageSize=10,@QueueID=3671
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetWorklistSearchReport] 
 @clinicID smallint,
@@ -56,17 +56,17 @@ BEGIN
 		JobTypes.Name AS JobType,
 		(P.MRN + '' - '' + P.FirstName + '' '' + P.LastName) AS Patient,
 		E.AppointmentDate AS Appointment,
-		JT.ChangedBy AS ChangedBy,
+		DT.ChangedBy AS ChangedBy,
 		J.Status AS Status, COUNT(*) OVER() as TotalCount
 			FROM Jobs J 
-			INNER JOIN JobTypes ON J.JobTypeID = JobTypes.JobTypeID 
-			INNER JOIN Encounters E ON J.EncounterID = E.EncounterID 
-			INNER JOIN Patients P ON E.PatientID = P.PatientID 
-			INNER JOIN Dictations D ON D.JobID = J.JobId 
-			LEFT JOIN Queues Q ON D.QueueID = Q.QueueID 
-			LEFT JOIN Dictators DI ON D.DictatorID = DI.DictatorID
-			LEFT OUTER JOIN (Select JobID,Status,MAX(ChangeDate) AS MAX_ChangeDate,ChangedBy FROM JobsTracking GROUP BY JobID,Status,ChangedBy) JT 
-						ON J.jobid = JT.jobID AND J.status = JT.status
+				INNER JOIN JobTypes ON J.JobTypeID = JobTypes.JobTypeID 
+				INNER JOIN Encounters E ON J.EncounterID = E.EncounterID 
+				INNER JOIN Patients P ON E.PatientID = P.PatientID 
+				LEFT JOIN (SELECT D.JobID,D.DictationID,D.DictatorID,D.QueueID FROM Dictations D 
+							INNER JOIN DictationTypes DT ON D.DictationTypeID = DT.DictationTypeID ) D ON D.JobID = J.JobId    
+				LEFT JOIN (Select DictationID,Status,MAX(ChangeDate) AS MAX_ChangeDate,ChangedBy FROM DictationsTracking GROUP BY DictationID,Status,ChangedBy) DT ON D.DictationID = DT.DictationID AND J.Status = DT.Status
+				LEFT JOIN Queues Q ON D.QueueID = Q.QueueID 
+				LEFT JOIN Dictators DI ON D.DictatorID = DI.DictatorID
 			WHERE J.Status IN(100,500) AND J.ClinicID = ' +CAST(@clinicID AS VARCHAR)
 			
 			 
@@ -89,7 +89,8 @@ BEGIN
 
 				SET @sql += ')'
 
-					SET @Sql=@Sql+' SELECT  Queue,JobType,Patient,Appointment,ChangedBy, 
+					SET @Sql=@Sql+' SELECT  Queue,JobType,Patient,Appointment,
+					   CASE WHEN ChangedBy NOT LIKE ''%[^0-9]%'' THEN (select DictatorName from Dictators where DictatorID = ChangedBy) ELSE ChangedBy END ChangedBy, 
 						CASE WHEN Status is not null and Status = 100 THEN ''Available'' when status =500 then ''Deleted'' ELSE ''Unknown'' END Status,
 						TotalCount
 						 
