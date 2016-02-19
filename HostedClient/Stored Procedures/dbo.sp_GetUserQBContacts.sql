@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -10,6 +9,7 @@ GO
 -- Description: SP Used to get all QB User's for a given user (all users on all clinics the dictator has access to)
 -- Modified by Vivek on 9/29/2015 - changed the logic to refer UserClinicXref instead of User.ClinicID
 -- Modified by Narender on 12/03/2015 - Added FullName,Email,PhoneNo,ClinicID and ClinicName to select statement
+-- Modified by Santhosh on 02/19/2016 - Pulling only active users
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetUserQBContacts] (
 	@UserId int
@@ -31,6 +31,8 @@ BEGIN
 		INNER JOIN Clinics C on C.ClinicID = UCX.ClinicID
 		LEFT JOIN SMContactFavorites F on U.UserID = F.FavUserId
 	WHERE
+	    --Only Active users
+		U.Deleted = 0 AND
 		(F.UserID IS NULL OR (F.UserID = @UserId AND F.IsDeleted=0)) AND 
 		 (
 		--All users who belong to the clinics I belong to
@@ -54,4 +56,5 @@ BEGIN
 
 
 END
+
 GO
