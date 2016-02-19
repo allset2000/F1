@@ -37,8 +37,8 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 
 	SET @newMRN = @vvcrMRN
 	SET @newJobType = @vvcrJobType
-
-	set @IsHistory =0
+	SET @IsHistory =0
+	
 		IF @vvcrUserId IS NULL OR  @vvcrUserId = ''
 		BEGIN
 			SELECT @vvcrUserId = LastEditedById FROM JobEditingSummary JE
@@ -46,7 +46,6 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 			ON J.jobid=JE.jobid
 			WHERE J.JobNumber =@vvcrJobNumber
 		END
-		
 		
 		-- if any jobtype value is changed then track that previous value.
 		SELECT  @vvcrJobType = CASE WHEN JobType <> @vvcrJobType THEN JobType ELSE NULL END  FROM jobs WHERE JobNumber = @vvcrJobNumber	
@@ -59,9 +58,6 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		@vvcrDOB = CASE WHEN DOB <> @vvcrDOB THEN DOB ELSE NULL END
 		FROM jobs_patients
 		WHERE JOBNUMBER = @vvcrJobNumber
-		
-		
-				
 
 		if @vvcrMRN is null 
 			BEGIN 
@@ -76,7 +72,7 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 			END
 
 		-- if job is sent to finsh in Editor stage then we need to track in process data and status
-		IF @vsintCurrentStatus=270 and not exists(SELECT 1 FROM JOB_HISTORY WHERE jobnumber=@vvcrJobNumber)
+		IF @vsintCurrentStatus >= 250 and not exists(SELECT 1 FROM JOB_HISTORY WHERE jobnumber=@vvcrJobNumber)
 			BEGIN
 				INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,IsHistory)
 				VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,170,@vintDocumentID,@vvcrUserId,GETDATE(),@IsHistory)
@@ -89,7 +85,10 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		
 		IF @vsintCurrentStatus is null or @oldStatus <> @vsintCurrentStatus 
 			SET @vsintCurrentStatus =@oldStatus
-	
+		
+		IF @vsintCurrentStatus = 250
+			SET	@vvcrUserId = NULL
+						
 		IF @vsintCurrentStatus = 260
 		BEGIN
 			SET @vvcrMRN = @newMRN
@@ -98,4 +97,5 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,FirstName,MI,LastName,DOB,IsHistory)
 		VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUserId,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,@IsHistory)
 	END
+	
 GO
