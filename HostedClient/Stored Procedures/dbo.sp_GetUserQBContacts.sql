@@ -22,8 +22,8 @@ BEGIN
 	SELECT U.UserId, U.FirstName, U.MI, U.LastName,  CONCAT(U.FirstName,' ', U.MI,' ', U.LastName) as FullName, U.LoginEmail as Email, U.PhoneNumber, C.ClinicID, C.Name as ClinicName, QBU.QuickBloxUserID, 
 		QBU.Login as 'QBUserLogin', 
 		CASE
-			WHEN F.FavUserId IS NULL THEN 0
-			ELSE 1
+			WHEN F.UserID=@UserID and F.IsDeleted=0 THEN 1
+			ELSE 0
 		END as 'IsFavorite'
 	FROM Users U
 		INNER JOIN QuickBloxUsers QBU on U.UserID = QBU.UserID
@@ -33,7 +33,7 @@ BEGIN
 	WHERE
 	    --Only Active users
 		U.Deleted = 0 AND
-		(F.UserID IS NULL OR (F.UserID = @UserId AND F.IsDeleted=0)) AND 
+		(F.UserID IS NULL OR (F.UserID = @UserId)) AND 
 		 (
 		--All users who belong to the clinics I belong to
 		--Don't include the users from SMDefaultClinic even if I belong there...
