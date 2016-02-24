@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -11,6 +12,7 @@ GO
 /*
 	set statistics io on
 	exec sp_JobsGet 210, 300, 1, 0, 0
+	exec sp_JobsGet 48, 300, 1, 0, 0
 */
 
 CREATE PROCEDURE [dbo].[sp_JobsGet] 
@@ -36,6 +38,6 @@ BEGIN
                                 LEFT OUTER JOIN Schedules ON Schedules.ScheduleID = Encounters.ScheduleID
                                 LEFT OUTER JOIN Dictators ON Dictators.DictatorID = Jobs.DictatorID                                 
                                 WHERE Jobs.ClinicID = @ClinicID and Jobs.[Status] = @Status and ISNULL(jobs.hasImages, 0) = @HasImages and ISNULL(jobs.hasDictation, 0) = @HasDictation and ISNULL(jobs.HasChatHistory,0) = @HasChatHistory
-								and Jobs.Jobid = 838920 
+								--and Jobs.Jobid = 838920 -- Greenway 827790 --Athena 838920 --
 END
 GO
