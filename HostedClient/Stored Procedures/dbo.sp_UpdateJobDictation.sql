@@ -1,24 +1,13 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-/******************************  
-** File:  spUpdateDictation.sql  
-** Name:  spUpdateDictation  
-** Desc:  Update the dictation and if status changed then insert into Dictationstracking table 
-** Auth:  Suresh  
-** Date:  18/May/2015  
-**************************  
-** Change History  
-**************************  
-** PR   Date     Author  Description   
-** --   --------   -------   ------------------------------------  
-** #358 01/18/2016 Santhosh  Deleting jobs which have same encounterid and ruleid after dictation 
-** updated 02/25/2016 Raghu dictation trigger logic implemented in this store procedure
-*******************************/
-  
-CREATE PROCEDURE [dbo].[spUpdateDictation]  
+-- =============================================
+-- Author:		Raghu A
+-- Create date: 2/24/2016
+-- Description: update dictation status after upload used for new upload method 
+-- =============================================
+CREATE PROCEDURE [dbo].[sp_UpdateJobDictation]
 (
  @bgintJobID BIGINT,  
  @bgintDictationID  BIGINT,
@@ -40,56 +29,19 @@ BEGIN TRY
 	BEGIN TRANSACTION 
 	
 	SELECT @OldDictationStatus = status FROM Dictations WHERE DictationID = @bgintDictationID 
+	
+	
+		UPDATE Dictations SET [FileName] = @vvcrFileName,status=@vintStatus,JobID=@bgintJobID,DictationTypeID=@vintDictationTypeID,DictatorID=@vintDictatorID,
+			   QueueID=@vintQueueID,Duration=@smintDuration,MachineName=@vvcrMachineName,UpdatedDateInUTC=GETUTCDATE()
+		WHERE DictationID = @bgintDictationID  	
 
-	
-	UPDATE Dictations SET [FileName] = @vvcrFileName,status=@vintStatus,JobID=@bgintJobID,DictationTypeID=@vintDictationTypeID,DictatorID=@vintDictatorID,
-		   QueueID=@vintQueueID,Duration=@smintDuration,MachineName=@vvcrMachineName,UpdatedDateInUTC=GETUTCDATE()
-	WHERE DictationID = @bgintDictationID  	
-	
-	-- Only update if the status changed
-	IF (@OldDictationStatus <> @vintStatus)
+		IF (@OldDictationStatus <> @vintStatus)
 		INSERT INTO DictationsTracking
 		    (DictationID,Status,ChangeDate,ChangedBy)
 		VALUES
 		    (@bgintDictationID,@vintStatus,GETDATE(),@vvcrChangedBy)
 
-
-	--begin trigger logic updated in store procedure
-			-- Find the lowest status of all a job's dictations
-			SELECT @newJobStatus = [Status] FROM Dictations WHERE JobID = @bgintjobId;
-
-			-- If any dictation is Available (100) or OnHold (200), the job should be Available (100)
-			-- If all dictations are Deleted (500), the job should be Deleted (500)
-			-- If all dictations are Dictated (250), the job should be Completed (300)
-			SELECT @newJobStatus =
-			   CASE 
-				  WHEN @newJobStatus > 0 AND @newJobStatus < 250 THEN 100 
-				  WHEN @newJobStatus >= 500 THEN 500
-				  WHEN @newJobStatus = 250 THEN 300 
-				  ELSE -1
-			   END 
-
-			IF @newJobStatus <>-1 BEGIN
-
-			      	SELECT @OldJobStatus = status FROM Jobs WHERE jobID = @bgintJobID 
-
-					-- We only want to update jobs that are Available (100)
-					UPDATE dbo.Jobs 
-					SET [Status] = @newJobStatus,UpdatedDateInUTC=GETUTCDATE() 
-					WHERE JobID = @bgintjobId AND [Status] in (100,500)
-
-					-- Changing the dictation status may have changed the job status
-				-- (via the trigger), so we may need to insert a tracking row
-				IF (@OldJobStatus <> @newJobStatus)
-					INSERT INTO Jobstracking
-						 (JobID,Status,ChangeDate,ChangedBy)
-					VALUES
-						 (@bgintjobId,@newJobStatus,GETDATE(),@vvcrChangedBy)	
-
-			END	
 	
-	--end trigger logic
-
 	--This is to delete jobs which have same encounterid and ruleid as this dictated job for NextGen vendor only
 	IF(@vintStatus = 250)
 	BEGIN

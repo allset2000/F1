@@ -11,7 +11,29 @@ CREATE PROCEDURE [dbo].[sp_GetErrorDetailsByJobNumber]
 )
 AS
 BEGIN	
-				SELECT B.Jobnumber,B.ErrorDate,ED.ResolutionGuide,JC.FileName,S.EHREncounterId,S.AppointmentId  
+
+
+DECLARE @ActualCount int 
+DECLARE @FilledCount int
+DECLARE @VendorId INT
+        -- Get vendorID for the job
+		SELECT TOP 1 @VendorId=C.EHRVendorId 
+		FROM Jobs J 
+		            INNER JOIN EH_Clinics C on C.ClinicId = J.ClinicId 
+		WHERE J.JobNumber = @jobNumber
+		--Get How Many Override values Added already
+		SELECT @FilledCount=Count(DISTINCT rov.FieldID) 
+		FROM EH_ROWOverrideValues rov 
+		INNER JOIN EH_ROWOverrideFields rof ON rof.FieldID = rov.FieldID 
+		WHERE JobNumber=@jobNumber
+		-- Get how many field we have for to override the value
+		SELECT @ActualCount=Count(DISTINCT FieldID) 
+		FROM EH_ROWOverrideFields 
+		WHERE EHRVendorId=@VendorId
+
+		
+				SELECT B.Jobnumber, B.ErrorDate, ED.ResolutionGuide,ED.ErrorMessage,JC.FileName, S.EHREncounterId, S.AppointmentId, 
+				    CASE WHEN @ActualCount=@FilledCount THEN 0 ELSE 1 END  AS 'ADDOverrideStatus' -- if all override fields are added than 0 else 1
                 FROM
 				(
 					 SELECT TOP 1 JOBNUMBER,ErrorCode ,ErrorDate

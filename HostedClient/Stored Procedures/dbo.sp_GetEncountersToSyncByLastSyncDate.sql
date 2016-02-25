@@ -8,7 +8,7 @@ GO
 -- Author: Raghu A
 -- Create date: 18/11/2014
 -- Description: SP called from DictateAPI to pull Dictations to sync on mobile
---exec sp_GetEncountersToSyncByLastSyncDate 2196 ,'2014-11-20 10:15:02.970','2015-05-04 00:00:00.000','next'
+--exec sp_GetEncountersToSyncByLastSyncDate 905 ,'2014-11-20 10:15:02.970',NULL,NULL
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetEncountersToSyncByLastSyncDate](
 	 @DictatorId INT,
@@ -33,7 +33,7 @@ BEGIN
 	  INSERT INTO @TempEncounter
 	  SELECT DISTINCT e.EncounterID AS ID, 
 			 DATEDIFF(SECOND,{D '1970-01-01'}, e.AppointmentDate) AS AppointmentDate ,			
-			 e.PatientID, 
+			 p.PatientID, 
 			 e.ScheduleID,
 			 CASE WHEN q.Deleted = 1 THEN 500 ELSE 100 END AS [State],
 			 STUFF((SELECT ', ' + CAST(JobID AS VARCHAR)

@@ -18,7 +18,7 @@ GO
 **************************  
 ** PR   Date     Author  Description   
 ** --   --------   -------   ------------------------------------  
-**   
+** 1    25-FEB-2016 Narender: #731# Added STAT Field to insert into Job History
 *******************************/  
 CREATE PROCEDURE [dbo].[spUpdatePortalJobDetails]  
 (  
@@ -60,14 +60,20 @@ BEGIN TRY
 	DECLARE @oldMRN VARCHAR(50) =null
 	DECLARE @oldJobType VARCHAR(100) =null
 	DECLARE @oldStatus INT=null
+	DECLARE @vbitStat1 BIT=null
 
 	BEGIN TRANSACTION 
 		-- Updating Patient Details
 		IF @vvcrMRN = '' OR @vvcrMRN = '0'
 			set @vvcrMRN =null
 
+		IF(@vbitStat = 1)
+			set @vbitStat1 = 1
+		ELSE
+			set @vbitStat1 = NULL
+
 		-- Tracking the previous status details
-		EXEC [spInsertJobHistory] @vvcrJobNumber,null,@vvcrJobType,null,null,@vvcrUsername,null,null,null,null
+		EXEC [spInsertJobHistory] @vvcrJobNumber,null,null,null,null,@vvcrUsername,null,null,null,null,@vbitStat1
 
 		select @oldStatus = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@oldStatus is NULL )
@@ -109,7 +115,6 @@ BEGIN TRY
 		BEGIN
 			UPDATE Jobs SET Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
 		END
-
 		
 
 		--updating document into jobs_documents table
@@ -149,8 +154,8 @@ BEGIN TRY
 			select @Status = status from JobStatusB where jobnumber=@vvcrJobNumber
 		if  @Status=250 
 			BEGIN
-			INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime)
-			SELECT @vvcrJobNumber,MRN,JobType,250,null,@vvcrUsername,GETDATE() from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber 
+			INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime, STAT)
+			SELECT @vvcrJobNumber,MRN,JobType,250,null,@vvcrUsername,GETDATE(), @vbitStat1 from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber 
 					WHERE (j.[JobNumber] = @vvcrJobNumber)
 			END
 

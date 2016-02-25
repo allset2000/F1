@@ -13,7 +13,8 @@ GO
 *************************          
 * PR   Date       Author    Description           
 * --   --------   -------   ------------------------------------
-*      2-Feb-2016  Baswaraj #393 Added a Column for ErrorHistoryIdentification     
+*      2-Feb-2016  Baswaraj #393 Added a Column for ErrorHistoryIdentification    
+*      25-FEB-2016 Narender: #731# Added STAT Field to insert into Job History 
 *******************************/      
       
 CREATE PROCEDURE [dbo].[spGetPortalJobHistory]  
@@ -50,7 +51,9 @@ DECLARE @TempJobsHostory1 TABLE(
  EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,5 -- Delivered Status
  INSERT INTO @TempJobsHostory1
  EXEC [spGetPortalJobErrorHistoryByJobNumber] @vvcrJobnumber --  Error Message
-
+ INSERT INTO @TempJobsHostory1  
+ SELECT TOP 1 JobNumber,DocumentID, 'Job Marked as STAT',HistoryDateTime, jobtype, UserId, MRN, FirstName, MI, LastName,null, null, null  FROM Job_History
+		WHERE JobNumber = @vvcrJobnumber and  STAT = 1 ORDER BY JobHistoryID DESC
 
  SELECT * FROM @TempJobsHostory1 order by IsError,SgId asc
 
