@@ -8,6 +8,7 @@ GO
 -- Author:		Narender
 -- Create date: 05/26/2015
 -- Description:	This stored procedure will return the jobs list based on search filter criteria
+-- Updated Date: 24-Feb-2016 -- Added block for StatusGroup-10 Error
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobReportsSearchJobList] 
 @JobReportSearchPreferenceId int,
@@ -51,6 +52,9 @@ BEGIN
 
 			if @DateField = 5 
 				set @JobStatus=5 -- this condition is to sure jobs are available in JobDeliveryHistory, don't consider 360 status
+				 
+		    if @JobStatus = 10  -- this condition is to set jdatefiled to 10 error- bcz we dnt have status 
+			    set @DateField = 10		
 
 	IF OBJECT_ID('tempdb..#SearchItems') IS NOT NULL
     DROP TABLE #SearchItems
@@ -74,7 +78,49 @@ BEGIN
 			SET @dateRangeTo = @To +' 23:59:59'
 		end
 	-- the below condition was added to fetch Jobs for "Delivered" status selected in DateField option
-	IF(@DateField <>5)
+	IF(@DateField=10) -- added by baswaraj for 393 error management
+	BEGIN
+	INSERT INTO @JobsToFilter
+	SELECT E.JobNumber,E.ErrorDate AS StatusDate,JB.ClinicID FROM															    
+			(
+			SELECT G.JobNumber,MIN(G.ErrorDate) AS ErrorDate FROM
+				(SELECT J.JobNumber,MIN(J2DE.ErrorDate) AS ErrorDate 
+				FROM jobstodeliver J2D 
+				INNER JOIN JOBS J ON j.jobnumber=j2d.jobnumber
+				INNER JOIN JobsToDeliverErrors J2DE ON J2D.DeliveryID = J2DE.DeliveryID
+				INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=J2DE.ErrorCode																
+				INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType
+				   WHERE  EST.ErrorSourceTypeID=1
+				      AND j.ClinicID=@ClinicID
+				   GROUP BY J.JOBNUMBER
+				                UNION
+				SELECT J.JobNumber AS JobNumber,MIN(EHJDE.FIRSTATTEMPT) AS ErrorDate
+				   FROM jobs J 
+				INNER JOIN jobs_client JC ON J.jobnumber=JC.jobnumber
+				INNER JOIN EntradaHostedClient.DBO.jobs EHJ ON EHJ.jobnumber=JC.[FILENAME]
+				INNER JOIN EntradaHostedClient.DBO.jobsdeliveryerrors EHJDE ON EHJDE.jobid=EHJ.jobid 
+				INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=EHJDE.ErrorCode
+				INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType
+				WHERE EST.ErrorSourceTypeID=1
+				  AND j.ClinicID=@ClinicID
+				GROUP BY J.JOBNUMBER
+				)G GROUP BY G.JobNumber
+				)E
+				INNER JOIN JOBS JB on JB.JobNumber=E.JobNumber
+							WHERE 
+							(@JobType is null or JB.JobType = @JobType) 
+							and (@DictatorID is null or JB.DictatorID = @DictatorID) 
+							and (@DeviceGenerated is null or JB.IsGenericJob = @DeviceGenerated) 
+							and (@CC is null or JB.CC = @CC) 
+							and (@STAT is null or JB.Stat = @STAT) 
+							and (@JobNumber is null or JB.JobNumber = @JobNumber) 
+							and (JB.ReceivedOn  >= DATEADD(M,-3,GETDATE()))
+						    and (@dateRangeFrom is null or (E.ErrorDate  >= @dateRangeFrom))
+							and (@dateRangeTo is null or (E.ErrorDate  <= @dateRangeTo))
+							--and (JB.ClinicID = @ClinicID)
+    --select * from @JobsToFilter
+	END	
+	ELSE IF(@DateField <>5)
 		BEGIN
 			INSERT INTO @JobsToFilter 
 					SELECT JT.JobNumber, MIN(jt.StatusDate) StatusDate,j.ClinicID
@@ -123,7 +169,8 @@ BEGIN
 	INSERT INTO #SearchItems 
 	SELECT J.JobNumber, J.DictatorID, J.JobType, J.IsGenericJob as DeviceGenerated,J.AppointmentDate,J.CC,J.Stat, JP.MRN, (ISNULL(JP.FirstName, '') + ' '+ ISNULL(JP.MI, '') +' '+ ISNULL(JP.LastName, '')) AS Patient, 
 		 JP.FirstName, JP.LastName,
-		 CASE WHEN JSB.id = 5 THEN 
+		 CASE WHEN @DateField=10 THEN 'Error: '+ CONVERT(varchar(75), JH.StatusDate, 100) 
+		 WHEN JSB.id = 5 THEN
 				CASE WHEN JSB.DeliveredOn is null THEN 
 					JTA.StatusGroup + ': '+ CONVERT(varchar(75), JTA.StatusDate, 100) 
 				ELSE 
@@ -152,7 +199,7 @@ BEGIN
 						WHERE JT.jobnumber = JH.jobnumber and (jg.id in (1,2,3,4) or (@jobStatus =4 or @jobStatus is null or @jobStatus =5 and JH.JobNumber  in (SELECT jobnumber FROM JobDeliveryHistory WHERE jobnumber=JH.JobNumber )))
 						GROUP BY JT.JobNumber,JG.StatusGroup,jg.id
 						ORDER BY JG.ID DESC)  JSB
-		WHERE	((@JobStatus is null or JSB.Id = @JobStatus) OR (JSB.DeliveredOn is null and JTA.id=@JobStatus))			
+		WHERE	((@JobStatus is null or JSB.Id = @JobStatus or @DateField=10) OR (JSB.DeliveredOn is null and JTA.id=@JobStatus))			
 				and (@MRN is null or JP.MRN = @MRN) 
 				and (@FirstName is null or JP.FirstName = @FirstName) 
 				and (@LastName is null or JP.LastName = @LastName) 

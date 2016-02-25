@@ -30,6 +30,7 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X_____________________________________________________________________________
 --X   1    | 27-Jan-2016  | Santhosh                | #735 - Adding Multiple Providers and Multiple JobTypes while sending Notifications
 --X   2    | 25-FRB-2016  | Narender				| #731 - Script to insert DB parameters to user SP from Backend WS
+--X   3    | 25-FRB-2016  | Baswaraj				| #393 - Script to insert record to JOBSTATUSGROUP table
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
@@ -116,6 +117,19 @@ BEGIN
 		END
 
 	-- #731 end
+
+	-- #393 Added for Error Management 
+
+	IF NOT EXISTS(SELECT '*' FROM [DBO].[JOBSTATUSGROUP] WHERE ID=10)
+	BEGIN
+	SET IDENTITY_INSERT [DBO].[JOBSTATUSGROUP] ON 
+	INSERT [DBO].[JOBSTATUSGROUP] ([ID], [StatusGroup]) 
+	VALUES (10,N'Error')
+	SET IDENTITY_INSERT [DBO].[JOBSTATUSGROUP] OFF
+	END
+
+	--
 END
+
 
 GO
