@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -14,7 +13,7 @@ GO
 **************************  
 ** PR   Date     Author  Description   
 ** --   --------   -------   ------------------------------------  
-**   
+** 1    25-FEB-2016 Narender: #731# Added STAT Field to insert into Job History
 *******************************/  
 CREATE PROCEDURE [dbo].[spInsertJobHistory] 
 (
@@ -27,7 +26,8 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 	@vvcrFirstName VARCHAR(50) = NULL,
 	@vvcrMI VARCHAR(50) = NULL,
 	@vvcrLastName VARCHAR(50) = NULL,
-	@vvcrDOB VARCHAR(50) = NULL
+	@vvcrDOB VARCHAR(50) = NULL,
+	@vbitStat BIT = NULL
 ) AS 
 	BEGIN 
 	DECLARE @oldStatus INT
@@ -94,8 +94,8 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 			SET @vvcrMRN = @newMRN
 			SET @vvcrJobType = @newJobType
 		END
-		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,FirstName,MI,LastName,DOB,IsHistory)
-		VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUserId,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,@IsHistory)
+		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,FirstName,MI,LastName,DOB,IsHistory,STAT)
+		VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUserId,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,@IsHistory,@vbitStat)
 	END
 	
 GO
