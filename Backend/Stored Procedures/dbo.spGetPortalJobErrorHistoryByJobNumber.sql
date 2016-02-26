@@ -1,7 +1,19 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+/******************************          
+** File:  spGetPortalJobErrorHistoryByJobNumber.sql          
+** Name:  spGetPortalJobErrorHistoryByJobNumber          
+** Desc:  Get the job error history for given job number          
+** Auth:  Baswaraj          
+** Date:  25/Feb/2016          
+**************************          
+** Change History          
+*************************          
+* PR   Date       Author    Description           
+*******************************/      
  --exec spGetPortalJobErrorHistoryByJobNumber '2016011800000004'
 CREATE PROCEDURE [dbo].[spGetPortalJobErrorHistoryByJobNumber] 
 (          
@@ -23,10 +35,11 @@ DECLARE @TempJobsHostory TABLE(
 	IsError int
  ) 
   DECLARE @IsJobinHistory bit = 0
+  DECLARE @ErrorStatusGroupID varchar(20)=(SELECT TOP 1 StatusGroup from JOBStatusGroup WHERE Id=10) 
   -- nee to write logic to deside job has error or not
 	
 		INSERT INTO @TempJobsHostory
-		  SELECT  JT.JobNumber,JH.DocumentID,'',A.ErrorDate AS StatusDate,JH.JobType,JH.UserId,JH.MRN,
+		  SELECT  JT.JobNumber,JH.DocumentID,@ErrorStatusGroupID,A.ErrorDate AS StatusDate,JH.JobType,JH.UserId,JH.MRN,
 				  JH.JobHistoryID,'',JH.CurrentStatus,1 as IsError
 			FROM JobTracking JT  
 			LEFT OUTER JOIN job_history JH on JT.jobnumber = JH.jobnumber and jt.status=JH.currentstatus
