@@ -61,6 +61,24 @@ BEGIN TRY
 
 			END
 
+       --If upload is image only or chat history only then change status to 390 (In Delivery) status
+		IF((@HasImages=1 OR @HasChatHistory=1) AND @HasDictation=0 )
+		   BEGIN		      
+				  SET @OldStatus=@Status
+
+				  SET @Status=390
+
+				  UPDATE dbo.Jobs SET [Status]=@Status WHERE JobId = @JobId
+			  
+					IF (@Status <> @OldStatus)
+					BEGIN				
+						INSERT INTO dbo.Jobstracking
+							   (JobID,[Status],ChangeDate,ChangedBy) 
+						VALUES (@JobId, @Status, GETDATE(), @ChangedBy)
+
+					END
+		   END		  
+
 	COMMIT TRANSACTION
 END TRY
 BEGIN CATCH
