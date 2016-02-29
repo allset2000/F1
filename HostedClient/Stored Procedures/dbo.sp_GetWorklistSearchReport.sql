@@ -90,7 +90,7 @@ BEGIN
 				SET @sql += ')'
 
 					SET @Sql=@Sql+' SELECT  Queue,JobType,Patient,Appointment,
-					   CASE WHEN ChangedBy NOT LIKE ''%[^0-9]%'' THEN (select DictatorName from Dictators where DictatorID = ChangedBy) ELSE ChangedBy END ChangedBy, 
+						CASE WHEN ChangedBy NOT LIKE ''%[^0-9]%'' THEN (SELECT DictatorName FROM Dictators WHERE DictatorID = ChangedBy) WHEN ChangedBy = ''HL7'' THEN ''Interface'' WHEN ChangedBy NOT LIKE ''[^0-9]%'' THEN ''Entrada'' ELSE ChangedBy END ChangedBy, 
 						CASE WHEN Status is not null and Status = 100 THEN ''Available'' when status =500 then ''Deleted'' ELSE ''Unknown'' END Status,
 						TotalCount
 						 
