@@ -3,6 +3,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+
 CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 --XX  Entrada Inc
@@ -37,9 +38,11 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X   6    | 10-Feb-2016  | Sharif Shaik			| #5477 - Added new record "Image Only" to table DeliveryTypes
 --X   7    | 11-Feb-2016  | Sharif Shaik			| #5477 - Removed above added record and uncommented the commented code
 --X   8    | 09-Feb-2016  | Santhosh       			| #000 - Added Permission for Mobile
+--X   9    | 19-Feb-2016  | Suresh       			| #734 - Added Permission for Centralized Job Activity Dashboard
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
+	
 	Update Applications
 	SET AppCode = 'EXPRESS_LINK'
 	Where [Description] =  'ExpressLink'
@@ -132,15 +135,15 @@ BEGIN
 	/*5478*/
 
 	/* #392 WORKLIST in NCP */
-	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 6 and ModuleName = 'Work List')
+	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 6 and ModuleName = 'Job List')
 	BEGIN
 		SET IDENTITY_INSERT [dbo].[Modules] ON
-		INSERT INTO Modules(ModuleId ,ApplicationId , ModuleName, IsDeleted, DateCreated, DateUpdated) values(28, 6, 'Work List', 0,GETDATE(), GETDATE())
+		INSERT INTO Modules(ModuleId ,ApplicationId , ModuleName, IsDeleted, DateCreated, DateUpdated) values(28, 6, 'Job List', 0,GETDATE(), GETDATE())
 		SET IDENTITY_INSERT [dbo].[Modules] OFF
 	END
 	IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-WORKLIST')
 	BEGIN
-		INSERT INTO Permissions (Code,Name,ParentPermissionID,ModuleId) VALUES ('MNU-WORKLIST','Menu Item - Work List',null,28)
+		INSERT INTO Permissions (Code,Name,ParentPermissionID,ModuleId) VALUES ('MNU-WORKLIST','Menu Item - Job List',null,28)
 	END
 	/* #392 WORKLIST in NCP */
 
@@ -180,6 +183,52 @@ BEGIN
 		(Code, Name, ModuleId) VALUES ('MOBILE-SECURE-MESSAGING-INVITE-CONTACTS', 'Function - Mobile Secure Messaging Invite Contacts', 3)
 	END
 	/* #000 */
+	
+	/* JOBACTIVITY In AdminConsole */
+	-- INSERT RECORD INTO MODULES TABLE 
+	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 5 and ModuleCode = 'ADMIN_CONSOLE_JOBACTIVITY')
+	BEGIN
+		SET IDENTITY_INSERT [dbo].[Modules] ON
+		INSERT INTO dbo.Modules(ModuleId, ApplicationId , ModuleName ,IsDeleted ,DateCreated ,DateUpdated , ModuleCode )
+				VALUES  ( 33, --ModuleId - int
+						   5 , -- ApplicationId - int
+						  'Centralized Job Activity Dashboard' , -- ModuleName - varchar(100)
+						  0 , -- IsDeleted - bit
+						  GETDATE() , -- DateCreated - datetime
+						  GETDATE() , -- DateUpdated - datetime
+						  'ADMIN_CONSOLE_JOBACTIVITY'  -- ModuleCode - varchar(100)
+						)
+		SET IDENTITY_INSERT [dbo].[Modules] OFF
+	END
+
+	------------------------------------
+	-- INSERT RECORD INTO PERMISSIONS TABLE 
+	------------------------------------
+
+	IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'TAB-JOBACTIVITY')
+	BEGIN
+		INSERT INTO dbo.Permissions( Code , Name , ParentPermissionID , ModuleId) values('TAB-JOBACTIVITY','Centralized Job Activity Dashboard',NULL,33)
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBACTIVITY-RESET-SINGLE-JOB')
+	BEGIN
+		INSERT INTO dbo.Permissions( Code , Name , ParentPermissionID , ModuleId) values('FNC-JOBACTIVITY-RESET-SINGLE-JOB','Function - Reset Single job for reprocess',NULL,33)
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBACTIVITY-VIEW-ERROR-JOB')
+	BEGIN
+		INSERT INTO dbo.Permissions( Code , Name , ParentPermissionID , ModuleId) values('FNC-JOBACTIVITY-VIEW-ERROR-JOB','Function - View Error Jobs' ,NULL,33)
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'FNC-JOBACTIVITY-RESET-ALL-JOBS')
+	BEGIN
+		INSERT INTO dbo.Permissions( Code , Name , ParentPermissionID , ModuleId) values('FNC-JOBACTIVITY-RESET-ALL-JOBS','Function - Reset all jobs for reprocess' ,NULL,33)
+	END
+
+	/* JOBACTIVITY In AdminConsole */
+
+	
+
 END
 
 GO

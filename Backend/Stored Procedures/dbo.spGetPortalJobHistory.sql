@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -13,7 +14,8 @@ GO
 *************************          
 * PR   Date       Author    Description           
 * --   --------   -------   ------------------------------------
-*      2-Feb-2016  Baswaraj #393 Added a Column for ErrorHistoryIdentification    
+*      2-Feb-2016  Baswaraj #393 Added a Column for ErrorHistoryIdentification   
+*      18-Feb-2016 Baswaraj #393 added insert block to get override fields added values  
 *      25-FEB-2016 Narender: #731# Added STAT Field to insert into Job History 
 *******************************/      
       
@@ -25,18 +27,18 @@ AS
 BEGIN       
 DECLARE @TempJobsHostory1 TABLE(  
 	JobNumber VARCHAR(20),
-	DocumentID int,  
-	StatusGroup varchar(255), 
-	StatusDate datetime, 
-	JobType varchar(100),
+	DocumentID INT,  
+	StatusGroup VARCHAR(255), 
+	StatusDate DATETIME, 
+	JobType VARCHAR(100),
 	UserId VARCHAR(48),
-	MRN int,
+	MRN INT,
 	FirstName VARCHAR(50),
-	 MI VARCHAR(50),
-	 LastName VARCHAR(50),
-	 ClinicID smallint,
-	 SgId int,
-	 IsError int -- To Identify the error existence in the job history page
+	MI VARCHAR(50),
+	LastName VARCHAR(50),
+	ClinicID SMALLINT,
+	SgId INT,
+	IsError INT -- To Identify the error existence in the job history page
  )  
 
  INSERT INTO @TempJobsHostory1
@@ -51,12 +53,15 @@ DECLARE @TempJobsHostory1 TABLE(
  EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,5 -- Delivered Status
  INSERT INTO @TempJobsHostory1
  EXEC [spGetPortalJobErrorHistoryByJobNumber] @vvcrJobnumber --  Error Message
+ INSERT INTO @TempJobsHostory1(JobNumber,StatusGroup,StatusDate,JobType,UserId,FirstName,LastName,SgId,IsError)
+ -- the below query to insert the override values #393
+ SELECT  rov.JobNumber,'Override Value Added',CASE WHEN rov.CreatedDate IS NULL THEN Getdate() ELSE rov.CreatedDate END
+		 ,rof.FieldName,'','',rov.Value,0,CASE WHEN rov.IsActive IS NULL or rov.IsActive =1 THEN 2 ELSE 3 END IsError -- IF 2 it is Active and 3 It is InActive
+		 FROM EH_ROWOverrideValues rov INNER JOIN EH_ROWOverrideFields rof ON rof.FieldID = rov.FieldID WHERE JobNumber= @vvcrJobnumber
  INSERT INTO @TempJobsHostory1  
  SELECT TOP 1 JobNumber,DocumentID, 'Job Marked as STAT',HistoryDateTime, jobtype, UserId, MRN, FirstName, MI, LastName,null, null, null  FROM Job_History
 		WHERE JobNumber = @vvcrJobnumber and  STAT = 1 ORDER BY JobHistoryID DESC
-
- SELECT * FROM @TempJobsHostory1 order by IsError,SgId asc
-
+ SELECT * FROM @TempJobsHostory1 ORDER BY IsError,SgId ASC
 
 END
 
