@@ -36,7 +36,7 @@ BEGIN
                                 LEFT OUTER JOIN Encounters ON Encounters.EncounterID = Jobs.EncounterID
                                 INNER JOIN Patients ON Patients.PatientID = Encounters.PatientID                                 
                                 LEFT OUTER JOIN Schedules ON Schedules.ScheduleID = Encounters.ScheduleID
-                                LEFT OUTER JOIN Dictators ON Dictators.DictatorID = Jobs.DictatorID                                 
+                                LEFT OUTER JOIN Dictators ON Dictators.DictatorID = Jobs.OwnerDictatorID                                 
                                 WHERE Jobs.ClinicID = @ClinicID and Jobs.[Status] = @Status and ISNULL(jobs.hasImages, 0) = @HasImages and ISNULL(jobs.hasDictation, 0) = @HasDictation and ISNULL(jobs.HasChatHistory,0) = @HasChatHistory
 								--and Jobs.Jobid = 838920 -- Greenway 827790 --Athena 838920 --
 END
