@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -72,6 +73,14 @@ BEGIN TRY
 		ELSE
 			set @vbitStat1 = NULL
 
+			-- Update the Stat value
+		IF NOT EXISTS(SELECT * FROM Jobs WHERE JobNumber = @vvcrJobNumber and Stat = @vbitStat) 
+		BEGIN
+			UPDATE Jobs SET Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
+		END
+		ELSE
+			set @vbitStat1 = NULL
+
 		-- Tracking the previous status details
 		EXEC [spInsertJobHistory] @vvcrJobNumber,null,null,null,null,@vvcrUsername,null,null,null,null,@vbitStat1
 
@@ -110,13 +119,7 @@ BEGIN TRY
 			END
 		END
 
-		-- Update the Stat value
-		IF NOT EXISTS(SELECT * FROM Jobs WHERE JobNumber = @vvcrJobNumber and Stat = @vbitStat) 
-		BEGIN
-			UPDATE Jobs SET Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
-		END
-		
-
+	
 		--updating document into jobs_documents table
 		IF @vbinDocumnet IS NOT Null AND  @oldStatus < 250
 			BEGIN

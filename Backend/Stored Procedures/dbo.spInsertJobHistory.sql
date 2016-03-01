@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -32,6 +33,7 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 	BEGIN 
 	DECLARE @oldStatus INT
 	DECLARE @IsHistory BIT 
+	DECLARE @newSTAT BIT 
 	DECLARE @newMRN VARCHAR(50)
 	DECLARE @newJobType VARCHAR(100)
 
@@ -49,6 +51,9 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		
 		-- if any jobtype value is changed then track that previous value.
 		SELECT  @vvcrJobType = CASE WHEN JobType <> @vvcrJobType THEN JobType ELSE NULL END  FROM jobs WHERE JobNumber = @vvcrJobNumber	
+			
+		-- if any STAT value is changed then track that previous value.
+		SELECT  @newSTAT = CASE WHEN Stat = 1 and @vbitStat =1 THEN Stat ELSE NULL END  FROM jobs WHERE JobNumber = @vvcrJobNumber	
 		
 		-- if any domographics value is changed then track that previous value. 
 		SELECT @vvcrMRN = CASE WHEN MRN <> @vvcrMRN THEN MRN ELSE NULL END,
@@ -95,7 +100,7 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 			SET @vvcrJobType = @newJobType
 		END
 		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,FirstName,MI,LastName,DOB,IsHistory,STAT)
-		VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUserId,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,@IsHistory,@vbitStat)
+		VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUserId,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,@IsHistory,@newSTAT)
 	END
 	
 GO
