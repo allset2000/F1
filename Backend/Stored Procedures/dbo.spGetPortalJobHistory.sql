@@ -17,6 +17,7 @@ GO
 *      2-Feb-2016  Baswaraj #393 Added a Column for ErrorHistoryIdentification   
 *      18-Feb-2016 Baswaraj #393 added insert block to get override fields added values  
 *      25-FEB-2016 Narender: #731# Added STAT Field to insert into Job History 
+*      3-March-2016  : Added return UserName with Override values Added BY
 *******************************/      
       
 CREATE PROCEDURE [dbo].[spGetPortalJobHistory]  
@@ -53,16 +54,20 @@ DECLARE @TempJobsHostory1 TABLE(
  EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,5 -- Delivered Status
  INSERT INTO @TempJobsHostory1
  EXEC [spGetPortalJobErrorHistoryByJobNumber] @vvcrJobnumber --  Error Message
- INSERT INTO @TempJobsHostory1(JobNumber,StatusGroup,StatusDate,JobType,UserId,FirstName,LastName,SgId,IsError)
  -- the below query to insert the override values #393
- SELECT  rov.JobNumber,'Override Value Added',CASE WHEN rov.CreatedDate IS NULL THEN Getdate() ELSE rov.CreatedDate END
+ INSERT INTO @TempJobsHostory1(JobNumber,StatusGroup,StatusDate,JobType,UserId,FirstName,LastName,SgId,IsError)
+ 
+SELECT  rov.JobNumber,'Override Value Added By '+u.Name ,CASE WHEN rov.CreatedDate IS NULL THEN Getdate() ELSE rov.CreatedDate END
 		 ,rof.FieldName,'','',rov.Value,0,CASE WHEN rov.IsActive IS NULL or rov.IsActive =1 THEN 2 ELSE 3 END IsError -- IF 2 it is Active and 3 It is InActive
-		 FROM EH_ROWOverrideValues rov INNER JOIN EH_ROWOverrideFields rof ON rof.FieldID = rov.FieldID WHERE JobNumber= @vvcrJobnumber
+		 FROM EH_ROWOverrideValues rov 
+		 INNER JOIN EH_ROWOverrideFields rof ON rof.FieldID = rov.FieldID 
+		 INNER JOIN EH_Users u ON u.UserID=rov.CreatedBY			                              
+		 WHERE JobNumber= @vvcrJobnumber
+
  INSERT INTO @TempJobsHostory1  
- SELECT TOP 1 JobNumber,DocumentID, 'Job Marked as STAT',HistoryDateTime, jobtype, UserId, MRN, FirstName, MI, LastName,null, null, null  FROM Job_History
-		WHERE JobNumber = @vvcrJobnumber and  STAT = 1 ORDER BY JobHistoryID DESC
- SELECT * FROM @TempJobsHostory1 ORDER BY IsError,SgId ASC
+ SELECT TOP 1 JobNumber,DocumentID, 'Job Marked as STAT',HistoryDateTime, jobtype, UserId, MRN, FirstName, MI, LastName,null, SC.StatusGroupId, 0  FROM Job_History JH
+		INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JobNumber = @vvcrJobnumber AND  STAT = 1 ORDER BY JobHistoryID DESC
+ SELECT * FROM @TempJobsHostory1 order by IsError,SgId,StatusDate  asc 
 
 END
-
 GO
