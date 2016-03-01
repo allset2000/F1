@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -28,11 +29,13 @@ BEGIN
 		   MH.ThreadDictatorID,
 		   QB.QuickBloxUserID,
 		   QB.[Login] AS QBLogin ,
-		   QB.[Password] AS QBPassword
+		   QB.[Password] AS QBPassword,
+		   P.DOB,
+		   p.MRN
 	   FROM MessageThreads MH WITH(NOLOCK)	
 	   INNER JOIN dbo.Jobs J ON J.ChatHistory_ThreadID=MH.MessageThreadID
 	   INNER JOIN [dbo].[QuickBloxUsers] QB on QB.UserID= MH.ThreadOwnerID  
-	   LEFT JOIN Patients p WITH(NOLOCK) ON P.PatientID=MH.PatientID       
+	   INNER JOIN Patients p WITH(NOLOCK) ON P.PatientID=MH.PatientID       
    WHERE J.JobID=@jobID
 
 
