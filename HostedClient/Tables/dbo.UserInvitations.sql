@@ -5,7 +5,7 @@ CREATE TABLE [dbo].[UserInvitations]
 [MI] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [LastName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [EmailAddress] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[PhoneNumber] [varchar] (15) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[PhoneNumber] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [InvitationSent] [bit] NOT NULL,
 [RequestingUserId] [int] NOT NULL,
 [ClinicId] [int] NOT NULL,
