@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -30,34 +29,38 @@ BEGIN
 	 
 	 -- Get the failur and error count for status from Hosted DB
 	 INSERT INTO @TempJobs 
-		SELECT STATUS,'Hosted',COUNT(j.jobid) FailureCount,COUNT(LG.[LogExceptionsCustomDataID]) ErroCount
-		FROM [dbo].[EH_Jobs] J
-		RIGHT OUTER JOIN  [dbo].EL_LogExceptionsCustomData LG
-			ON j.jobid = lg.jobid
-		WHERE processfailurecount >= @vintFaileCount
-		GROUP BY STATUS
+		SELECT  j.status,'Hosted',
+		COUNT(DISTINCT j.jobnumber) AS FailureCount ,
+		COUNT(LG.[LogExceptionsCustomDataID]) AS ErroCount
+		FROM  [dbo].[EH_Jobs] J
+		LEFT OUTER JOIN  [dbo].EL_LogExceptionsCustomData LG ON j.jobid = lg.jobid
+		WHERE j.ProcessFailureCount >= @vintFaileCount and j.status is not null
+		GROUP BY j.status
+		ORDER BY j.status;
 
 	-- Get the failur and error count for 150 status from Bacend DB
     INSERT INTO @TempJobs 
-		SELECT ja.status,'Backend', COUNT(j.jobnumber) FailureCount,COUNT(LG.[LogExceptionsCustomDataID]) ErroCount
-		FROM jobs j
-		INNER JOIN jobstatusa ja
-		ON j.jobnumber = ja.jobnumber
-		RIGHT OUTER join [dbo].EL_LogExceptionsCustomData LG
-		on j.jobnumber = lg.jobnumber
-		WHERE ja.STATUS=150 OR j.ProcessFailureCount >= @vintFaileCount
-		GROUP BY ja.status
+		SELECT  ja.status,'Backend',
+		COUNT(DISTINCT j.jobnumber) AS FailureCount,
+		COUNT(LG.[LogExceptionsCustomDataID]) AS ErroCount
+		 FROM    jobs j
+		 INNER JOIN jobstatusa ja ON j.jobnumber = ja.jobnumber
+		 LEFT OUTER JOIN  [dbo].EL_LogExceptionsCustomData LG ON ja.jobnumber = lg.jobnumber
+		 WHERE (ja.STATUS=150 OR j.ProcessFailureCount >= @vintFaileCount) and ja.status is not null
+		 GROUP BY ja.status
+		 ORDER BY ja.status;
 
 	-- Get the failur and error count for other status from Bacend DB
     INSERT INTO @TempJobs
-		SELECT jb.status,'Backend', COUNT(j.jobnumber) FailureCount,COUNT(LG.[LogExceptionsCustomDataID]) ErroCount
-		FROM jobs j
-		INNER JOIN jobstatusb jb
-		ON j.jobnumber = jb.jobnumber
-		RIGHT OUTER JOIN [dbo].EL_LogExceptionsCustomData LG
-		on j.jobnumber = lg.jobnumber
-		WHERE j.ProcessFailureCount >= @vintFaileCount
-		GROUP BY jb.status
+		SELECT  jb.status,'Backend',
+		COUNT(DISTINCT j.jobnumber) AS FailureCount ,
+		COUNT(LG.[LogExceptionsCustomDataID]) AS ErroCount
+		 FROM    jobs j
+		 INNER JOIN jobstatusb jb ON j.jobnumber = jb.jobnumber
+		 LEFT OUTER JOIN  [dbo].EL_LogExceptionsCustomData LG ON jb.jobnumber = lg.jobnumber
+		 WHERE j.ProcessFailureCount >= @vintFaileCount and jb.status is not null
+		 GROUP BY jb.status
+		 ORDER BY jb.status;
 
 	SELECT * FROM @TempJobs
 

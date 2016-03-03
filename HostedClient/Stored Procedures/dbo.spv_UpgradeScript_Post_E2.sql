@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -134,15 +135,15 @@ BEGIN
 	/*5478*/
 
 	/* #392 WORKLIST in NCP */
-	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 6 and ModuleName = 'Work List')
+	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 6 and ModuleName = 'Job List')
 	BEGIN
 		SET IDENTITY_INSERT [dbo].[Modules] ON
-		INSERT INTO Modules(ModuleId ,ApplicationId , ModuleName, IsDeleted, DateCreated, DateUpdated) values(28, 6, 'Work List', 0,GETDATE(), GETDATE())
+		INSERT INTO Modules(ModuleId ,ApplicationId , ModuleName, IsDeleted, DateCreated, DateUpdated) values(28, 6, 'Job List', 0,GETDATE(), GETDATE())
 		SET IDENTITY_INSERT [dbo].[Modules] OFF
 	END
 	IF NOT EXISTS (SELECT 1 FROM Permissions WHERE Code = 'MNU-WORKLIST')
 	BEGIN
-		INSERT INTO Permissions (Code,Name,ParentPermissionID,ModuleId) VALUES ('MNU-WORKLIST','Menu Item - Work List',null,28)
+		INSERT INTO Permissions (Code,Name,ParentPermissionID,ModuleId) VALUES ('MNU-WORKLIST','Menu Item - Job List',null,28)
 	END
 	/* #392 WORKLIST in NCP */
 

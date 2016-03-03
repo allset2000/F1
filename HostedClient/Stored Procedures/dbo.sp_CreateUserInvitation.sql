@@ -20,7 +20,7 @@ CREATE PROCEDURE [dbo].[sp_CreateUserInvitation]
 	@MI VARCHAR(100) = '',
 	@LastName VARCHAR(100) = '',
 	@EmailAddress VARCHAR(100) = '',
-	@PhoneNumber VARCHAR(15) = '',
+	@PhoneNumber VARCHAR(50) = '',
 	@ClinicId INT = -1,
 	@InvitationMethod INT,
 	@RoleId VARCHAR(500) = '',

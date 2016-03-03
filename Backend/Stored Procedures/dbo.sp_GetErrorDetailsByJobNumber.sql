@@ -1,10 +1,11 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
 -- Author: Baswaraj.K
 /******* This is used to get Latest Error Information(Jobnumber,ErrorDate,ResolutionGuide,FileName,EHREncounterId,AppointmentId) by jobnumber ******/
---exec sp_GetErrorDetailsByJobNumber '2016020400000019'
+--exec sp_GetErrorDetailsByJobNumber '2016012000000004'
 CREATE PROCEDURE [dbo].[sp_GetErrorDetailsByJobNumber]
 (
 	@jobNumber varchar(1000)
@@ -32,23 +33,23 @@ DECLARE @VendorId INT
 		WHERE EHRVendorId=@VendorId
 
 		
-				SELECT B.Jobnumber, B.ErrorDate, ED.ResolutionGuide,ED.ErrorMessage,JC.FileName, S.EHREncounterId, S.AppointmentId, 
+				SELECT B.Jobnumber, B.ErrorDate, ED.ResolutionGuide,B.ErrorMessage,JC.FileName, S.EHREncounterId, S.AppointmentId, 
 				    CASE WHEN @ActualCount=@FilledCount THEN 0 ELSE 1 END  AS 'ADDOverrideStatus' -- if all override fields are added than 0 else 1
                 FROM
 				(
-					 SELECT TOP 1 JOBNUMBER,ErrorCode ,ErrorDate
+					 SELECT TOP 1 JOBNUMBER,ErrorCode ,ErrorDate,ErrorMessage
 					 FROM
 						(
-							SELECT J.JOBNUMBER,J2DE.ErrorCode AS ErrorCode,MAX(J2DE.ErrorDate) AS ErrorDate
+							SELECT J.JOBNUMBER,J2DE.ErrorCode AS ErrorCode,J2DE.Message AS ErrorMessage,MAX(J2DE.ErrorDate) AS ErrorDate
 							FROM jobstodeliver J2D 
 							    INNER JOIN JOBS J ON j.jobnumber=j2d.jobnumber
 								INNER JOIN JobsToDeliverErrors J2DE ON J2D.DeliveryID = J2DE.DeliveryID
 								INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=J2DE.ErrorCode	
 								INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType													
 							WHERE J.JobNumber=@jobNumber AND EST.ErrorSourceTypeID=1 -- CLIENT-DELIVERY ERRORs Only
-							GROUP BY J.JOBNUMBER,J2DE.ErrorCode
+							GROUP BY J.JOBNUMBER,J2DE.ErrorCode,J2DE.Message
 						UNION --ALL
-							SELECT J.JOBNUMBER AS JOBNUMBER,EHJDE.ErrorCode AS ErrorCode,MAX(EHJDE.ChangedOn) AS ErrorDate
+							SELECT J.JOBNUMBER AS JOBNUMBER,EHJDE.ErrorCode AS ErrorCode,EHJDE.ErrorMessage AS ErrorMessage,MAX(EHJDE.ChangedOn) AS ErrorDate
 							FROM jobs J 
 								INNER JOIN jobs_client JC ON J.jobnumber=JC.jobnumber
 								INNER JOIN eh_jobs EHJ ON EHJ.jobnumber=JC.[FILENAME] 
@@ -56,7 +57,7 @@ DECLARE @VendorId INT
 								INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=EHJDE.ErrorCode
 								INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType													
 							WHERE J.JobNumber=@jobNumber AND EST.ErrorSourceTypeID=1 -- CLIENT-DELIVERY ERRORs Only
-							GROUP BY J.JOBNUMBER,EHJDE.ErrorCode
+							GROUP BY J.JOBNUMBER,EHJDE.ErrorCode,EHJDE.ErrorMessage
 						 ) A ORDER BY ErrorDate DESC				 
 				) B
 				INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=B.ErrorCode	
@@ -64,8 +65,7 @@ DECLARE @VendorId INT
 				INNER JOIN Eh_Jobs EHJ on EHJ.jobnumber=JC.FileName
 				LEFT OUTER JOIN EH_Encounters E on E.EncounterId = EHJ.EncounterId 
 				LEFT OUTER JOIN EH_Schedules S on S.SCheduleId = E.ScheduleId 
-				WHERE EHJ.JobNumber = JC.FileName
-				
+				WHERE EHJ.JobNumber = JC.FileName				
 END
 
 GO

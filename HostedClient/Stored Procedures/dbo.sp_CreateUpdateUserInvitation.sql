@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -14,7 +15,7 @@ CREATE PROCEDURE [dbo].[sp_CreateUpdateUserInvitation] (
 	@MI VARCHAR(100),
     @LastName VARCHAR(100),
 	@EmailAddress VARCHAR(100), 
-	@PhoneNumber VARCHAR(15), 
+	@PhoneNumber VARCHAR(50), 
 	@InvitationSent BIT, 
 	@RequestingUserID INT, 
 	@ClinicId INT, 
