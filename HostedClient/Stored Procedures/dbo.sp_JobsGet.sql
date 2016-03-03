@@ -53,7 +53,7 @@ BEGIN
 			,JobTypes.AllowNotifications
 			,JobTypes.DocumentType
 			,JobTypes.ACKEnabled
-            ,Clinics.EHRClinicID as EHRPracticeID
+            ,Clinics.EHRClinicID
 			FROM Jobs INNER JOIN JobTypes ON Jobs.JobTypeID = JobTypes.JobTypeID
 			INNER JOIN Clinics ON Clinics.ClinicID = Jobs.ClinicID AND Jobs.ClinicID = @ClinicID                                
             LEFT OUTER JOIN Encounters ON Encounters.EncounterID = Jobs.EncounterID
