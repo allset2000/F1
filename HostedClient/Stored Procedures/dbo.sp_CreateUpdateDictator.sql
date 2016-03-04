@@ -9,6 +9,7 @@ GO
 -- Create date: 10/28/2014
 -- Description: SP used to Create new Dictator accounts
 -- Updated: 11/10/2014 - Changed the sproc to allow update or insert
+-- Updated: 03/04/2016 - Changed the sproc to add record to UserClinicXref
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_CreateUpdateDictator] (
 	@DictatorName varchar(50),
@@ -69,6 +70,7 @@ BEGIN
 				WHERE ClinicID = @ClinicID and DictatorName = @DictatorName
 			END
 	
+			-- Add record to UserClinicXref
 			IF EXISTS(SELECT * FROM UserClinicXref WHERE UserId = @UserId AND ClinicId = @ClinicID)
 			BEGIN
 				UPDATE UserClinicXref SET IsDeleted = 0 WHERE UserId = @UserId AND ClinicId = @ClinicID
