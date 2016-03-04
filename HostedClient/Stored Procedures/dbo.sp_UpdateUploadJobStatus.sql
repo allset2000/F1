@@ -22,6 +22,7 @@ CREATE PROCEDURE [dbo].[sp_UpdateUploadJobStatus]
 	@HasImages SMALLINT,
 	@HasDictation SMALLINT,
 	@HasChatHistory SMALLINT,
+	@OwnerDictatorID INT,
 	@ChangedBy VARCHAR(200)
 )  
 AS  
@@ -33,7 +34,12 @@ BEGIN TRY
     SET NOCOUNT ON;
 
 	BEGIN TRANSACTION 
-	
+	    
+		
+	 if(@Status=0)
+	    SET @Status=300
+
+	   
 			SELECT @OldStatus = [Status], @OldStat = Stat, 
 				    @OldJobTypeID = JobTypeID 
 			FROM dbo.Jobs 
@@ -48,7 +54,8 @@ BEGIN TRY
 					HasImages=@HasImages,
 					HasChatHistory=@HasChatHistory,
 					HasTagMetaData=@HasTagMetaData,
-					TagMetaData=@TagMetaData,				
+					TagMetaData=@TagMetaData,
+					OwnerDictatorID=@OwnerDictatorID,			
 					ChatHistory_ThreadID=CASE WHEN ISNULL(@MessageThreadID,'')='' THEN NULL ELSE CAST(@MessageThreadID AS INT) END,
 					UpdatedDateInUTC=GETUTCDATE() 
 			WHERE JobId = @JobId
@@ -90,7 +97,6 @@ BEGIN CATCH
 			RAISERROR(@ErrMsg, @ErrSeverity, 1)
 		END
 END CATCH 
-
 
 
   

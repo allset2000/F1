@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -22,7 +23,7 @@ BEGIN
       ,[CurrentStatus]
       ,[DocumentID]
       ,[UserId]
-      ,CONVERT(VARCHAR(40),[HistoryDateTime]) AS HistoryDateTime
+      ,CONVERT(NVARCHAR(50), FORMAT([HistoryDateTime], 'M/d/yyyy hh:mm:ss tt')) AS HistoryDateTime
       ,[FirstName]
       ,[MI]
       ,[LastName]
@@ -33,4 +34,5 @@ BEGIN
 	WHERE JobNumber = @JobNumber and STAT = 1 ORDER BY JobHistoryID DESC
 
 END
+
 GO
