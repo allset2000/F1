@@ -8,7 +8,7 @@ GO
 -- Author: Raghu A
 -- Create date: 18/11/2014
 -- Description: SP called from DictateAPI to pull Dictations to sync on mobile
---exec sp_GetEncountersToSyncByLastSyncDate 905 ,'2014-11-20 10:15:02.970',NULL,NULL
+--exec sp_GetEncountersToSyncByLastSyncDate 3489 ,'2013-11-20 10:15:02.970','2016-2-14','next'
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetEncountersToSyncByLastSyncDate](
 	 @DictatorId INT,
@@ -43,11 +43,11 @@ BEGIN
 						INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID 
 						INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID							
 				WHERE qu.DictatorID = @DictatorId AND 
-		     			CAST(@AppointmentDate AS DATE)<=(CASE WHEN @Direction='next' THEN CAST(e.AppointmentDate AS DATE) else @AppointmentDate END) AND
-						CAST(@AppointmentDate AS DATE)>=(CASE WHEN @Direction='prev' THEN CAST(e.AppointmentDate AS DATE) else @AppointmentDate END) AND
+		     			@AppointmentDate<=(CASE WHEN @Direction='next' THEN CAST(e.AppointmentDate AS DATE) else @AppointmentDate END) AND
+						@AppointmentDate>=(CASE WHEN @Direction='prev' THEN CAST(e.AppointmentDate AS DATE) else @AppointmentDate END) AND
 						d.[Status] IN (100, 200)
 
-				
+			
 
 			   --IF appointment date is null then return as Empty result 
 				IF (@AppointmentDate IS NULL)
@@ -78,7 +78,7 @@ BEGIN
 				LEFT JOIN dbo.Patients p ON p.PatientID=e.PatientID
 		WHERE qu.DictatorID = @DictatorId AND 
 		     CAST(e.AppointmentDate AS DATE)=(CASE WHEN @AppointmentDate IS NOT NULL 
-							THEN @AppointmentDate  ELSE CAST(e.AppointmentDate AS DATE) END) AND 	       
+							THEN  CAST(@AppointmentDate AS DATE)  ELSE CAST(e.AppointmentDate AS DATE) END) AND 	       
 			  d.[Status] IN (100, 200) AND 			  
 			  (ISNULL(e.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
 			   OR (e.ScheduleID  IS NOT NULL AND ISNULL(s.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate)

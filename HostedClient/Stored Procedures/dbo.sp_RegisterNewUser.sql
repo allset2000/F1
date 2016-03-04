@@ -50,7 +50,7 @@ BEGIN
 			   @cur_registeredid=RegisteredUserId			  
 		FROM UserInvitations
 		WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
-
+			
 		-- Validate the ClinicId
 		IF(@cur_clinicid <=0)
 		BEGIN
@@ -68,18 +68,26 @@ BEGIN
 		-- Added new field while creating a new user, The name of the field added in the insert statement below is  LastPasswordReset. Ticket#3237 modified by Tamojit Chakraborty
 		IF NOT EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress)
 		BEGIN
-		
+	
 			INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt,LastPasswordReset) 
 			     VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt,getdate())
 			SET @UserId = SCOPE_IDENTITY()  --(SELECT UserId FROM Users WHERE UserName = @EmailAddress)
 		END
 		ELSE
 		BEGIN
+		     
+			IF EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress and UserID<>@cur_registeredid)
+			BEGIN
+			   RAISERROR ('Username already exists',16,1);
+			END
+
 		  --Raghu Added --3518- WS for invite a user with a new message
 			  IF EXISTS(SELECT '*' FROM DBO.Users U
 							INNER JOIN UserInvitations UI ON UI.RegisteredUserId=U.UserID
-							 WHERE UI.UserInvitationId=@InviteId AND UI.PendingRegStatus=1)
-			  BEGIN		     
+							 WHERE UI.UserInvitationId=@InviteId AND UI.PendingRegStatus=1  )
+			  BEGIN	
+			  
+			          
 					   UPDATE USERS 
 					   SET  UserName=@EmailAddress,
 							FirstName=@FirstName,
@@ -97,10 +105,10 @@ BEGIN
 
 			  END
 		  --END
-		 ELSE
-		  BEGIN		    
-			   RAISERROR ('Username already registered',16,1);
-		  END
+			 ELSE
+			  BEGIN		    
+				   RAISERROR ('Username already registered',16,1);
+			  END
 		END
 
 		-- Add User Clinic Xref
