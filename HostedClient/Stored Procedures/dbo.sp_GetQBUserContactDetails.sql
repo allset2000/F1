@@ -14,7 +14,8 @@ CREATE PROCEDURE [dbo].[sp_GetQBUserContactDetails] (
 ) AS 
 BEGIN
 
-	SELECT U.UserId, U.FirstName, U.MI, U.LastName,  CONCAT(U.FirstName,' ', U.MI,' ', U.LastName) as FullName, 
+	SELECT U.UserId, U.FirstName, U.MI, U.LastName,  
+	CONCAT(LTRIM(RTRIM(U.FirstName)), CASE WHEN LTRIM(RTRIM(U.MI)) <> '' THEN ' ' + LTRIM(RTRIM(U.MI)) + ' ' ELSE ' ' END, LTRIM(RTRIM(U.LastName))) as FullName, 
 			U.LoginEmail as Email, U.PhoneNumber, C.ClinicID, C.Name as ClinicName, QBU.QuickBloxUserID, QBU.Login as 'QBUserLogin'
 	FROM QuickBloxUsers QBU
 		INNER JOIN Users U on U.UserID = QBU.UserID

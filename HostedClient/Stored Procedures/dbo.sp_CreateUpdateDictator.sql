@@ -9,6 +9,7 @@ GO
 -- Create date: 10/28/2014
 -- Description: SP used to Create new Dictator accounts
 -- Updated: 11/10/2014 - Changed the sproc to allow update or insert
+-- Updated: 03/04/2016 - Changed the sproc to add record to UserClinicXref
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_CreateUpdateDictator] (
 	@DictatorName varchar(50),
@@ -36,42 +37,62 @@ CREATE PROCEDURE [dbo].[sp_CreateUpdateDictator] (
 	@ImageName varchar(100) = null
 ) AS 
 BEGIN
+	BEGIN TRY 
+		BEGIN TRANSACTION
+			IF NOT EXISTS(select * from Dictators where ClinicID = @ClinicID and DictatorName = @DictatorName)
+			BEGIN
+				INSERT INTO Dictators(DictatorName,ClinicID,Deleted,DefaultJobTypeID,DefaultQueueID,Password,Salt,FirstName,MI,LastName,Suffix,Initials,Signature,EHRProviderID,EHRProviderAlias,VRMode,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,SignatureImage,ImageName,UserId,SreTypeId)
+				VALUES(@DictatorName,@ClinicID,0,@DefaultJobTypeID,@DefaultQueueID,@Password,@Salt,@FirstName,@MI,@LastName,@Suffix,@Initials,@Signature,@EHRProviderID,@EHRProviderAlias,@VRMode,@CRFlagType,@ForceCRStartDate,@ForceCREndDate,@ExcludeStat,@SignatureImage,@ImageName,@UserId,@SreTypeId)
+			END
+			ELSE
+			BEGIN
+				UPDATE Dictators SET DefaultJobTypeID = @DefaultJobTypeID,
+									 DefaultQueueID = @DefaultQueueID,
+									 Password = @Password,
+									 Salt = @Salt,
+									 FirstName = @FirstName,
+									 MI = @MI,
+									 LastName = @LastName,
+									 Suffix = @Suffix,
+									 Initials = @Initials,
+									 Signature = @Signature,
+									 EHRProviderID = @EHRProviderID,
+									 EHRProviderAlias = @EHRProviderAlias,
+									 VRMode = @VRMode,
+									 CRFlagType = @CRFlagType,
+									 ForceCRStartDate = @ForceCRStartDate,
+									 ForceCREndDate = @ForceCREndDate,
+									 ExcludeStat = @ExcludeStat,
+									 SignatureImage = @SignatureImage,
+									 ImageName = @ImageName,
+									 UserId = @UserId,
+									 SreTypeId = @SreTypeId
+				WHERE ClinicID = @ClinicID and DictatorName = @DictatorName
+			END
 	
-	IF NOT EXISTS(select * from Dictators where ClinicID = @ClinicID and DictatorName = @DictatorName)
-	BEGIN
-		INSERT INTO Dictators(DictatorName,ClinicID,Deleted,DefaultJobTypeID,DefaultQueueID,Password,Salt,FirstName,MI,LastName,Suffix,Initials,Signature,EHRProviderID,EHRProviderAlias,VRMode,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,SignatureImage,ImageName,UserId,SreTypeId)
-		VALUES(@DictatorName,@ClinicID,0,@DefaultJobTypeID,@DefaultQueueID,@Password,@Salt,@FirstName,@MI,@LastName,@Suffix,@Initials,@Signature,@EHRProviderID,@EHRProviderAlias,@VRMode,@CRFlagType,@ForceCRStartDate,@ForceCREndDate,@ExcludeStat,@SignatureImage,@ImageName,@UserId,@SreTypeId)
-	END
-	ELSE
-	BEGIN
-		UPDATE Dictators SET DefaultJobTypeID = @DefaultJobTypeID,
-							 DefaultQueueID = @DefaultQueueID,
-							 Password = @Password,
-							 Salt = @Salt,
-							 FirstName = @FirstName,
-							 MI = @MI,
-							 LastName = @LastName,
-							 Suffix = @Suffix,
-							 Initials = @Initials,
-							 Signature = @Signature,
-							 EHRProviderID = @EHRProviderID,
-							 EHRProviderAlias = @EHRProviderAlias,
-							 VRMode = @VRMode,
-							 CRFlagType = @CRFlagType,
-							 ForceCRStartDate = @ForceCRStartDate,
-							 ForceCREndDate = @ForceCREndDate,
-							 ExcludeStat = @ExcludeStat,
-							 SignatureImage = @SignatureImage,
-							 ImageName = @ImageName,
-							 UserId = @UserId,
-							 SreTypeId = @SreTypeId
-		WHERE ClinicID = @ClinicID and DictatorName = @DictatorName
-	END
-	
-	SELECT DictatorId from Dictators where ClinicID = @ClinicID and DictatorName = @DictatorName		
+			-- Add record to UserClinicXref
+			IF EXISTS(SELECT * FROM UserClinicXref WHERE UserId = @UserId AND ClinicId = @ClinicID)
+			BEGIN
+				UPDATE UserClinicXref SET IsDeleted = 0 WHERE UserId = @UserId AND ClinicId = @ClinicID
+			END
+			ELSE
+			BEGIN
+				INSERT INTO UserClinicXref VALUES (@UserId, @ClinicID, 0)
+			END
+
+			SELECT DictatorId from Dictators where ClinicID = @ClinicID and DictatorName = @DictatorName	
+		COMMIT TRANSACTION
+	END TRY
+	BEGIN CATCH
+		IF @@TRANCOUNT > 0 
+		   BEGIN
+				ROLLBACK TRANSACTION
+				DECLARE @ErrMsg nvarchar(4000), @ErrSeverity int
+				SELECT @ErrMsg = ERROR_MESSAGE(), @ErrSeverity = ERROR_SEVERITY()
+				RAISERROR(@ErrMsg, @ErrSeverity, 1)
+			END
+	END CATCH	
 END
 
 
 GO
-
-

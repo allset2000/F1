@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -19,7 +20,9 @@ BEGIN
 	DECLARE @DefaultClinicID int
 	SELECT @DefaultClinicID = ConfigValue from SystemConfiguration where ConfigKey = 'SMDefaultClinic'
 
-	SELECT U.UserId, U.FirstName, U.MI, U.LastName,  CONCAT(U.FirstName,' ', U.MI,' ', U.LastName) as FullName, U.LoginEmail as Email, U.PhoneNumber, C.ClinicID, C.Name as ClinicName, QBU.QuickBloxUserID, 
+	SELECT U.UserId, U.FirstName, U.MI, U.LastName,  
+		CONCAT(LTRIM(RTRIM(U.FirstName)), CASE WHEN LTRIM(RTRIM(U.MI)) <> '' THEN ' ' + LTRIM(RTRIM(U.MI)) + ' ' ELSE ' ' END, LTRIM(RTRIM(U.LastName))) as FullName, 
+		U.LoginEmail as Email, U.PhoneNumber, C.ClinicID, C.Name as ClinicName, QBU.QuickBloxUserID, 
 		QBU.Login as 'QBUserLogin', 
 		CASE
 			WHEN F.UserID=@UserID and F.IsDeleted=0 THEN 1

@@ -121,7 +121,7 @@ BEGIN TRY
 
 	
 		--updating document into jobs_documents table
-		IF @vbinDocumnet IS NOT Null AND  @oldStatus < 250
+		IF @vbinDocumnet IS NOT Null AND  @oldStatus < 250 OR @oldStatus >= 360 
 			BEGIN
 				IF @vnitIsApproved = 0 
 					EXEC doUpdateJobDocument @vvcrJobNumber, @vbinDocumnet,@vvcrUsername,@currentDate
