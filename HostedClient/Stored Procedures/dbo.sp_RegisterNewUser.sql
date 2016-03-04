@@ -10,6 +10,7 @@ GO
 -- Modified Date:  11/01/2016
 -- Modification Details: Implemented new improvced logic to validate new invitations,
 -- Update existing user details for pending invitation user
+-- Updated : Changed procedure to save a record in UserClinicXref table
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_RegisterNewUser]
 (
@@ -67,6 +68,7 @@ BEGIN
 		-- Added new field while creating a new user, The name of the field added in the insert statement below is  LastPasswordReset. Ticket#3237 modified by Tamojit Chakraborty
 		IF NOT EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress)
 		BEGIN
+		
 			INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt,LastPasswordReset) 
 			     VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt,getdate())
 			SET @UserId = SCOPE_IDENTITY()  --(SELECT UserId FROM Users WHERE UserName = @EmailAddress)
@@ -99,6 +101,16 @@ BEGIN
 		  BEGIN		    
 			   RAISERROR ('Username already registered',16,1);
 		  END
+		END
+
+		-- Add User Clinic Xref
+		IF EXISTS(SELECT 1 FROM UserClinicXref WHERE UserId = @UserId AND ClinicId = @cur_clinicid)
+		BEGIN
+			UPDATE UserClinicXref SET IsDeleted = 0 WHERE UserId = @UserId AND ClinicId = @cur_clinicid
+		END
+		ELSE
+		BEGIN
+			INSERT INTO UserClinicXref VALUES (@UserId, @cur_clinicid, 0)
 		END
 
 		-- Add User Role Xref
