@@ -29,7 +29,7 @@ BEGIN
 	--WHERE JobImages.JobID = @JobID AND JobsDeliveryTracking.JobID IS NULL
 
 	SELECT JobImages.ImageID, JobImages.JobID, JobImages.ImagePath, JobImages.ImageDescription  
-	FROM JobImages 
+	FROM JobImages WITH (NOLOCK)
 	LEFT JOIN JobsDeliveryTracking on JobImages.ImageID = JobsDeliveryTracking.ImageID 
 	LEFT JOIN JobsDeliveryErrors on JobImages.ImageID = JobsDeliveryErrors.ImageID AND DATEDIFF(minute,ChangedOn,GETDATE()) < 30
 	WHERE JobImages.JobID = @JobID AND JobsDeliveryTracking.JobID IS NULL 

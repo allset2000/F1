@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -15,14 +16,14 @@ GO
 
 CREATE PROCEDURE [dbo].[sp_JobsDeliveryErrorsDel] 
 	@JobID bigint,
-	@ImageID bigint
+	@ImageID bigint = NULL
 	
 AS
 BEGIN
 
 	SET NOCOUNT ON;
 
-	DELETE FROM JobsDeliveryErrors WHERE JobID = @JobID AND ImageID = @ImageID
+	DELETE FROM JobsDeliveryErrors WHERE JobID = @JobID AND (@ImageID IS NULL or  ImageID = @ImageID)
 
 END
 GO
