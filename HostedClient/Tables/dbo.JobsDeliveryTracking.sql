@@ -12,6 +12,8 @@ CREATE TABLE [dbo].[JobsDeliveryTracking]
 [ResponseDate] [datetime] NULL,
 [ImageID] [bigint] NULL CONSTRAINT [DF_JobsDeliveryTracking_ImageID] DEFAULT (NULL)
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20160307-142340] ON [dbo].[JobsDeliveryTracking] ([ImageID]) ON [PRIMARY]
+
 ALTER TABLE [dbo].[JobsDeliveryTracking] ADD
 CONSTRAINT [FK_JobsDeliveryTracking_JobImages] FOREIGN KEY ([ImageID]) REFERENCES [dbo].[JobImages] ([ImageID])
 CREATE NONCLUSTERED INDEX [idx_JDT_JobIDDelTypeID] ON [dbo].[JobsDeliveryTracking] ([JobId], [DeliveryTypeId], [Section], [DeliveryTrackingId]) ON [PRIMARY]

@@ -12,6 +12,8 @@ CREATE TABLE [dbo].[JobsDeliveryErrorsTracking]
 [ErrorCode] [int] NULL,
 [ImageID] [bigint] NULL CONSTRAINT [DF_JobsDeliveryErrorsTracking_ImageID] DEFAULT (NULL)
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20160307-142745] ON [dbo].[JobsDeliveryErrorsTracking] ([ImageID]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[JobsDeliveryErrorsTracking] ADD CONSTRAINT [PK_JobsDeliveryErrorsTracking] PRIMARY KEY CLUSTERED  ([DeliveryErrorTrackingId]) ON [PRIMARY]
 GO
