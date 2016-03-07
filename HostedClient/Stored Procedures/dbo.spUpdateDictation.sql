@@ -63,7 +63,7 @@ BEGIN TRY
 			-- If all dictations are Dictated (250), the job should be Completed (300)
 			SELECT @newJobStatus =
 			   CASE 
-				  WHEN @newJobStatus > 0 AND @newJobStatus < 250 THEN 100 
+				  WHEN @newJobStatus >= 0 AND @newJobStatus < 250 THEN 100 
 				  WHEN @newJobStatus >= 500 THEN 500
 				  WHEN @newJobStatus = 250 THEN 300 
 				  ELSE -1

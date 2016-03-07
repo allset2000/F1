@@ -8,7 +8,7 @@ GO
 -- Author: Raghu A
 -- Create date: 18/11/2014
 -- Description: SP called from DictateAPI to pull patients to sync
-
+--exec sp_GetPatientsToSyncByLastSyncDate 3489,'2014-01-01'
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetPatientsToSyncByLastSyncDate] (
 	 @DictatorId INT,
@@ -37,6 +37,7 @@ BEGIN
 				INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID 
 			WHERE qu.DictatorID = @DictatorId AND 
 				  d.[Status] IN (100, 200) AND 				
-				  ISNULL(p.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
+				  ISNULL(p.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate AND
+				  e.PatientID NOT IN(SELECT GenericPatientID FROM SystemSettings WHERE ClinicID=P.ClinicID)
 END
 GO
