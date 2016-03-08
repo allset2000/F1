@@ -3,7 +3,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
 -- =============================================
 -- Author: Sam Shoultz
 -- Create date: 2/26/2015
@@ -11,6 +10,7 @@ GO
 -- Modified by Vivek on 9/29/2015 - changed the logic to refer UserClinicXref instead of User.ClinicID
 -- Modified by Narender on 12/03/2015 - Added FullName,Email,PhoneNo,ClinicID and ClinicName to select statement
 -- Modified by Santhosh on 02/19/2016 - Pulling only active users
+-- Modified by Vivek on 03/08/2016 - no WHERE clause for SMContactFavorites. Proper handling of PendingRegStatus.
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetUserQBContacts] (
 	@UserId int
@@ -36,15 +36,14 @@ BEGIN
 	WHERE
 	    --Only Active users
 		U.Deleted = 0 AND
-		(F.UserID IS NULL OR (F.UserID = @UserId)) AND 
 		 (
 		--All users who belong to the clinics I belong to
 		--Don't include the users from SMDefaultClinic even if I belong there...
-		U.UserId in (SELECT UserId FROM UserClinicXref WHERE ClinicId in 
-		(SELECT UCX.ClinicId FROM Users U INNER JOIN UserClinicXref UCX on U.UserID = UCX.UserID 
-		 WHERE U.UserID = @UserId and UCX.IsDeleted=0 AND UCX.ClinicId <> @DefaultClinicID))
+		U.UserId in (SELECT UserId FROM UserClinicXref UCX1 WHERE UCX1.IsDeleted=0 and UCX1.ClinicId in 
+		(SELECT UCX2.ClinicId FROM Users U INNER JOIN UserClinicXref UCX2 on U.UserID = UCX2.UserID 
+		 WHERE U.UserID = @UserId and UCX2.IsDeleted=0 AND UCX2.ClinicId <> @DefaultClinicID))
 		--Users who're invited by me and registered
-		OR U.UserId in (SELECT RegisteredUserId FROM UserInvitations UI WHERE RequestingUserId = @UserId)
+		OR U.UserId in (SELECT RegisteredUserId FROM UserInvitations UI WHERE RequestingUserId = @UserId AND ISNULL(PendingRegStatus,0)=0)
 		--User who invited me
 		OR U.UserId in (SELECT RequestingUserId FROM UserInvitations UI WHERE RegisteredUserId = @UserId)
 		)
@@ -55,9 +54,10 @@ BEGIN
 		SELECT NULL, UI.FirstName, UI.MI, UI.LastName, CONCAT(UI.FirstName,' ', UI.MI,' ', UI.LastName) as FullName, UI.EmailAddress as Email, UI.PhoneNumber, null, null, null, null, 0 as 'IsFavorite'
 		FROM UserInvitations UI
 		WHERE UI.RequestingUserId = @UserId
-		AND (UI.RegisteredUserId is NULL OR UI.PendingRegStatus=1)  and UI.FirstName is not null and UI.InvitationSent = 1
+		AND (UI.RegisteredUserId is NULL)  and UI.FirstName is not null and UI.InvitationSent = 1
 
 
 END
+
 
 GO
