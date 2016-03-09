@@ -50,6 +50,7 @@ BEGIN
   CROSS APPLY (SELECT TOP 1 JOBNUMBER FROM JobDeliveryHistory jh WHERE jb.jobnumber=jh.jobnumber) jh 
   WHERE  jb.IsLockedForProcessing=0 AND jb.FinaldocSentToBBN <> 1
   AND ((d.SRETypeId IS NOT NULL AND d.SRETypeId = 2) or (d.SRETypeId is NULL AND C.SRETypeId IS NOT NULL AND C.SRETypeID=2))  
+  AND js.Status=360
 
  --update the jobs to jobstatus       
  UPDATE Jobs Set IsLockedForProcessing=1 FROM Jobs JB             
