@@ -23,8 +23,8 @@ BEGIN
 		     CASE WHEN JT.Deleted = 1 THEN 500 ELSE 100 END AS [State],
 			 JTC.JobTypeCategoryId,
 			 JTC.JobTypeCategory
-		 FROM dbo.JobTypes JT
-		 LEFT JOIN	dbo.JobTypeCategory JTC ON JT.JobTypeCategoryId=JTC.JobTypeCategoryId
+		 FROM dbo.JobTypes JT WITH(NOLOCK)
+		 LEFT JOIN	dbo.JobTypeCategory JTC WITH(NOLOCK) ON JT.JobTypeCategoryId=JTC.JobTypeCategoryId
 		 WHERE JT.ClinicID=@ClinicId
 		 AND ISNULL(JT.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate 
 END

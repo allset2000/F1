@@ -25,12 +25,12 @@ BEGIN
 						rp.LastName,						
 						rp.Address1+', '+rp.City+', '+rp.State+', '+rp.Zip AS [Address],
 						rp.Phone1
-				FROM dbo.Dictations AS d 
-					INNER JOIN dbo.Jobs AS j ON d.JobID = j.JobID 
-					INNER JOIN dbo.Jobs_Referring AS jr ON j.JobID = jr.JobID
-					INNER JOIN dbo.Encounters AS e ON j.EncounterID = e.EncounterID
-					INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID
-					INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
+				FROM dbo.Dictations AS d WITH(NOLOCK) 
+					INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON d.JobID = j.JobID 
+					INNER JOIN dbo.Jobs_Referring AS jr WITH(NOLOCK) ON j.JobID = jr.JobID
+					INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON j.EncounterID = e.EncounterID
+					INNER JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON qu.QueueID = d.QueueID
+					INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID
 					INNER JOIN dbo.ReferringPhysicians rp ON rp.ReferringID=jr.ReferringID 
 				WHERE qu.DictatorID = @DictatorId AND 	       
 					  d.[Status] IN (100, 200) AND 		
@@ -42,13 +42,13 @@ BEGIN
 							rp.LastName,
 							rp.Address1+', '+rp.City+', '+rp.State+', '+rp.Zip AS [Address],
 							rp.Phone1
-					FROM dbo.Patients AS p 
-						INNER JOIN dbo.Encounters AS e ON p.PatientID = e.PatientID
-						INNER JOIN dbo.Jobs AS j ON e.EncounterID = j.EncounterID
-						INNER JOIN dbo.Dictations AS d ON d.JobID = j.JobID 
-						INNER JOIN dbo.Queue_Users AS qu ON d.QueueID = qu.QueueID 
-						INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID 
-						INNER JOIN dbo.ReferringPhysicians rp ON rp.ReferringID=p.PrimaryCareProviderID 
+					FROM dbo.Patients AS p WITH(NOLOCK)
+						INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON p.PatientID = e.PatientID
+						INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON e.EncounterID = j.EncounterID
+						INNER JOIN dbo.Dictations AS d WITH(NOLOCK) ON d.JobID = j.JobID 
+						INNER JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON d.QueueID = qu.QueueID 
+						INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID 
+						INNER JOIN dbo.ReferringPhysicians rp WITH(NOLOCK) ON rp.ReferringID=p.PrimaryCareProviderID 
 					WHERE qu.DictatorID = @DictatorId AND 	       
 					  d.[Status] IN (100, 200) AND 		
 					  p.PrimaryCareProviderID IS NOT NULL AND		
@@ -61,4 +61,3 @@ BEGIN
 
 END
 GO
-

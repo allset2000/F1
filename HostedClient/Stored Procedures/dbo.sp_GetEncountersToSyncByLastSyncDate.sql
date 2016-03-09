@@ -37,11 +37,11 @@ BEGIN
 	  BEGIN
 	        
 				SELECT @AppointmentDate=(CASE WHEN @Direction='prev' THEN MAX(e.AppointmentDate) ELSE MIN (e.AppointmentDate) END) 
-					FROM dbo.Encounters e
-						INNER	JOIN dbo.Jobs j ON j.EncounterID=e.EncounterID
-						INNER JOIN dbo.Dictations d ON d.JobID=j.JobID	
-						INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID 
-						INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID							
+					FROM dbo.Encounters e WITH(NOLOCK)
+						INNER	JOIN dbo.Jobs j WITH(NOLOCK) ON j.EncounterID=e.EncounterID
+						INNER JOIN dbo.Dictations d WITH(NOLOCK) ON d.JobID=j.JobID	
+						INNER JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON qu.QueueID = d.QueueID 
+						INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID							
 				WHERE qu.DictatorID = @DictatorId AND 
 		     			@AppointmentDate<=(CASE WHEN @Direction='next' THEN CAST(e.AppointmentDate AS DATE) else @AppointmentDate END) AND
 						@AppointmentDate>=(CASE WHEN @Direction='prev' THEN CAST(e.AppointmentDate AS DATE) else @AppointmentDate END) AND
@@ -69,13 +69,13 @@ BEGIN
 				  WHERE  j2.EncounterID = e.EncounterID                   
 				  FOR XML PATH('')), 1, 2, '')  JobDetails,
 				  e.AppointmentDate as ADate
-		 FROM dbo.Encounters e
-				INNER JOIN dbo.Jobs j ON j.EncounterID=e.EncounterID
-				INNER JOIN dbo.Dictations d ON d.JobID=j.JobID	
-				INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID 
-				INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
-				LEFT JOIN dbo.Schedules s ON s.ScheduleID=e.ScheduleID
-				LEFT JOIN dbo.Patients p ON p.PatientID=e.PatientID
+		 FROM dbo.Encounters e WITH(NOLOCK)
+				INNER JOIN dbo.Jobs j WITH(NOLOCK) ON j.EncounterID=e.EncounterID
+				INNER JOIN dbo.Dictations d WITH(NOLOCK) ON d.JobID=j.JobID	
+				INNER JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON qu.QueueID = d.QueueID 
+				INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID
+				LEFT JOIN dbo.Schedules s WITH(NOLOCK) ON s.ScheduleID=e.ScheduleID
+				LEFT JOIN dbo.Patients p WITH(NOLOCK) ON p.PatientID=e.PatientID
 		WHERE qu.DictatorID = @DictatorId AND 
 		     CAST(e.AppointmentDate AS DATE)=(CASE WHEN @AppointmentDate IS NOT NULL 
 							THEN  CAST(@AppointmentDate AS DATE)  ELSE CAST(e.AppointmentDate AS DATE) END) AND 	       

@@ -25,12 +25,12 @@ BEGIN
 			s.ResourceID,
 			s.[Status] AS AppointmentStatus ,
 			e.EncounterID AS ConditionEncounterID
-     FROM dbo.Schedules s
-	 INNER JOIN dbo.Encounters AS e ON S.ScheduleID = e.ScheduleID
-	 INNER JOIN dbo.Jobs AS j ON E.EncounterID = j.EncounterID 
-	 INNER JOIN dbo.Dictations D ON D.JobID=J.JobID
-	 INNER JOIN Queue_Users qu ON  qu.QueueID = d.QueueID 
-	 INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID	
+     FROM dbo.Schedules s WITH(NOLOCK)
+	 INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON S.ScheduleID = e.ScheduleID
+	 INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON E.EncounterID = j.EncounterID 
+	 INNER JOIN dbo.Dictations D WITH(NOLOCK) ON D.JobID=J.JobID
+	 INNER JOIN Queue_Users qu WITH(NOLOCK) ON  qu.QueueID = d.QueueID 
+	 INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID	
 	WHERE qu.DictatorID = @DictatorId AND 	          
 		  d.[Status] IN (100, 200) AND 		
 		  ISNULL(s.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate AND

@@ -8,7 +8,7 @@ GO
 -- Author: Raghu A
 -- Create date: 18/11/2014
 -- Description: SP called from DictateAPI to pull patients to sync
---exec sp_GetPatientsToSyncByLastSyncDate 3489,'2014-01-01'
+--exec sp_GetPatientsToSyncByLastSyncDate 3489,'1/1/1753 12:00:00 AM'
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetPatientsToSyncByLastSyncDate] (
 	 @DictatorId INT,
@@ -16,6 +16,10 @@ CREATE PROCEDURE [dbo].[sp_GetPatientsToSyncByLastSyncDate] (
 ) AS 
 BEGIN
 		SET NOCOUNT ON;
+
+		  DECLARE @GenericPatientID INT
+
+		  SELECT @GenericPatientID=GenericPatientID FROM SystemSettings WITH(NOLOCK) WHERE ClinicID=350
    
 			 SELECT DISTINCT p.PatientID AS ID, 
 					CASE WHEN q.Deleted = 1 THEN 500 ELSE 100 END AS [State],
@@ -29,15 +33,16 @@ BEGIN
 					p.Phone1,
 					p.PrimaryCareProviderID ,
 					e.EncounterID
-			FROM dbo.Patients AS p 
-				INNER JOIN dbo.Encounters AS e ON p.PatientID = e.PatientID
-				INNER JOIN dbo.Jobs AS j ON e.EncounterID = j.EncounterID
-				INNER JOIN dbo.Dictations AS d ON d.JobID = j.JobID 
-				INNER JOIN dbo.Queue_Users AS qu ON d.QueueID = qu.QueueID 
-				INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID 
+			FROM dbo.Patients  AS p WITH(NOLOCK)
+				INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON p.PatientID = e.PatientID
+				INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON e.EncounterID = j.EncounterID
+				INNER JOIN dbo.Dictations AS d WITH(NOLOCK) ON d.JobID = j.JobID 
+				INNER JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON d.QueueID = qu.QueueID 
+				INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID 
 			WHERE qu.DictatorID = @DictatorId AND 
+				  e.PatientID <>@GenericPatientID AND
 				  d.[Status] IN (100, 200) AND 				
-				  ISNULL(p.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate AND
-				  e.PatientID NOT IN(SELECT GenericPatientID FROM SystemSettings WHERE ClinicID=P.ClinicID)
+				  ISNULL(p.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate-- AND
+				 -- 
 END
 GO

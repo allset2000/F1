@@ -28,12 +28,12 @@ BEGIN
 					q.QueueID,
 					e.EncounterID,
 					jr.ReferringID AS ReferringPhysicianID
-			FROM dbo.Dictations AS d 
-				INNER JOIN dbo.Jobs AS j ON d.JobID = j.JobID 
-				INNER JOIN dbo.Encounters AS e ON j.EncounterID = e.EncounterID
-				INNER JOIN dbo.Queue_Users AS qu ON qu.QueueID = d.QueueID 
-				INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
-				LEFT JOIN dbo.Jobs_Referring jr ON jr.JobID=j.JobID		
+			FROM dbo.Dictations AS d WITH(NOLOCK)
+				INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON d.JobID = j.JobID 
+				INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON j.EncounterID = e.EncounterID
+				INNER JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON qu.QueueID = d.QueueID 
+				INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID
+				LEFT JOIN dbo.Jobs_Referring jr WITH(NOLOCK) ON jr.JobID=j.JobID		
 			WHERE qu.DictatorID=@DictatorID AND
 				  @EncounterId=(CASE WHEN @EncounterId=0 THEN @EncounterId ELSE e.EncounterID END) AND 	       
 				  d.[Status] IN (100, 200) AND 	
@@ -53,13 +53,13 @@ BEGIN
 		 LEFT JOIN 
 				( 
 					 SELECT jc.FileName AS EHJobnumber, ISNULL(JSA.Status,JSB.Status) AS StatusCode   
-					 FROM [Entrada].dbo.Jobs_Client JC 
-				     INNER JOIN CTE_Jobs cj ON  cj.JobNumber=JC.FileName	
-					 LEFT JOIN [Entrada].dbo.JobStatusA JSA ON JSA.JobNumber=JC.JobNumber
-					 LEFT JOIN [Entrada].dbo.JobStatusB JSB ON JSB.JobNumber=JC.JobNumber
+					 FROM [Entrada].dbo.Jobs_Client JC  WITH(NOLOCK)
+				     INNER JOIN CTE_Jobs cj WITH(NOLOCK) ON  cj.JobNumber=JC.FileName	
+					 LEFT JOIN [Entrada].dbo.JobStatusA JSA WITH(NOLOCK) ON JSA.JobNumber=JC.JobNumber
+					 LEFT JOIN [Entrada].dbo.JobStatusB JSB WITH(NOLOCK) ON JSB.JobNumber=JC.JobNumber
 				
 				) AS StatusData ON StatusData.EHJobnumber=CTE.JobNumber
-        LEFT JOIN [Entrada].dbo.StatusCodes SC ON SC.StatusID=StatusData.StatusCode		
+        LEFT JOIN [Entrada].dbo.StatusCodes SC WITH(NOLOCK) ON SC.StatusID=StatusData.StatusCode		
 
 				   
 END
