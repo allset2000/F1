@@ -33,7 +33,7 @@ DECLARE @TempJobsHostory1 TABLE(
 	StatusDate DATETIME, 
 	JobType VARCHAR(100),
 	UserId VARCHAR(48),
-	MRN INT,
+	MRN VARCHAR(50),
 	FirstName VARCHAR(50),
 	MI VARCHAR(50),
 	LastName VARCHAR(50),
