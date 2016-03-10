@@ -9,6 +9,10 @@ CREATE TABLE [dbo].[ErrorDefinitions]
 [AllowDocumentID] [bit] NOT NULL,
 [AllowDocumentTypeID] [bit] NOT NULL
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20160308-004141] ON [dbo].[ErrorDefinitions] ([ErrorCode]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20160308-004305] ON [dbo].[ErrorDefinitions] ([ErrorSourceType]) ON [PRIMARY]
+
 GO
 ALTER TABLE [dbo].[ErrorDefinitions] ADD CONSTRAINT [PK_ErrorDefinitions] PRIMARY KEY CLUSTERED  ([ErrorDefinitionID]) ON [PRIMARY]
 GO
