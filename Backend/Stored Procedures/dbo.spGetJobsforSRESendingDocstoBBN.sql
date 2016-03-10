@@ -42,7 +42,7 @@ BEGIN
  BEGIN            
   INSERT INTO @TempJobs  
   SELECT top (@vintrowsCount) jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,    
-  CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId,2 as ProcessTypeId,js.status,jd.doc as Document 
+  CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId,3 as ProcessTypeId,js.status,jd.doc as Document 
   FROM  Jobs jb        
   INNER JOIN dbo.Dictators d on jb.DictatorID = d.DictatorID      
   INNER JOIN Clinics c on jb.ClinicID = c.ClinicID      
