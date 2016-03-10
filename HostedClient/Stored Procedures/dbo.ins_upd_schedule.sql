@@ -6,6 +6,9 @@ GO
 -- Author:		<Author,,Name>
 -- Create date: <Create Date,,>
 -- Description:	<Description,,>
+-- History
+-- Ticket#	Date			Fixed by			Comments
+-- #6077#	10 Feb 2016		Sharif Shaik		if @PatientID is NULL, EXIT the stored procedure without adding the record to schedules table
 -- =============================================
 CREATE PROCEDURE [dbo].[ins_upd_schedule]
 	@ClinicID smallint ,
@@ -42,6 +45,12 @@ IF ISNULL (@MRN, '') <> ''
 	SELECT @PatientID = PatientID FROM Patients WHERE ClinicID = @ClinicID AND MRN = @MRN
 ELSE
 	SELECT @PatientID = PatientID FROM Patients WHERE ClinicID = @ClinicID AND AlternateID = @alternate_id
+
+-- #6077# - if @PatientID is NULL, EXIT the stored procedure without adding the record to schedules table
+IF @PatientID IS NULL
+BEGIN   
+    RETURN
+END
 
 -- Preserve any existing EHREncounterID (subsequent messages may not have it)
 SELECT @orig_enc_id = EHREncounterID, @currentStatus=Status FROM Schedules WHERE ClinicID = @ClinicID and AppointmentID = @AppointmentID
@@ -284,3 +293,4 @@ BEGIN
 END
 END
 GO
+
