@@ -35,11 +35,7 @@ BEGIN TRY
 
 	BEGIN TRANSACTION 
 	    
-		
-	 if(@Status=0)
-	    SET @Status=300
-
-	   
+	  
 			SELECT @OldStatus = [Status], @OldStat = Stat, 
 				    @OldJobTypeID = JobTypeID 
 			FROM dbo.Jobs 
