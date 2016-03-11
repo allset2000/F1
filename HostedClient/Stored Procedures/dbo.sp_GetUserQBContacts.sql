@@ -43,7 +43,7 @@ BEGIN
 		(SELECT UCX2.ClinicId FROM Users U INNER JOIN UserClinicXref UCX2 on U.UserID = UCX2.UserID 
 		 WHERE U.UserID = @UserId and UCX2.IsDeleted=0 AND UCX2.ClinicId <> @DefaultClinicID))
 		--Users who're invited by me and registered
-		OR U.UserId in (SELECT RegisteredUserId FROM UserInvitations UI WHERE RequestingUserId = @UserId AND ISNULL(PendingRegStatus,0)=0)
+		OR U.UserId in (SELECT RegisteredUserId FROM UserInvitations UI WHERE RequestingUserId = @UserId and RegisteredUserId is not null)
 		--User who invited me
 		OR U.UserId in (SELECT RequestingUserId FROM UserInvitations UI WHERE RegisteredUserId = @UserId)
 		)
