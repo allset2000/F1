@@ -56,7 +56,9 @@ BEGIN TRY
 
 	--begin trigger logic updated in store procedure
 			-- Find the lowest status of all a job's dictations
-			SELECT @newJobStatus = [Status] FROM Dictations WHERE JobID = @bgintjobId;
+			--SELECT @newJobStatus = [Status] FROM Dictations WHERE JobID = @bgintjobId;
+
+			SELECT @newJobStatus =@vintStatus
 
 			-- If any dictation is Available (100) or OnHold (200), the job should be Available (100)
 			-- If all dictations are Deleted (500), the job should be Deleted (500)
