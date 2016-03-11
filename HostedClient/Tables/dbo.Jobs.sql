@@ -21,6 +21,8 @@ CREATE TABLE [dbo].[Jobs]
 [TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ChatHistory_ThreadID] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+ALTER TABLE [dbo].[Jobs] ADD
+CONSTRAINT [CK_jobs_Status_colHasLength] CHECK (([Status]>(0)))
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobID]) ON [PRIMARY]
 GO

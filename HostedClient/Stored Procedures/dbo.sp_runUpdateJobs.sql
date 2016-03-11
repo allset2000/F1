@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -113,7 +114,7 @@ BEGIN
 		DECLARE @cur_dictid int
 
 		SET @cur_jobid = (SELECT TOP 1 jobid from #tmp_data where Processed = 0)
-		SET @cur_dictid = (SELECT TOP 1 dictationid from Dictations where JobID = @cur_jobid and Status = @cur_status)
+		SET @cur_dictid = (SELECT TOP 1 dictationid from Dictations where JobID = @cur_jobid and Status = @cur_status)		
 		
 		IF EXISTS (SELECT JobNumber FROM Jobs WHERE JobID = @cur_jobid AND Status = @cur_status)
 		BEGIN
@@ -122,10 +123,13 @@ BEGIN
 			-- Insert into JobTracking
 			INSERT INTO JobsTracking(JobID, Status, ChangeDate, ChangedBy) VALUES(@cur_jobid, @new_status, GETDATE(), @UpdatedBy)
 		
+			IF(@cur_dictid != NULL)
+			BEGIN
 			-- Delete Dictation
 			UPDATE Dictations SET Status = @new_status,UpdatedDateInUTC=GETUTCDATE() WHERE DictationID = @cur_dictid
 			-- Insert into DictationTracking
 			INSERT INTO DictationsTracking(DictationID, Status, ChangeDate, ChangedBy) VALUES(@cur_dictid, @new_status, GETDATE(), @UpdatedBy)
+			END
 		END
 
 		UPDATE #tmp_data set Processed = 1 WHERE JobID = @cur_jobid
