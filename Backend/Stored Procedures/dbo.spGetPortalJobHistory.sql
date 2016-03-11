@@ -65,7 +65,7 @@ SELECT  rov.JobNumber,'Override Value Added By '+u.Name ,CASE WHEN rov.CreatedDa
 		 WHERE JobNumber= @vvcrJobnumber
 
  INSERT INTO @TempJobsHostory1  
- SELECT TOP 1 JobNumber,DocumentID, 'Job Marked as STAT',HistoryDateTime, jobtype, UserId, null, null, null, null, null, null, SC.StatusGroupId, 0  FROM Job_History JH
+ SELECT TOP 1 JobNumber,DocumentID, 'Job Marked as STAT',HistoryDateTime, null, UserId, null, null, null, null, null, SC.StatusGroupId, 0  FROM Job_History JH
 		INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JobNumber = @vvcrJobnumber AND  STAT = 1 ORDER BY JobHistoryID DESC
  SELECT * FROM @TempJobsHostory1 order by IsError,SgId,StatusDate  asc 
 
