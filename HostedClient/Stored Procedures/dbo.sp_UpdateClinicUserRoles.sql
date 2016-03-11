@@ -20,9 +20,9 @@ BEGIN
 		UserId int,
 		Processed int
 	)
-
+	
 	INSERT INTO #users (UserId, Processed)
-	SELECT DISTINCT(UserId), 0 from Dictators where UserId is not null
+	SELECT DISTINCT(UserId), 0 from Dictators where UserId is not null AND ClinicID = @ClinicId
 
 	WHILE EXISTS (select 1 from #users where Processed = 0)
 	BEGIN
