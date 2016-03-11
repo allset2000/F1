@@ -82,11 +82,14 @@ BEGIN TRY
 			set @vbitStat1 = NULL
 
 		-- Tracking the previous status details
-		EXEC [spInsertJobHistory] @vvcrJobNumber,null,null,null,null,@vvcrUsername,null,null,null,null,@vbitStat1
+		EXEC [spInsertJobHistory] @vvcrJobNumber,null,null,null,null,@vvcrUsername,null,null,null,null,null
 
 		select @oldStatus = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@oldStatus is NULL )
 			select @oldStatus = status from JobStatusB where jobnumber=@vvcrJobNumber
+
+		IF(@vbitStat1 = 1)
+		INSERT INTO Job_History(JobNumber, CurrentStatus,UserId, HistoryDateTime,IsHistory, STAT ) VALUES (@vvcrJobNumber,@oldStatus,@vvcrUsername,GETDATE(),0, @vbitStat1)
 
 		-- Update the Patient		
 		IF @vvcrMRN is not null
