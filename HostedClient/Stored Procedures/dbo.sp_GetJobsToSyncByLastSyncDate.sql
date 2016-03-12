@@ -9,6 +9,7 @@ GO
 -- Create date: 11/18/2014
 -- Description: SP called from DictateAPI to pull Jobs to sync on mobile
 --EXEC sp_GetJobsToSyncByLastSyncDate 2196,0,'2014-11-20 10:15:02.970'
+--Modified :Raghu--3/12/2016  --> Status code 450 added 
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobsToSyncByLastSyncDate](
 	 @DictatorID INT,
@@ -48,6 +49,7 @@ BEGIN
 					 WHEN [State]=360 THEN 7
 					 WHEN [State]=390 THEN 8
 					 WHEN [State]=500 THEN 9
+					 WHEN [State]=450 THEN 5
 					 WHEN [State]=400 THEN SC.StatusGroupId END  AS StatusGroupID					
 		FROM CTE_Jobs AS CTE		
 		 LEFT JOIN 
