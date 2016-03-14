@@ -8,6 +8,8 @@ GO
 -- Author:		<A Raghu>
 -- Create date: <12-10-2015>
 -- Description:	<Description,,>
+-- Updated: Baswaraj - 393 added for delivery error management
+-- Updated : Updated Case "Errors" block to return error message also with the results
 -- =============================================
 --exec [proc_fetchdashboardactivitydetails] 'ELCaniprasad', 'DeliveredToday',1,10,'JobStatus','Ascending'
 CREATE PROCEDURE [dbo].[proc_fetchdashboardactivitydetails]
@@ -61,6 +63,7 @@ BEGIN
 												JP.MRN,  
 												CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
 												AD.AwaitingDelivery,
+												'''' as ErrorMessage,
 												COUNT(*) OVER()  as TotalCount												
 										 FROM jobs J WITH(NOLOCK)   
 										 INNER JOIN jobstatusA JA WITH(NOLOCK) on J.jobnumber = JA.JobNumber  
@@ -106,6 +109,7 @@ BEGIN
 												JP.MRN,
 												CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
 												AD.AwaitingDelivery,
+												'''' as ErrorMessage,
 												COUNT(*) OVER()  as TotalCount
 											FROM jobs J WITH(NOLOCK) 
 											INNER JOIN jobstatusA JA WITH(NOLOCK)  on J.jobnumber = JA.JobNumber
@@ -157,6 +161,7 @@ BEGIN
 												JP.MRN,  
 												CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
 												IPD.AwaitingDelivery,
+												AD.ErrorMessage,
 												COUNT(*) OVER()  as TotalCount												
 										 FROM jobs J WITH(NOLOCK) 
 										 INNER JOIN Jobs_Patients JP WITH(NOLOCK)  on J.Jobnumber=JP.Jobnumber			
@@ -168,18 +173,21 @@ BEGIN
 													 ) AS IPD 
 													ON  IPD.JobNumber= J.Jobnumber 												
 											INNER JOIN (
-														SELECT JobNumber,MIN(ErrorDate) AS ErrorDate
+														SELECT JobNumber,ErrorMessage,ErrorDate AS ErrorDate
+														FROM
+														(
+														SELECT JobNumber,ErrorMessage,MIN(ErrorDate) AS ErrorDate,ROW_NUMBER() OVER(PARTITION BY JobNumber ORDER BY JobNumber,MIN(ErrorDate) ASC) rownumber														
 														 FROM
-															(SELECT J.JobNumber,MIN(J2DE.ErrorDate) AS ErrorDate 
+															(SELECT J.JobNumber,J2DE.Message AS ErrorMessage,MIN(J2DE.ErrorDate) AS ErrorDate 
 																FROM jobstodeliver J2D 
 																INNER JOIN JOBS J ON j.jobnumber=j2d.jobnumber
 																INNER JOIN JobsToDeliverErrors J2DE ON J2D.DeliveryID = J2DE.DeliveryID
 																INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=J2DE.ErrorCode																
 																INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType
 																WHERE j.dictatorid='''+@dictatorid+''' AND EST.ErrorSourceTypeID=1
-																GROUP BY J.JOBNUMBER
+																GROUP BY J.JOBNUMBER,J2DE.Message
 																UNION
-																SELECT J.JobNumber AS JobNumber,MIN(EHJDE.FIRSTATTEMPT) AS ErrorDate
+																SELECT J.JobNumber AS JobNumber,EHJDE.ErrorMessage AS ErrorMessage,MIN(EHJDE.FIRSTATTEMPT) AS ErrorDate
 																FROM jobs J 
 																INNER JOIN jobs_client JC ON J.jobnumber=JC.jobnumber
 																INNER JOIN EntradaHostedClient.DBO.jobs EHJ ON EHJ.jobnumber=JC.[FILENAME]
@@ -187,8 +195,9 @@ BEGIN
 																INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=EHJDE.ErrorCode
 																INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType
 																WHERE j.dictatorid ='''+@dictatorid+''' AND EST.ErrorSourceTypeID=1
-																GROUP BY J.JOBNUMBER
-														    ) A GROUP BY JOBNUMBER
+																GROUP BY J.JOBNUMBER,EHJDE.ErrorMessage
+														    ) A GROUP BY JOBNUMBER,ErrorMessage
+															) B WHERE rownumber=1
 														) AS AD ON  AD.JobNumber= J.Jobnumber WHERE J.dictatorid ='''+@dictatorid+'''									
 													) '										
 			--print @sql
@@ -208,6 +217,7 @@ BEGIN
 													JP.MRN,
 													CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
 												    AD.AwaitingDelivery,
+													'''' as ErrorMessage,
 													COUNT(*) OVER()  as TotalCount
 												FROM jobs J WITH(NOLOCK) 
 												--INNER JOIN jobstatusA JA WITH(NOLOCK)  on J.jobnumber = JA.JobNumber
@@ -247,7 +257,7 @@ BEGIN
 									   WHEN '''+@statusgroupname+'''=''CustomerReview'' THEN ''Customer Review: ''
 									   ELSE ''In Process: '' END) +Convert(varchar,A.JObStatus,100) AS JObStatus,A.Stat,
 								A.MRN, A.Patient,
-								CASE WHEN ISNULL(AwaitingDelivery,'''')='''' THEN '''' ELSE ''Editing Complete: ''+ Convert(varchar,AwaitingDelivery,100) END AS AwaitingDelivery, 
+								CASE WHEN ISNULL(AwaitingDelivery,'''')='''' THEN '''' ELSE ''Editing Complete: ''+ Convert(varchar,AwaitingDelivery,100) END AS AwaitingDelivery,ErrorMessage As ErrorMessage,
 								A.TotalCount 
 							FROM
 								(SELECT ROW_NUMBER() OVER(ORDER BY '+@SortColumn +' '+@SortType+') as RowNumber,  
