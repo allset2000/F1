@@ -20,11 +20,10 @@ BEGIN
 			DATEDIFF(SECOND,{D '1970-01-01'}, s.AppointmentDate) AS AppointmentDate, --Unix Timestamp
 			s.ReasonName,
 			s.PatientID,
-			s.EHREncounterID AS EncounterID,
+			e.EncounterID,
 			s.ReasonName,
 			s.ResourceID,
-			s.[Status] AS AppointmentStatus ,
-			e.EncounterID AS ConditionEncounterID
+			s.[Status] AS AppointmentStatus 
      FROM dbo.Schedules s WITH(NOLOCK)
 	 INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON S.ScheduleID = e.ScheduleID
 	 INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON E.EncounterID = j.EncounterID 
