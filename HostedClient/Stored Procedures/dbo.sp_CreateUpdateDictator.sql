@@ -71,13 +71,16 @@ BEGIN
 			END
 	
 			-- Add record to UserClinicXref
-			IF EXISTS(SELECT * FROM UserClinicXref WHERE UserId = @UserId AND ClinicId = @ClinicID)
+			IF(@UserId != null)
 			BEGIN
-				UPDATE UserClinicXref SET IsDeleted = 0 WHERE UserId = @UserId AND ClinicId = @ClinicID
-			END
-			ELSE
-			BEGIN
-				INSERT INTO UserClinicXref VALUES (@UserId, @ClinicID, 0)
+				IF EXISTS(SELECT * FROM UserClinicXref WHERE UserId = @UserId AND ClinicId = @ClinicID)
+				BEGIN
+					UPDATE UserClinicXref SET IsDeleted = 0 WHERE UserId = @UserId AND ClinicId = @ClinicID
+				END
+				ELSE
+				BEGIN
+					INSERT INTO UserClinicXref VALUES (@UserId, @ClinicID, 0)
+				END
 			END
 
 			SELECT DictatorId from Dictators where ClinicID = @ClinicID and DictatorName = @DictatorName	
