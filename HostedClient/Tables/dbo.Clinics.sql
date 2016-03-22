@@ -30,6 +30,9 @@ CREATE TABLE [dbo].[Clinics]
 [FailedPasswordLockoutCount] [int] NULL,
 [TimeZoneId] [int] NULL
 ) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Clinics] ADD CONSTRAINT [IX_Clinics_ClinicCode] UNIQUE NONCLUSTERED  ([ClinicCode]) ON [PRIMARY]
+
 ALTER TABLE [dbo].[Clinics] ADD
 CONSTRAINT [fk_clinic_SRETypeId] FOREIGN KEY ([SRETypeId]) REFERENCES [dbo].[SREEngineType] ([SRETypeId])
 
