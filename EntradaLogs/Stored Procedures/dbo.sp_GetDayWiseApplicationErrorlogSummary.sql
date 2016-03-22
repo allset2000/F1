@@ -17,7 +17,6 @@ BEGIN
 
     SET NOCOUNT ON;
 	 
-	 SET @FromDate=ISNULL(@FromDate,DATEADD(DAY,-7,GETDATE()))
 
 	SELECT * FROM 
 			(
@@ -26,14 +25,15 @@ BEGIN
 				   DATEPART(dd, LE.ErrorWrittenDate) AS [Day],
 				   CONVERT(VARCHAR, DATEPART(yy, LE.ErrorWrittenDate)) + '/' + CONVERT(VARCHAR, DATEPART(mm, LE.ErrorWrittenDate)) 
 					   + '/' +  CONVERT(VARCHAR, DATEPART(dd, LE.ErrorWrittenDate)) AS ErrorWrittenDate, 
-				   LC.applicationname,
+				   LC.logconfigurationid,
+				   LC.applicationname,				  
 				   COUNT(*) ErrorCount 
 			FROM dbo.logexceptions LE 
 			INNER JOIN dbo.logconfiguration LC ON LE.logconfigurationid = LC.logconfigurationid
 			WHERE CONVERT(DATE,LE.ErrorCreatedDate)>=CONVERT(DATE,@FromDate) 
 							  AND CONVERT(DATE,LE.ErrorCreatedDate)<=CONVERT(DATE,ISNULL(@ToDate,GETDATE())
 							 )
-			GROUP BY DATEPART(yy, LE.ErrorWrittenDate), DATEPART(mm, LE.ErrorWrittenDate), DATEPART(dd, LE.ErrorWrittenDate), LC.applicationname		
+			GROUP BY DATEPART(yy, LE.ErrorWrittenDate), DATEPART(mm, LE.ErrorWrittenDate), DATEPART(dd, LE.ErrorWrittenDate),  LC.logconfigurationid,LC.applicationname		
 			) p
 			PIVOT
 			(

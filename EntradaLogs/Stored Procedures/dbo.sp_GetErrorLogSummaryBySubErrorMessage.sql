@@ -8,6 +8,7 @@ GO
 -- Create date: 01/04/2016
 -- Description:	Error log details group by sub error message
 -- =============================================
+--exec sp_GetErrorLogSummaryBySubErrorMessage '2016-03-09','2016-03-11',100
 CREATE PROCEDURE [dbo].[sp_GetErrorLogSummaryBySubErrorMessage]
 @FromDate DATE,
 @ToDate DATE,
@@ -15,18 +16,17 @@ CREATE PROCEDURE [dbo].[sp_GetErrorLogSummaryBySubErrorMessage]
 AS
 BEGIN
 
-    SET NOCOUNT ON;
-	 
-	SET @FromDate=ISNULL(@FromDate,DATEADD(DAY,-7,GETDATE()))
+    SET NOCOUNT ON;	
 
-	SELECT  SUBSTRING(exceptionmessage, 1, @SubStringLength) AS [ExceptionMessage], 
+	SELECT LC.LogConfigurationID,LC.ApplicationName, SUBSTRING(exceptionmessage, 1, @SubStringLength) AS [ExceptionMessage], 
 	        COUNT(*) AS Total
 	FROM dbo.logexceptions LE 
 	INNER JOIN dbo.logconfiguration LC ON LE.logconfigurationid = lc.logconfigurationid
 	WHERE CONVERT(DATE,LE.ErrorCreatedDate)>=CONVERT(DATE,@FromDate) 
 				AND CONVERT(DATE,LE.ErrorCreatedDate)<=CONVERT(DATE,ISNULL(@ToDate,GETDATE())
 				)
-	GROUP BY SUBSTRING(exceptionmessage, 1, @SubStringLength)
-	ORDER BY COUNT(*) DESC
+	GROUP BY LC.logconfigurationid,LC.ApplicationName,SUBSTRING(exceptionmessage, 1, @SubStringLength)
+	ORDER BY SUBSTRING(exceptionmessage, 1, @SubStringLength) DESC
 END
+
 GO

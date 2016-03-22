@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -16,14 +17,14 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	 
-	 SET @FromDate=ISNULL(@FromDate,DATEADD(DAY,-7,GETDATE()))
 
 	   SELECT * FROM 
-		 (SELECT  LC.LogConfigurationID,
+		 (
+		 SELECT  LC.LogConfigurationID,
 				 LC.ApplicationName, 
 				 COUNT(*) as ErrorCount 
 			FROM 
-			dbo.LogExceptions LE
+			   dbo.LogExceptions LE
 			INNER JOIN [dbo].[LogConfiguration] LC
 			ON LC.LogConfigurationID=LE.LogConfigurationID
 			WHERE CONVERT(DATE,LE.ErrorCreatedDate)>=CONVERT(DATE,@FromDate) 
