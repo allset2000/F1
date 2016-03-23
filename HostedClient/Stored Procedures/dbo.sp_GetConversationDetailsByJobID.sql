@@ -31,7 +31,8 @@ BEGIN
 		   QB.[Login] AS QBLogin ,
 		   QB.[Password] AS QBPassword,
 		   P.DOB,
-		   p.MRN
+		   p.MRN,
+		   J.UpdatedDateInUTC
 	   FROM MessageThreads MH WITH(NOLOCK)	
 	   INNER JOIN dbo.Jobs J ON J.ChatHistory_ThreadID=MH.MessageThreadID
 	   INNER JOIN [dbo].[QuickBloxUsers] QB on QB.UserID= MH.ThreadOwnerID  
@@ -40,4 +41,5 @@ BEGIN
 
 
 END
+
 GO
