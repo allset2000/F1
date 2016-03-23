@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -132,7 +131,7 @@ BEGIN
 		INSERT INTO JobTypeCategory VALUES (3, 'Chat Upload')
 	END
 
-	Update JobTypes SET JobTypeCategoryId = 1
+	Update JobTypes SET JobTypeCategoryId = 1 WHERE JobTypeCategoryId IS NULL
 	/*5478*/
 
 	/* #392 WORKLIST in NCP */
