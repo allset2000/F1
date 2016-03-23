@@ -30,10 +30,10 @@ BEGIN
             END
             ELSE
             BEGIN				  
-                  UPDATE JobsDeliveryErrors SET ErrorMessage = @ErrorMessage, ErrorStatus = @ErrorStatus, ExceptionMessage = @ExceptionMessage, ChangedOn = GETDATE(), ErrorCode = @ErrorCode, ImageId = @ImageID where JobId = @JobId
+                  UPDATE JobsDeliveryErrors SET ErrorMessage = @ErrorMessage, ErrorStatus = @ErrorStatus, ExceptionMessage = @ExceptionMessage, ChangedOn = GETDATE(), ErrorCode = @ErrorCode, ImageId = @ImageID where JobId = @JobId and (@ImageID IS NULL or ImageID =  @ImageID)
  
                   INSERT INTO JobsDeliveryErrorsTracking(DeliveryErrorId,JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode,ImageID)
-                  SELECT DeliveryErrorId,JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode,ImageID FROM JobsDeliveryErrors where JobId = @JobId
+                  SELECT DeliveryErrorId,JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode,ImageID FROM JobsDeliveryErrors where JobId = @JobId and (@ImageID IS NULL or ImageID =  @ImageID)
                   
             END
       END
@@ -43,7 +43,7 @@ BEGIN
             VALUES(@JobId,@DeliveryRuleId,@ErrorStatus,@ErrorMessage,@ExceptionMessage,GETDATE(),GETDATE(),@ErrorCode,@ImageID)
  
 			INSERT INTO JobsDeliveryErrorsTracking(DeliveryErrorId,JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode,ImageID)
-            SELECT @@IDENTITY,JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode,ImageID FROM JobsDeliveryErrors where JobId = @JobId
+            SELECT @@IDENTITY,JobId,DeliveryRuleId,ErrorStatus,ErrorMessage,ExceptionMessage,FirstAttempt,ChangedOn,ErrorCode,ImageID FROM JobsDeliveryErrors where JobId = @JobId and (@ImageID IS NULL or ImageID =  @ImageID)
       END
 END
  
