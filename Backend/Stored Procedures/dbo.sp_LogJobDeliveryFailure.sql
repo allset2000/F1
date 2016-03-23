@@ -19,8 +19,15 @@ CREATE PROCEDURE [dbo].[sp_LogJobDeliveryFailure](
       
 )AS 
 BEGIN	
-	DECLARE @ErrorCode INT
-	SET @ErrorCode = ISNULL((SELECT TOP 1 ED.ErrorCode from ENTRADAHOSTEDCLIENT.DBO.ErrorDefinitions ED where @Message like '%'+ED.ErrorMessage+'%'),5000)
+	DECLARE @ErrorCode INT	
+	IF(@Message IS NOT NULL)
+	BEGIN
+		SET @ErrorCode = ISNULL((SELECT TOP 1 ED.ErrorCode from ENTRADAHOSTEDCLIENT.DBO.ErrorDefinitions ED WHERE @Message like '%'+ED.ErrorMessage+'%'),5000)
+	END
+	ELSE
+	BEGIN
+		SET @ErrorCode = ISNULL((SELECT TOP 1 ED.ErrorCode from ENTRADAHOSTEDCLIENT.DBO.ErrorDefinitions ED WHERE @ErrorMessage like '%'+ED.ErrorMessage+'%'),5000)
+	END	
 	
 	INSERT INTO [dbo].[JobsToDeliverErrors]
 			   ([ConfigurationName]
