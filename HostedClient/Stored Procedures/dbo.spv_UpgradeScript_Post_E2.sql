@@ -242,7 +242,7 @@ BEGIN
 	END
 	/* #000 */
 	
-	/* JOBACTIVITY In AdminConsole */
+	/* Start #734 JOBACTIVITY In AdminConsole */
 	-- INSERT RECORD INTO MODULES TABLE 
 	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 5 and ModuleName = 'Centralized Job Activity Dashboard')
 	BEGIN
@@ -282,7 +282,7 @@ BEGIN
 		INSERT INTO dbo.Permissions( Code , Name , ParentPermissionID , ModuleId) values('FNC-JOBACTIVITY-RESET-ALL-JOBS','Function - Reset all jobs for reprocess' ,NULL,33)
 	END
 
-	/* JOBACTIVITY In AdminConsole */
+	/* End #734 JOBACTIVITY In AdminConsole */
 
 	
 
