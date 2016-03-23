@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -243,17 +244,16 @@ BEGIN
 	
 	/* JOBACTIVITY In AdminConsole */
 	-- INSERT RECORD INTO MODULES TABLE 
-	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 5 and ModuleCode = 'ADMIN_CONSOLE_JOBACTIVITY')
+	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 5 and ModuleName = 'Centralized Job Activity Dashboard')
 	BEGIN
 		SET IDENTITY_INSERT [dbo].[Modules] ON
-		INSERT INTO dbo.Modules(ModuleId, ApplicationId , ModuleName ,IsDeleted ,DateCreated ,DateUpdated , ModuleCode )
+		INSERT INTO dbo.Modules(ModuleId, ApplicationId , ModuleName ,IsDeleted ,DateCreated ,DateUpdated )
 				VALUES  ( 33, --ModuleId - int
 						   5 , -- ApplicationId - int
 						  'Centralized Job Activity Dashboard' , -- ModuleName - varchar(100)
 						  0 , -- IsDeleted - bit
 						  GETDATE() , -- DateCreated - datetime
-						  GETDATE() , -- DateUpdated - datetime
-						  'ADMIN_CONSOLE_JOBACTIVITY'  -- ModuleCode - varchar(100)
+						  GETDATE()  -- DateUpdated - datetime
 						)
 		SET IDENTITY_INSERT [dbo].[Modules] OFF
 	END
