@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -12,9 +13,10 @@ CREATE PROCEDURE [dbo].[sp_RM4926_UnlockJobslockedforProcessing]
 AS
 BEGIN
         
-  UPDATE [Entrada].[dbo].[Jobs]
+  UPDATE [dbo].[Jobs]
   SET IsLockedForProcessing = 0
   WHERE [jobnumber] = @Jobnumber
         
 END
 GO
+

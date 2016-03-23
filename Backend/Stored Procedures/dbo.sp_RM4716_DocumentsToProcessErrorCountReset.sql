@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -11,9 +12,10 @@ CREATE PROCEDURE [dbo].[sp_RM4716_DocumentsToProcessErrorCountReset]
 AS
 BEGIN
        
-  UPDATE [Entrada].[dbo].[DocumentsToProcess]
+  UPDATE [dbo].[DocumentsToProcess]
   SET [ProcessFailureCount] = 0
   WHERE [ProcessFailureCount] = 5
        
 END
 GO
+
