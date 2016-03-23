@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[JobsToDeliverErrors]
 [ErrorMessage] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ExceptionMessage] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [StackTrace] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[ErrorCode] [int] NULL
+[ErrorCode] [int] NOT NULL CONSTRAINT [DF_JobsToDeliverErrors_ErrorCode] DEFAULT ((5000))
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[JobsToDeliverErrors] ADD CONSTRAINT [PK_JobsToDeliverErrors] PRIMARY KEY CLUSTERED  ([ErrorDeliveryId]) ON [PRIMARY]
