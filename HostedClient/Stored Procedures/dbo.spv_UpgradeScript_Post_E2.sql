@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -39,6 +40,7 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X   8    | 09-Feb-2016  | Santhosh       			| #000 - Added Permission for Mobile
 --X   9    | 19-Feb-2016  | Suresh       			| #734 - Added Permission for Centralized Job Activity Dashboard
 --X   10   | 14-Mar-2016  | Baswaraj				| #0000 - Update EHRVendor table to set DeliveryErrorAccess true 
+--X   10   | 23-Mar-2016  | Naga					| #0000 - Removed the hard coded database name (as it is not required when referring the current database, also will not work on Developer DBs)
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
@@ -178,57 +180,57 @@ BEGIN
 	--- Update EHRVendor tabel to set ShowDeliveryErrorInNCP to true
 	----------------------------------------
 
-	IF NOT EXISTS(SELECT '*' FROM [EntradaHostedClient].[DBO].[EHRVendors] WHERE EHRVendorID=10 AND ShowDeliveryErrorInNCP=1 )
+	IF NOT EXISTS(SELECT '*' FROM [DBO].[EHRVendors] WHERE EHRVendorID=10 AND ShowDeliveryErrorInNCP=1 )
 	BEGIN
-	UPDATE [EntradaHostedClient].[DBO].[EHRVendors] Set ShowDeliveryErrorInNCP=1 WHERE EHRVendorID=10 -- Allscripts TW
+	UPDATE [DBO].[EHRVendors] Set ShowDeliveryErrorInNCP=1 WHERE EHRVendorID=10 -- Allscripts TW
 	END
 
-	 IF NOT EXISTS(SELECT '*' FROM [EntradaHostedClient].[DBO].[EHRVendors] WHERE EHRVendorID=2 AND ShowDeliveryErrorInNCP=1 )
+	 IF NOT EXISTS(SELECT '*' FROM [DBO].[EHRVendors] WHERE EHRVendorID=2 AND ShowDeliveryErrorInNCP=1 )
 	BEGIN
-	UPDATE [EntradaHostedClient].[DBO].[EHRVendors] Set ShowDeliveryErrorInNCP=1 WHERE EHRVendorID=2 -- Athena
+	UPDATE [DBO].[EHRVendors] Set ShowDeliveryErrorInNCP=1 WHERE EHRVendorID=2 -- Athena
 	END
 
-	 IF NOT EXISTS(SELECT '*' FROM [EntradaHostedClient].[DBO].[EHRVendors] WHERE EHRVendorID=6 AND ShowDeliveryErrorInNCP=1 )
+	 IF NOT EXISTS(SELECT '*' FROM [DBO].[EHRVendors] WHERE EHRVendorID=6 AND ShowDeliveryErrorInNCP=1 )
 	BEGIN
-	UPDATE [EntradaHostedClient].[DBO].[EHRVendors] Set ShowDeliveryErrorInNCP=1 WHERE EHRVendorID=6 -- Greenway
+	UPDATE [DBO].[EHRVendors] Set ShowDeliveryErrorInNCP=1 WHERE EHRVendorID=6 -- Greenway
 	END
 	
-	IF NOT EXISTS(SELECT '*' FROM [EntradaHostedClient].[DBO].[EHRVendors] WHERE EHRVendorID=3 AND ShowDeliveryErrorInNCP=1 )
+	IF NOT EXISTS(SELECT '*' FROM [DBO].[EHRVendors] WHERE EHRVendorID=3 AND ShowDeliveryErrorInNCP=1 )
 	BEGIN
-	UPDATE [EntradaHostedClient].[DBO].[EHRVendors] Set ShowDeliveryErrorInNCP=1 WHERE EHRVendorID=3 -- NextGen
+	UPDATE [DBO].[EHRVendors] Set ShowDeliveryErrorInNCP=1 WHERE EHRVendorID=3 -- NextGen
 	END
 	---------------------------
 	-- Insert scripts to ROWOverrideFields to add Fields for Athena and allscripts
 	--------------------------
 
-	 IF NOT EXISTS(select * from [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] Where FieldID=6)
+	 IF NOT EXISTS(select * from [DBO].[ROWOverrideFields] Where FieldID=6)
 		BEGIN
-		    SET IDENTITY_INSERT [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] ON 
-			INSERT [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] ([FieldID], [FieldName], [EHRVendorId]) 
+		    SET IDENTITY_INSERT [DBO].[ROWOverrideFields] ON 
+			INSERT [DBO].[ROWOverrideFields] ([FieldID], [FieldName], [EHRVendorId]) 
 			VALUES (6, N'AthenaEHREncounterID', 2)
-			SET IDENTITY_INSERT [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] OFF
+			SET IDENTITY_INSERT [DBO].[ROWOverrideFields] OFF
 		END
 
-		IF NOT EXISTS(select * from [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] Where FieldID=7)
+		IF NOT EXISTS(select * from [DBO].[ROWOverrideFields] Where FieldID=7)
 		BEGIN
-		SET IDENTITY_INSERT [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] ON 
-			INSERT [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] ([FieldID], [FieldName], [EHRVendorId]) 
+		SET IDENTITY_INSERT [DBO].[ROWOverrideFields] ON 
+			INSERT [DBO].[ROWOverrideFields] ([FieldID], [FieldName], [EHRVendorId]) 
 			VALUES (7, N'AthenaEHRDocumentTypeID', 2)
-			SET IDENTITY_INSERT [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] OFF
+			SET IDENTITY_INSERT [DBO].[ROWOverrideFields] OFF
 		END
 
-		IF NOT EXISTS(select * from [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] Where FieldID=8)
+		IF NOT EXISTS(select * from [DBO].[ROWOverrideFields] Where FieldID=8)
 		BEGIN
-		SET IDENTITY_INSERT [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] ON 
-			INSERT [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] ([FieldID], [FieldName], [EHRVendorId]) 
+		SET IDENTITY_INSERT [DBO].[ROWOverrideFields] ON 
+			INSERT [DBO].[ROWOverrideFields] ([FieldID], [FieldName], [EHRVendorId]) 
 			VALUES (8, N'AthenaEHRDocumentID', 2)
-			SET IDENTITY_INSERT [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] OFF
+			SET IDENTITY_INSERT [DBO].[ROWOverrideFields] OFF
 		END
 
 		
-		IF EXISTS(select * from [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] Where FieldID=4 and FieldName='DocumentId')
+		IF EXISTS(select * from [DBO].[ROWOverrideFields] Where FieldID=4 and FieldName='DocumentId')
 		BEGIN
-			Update [ENTRADAHOSTEDCLIENT].[DBO].[ROWOverrideFields] set	FieldName='AllscriptsEHRDocumentID' where FieldID=4
+			Update [DBO].[ROWOverrideFields] set	FieldName='AllscriptsEHRDocumentID' where FieldID=4
 		END
 
 	/* End #393 Error Management */
