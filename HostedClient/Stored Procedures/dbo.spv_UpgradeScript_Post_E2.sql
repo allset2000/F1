@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -193,7 +192,11 @@ BEGIN
 	BEGIN
 	UPDATE [EntradaHostedClient].[DBO].[EHRVendors] Set ShowDeliveryErrorInNCP=1 WHERE EHRVendorID=6 -- Greenway
 	END
-
+	
+	IF NOT EXISTS(SELECT '*' FROM [EntradaHostedClient].[DBO].[EHRVendors] WHERE EHRVendorID=3 AND ShowDeliveryErrorInNCP=1 )
+	BEGIN
+	UPDATE [EntradaHostedClient].[DBO].[EHRVendors] Set ShowDeliveryErrorInNCP=1 WHERE EHRVendorID=3 -- NextGen
+	END
 	---------------------------
 	-- Insert scripts to ROWOverrideFields to add Fields for Athena and allscripts
 	--------------------------
