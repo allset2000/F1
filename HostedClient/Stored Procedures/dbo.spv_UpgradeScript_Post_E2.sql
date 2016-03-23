@@ -244,16 +244,17 @@ BEGIN
 	
 	/* Start #734 JOBACTIVITY In AdminConsole */
 	-- INSERT RECORD INTO MODULES TABLE 
-	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 5 and ModuleName = 'Centralized Job Activity Dashboard')
+	IF NOT EXISTS (SELECT 1 FROM Modules WHERE ApplicationId = 5 and ModuleCode = 'ADMIN_CONSOLE_CENTRALIZED_JOB_ACTIVITY_DASHBOARD')
 	BEGIN
 		SET IDENTITY_INSERT [dbo].[Modules] ON
-		INSERT INTO dbo.Modules(ModuleId, ApplicationId , ModuleName ,IsDeleted ,DateCreated ,DateUpdated )
+		INSERT INTO dbo.Modules(ModuleId, ApplicationId , ModuleName ,IsDeleted ,DateCreated ,DateUpdated,ModuleCode )
 				VALUES  ( 33, --ModuleId - int
 						   5 , -- ApplicationId - int
 						  'Centralized Job Activity Dashboard' , -- ModuleName - varchar(100)
 						  0 , -- IsDeleted - bit
 						  GETDATE() , -- DateCreated - datetime
-						  GETDATE()  -- DateUpdated - datetime
+						  GETDATE(),  -- DateUpdated - datetime
+						  'ADMIN_CONSOLE_CENTRALIZED_JOB_ACTIVITY_DASHBOARD'
 						)
 		SET IDENTITY_INSERT [dbo].[Modules] OFF
 	END
