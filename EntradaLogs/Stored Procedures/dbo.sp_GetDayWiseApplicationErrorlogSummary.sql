@@ -7,7 +7,7 @@ GO
 -- Author:		Raghu A
 -- Create date: 01/04/2016
 -- Description:	get day wise application level error log summary
---sp_GetDayWiseApplicationErrorlogSummary '2015/12/12','2015/12/30'
+--exec sp_GetDayWiseApplicationErrorlogSummary '3/21/2016','3/24/2016'
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetDayWiseApplicationErrorlogSummary]
 @FromDate DATE,
@@ -17,23 +17,19 @@ BEGIN
 
     SET NOCOUNT ON;
 	 
-
 	SELECT * FROM 
 			(
-			SELECT DATEPART(yy, LE.ErrorWrittenDate) AS  [Year], 
-				   DATEPART(mm, LE.ErrorWrittenDate) AS [Month], 
-				   DATEPART(dd, LE.ErrorWrittenDate) AS [Day],
+			SELECT 
 				   CONVERT(VARCHAR, DATEPART(yy, LE.ErrorWrittenDate)) + '/' + CONVERT(VARCHAR, DATEPART(mm, LE.ErrorWrittenDate)) 
-					   + '/' +  CONVERT(VARCHAR, DATEPART(dd, LE.ErrorWrittenDate)) AS ErrorWrittenDate, 
-				   LC.logconfigurationid,
+					   + '/' +  CONVERT(VARCHAR, DATEPART(dd, LE.ErrorWrittenDate)) AS ErrorWrittenDate, 				  
 				   LC.applicationname,				  
 				   COUNT(*) ErrorCount 
-			FROM dbo.logexceptions LE 
+			FROM dbo.logexceptions LE WITH(NOLOCK)
 			INNER JOIN dbo.logconfiguration LC ON LE.logconfigurationid = LC.logconfigurationid
 			WHERE CONVERT(DATE,LE.ErrorCreatedDate)>=CONVERT(DATE,@FromDate) 
 							  AND CONVERT(DATE,LE.ErrorCreatedDate)<=CONVERT(DATE,ISNULL(@ToDate,GETDATE())
 							 )
-			GROUP BY DATEPART(yy, LE.ErrorWrittenDate), DATEPART(mm, LE.ErrorWrittenDate), DATEPART(dd, LE.ErrorWrittenDate),  LC.logconfigurationid,LC.applicationname		
+			GROUP BY DATEPART(yy, LE.ErrorWrittenDate), DATEPART(mm, LE.ErrorWrittenDate), DATEPART(dd, LE.ErrorWrittenDate),LC.applicationname		
 			) p
 			PIVOT
 			(
