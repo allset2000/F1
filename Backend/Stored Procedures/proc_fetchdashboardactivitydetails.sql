@@ -257,7 +257,9 @@ BEGIN
 									   WHEN '''+@statusgroupname+'''=''CustomerReview'' THEN ''Customer Review: ''
 									   ELSE ''In Process: '' END) +Convert(varchar,A.JObStatus,100) AS JObStatus,A.Stat,
 								A.MRN, A.Patient,
-								CASE WHEN ISNULL(AwaitingDelivery,'''')='''' THEN '''' ELSE ''Editing Complete: ''+ Convert(varchar,AwaitingDelivery,100) END AS AwaitingDelivery,ErrorMessage As ErrorMessage,
+								CASE WHEN ISNULL(AwaitingDelivery,'''')='''' THEN '''' ELSE ''Editing Complete: ''+ Convert(varchar,AwaitingDelivery,100) END AS AwaitingDelivery,
+								LEFT (ErrorMessage, 47)+''...'' As ErrorMessage,
+								ErrorMessage As ErrorMessageToolTip,
 								A.TotalCount 
 							FROM
 								(SELECT ROW_NUMBER() OVER(ORDER BY '+@SortColumn +' '+@SortType+') as RowNumber,  
