@@ -6,6 +6,8 @@ GO
 -- Author: Baswaraj.K
 /******* This is used to get Latest Error Information(Jobnumber,ErrorDate,ResolutionGuide,FileName,EHREncounterId,AppointmentId) by jobnumber ******/
 --exec sp_GetErrorDetailsByJobNumber '2016012000000004'
+-- Tickey# 7110, Sharif Sharif added ISNULL(J2DE.Message, J2DE.ErrorMessage), date: March 24, 2016
+
 CREATE PROCEDURE [dbo].[sp_GetErrorDetailsByJobNumber]
 (
 	@jobNumber varchar(1000)
@@ -40,14 +42,14 @@ DECLARE @VendorId INT
 					 SELECT TOP 1 JOBNUMBER,ErrorCode ,ErrorDate,ErrorMessage
 					 FROM
 						(
-							SELECT J.JOBNUMBER,J2DE.ErrorCode AS ErrorCode,J2DE.Message AS ErrorMessage,MAX(J2DE.ErrorDate) AS ErrorDate
+							SELECT J.JOBNUMBER,J2DE.ErrorCode AS ErrorCode,ISNULL(J2DE.Message, J2DE.ErrorMessage) AS ErrorMessage,MAX(J2DE.ErrorDate) AS ErrorDate
 							FROM jobstodeliver J2D 
 							    INNER JOIN JOBS J ON j.jobnumber=j2d.jobnumber
 								INNER JOIN JobsToDeliverErrors J2DE ON J2D.DeliveryID = J2DE.DeliveryID
 								INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=J2DE.ErrorCode	
 								INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType													
 							WHERE J.JobNumber=@jobNumber AND EST.ErrorSourceTypeID=1 -- CLIENT-DELIVERY ERRORs Only
-							GROUP BY J.JOBNUMBER,J2DE.ErrorCode,J2DE.Message
+							GROUP BY J.JOBNUMBER,J2DE.ErrorCode,ISNULL(J2DE.Message, J2DE.ErrorMessage)
 						UNION --ALL
 							SELECT J.JOBNUMBER AS JOBNUMBER,EHJDE.ErrorCode AS ErrorCode,EHJDE.ErrorMessage AS ErrorMessage,MAX(EHJDE.ChangedOn) AS ErrorDate
 							FROM jobs J 
@@ -69,3 +71,4 @@ DECLARE @VendorId INT
 END
 
 GO
+
