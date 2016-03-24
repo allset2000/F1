@@ -33,7 +33,7 @@ BEGIN
 						     INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
 							 INNER JOIN dbo.JobTypes jt on jt.JobTypeID=j.JobTypeID
 	WHERE qu.DictatorID = @DictatorId AND 
-	      jt.JobTypeCategoryId=1 AND   
+	      (jt.JobTypeCategoryId=1 AND j.[Status] NOT IN(350,390,400,450)) AND
 		  d.[Status] IN (100, 200) AND 
 		  q.Deleted = 0 AND 
 		  DATEDIFF (D, GETDATE(), e.AppointmentDate) <= @MaxFutureDays 
