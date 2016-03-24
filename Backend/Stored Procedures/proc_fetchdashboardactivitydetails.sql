@@ -10,6 +10,7 @@ GO
 -- Description:	<Description,,>
 -- Updated: Baswaraj - 393 added for delivery error management
 -- Updated : Updated Case "Errors" block to return error message also with the results
+-- Tickey# 7110, Sharif Sharif added ISNULL(J2DE.Message, J2DE.ErrorMessage), date: March 24, 2016
 -- =============================================
 --exec [proc_fetchdashboardactivitydetails] 'ELCaniprasad', 'DeliveredToday',1,10,'JobStatus','Ascending'
 CREATE PROCEDURE [dbo].[proc_fetchdashboardactivitydetails]
@@ -178,14 +179,14 @@ BEGIN
 														(
 														SELECT JobNumber,ErrorMessage,MIN(ErrorDate) AS ErrorDate,ROW_NUMBER() OVER(PARTITION BY JobNumber ORDER BY JobNumber,MIN(ErrorDate) ASC) rownumber														
 														 FROM
-															(SELECT J.JobNumber,J2DE.Message AS ErrorMessage,MIN(J2DE.ErrorDate) AS ErrorDate 
+															(SELECT J.JobNumber, ISNULL(J2DE.Message, J2DE.ErrorMessage) AS ErrorMessage,MIN(J2DE.ErrorDate) AS ErrorDate 
 																FROM jobstodeliver J2D 
 																INNER JOIN JOBS J ON j.jobnumber=j2d.jobnumber
 																INNER JOIN JobsToDeliverErrors J2DE ON J2D.DeliveryID = J2DE.DeliveryID
 																INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=J2DE.ErrorCode																
 																INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType
 																WHERE j.dictatorid='''+@dictatorid+''' AND EST.ErrorSourceTypeID=1
-																GROUP BY J.JOBNUMBER,J2DE.Message
+																GROUP BY J.JOBNUMBER, ISNULL(J2DE.Message, J2DE.ErrorMessage)
 																UNION
 																SELECT J.JobNumber AS JobNumber,EHJDE.ErrorMessage AS ErrorMessage,MIN(EHJDE.FIRSTATTEMPT) AS ErrorDate
 																FROM jobs J 
