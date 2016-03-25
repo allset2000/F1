@@ -50,6 +50,7 @@ BEGIN
 								WHEN @SortBy='MRN' THEN 'MRN'
 								WHEN @SortBy='AwaitingDelivery' THEN 'AwaitingDelivery'
 								WHEN @SortBy='Patient' THEN 'Patient'
+								WHEN @SortBy='ErrorMessage' THEN 'ErrorMessage'
 								ELSE 'jobnumber' END
 
 			IF(@statusgroupname IN ('Inprocess','InprocessToday'))
