@@ -6,9 +6,11 @@ GO
 
 -- =============================================
 -- Author: Raghu A
--- Create date: 18/11/2014
+-- Create date: 18/11/2014,3/27/2016
 -- Description: SP called from DictateAPI to pull Dictations to sync on mobile
+--Generic patient details issue fixed
 --exec sp_GetEncountersToSyncByLastSyncDate 3489 ,'2013-11-20 10:15:02.970','2016-2-14','next'
+
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetEncountersToSyncByLastSyncDate](
 	 @DictatorId INT,
@@ -61,15 +63,13 @@ BEGIN
 	--  INSERT INTO @TempEncounter
      SELECT DISTINCT e.EncounterID AS ID, 
 			 DATEDIFF(SECOND,{D '1970-01-01'}, e.AppointmentDate) AS AppointmentDate ,			
-			 CASE WHEN E.PatientID=GP.GenericPatientID THEN NULL ELSE P.PatientID END AS PatientID, 
+			 CASE WHEN E.PatientID=SS.GenericPatientID THEN NULL ELSE P.PatientID END AS PatientID,
 			 e.ScheduleID,
 			 CASE WHEN q.Deleted = 1 THEN 500 ELSE 100 END AS [State],
 			 STUFF((SELECT ', ' + CAST(JobID AS VARCHAR)
 				  FROM   dbo.Jobs j2 
 				  WHERE  j2.EncounterID = e.EncounterID                   
-				  FOR XML PATH('')), 1, 2, '')  JobDetails,
-				  e.AppointmentDate as ADate
-			
+				  FOR XML PATH('')), 1, 2, '')  JobDetails			
 		 FROM dbo.Encounters e WITH(NOLOCK)
 				INNER JOIN dbo.Jobs j WITH(NOLOCK) ON j.EncounterID=e.EncounterID
 				INNER JOIN dbo.Dictations d WITH(NOLOCK) ON d.JobID=j.JobID	
@@ -77,10 +77,7 @@ BEGIN
 				INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID
 				LEFT JOIN dbo.Patients p WITH(NOLOCK) ON p.PatientID=e.PatientID
 				LEFT JOIN dbo.Schedules s WITH(NOLOCK) ON s.ScheduleID=e.ScheduleID
-				LEFT JOIN 
-				         (SELECT SS.GenericPatientID,SS.ClinicID FROM [SystemSettings] ss
-				            INNER JOIN dbo.Patients P on P.ClinicID=SS.ClinicID
-						 )AS GP on GP.ClinicID=P.ClinicID	
+				LEFT JOIN [SystemSettings] SS on SS.ClinicID=P.ClinicID and E.PatientID=SS.GenericPatientID
 		WHERE qu.DictatorID = @DictatorId AND 
 		     CAST(e.AppointmentDate AS DATE)=(CASE WHEN @AppointmentDate IS NOT NULL 
 							THEN  CAST(@AppointmentDate AS DATE)  ELSE CAST(e.AppointmentDate AS DATE) END) AND 	       
