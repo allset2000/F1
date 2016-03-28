@@ -19,6 +19,7 @@ GO
 --	Modification Date: 5/29/2015,3/23/2016
 --	Details: Performance improvement. Eliminating use of vw_GetJobsToSync view.,   
 --           jobtypecategpryID condition added for compatibility with Android and IOS  Old version(release E)
+--exec [sp_GetJobsToSync] '3487',20
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobsToSync](
 	 @DictatorId INT,
@@ -33,10 +34,12 @@ BEGIN
 						     INNER JOIN dbo.Queues AS q ON q.QueueID = qu.QueueID
 							 INNER JOIN dbo.JobTypes jt on jt.JobTypeID=j.JobTypeID
 	WHERE qu.DictatorID = @DictatorId AND 
-	      (jt.JobTypeCategoryId=1 AND j.[Status] NOT IN(350,390,400,450)) AND
+	      (jt.JobTypeCategoryId=1 AND j.[Status] NOT IN(350,390,450)) AND
 		  d.[Status] IN (100, 200) AND 
 		  q.Deleted = 0 AND 
 		  DATEDIFF (D, GETDATE(), e.AppointmentDate) <= @MaxFutureDays 
 END
+
+
 
 GO
