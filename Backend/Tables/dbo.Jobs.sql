@@ -42,7 +42,10 @@ CREATE TABLE [dbo].[Jobs]
 [FinaldocSentToBBN] [bit] NOT NULL CONSTRAINT [DF__Jobs__FinaldocSe__186270A4] DEFAULT ((0)),
 [LokedbyUserForJobDetailsView] [varchar] (48) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [LockbyUserTimeStamp] [datetime] NULL,
+[RhythmWorkFlowID] [int] NULL
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Jobs] ADD
+CONSTRAINT [FK_Jobs_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
 CREATE NONCLUSTERED INDEX [IX_ReceivedOn_INC_JobNumber_DictatorID_ClinicID_Location...] ON [dbo].[Jobs] ([ReceivedOn]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [ClinicID], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [IsGenericJob], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [Stat]) ON [PRIMARY]
 
 GO
