@@ -41,6 +41,7 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X   9    | 19-Feb-2016  | Suresh       			| #734 - Added Permission for Centralized Job Activity Dashboard
 --X   10   | 14-Mar-2016  | Baswaraj				| #0000 - Update EHRVendor table to set DeliveryErrorAccess true 
 --X   10   | 23-Mar-2016  | Naga					| #0000 - Removed the hard coded database name (as it is not required when referring the current database, also will not work on Developer DBs)
+--X   11   | 29-Mar-2016  | Naga					| #0000 - removed the SET IDENTITY INSERT for [DBO].[PERMISSIONS] table, since we're not explicitly inserting identity value
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
@@ -164,17 +165,13 @@ BEGIN
 	------------------------------------
 	IF NOT EXISTS(SELECT '*' FROM [DBO].[PERMISSIONS] WHERE CODE='FNC-CLIENTERRORS-VIEW' AND MODULEID=31)
 	BEGIN
-	SET IDENTITY_INSERT [DBO].[PERMISSIONS] ON 
-	INSERT [DBO].[PERMISSIONS] ([CODE], [NAME], [PARENTPERMISSIONID], [MODULEID]) 
-	VALUES (N'FNC-CLIENTERRORS-VIEW', N'Function - View only client errors', NULL, 31)
-	SET IDENTITY_INSERT [DBO].[PERMISSIONS] OFF
+		INSERT [DBO].[PERMISSIONS] ([CODE], [NAME], [PARENTPERMISSIONID], [MODULEID]) 
+		VALUES (N'FNC-CLIENTERRORS-VIEW', N'Function - View only client errors', NULL, 31)
 	END
 	IF NOT EXISTS(SELECT '*' FROM [DBO].[PERMISSIONS] WHERE CODE='FNC-OVERRIDEVALUES-ADD' AND MODULEID=31)
 	BEGIN
-	SET IDENTITY_INSERT [DBO].[PERMISSIONS] ON 
-	INSERT [DBO].[PERMISSIONS] ([CODE], [NAME], [PARENTPERMISSIONID], [MODULEID]) 
-	VALUES (N'FNC-OVERRIDEVALUES-ADD', N'Function - Add override values', NULL, 31)
-	SET IDENTITY_INSERT [DBO].[PERMISSIONS] OFF
+		INSERT [DBO].[PERMISSIONS] ([CODE], [NAME], [PARENTPERMISSIONID], [MODULEID]) 
+		VALUES (N'FNC-OVERRIDEVALUES-ADD', N'Function - Add override values', NULL, 31)
 	END
 	----------------------------------------
 	--- Update EHRVendor tabel to set ShowDeliveryErrorInNCP to true
