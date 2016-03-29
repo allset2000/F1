@@ -28,8 +28,12 @@ CREATE TABLE [dbo].[Clinics]
 [PreviousPasswordCount] [int] NULL,
 [PasswordMinCharacters] [int] NULL,
 [FailedPasswordLockoutCount] [int] NULL,
-[TimeZoneId] [int] NULL
+[TimeZoneId] [int] NULL,
+[RhythmWorkFlowID] [int] NULL,
+[AppSetting_DisableSendToTranscription] [bit] NOT NULL CONSTRAINT [DF_Clinics_AppSetting_DisableSendToTranscription] DEFAULT ((0))
 ) ON [PRIMARY]
+ALTER TABLE [dbo].[Clinics] ADD
+CONSTRAINT [FK_Clinics_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
 GO
 ALTER TABLE [dbo].[Clinics] ADD CONSTRAINT [IX_Clinics_ClinicCode] UNIQUE NONCLUSTERED  ([ClinicCode]) ON [PRIMARY]
 
