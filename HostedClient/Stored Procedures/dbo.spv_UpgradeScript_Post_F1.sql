@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -29,7 +30,7 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_F1]
 --X  VER   |    DATE      |  BY						|  COMMENTS - include Ticket#
 --X_____________________________________________________________________________
 --X   0    | 29-Mar-2016  | Sharif Shaik			| Initial Design
-
+--X   1    | 31-Mar-2016  | Sharif Shaik			| Inserting records into new tables EncounterSearchType and TaskType
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
@@ -45,6 +46,32 @@ BEGIN
 		INSERT INTO RhythmWorkFlows (RhythmWorkFlowID,RhythmWorkFlowName) VALUES (3, 'No Edit - Direct to EHR')
 	END
 
+	/*366*/
+	IF NOT EXISTS (SELECT 1 FROM EncounterSearchType  WHERE EncounterSearchTypeName = 'Appointment Encounter') BEGIN
+		INSERT INTO EncounterSearchType (EncounterSearchTypeId, EncounterSearchTypeName) VALUES (1, 'Appointment Encounter')
+	END
+	IF NOT EXISTS (SELECT 1 FROM EncounterSearchType  WHERE EncounterSearchTypeName = 'Date') BEGIN
+		INSERT INTO EncounterSearchType (EncounterSearchTypeId, EncounterSearchTypeName) VALUES (2, 'Date')
+	END
+		IF NOT EXISTS (SELECT 1 FROM EncounterSearchType  WHERE EncounterSearchTypeName = 'Provider') BEGIN
+		INSERT INTO EncounterSearchType (EncounterSearchTypeId, EncounterSearchTypeName) VALUES (3, 'Provider')
+	END
+	IF NOT EXISTS (SELECT 1 FROM EncounterSearchType  WHERE EncounterSearchTypeName = 'Template') BEGIN
+		INSERT INTO EncounterSearchType (EncounterSearchTypeId, EncounterSearchTypeName) VALUES (4, 'Template')
+	END
+	IF NOT EXISTS (SELECT 1 FROM EncounterSearchType  WHERE EncounterSearchTypeName = 'Provider & Template') BEGIN
+		INSERT INTO EncounterSearchType (EncounterSearchTypeId, EncounterSearchTypeName) VALUES (5, 'Provider & Template')
+	END
+	IF NOT EXISTS (SELECT 1 FROM EncounterSearchType  WHERE EncounterSearchTypeName = 'Full') BEGIN
+		INSERT INTO EncounterSearchType (EncounterSearchTypeId, EncounterSearchTypeName) VALUES (6, 'Full')
+	END
+	IF NOT EXISTS (SELECT 1 FROM EncounterSearchType  WHERE EncounterSearchTypeName = 'Best Match') BEGIN
+		INSERT INTO EncounterSearchType (EncounterSearchTypeId, EncounterSearchTypeName) VALUES (7, 'Best Match')
+	END
+
+	
+
+	
 
 END
 
