@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -16,5 +17,6 @@ AS
 BEGIN
 	SELECT EncounterSearchTypeId, EncounterSearchTypeName
 	FROM [dbo].[EncounterSearchType]
+	ORDER BY EncounterSearchTypeName
 END
 GO
