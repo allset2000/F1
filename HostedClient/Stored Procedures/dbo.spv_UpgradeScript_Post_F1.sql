@@ -69,7 +69,12 @@ BEGIN
 		INSERT INTO EncounterSearchType (EncounterSearchTypeId, EncounterSearchTypeName) VALUES (7, 'Best Match')
 	END
 
-	
+	IF NOT EXISTS (SELECT 1 FROM TaskType  WHERE TaskTypeID = 1) BEGIN
+	INSERT INTO TaskType (TaskTypeID, TaskTypeName) VALUES (1, 'User')
+	END
+	IF NOT EXISTS (SELECT 1 FROM TaskType  WHERE TaskTypeID = 2) BEGIN
+		INSERT INTO TaskType (TaskTypeID, TaskTypeName) VALUES (2, 'Group')
+	END
 
 	
 
