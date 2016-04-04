@@ -9,6 +9,7 @@ GO
 -- Create date: 05/26/2015
 -- Description:	This stored procedure will return the jobs list based on search filter criteria
 -- Updated Date: 24-Feb-2016 -- Added block for StatusGroup-10 Error
+-- Updated Date: 04-APR-2016 -- Added status group 6(Draft Review) to jobs filter
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobReportsSearchJobList] 
 @JobReportSearchPreferenceId int,
@@ -196,7 +197,7 @@ BEGIN
 						INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID 
 						INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 						LEFT OUTER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
-						WHERE JT.jobnumber = JH.jobnumber and (jg.id in (1,2,3,4) or (@jobStatus =4 or @jobStatus is null or @jobStatus =5 and JH.JobNumber  in (SELECT jobnumber FROM JobDeliveryHistory WHERE jobnumber=JH.JobNumber )))
+						WHERE JT.jobnumber = JH.jobnumber and (jg.id in (1,2,3,4,6) or (@jobStatus =4 or @jobStatus is null or @jobStatus =5 and JH.JobNumber  in (SELECT jobnumber FROM JobDeliveryHistory WHERE jobnumber=JH.JobNumber )))
 						GROUP BY JT.JobNumber,JG.StatusGroup,jg.id
 						ORDER BY JG.ID DESC)  JSB
 		WHERE	((@JobStatus is null or JSB.Id = @JobStatus or @DateField=10) OR (JSB.DeliveredOn is null and JTA.id=@JobStatus))			

@@ -5,10 +5,11 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
---EXEC proc_fetchdashboardactivity 'gitqtesting',1
+--EXEC proc_fetchdashboardactivity 'tscskumar',1
 -- =============================================
 -- Author:		EntradaDev
 -- Updated:     Baswaraj on 02-Feb-2016 for #393 
+-- Updated:     Narender on 04-Apr-2016 for #5461 
 -- =============================================
 CREATE PROCEDURE [dbo].[proc_fetchdashboardactivity]
 	
@@ -32,7 +33,8 @@ create table #tmpoutput
 	totalinprocesstoday int null,
 	delivered int null,
 	customerreviewed int null,
-	errors INT NULL
+	errors INT NULL,
+	draftreview INT
 )
 
 --splitting the comma separated dictators to inser into a temp table as we can not use user id in the backend database
@@ -145,6 +147,27 @@ when matched then
 				INSERT(dictatorid,errors) 
 				VALUES (S.DictatorId,S.ErrorCount); 
    END
+   
+--for DRAFT REVIEW
+Merge #tmpoutput as T
+using
+(
+SELECT j.dictatorid, count(*) draftreview from jobs J
+	INNER JOIN jobstatusA JA on j.jobnumber = JA.JobNumber
+	INNER JOIN statuscodes SCA on JA.status = SCA.StatusID
+	INNER JOIN jobstatusgroup JSGA on SCA.statusGroupId = JSGA.id
+WHERE 
+	DATEDIFF(d, J.receivedon, getdate())<= 90 
+	AND J.dictatorid in (select dictatorid from #tempdictators)
+	AND JSGA.id =6
+group by J.dictatorid
+) as S on T.dictatorid=S.dictatorid
+when matched then
+update Set T.draftreview=S.draftreview
+
+when not matched by target then
+Insert(dictatorid,draftreview) values (S.DictatorId,S.draftreview);
+--end DraftReview
 
  --final Output
  Select 
@@ -159,6 +182,8 @@ when matched then
 	case when customerreviewed is null then 0 else customerreviewed end as customerreviewed
 	,
 	CASE WHEN errors IS NULL THEN 0 ELSE errors END AS errors
+	,
+	CASE WHEN draftreview IS NULL THEN 0 ELSE draftreview END AS draftreview
 	  from #tmpoutput t
 --tempta.totalinprocess desc
 END
