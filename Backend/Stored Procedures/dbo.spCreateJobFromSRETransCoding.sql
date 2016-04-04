@@ -1,3 +1,7 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 /******************************    
 ** File:  spCreateJobFromSRETransCoding.sql    
 ** Name:  spCreateJobFromSRETransCoding    
@@ -11,7 +15,7 @@
 * --   --------   -------   ------------------------------------    
 **   exec spCreateJobFromSRETransCoding  
 *******************************/
-CREATE PROCEDURE dbo.spCreateJobFromSRETransCoding    
+CREATE PROCEDURE [dbo].[spCreateJobFromSRETransCoding]    
 (    
  @xmlJobsClient XML,
  @xmlJobs XML,
@@ -38,13 +42,13 @@ BEGIN TRY
 	FROM @xmlJobsClient.nodes('JobsClient')Catalog(Client)
 
 	--Insert hosted data into backend Jobs table
-	INSERT INTO Jobs(JobNumber,DictatorID,ClinicID,Location,AppointmentDate,AppointmentTime,JobType,ContextName,Vocabulary,Stat,Duration,DictationDate,DictationTime,ReceivedOn,IsGenericJob,IsNewSchema,RecServer)
+	INSERT INTO Jobs(JobNumber,DictatorID,ClinicID,Location,AppointmentDate,AppointmentTime,JobType,ContextName,Vocabulary,Stat,Duration,DictationDate,DictationTime,ReceivedOn,IsGenericJob,IsNewSchema,RecServer,RhythmWorkFlowID,TagMetaData)
 	SELECT Jobs.value('JobNumber[1]','VARCHAR(20)') AS JobNumber,Jobs.value('DictatorID[1]','VARCHAR(50)') AS DictatorID, Jobs.value('ClinicID[1]','smallint') AS ClinicID,
 		Jobs.value('Location[1]','smallint') AS Location,Jobs.value('AppointmentDate[1]','smalldatetime') AS AppointmentDate,Jobs.value('AppointmentTime[1]','smalldatetime') AS AppointmentTime,
 		Jobs.value('JobType[1]','VARCHAR(100)') AS JobType,Jobs.value('ContextName[1]','VARCHAR(100)') AS ContextName,Jobs.value('Vocabulary[1]','VARCHAR(255)') AS Vocabulary,
 		Jobs.value('Stat[1]','bit') AS Stat,Jobs.value('Duration[1]','smallint') AS Duration,Jobs.value('DictationDate[1]','smalldatetime') AS DictationDate,
 		Jobs.value('DictationTime[1]','smalldatetime') AS DictationTime,Jobs.value('ReceivedOn[1]','datetime') AS ReceivedOn,Jobs.value('IsGenericJob[1]','bit') AS IsGenericJob,
-		Jobs.value('IsNewSchema[1]','bit') AS IsNewSchema,Jobs.value('RecServer[1]','VARCHAR(50)') AS RecServer
+		Jobs.value('IsNewSchema[1]','bit') AS IsNewSchema,Jobs.value('RecServer[1]','VARCHAR(50)') AS RecServer,jobs.value('RhythmWorkFlowID[1]','INT') AS RhythmWorkFlowID,jobs.value('TagMetaData[1]','VARCHAR(2000)') AS TagMetaData
 	FROM @xmlJobs.nodes('Jobs')Catalog(Jobs)
 
 	--Insert hosted data into backed Jobs_Patients table
@@ -137,3 +141,4 @@ BEGIN CATCH
 		RAISERROR(@ErrMsg, @ErrSeverity, 1)
 	   END
 END CATCH
+GO

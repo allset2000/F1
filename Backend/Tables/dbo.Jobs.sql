@@ -42,7 +42,8 @@ CREATE TABLE [dbo].[Jobs]
 [FinaldocSentToBBN] [bit] NOT NULL CONSTRAINT [DF__Jobs__FinaldocSe__186270A4] DEFAULT ((0)),
 [LokedbyUserForJobDetailsView] [varchar] (48) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [LockbyUserTimeStamp] [datetime] NULL,
-[RhythmWorkFlowID] [int] NULL
+[RhythmWorkFlowID] [int] NULL,
+[TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[Jobs] ADD
 CONSTRAINT [FK_Jobs_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
