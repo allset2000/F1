@@ -7,10 +7,11 @@ GO
 -- Author: Sam Shoultz
 -- Create date: 01/21/2015
 -- Description: SP used to Register a new user, and create the useraccount defined
--- Modified Date:  11/01/2016
+-- Modified Date:  11/01/2016,4/4/2016
 -- Modification Details: Implemented new improvced logic to validate new invitations,
 -- Update existing user details for pending invitation user
 -- Updated : Changed procedure to save a record in UserClinicXref table
+-- Updated : Logic changed to temp user registration
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_RegisterNewUser]
 (
@@ -66,27 +67,15 @@ BEGIN
 
 		-- Create User entry in the DB
 		-- Added new field while creating a new user, The name of the field added in the insert statement below is  LastPasswordReset. Ticket#3237 modified by Tamojit Chakraborty
-		IF NOT EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress)
-		BEGIN
-	
-			INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt,LastPasswordReset) 
-			     VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt,getdate())
-			SET @UserId = SCOPE_IDENTITY()  --(SELECT UserId FROM Users WHERE UserName = @EmailAddress)
-		END
-		ELSE
-		BEGIN
-		     
-			IF EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress and UserID<>@cur_registeredid)
-			BEGIN
-			   RAISERROR ('Username already exists',16,1);
-			END
-
-		  --Raghu Added --3518- WS for invite a user with a new message
-			  IF EXISTS(SELECT '*' FROM DBO.Users U
+		  IF EXISTS(SELECT '*' FROM DBO.Users U
 							INNER JOIN UserInvitations UI ON UI.RegisteredUserId=U.UserID
 							 WHERE UI.UserInvitationId=@InviteId AND UI.PendingRegStatus=1  )
 			  BEGIN	
 			  
+			      	IF EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress and UserID<>@cur_registeredid)
+					BEGIN
+						RAISERROR ('Username already exists',16,1);
+					END
 			          
 					   UPDATE USERS 
 					   SET  UserName=@EmailAddress,
@@ -104,12 +93,62 @@ BEGIN
 					 SET @UserId =@cur_registeredid
 
 			  END
-		  --END
-			 ELSE
-			  BEGIN		    
-				   RAISERROR ('Username already registered',16,1);
-			  END
-		END
+         ELSE IF NOT EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress)
+				BEGIN
+	
+					INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt,LastPasswordReset) 
+						 VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt,getdate())
+					SET @UserId = SCOPE_IDENTITY()  --(SELECT UserId FROM Users WHERE UserName = @EmailAddress)
+				END
+			ELSE
+				BEGIN			  		    
+					   RAISERROR ('Username already registered',16,1);			
+				END
+
+		--IF NOT EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress)
+		--BEGIN
+	
+		--	INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt,LastPasswordReset) 
+		--	     VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt,getdate())
+		--	SET @UserId = SCOPE_IDENTITY()  --(SELECT UserId FROM Users WHERE UserName = @EmailAddress)
+		--END
+		--ELSE
+		--BEGIN
+		     
+		--	IF EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress and UserID<>@cur_registeredid)
+		--	BEGIN
+		--	    RAISERROR ('Username already exists',16,1);
+		--	END
+
+		--  --Raghu Added --3518- WS for invite a user with a new message
+		--	  IF EXISTS(SELECT '*' FROM DBO.Users U
+		--					INNER JOIN UserInvitations UI ON UI.RegisteredUserId=U.UserID
+		--					 WHERE UI.UserInvitationId=@InviteId AND UI.PendingRegStatus=1  )
+		--	  BEGIN	
+			  
+			          
+		--			   UPDATE USERS 
+		--			   SET  UserName=@EmailAddress,
+		--					FirstName=@FirstName,
+		--					MI=@MI,
+		--					LastName=@LastName,
+		--					ClinicId=@cur_clinicid,
+		--					LoginEmail=@EmailAddress,
+		--					Name= @FirstName + ' ' + @LastName,
+		--					Password=@Password,
+		--					Salt=@Salt,
+		--					LastPasswordReset=GETDATE()
+		--			   WHERE UserID=@cur_registeredid
+
+		--			 SET @UserId =@cur_registeredid
+
+		--	  END
+		--  --END
+		--	 ELSE
+		--	  BEGIN		    
+		--		   RAISERROR ('Username already registered',16,1);
+		--	  END
+		--END
 
 		-- Add User Clinic Xref
 		IF EXISTS(SELECT 1 FROM UserClinicXref WHERE UserId = @UserId AND ClinicId = @cur_clinicid)
