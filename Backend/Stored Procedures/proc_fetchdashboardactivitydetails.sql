@@ -11,8 +11,9 @@ GO
 -- Updated: Baswaraj - 393 added for delivery error management
 -- Updated : Updated Case "Errors" block to return error message also with the results
 -- Tickey# 7110, Sharif Sharif added ISNULL(J2DE.Message, J2DE.ErrorMessage), date: March 24, 2016
+-- Updated: Narender - #5461 added script for draft review jobs 
 -- =============================================
---exec [proc_fetchdashboardactivitydetails] 'ELCaniprasad', 'DeliveredToday',1,10,'JobStatus','Ascending'
+--exec [proc_fetchdashboardactivitydetails] 'tscskumar', 'DraftReview',1,10,'JobStatus','Ascending'
 CREATE PROCEDURE [dbo].[proc_fetchdashboardactivitydetails]
 	
 	 @dictatorid  varchar(150),
@@ -205,7 +206,46 @@ BEGIN
 			--print @sql
 			END
 			----------End error Management------------
-
+			
+			--** Start of Draft Review jobs **-
+			IF(@statusgroupname IN ('DraftReview'))
+					BEGIN
+					   SET @Sql=';WITH DashBoardDetails_CTE AS ( 
+				     					SELECT	j.JobNumber, J.DictatorId, J.JobType, J.Stat, 
+												CASE WHEN J.IsGenericJob IS NOT NULL AND IsGenericJob=1 THEN ''Y'' ELSE ''N'' end DeviceGenerated, 			  
+												J.AppointmentDate,
+												IPD.StatusDate AS InProcessWithDate ,  
+												IPD.StatusDate AS JobStatus ,   
+												JP.MRN,  
+												CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
+												AD.AwaitingDelivery,
+												COUNT(*) OVER()  as TotalCount												
+										 FROM jobs J WITH(NOLOCK)   
+										 INNER JOIN jobstatusA JA WITH(NOLOCK) on J.jobnumber = JA.JobNumber  
+										 INNER JOIN statuscodes SCA WITH(NOLOCK)  on JA.status = SCA.StatusID  
+										 INNER JOIN Jobs_Patients JP WITH(NOLOCK)  on J.Jobnumber=JP.Jobnumber			
+										 INNER JOIN (
+														SELECT  JT.JobNumber,MIN(JT.StatusDate) AS StatusDate
+													   FROM Jobtracking JT WITH(NOLOCK)   
+													   INNER JOIN statuscodes SC WITH(NOLOCK)  ON JT.Status=SC.StatusID  
+													   WHERE SC.statusgroupid=6 
+													   GROUP BY JT.JobNumber
+													) AS IPD 
+													ON  IPD.JobNumber= J.Jobnumber   
+										 LEFT JOIN (
+														SELECT  JT.JobNumber ,MIN(JT.StatusDate) AS AwaitingDelivery
+															 FROM Jobtracking JT WITH(NOLOCK)
+															 INNER JOIN statuscodes SC ON JT.status=SC.statusid
+															 WHERE SC.StatusGroupId=6
+															 GROUP BY JT.JobNumber
+													) AS AD ON  AD.JobNumber= J.Jobnumber
+										WHERE  SCA.statusgroupid=6 
+										AND DATEDIFF(d, J.receivedon, getdate())<= 90'
+								SET @Sql=@Sql+' AND J.dictatorid ='''+@dictatorid+''' )'
+						
+					END
+					--** End of Draft Review jobs **--			
+			
 			  ELSE --(@statusgroupname='DeliveredToday') -- Delivered Today does not need any join with other tables Only JobDeliveryHistory should be enough Bug 3430
 				  BEGIN			
 					   SET @Sql=';WITH DashBoardDetails_CTE AS ( 
