@@ -1,21 +1,36 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-/******************************
-** File:  spGetClinic.sql  
-** Name:  spGetClinic  
-** Desc:  Get Clinic based on clinic ID 
-** Auth:  Suresh  
-** Date:  18/May/2015  
-**************************
-** Change History
-******************
-** Ticket       Date	    Author           Description	
-** --           --------    -------          ------------------------------------
-** D.2 - 4355   6/8         Sam Shoultz      Added new Clinic values / variables to the SP
-**
-*******************************/
+--XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+--XX  Entrada Inc
+--XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
+--X PROCEDURE: spGetClinic
+--X
+--X AUTHOR: Suresh
+--X
+--X DESCRIPTION: Get Clinic based on clinic ID
+--X				 
+--X
+--X ASSUMPTIONS: 
+--X
+--X DEPENDENTS: 
+--X
+--X PARAMETERS: 
+--X
+--X RETURNS:  
+--X
+--X TABLES REQUIRED: 
+--X
+--X HISTORY:
+--X_____________________________________________________________________________
+--X  VER   |    DATE      |  BY						|  COMMENTS - include Ticket#
+--X_____________________________________________________________________________
+--X   0    | 05-18-2015   | Suresh		  			| Initial design
+--X   1    | 06-08-2015   | Sam Shoultz  			| 4355 - Added new Clinic values / variables to the SP
+--X   2    | 04-07-2016   | Naga					| 6446 - Modified the proc to return "Express Link ApiKey" as part of the resultset
+--XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 CREATE PROCEDURE [dbo].[spGetClinic] 
 (  
  @vintClinicID  INT  
@@ -53,10 +68,12 @@ BEGIN
 	C.RealTimeEnabled,
 	EV.CanAck, 
 	EV.Name AS EHRVendorName,
-	CA.ConnectionString AS ApiConnectionString
+	CA.ConnectionString AS ApiConnectionString,
+	EL.ApiKey
 	FROM Clinics C 
 		INNER JOIN EHRVendors EV ON C.EHRVendorID = EV.EHRVendorID
 		LEFT OUTER JOIN ClinicApis CA ON C.ClinicID = CA.ClinicID
+		LEFT OUTER JOIN ExpressLinkConfigurations EL ON EL.ClinicID = C.ClinicID
 	WHERE C.ClinicID = @vintClinicID
 END  
 GO
