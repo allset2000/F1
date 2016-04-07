@@ -8,8 +8,9 @@ GO
 -- Author: Raghu A
 -- Create date: 11/18/2014
 -- Description: SP called from DictateAPI to pull Jobs to sync on mobile
---EXEC sp_GetJobsToSyncByLastSyncDate 2196,0,'2014-11-20 10:15:02.970'
+--EXEC sp_GetJobsToSyncByLastSyncDate 3526,0,'2014-11-20 10:15:02.970'
 --Modified :Raghu--3/12/2016  --> Status code 450 added 
+--Modified :Raghu--4/7/2016  --> Uploaded Date field added  
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobsToSyncByLastSyncDate](
 	 @DictatorID INT,
@@ -28,13 +29,21 @@ BEGIN
 					j.Stat AS IsStat,
 					q.QueueID,
 					e.EncounterID,
-					jr.ReferringID AS ReferringPhysicianID
+					jr.ReferringID AS ReferringPhysicianID,
+					A.UploadedDate
 			FROM dbo.Dictations AS d WITH(NOLOCK)
 				INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON d.JobID = j.JobID 
 				INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON j.EncounterID = e.EncounterID
 				INNER JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON qu.QueueID = d.QueueID 
 				INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID
-				LEFT JOIN dbo.Jobs_Referring jr WITH(NOLOCK) ON jr.JobID=j.JobID		
+				LEFT JOIN dbo.Jobs_Referring jr WITH(NOLOCK) ON jr.JobID=j.JobID	
+				LEFT JOIN
+				        (SELECT JT.JobID,max(JT.ChangeDate) as UploadedDate 
+						   FROM [dbo].[JobsTracking] JT WITH(NOLOCK)
+								INNER JOIN Jobs js on Js.JobID=JT.JobID						  
+							 Where JT.[Status]=300 AND ISNULL(js.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
+						     Group by JT.JobID
+						 ) A on A.JobId=j.JobID
 			WHERE qu.DictatorID=@DictatorID AND
 				  @EncounterId=(CASE WHEN @EncounterId=0 THEN @EncounterId ELSE e.EncounterID END) AND 	       
 				  d.[Status] IN (100, 200) AND 	
@@ -50,7 +59,8 @@ BEGIN
 					 WHEN [State]=390 THEN 8
 					 WHEN [State]=500 THEN 9
 					 WHEN [State]=450 THEN 5
-					 WHEN [State]=400 THEN SC.StatusGroupId END  AS StatusGroupID					
+					 WHEN [State]=400 THEN SC.StatusGroupId END  AS StatusGroupID,
+					 UploadedDate					
 		FROM CTE_Jobs AS CTE		
 		 LEFT JOIN 
 				( 
