@@ -16,6 +16,7 @@ GO
 * --   --------   -------   ------------------------------------ 
 * #393 2-Feb-2016 Baswaraj  Added "0 as isError" retrun calumn in select for know it is not error history         
 * #731 25-FEB-2016 Narender Added STAT Field to insert into Job History 
+* #4832 11-APR-2016 Narender Updated for Job Resend Feature
 *******************************/      
 CREATE PROCEDURE [dbo].[spGetPortalJobHistoryByStatusGroupId] 
 (          
@@ -62,16 +63,13 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- get the Delivered history from JobDeliveryHistory table, if job is deliverd to customer
 		INSERT INTO @TempJobsHostory
-			--SELECT TOP 1 JT.JobNumber,null DocumentID,'Delivered' StatusGroup,min(jd.DeliveredOn) StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus  
-			SELECT JT.JobNumber,null DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus   -- this is related to resend the doc
+			SELECT JT.JobNumber, DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus   -- this is related to resend the doc
 			FROM JobTracking JT 
-			--INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId in(4,5) 
 			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId = 5 -- this is related to resend the doc
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 			INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
 			left outer join job_history JH on JT.jobnumber = JH.jobnumber and jt.status=JH.currentstatus
 			WHERE JT.JobNumber=@vvcrJobnumber
-			--GROUP BY jg.Id,JT.JobNumber,JH.JobType,JH.UserId,JH.MRN
 			ORDER BY jg.id DESC
 		END
 	ELSE 
