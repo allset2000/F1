@@ -1,6 +1,3 @@
-USE [Entrada_Copy]
-GO
-
 /****** Object:  StoredProcedure [dbo].[spv_UpgradeScript_post_SP4]    Script Date: 10/22/2014 2:18:28 PM ******/
 SET ANSI_NULLS ON
 GO
