@@ -51,7 +51,7 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- Get the history based status group id 
 		INSERT INTO @TempJobsHostory
-			SELECT  JT.JobNumber,JH.DocumentID,JG.StatusGroup,JT.StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus  
+			SELECT TOP 1  JT.JobNumber,JH.DocumentID,JG.StatusGroup,JT.StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus  
 			FROM JobTracking JT  
 			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
@@ -63,9 +63,9 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- get the Delivered history from JobDeliveryHistory table, if job is deliverd to customer
 		INSERT INTO @TempJobsHostory
-			SELECT JT.JobNumber, DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus   -- this is related to resend the doc
+			SELECT JT.JobNumber, DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus
 			FROM JobTracking JT 
-			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId = 5 -- this is related to resend the doc
+			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId = 5
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 			INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
 			left outer join job_history JH on JT.jobnumber = JH.jobnumber and jt.status=JH.currentstatus
@@ -76,7 +76,7 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- get the history from jobtracking table if history not avalable in job_history table
 		INSERT INTO @TempJobsHostory
-			SELECT JH.JobNumber,null DocumentID,JG.StatusGroup,min(JH.StatusDate),null JobType,null UserId,null MRN,1 JobHistoryID,jg.id,null CurrentStatus  from JobTracking JH  
+			SELECT TOP 1  JH.JobNumber,null DocumentID,JG.StatusGroup,min(JH.StatusDate),null JobType,null UserId,null MRN,1 JobHistoryID,jg.id,null CurrentStatus  from JobTracking JH  
 			INNER JOIN dbo.StatusCodes SC ON JH.Status= SC.StatusID
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 			WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=@StatusGroupId 
@@ -84,7 +84,7 @@ DECLARE @TempJobsHostory TABLE(
 		END
 
 -- Get the jobtype, documentid and MRN from previous record in that group or get it from jobs and patient table.
-SELECT TOP 1 JH.JobNumber,
+SELECT JH.JobNumber,
 	doc.DocumentID,
 	JH.StatusGroup,JH.StatusDate,
 	CASE WHEN jt.JobType IS NULL or jt.JobType ='' THEN jb.JobType ELSE jt.JobType END JobType,
