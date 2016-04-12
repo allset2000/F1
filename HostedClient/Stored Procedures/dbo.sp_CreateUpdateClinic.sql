@@ -16,6 +16,7 @@ GO
 --x  ver   |    date     |  by                 |  comments - include Ticket#
 --x_____________________________________________________________________________
 --x   1    | 11/10/2015  | sharif shaik        | Bug 4669 - incresed size for the @EHRLocationID varchar(500) from varchar(50)
+--x   1    | 04/11/2016  | sharif shaik        | 7225 - Updateing EHRLocationId of [dbo].[ExpressLinkConfigurations]table
 --x
 --xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 */
@@ -120,6 +121,15 @@ BEGIN
 				INSERT INTO ClinicAPIs(ClinicId, ConnectionString) VALUES(@ClinicID, 'PracticeID='+@EHRClinicID+';DepartmentID=1')
 			END
 		END
+
+		-- Updating [dbo].[ExpressLinkConfigurations]table
+		-- We can update remaining columns of clinics table which are referred in ExpressLinkConfigurations table
+		IF EXISTS(select 1 from ExpressLinkConfigurations where clinicid = @ClinicID)
+			BEGIN
+				UPDATE ExpressLinkConfigurations 
+				SET EHRLocationID = @EHRLocationID 
+				WHERE ClinicId = @ClinicID
+		END
 	END
 	
 	SELECT ClinicID from Clinics where ClinicCode = @ClinicCode
@@ -128,4 +138,3 @@ END
 
 
 GO
-
