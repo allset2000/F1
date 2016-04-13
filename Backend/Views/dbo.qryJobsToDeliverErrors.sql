@@ -21,6 +21,7 @@ ORDER BY dbo.JobsToDeliver.DeliveryID, dbo.qryJobsToDeliverErrors_10.ErrorDate
 
 
 GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
@@ -196,6 +197,7 @@ EXEC sp_addextendedproperty N'MS_DiagramPane2', N'h = 1500
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliverErrors', NULL, NULL
 GO
+
 
 DECLARE @xp int
 SELECT @xp=2

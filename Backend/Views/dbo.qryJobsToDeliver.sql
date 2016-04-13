@@ -1,20 +1,20 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
 CREATE VIEW [dbo].[qryJobsToDeliver]
 AS
-SELECT     dbo.JobsToDeliver.DeliveryID, dbo.JobsToDeliver.JobNumber, dbo.JobsToDeliver.Method, dbo.JobsToDeliver.RuleName, dbo.JobsToDeliver.LastUpdatedOn, dbo.Clinics.ClinicID, 
-                      dbo.Clinics.ClinicName, dbo.Jobs.DictatorID, dbo.Jobs.AppointmentDate, dbo.Jobs.AppointmentTime, dbo.Jobs.JobType, dbo.Jobs.ContextName, dbo.Jobs_Patients.MRN, 
-                      dbo.Jobs_Patients.FirstName, dbo.Jobs_Patients.LastName, dbo.Jobs_Patients.DOB
-FROM         dbo.JobsToDeliver INNER JOIN
-                      dbo.Jobs ON dbo.JobsToDeliver.JobNumber = dbo.Jobs.JobNumber INNER JOIN
-                      dbo.Clinics ON dbo.Jobs.ClinicID = dbo.Clinics.ClinicID INNER JOIN
-                      dbo.Jobs_Patients ON dbo.Jobs.JobNumber = dbo.Jobs_Patients.JobNumber
-
+SELECT        dbo.JobsToDeliver.DeliveryID, dbo.JobsToDeliver.JobNumber, dbo.JobsToDeliver.Method, dbo.JobsToDeliver.RuleName, dbo.JobsToDeliver.LastUpdatedOn, dbo.Clinics.ClinicID, dbo.Clinics.ClinicName, 
+                         dbo.Jobs.DictatorID, dbo.Jobs.AppointmentDate, dbo.Jobs.AppointmentTime, dbo.Jobs.JobType, dbo.Jobs.ContextName, dbo.Jobs_Patients.MRN, dbo.Jobs_Patients.FirstName, dbo.Jobs_Patients.LastName, 
+                         dbo.Jobs_Patients.DOB, dbo.JobsToDeliver.JobHistoryID
+FROM            dbo.JobsToDeliver INNER JOIN
+                         dbo.Jobs ON dbo.JobsToDeliver.JobNumber = dbo.Jobs.JobNumber INNER JOIN
+                         dbo.Clinics ON dbo.Jobs.ClinicID = dbo.Clinics.ClinicID INNER JOIN
+                         dbo.Jobs_Patients ON dbo.Jobs.JobNumber = dbo.Jobs_Patients.JobNumber
 GO
-EXEC sp_addextendedproperty N'MS_DiagramPane2', N'   Or = 1350
-      End
+
+EXEC sp_addextendedproperty N'MS_DiagramPane2', N'nd
    End
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliver', NULL, NULL
@@ -83,10 +83,9 @@ Begin DesignProperties =
          NumPanes = 1
          Configuration = "(V (2))"
       End
-      ActivePaneConfig = 3
+      ActivePaneConfig = 0
    End
    Begin DiagramPane = 
-      PaneHidden = 
       Begin Origin = 
          Top = 0
          Left = 0
@@ -100,7 +99,7 @@ Begin DesignProperties =
                Right = 198
             End
             DisplayFlags = 280
-            TopColumn = 0
+            TopColumn = 3
          End
          Begin Table = "Jobs"
             Begin Extent = 
@@ -165,8 +164,10 @@ Begin DesignProperties =
          Filter = 1350
          Or = 1350
          Or = 1350
-      ', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliver', NULL, NULL
+         Or = 1350
+      E', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliver', NULL, NULL
 GO
+
 
 DECLARE @xp int
 SELECT @xp=2

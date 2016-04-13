@@ -12,6 +12,7 @@ FROM         dbo.JobDeliveryHistory INNER JOIN
 ORDER BY dbo.JobDeliveryHistory.DeliveredOn
 
 GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
@@ -152,6 +153,7 @@ Begin DesignProperties =
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'qryJobDeliveryHistoryView', NULL, NULL
 GO
+
 
 DECLARE @xp int
 SELECT @xp=1

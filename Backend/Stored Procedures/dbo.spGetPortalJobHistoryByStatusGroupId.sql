@@ -68,7 +68,7 @@ DECLARE @TempJobsHostory TABLE(
 			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId = 5
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 			INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
-			left outer join job_history JH on JT.jobnumber = JH.jobnumber and jt.status=JH.currentstatus
+			left outer join job_history JH on JT.jobnumber = JH.jobnumber and jt.status=JH.currentstatus AND JD.JobHistoryID = JH.JobHistoryID
 			WHERE JT.JobNumber=@vvcrJobnumber
 			ORDER BY jg.id DESC
 		END
@@ -84,7 +84,22 @@ DECLARE @TempJobsHostory TABLE(
 		END
 
 -- Get the jobtype, documentid and MRN from previous record in that group or get it from jobs and patient table.
-SELECT JH.JobNumber,
+ IF @StatusGroupId = 5
+	BEGIN
+		SELECT JH.JobNumber,
+	JH.DocumentID,
+	JH.StatusGroup,JH.StatusDate,
+	CASE WHEN JH.JobType IS NULL or JH.JobType ='' THEN jb.JobType ELSE JH.JobType END JobType,
+	JH.UserId,
+	CASE WHEN JH.MRN IS NULL THEN JP.MRN ELSE  JH.MRN END MRN,JP.FirstName,JP.MI,JP.LastName,jb.ClinicID,JH.JgId, 0 as isError -- added this to represent that it is not error history
+	FROM @TempJobsHostory as JH 
+	INNER JOIN jobs jb ON jh.JobNumber=jb.JobNumber
+	LEFT OUTER JOIN [dbo].[Jobs_Patients] JP ON JH.JobNumber = jp.JobNumber 
+	ORDER BY JH.StatusDate asc
+	END
+ ELSE
+	BEGIN		
+		SELECT JH.JobNumber,
 	doc.DocumentID,
 	JH.StatusGroup,JH.StatusDate,
 	CASE WHEN jt.JobType IS NULL or jt.JobType ='' THEN jb.JobType ELSE jt.JobType END JobType,
@@ -103,6 +118,7 @@ SELECT JH.JobNumber,
 		ON jh.JobNumber=jb.JobNumber
 	LEFT OUTER JOIN [dbo].[Jobs_Patients] JP
 		ON JH.JobNumber = jp.JobNumber  and (mr.mrn=jp.mrn or mr.mrn is null)
-	ORDER BY JH.StatusDate asc
+	ORDER BY JH.StatusDate ASC
+	END
 END
 GO

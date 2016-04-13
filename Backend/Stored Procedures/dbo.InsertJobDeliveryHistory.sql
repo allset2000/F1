@@ -1,7 +1,9 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+
 /*
 	Created By: Mikayil Bayramov
 	Created Date: 04/27/2015
@@ -18,14 +20,16 @@ CREATE PROCEDURE [dbo].[InsertJobDeliveryHistory] (
 	@RuleName VARCHAR(100) = NULL, 
 	@DeliveredOn DATETIME = NULL, 
 	@JobData VARCHAR(200) = NULL, 
-	@Id INT = NULL
+	@Id INT = NULL,
+	@JobHistoryID INT = NULL
 ) AS
 BEGIN
 	SET @DeliveredOn = COALESCE(@DeliveredOn, GETDATE())
 
-	INSERT INTO [dbo].[JobDeliveryHistory] (JobNumber, Method, RuleName, DeliveredOn, JobData, Id)
-	VALUES (@JobNumber, @Method, @RuleName, @DeliveredOn, @JobData, @Id)
+	INSERT INTO [dbo].[JobDeliveryHistory] (JobNumber, Method, RuleName, DeliveredOn, JobData, Id, JobHistoryID)
+	VALUES (@JobNumber, @Method, @RuleName, @DeliveredOn, @JobData, @Id, @JobHistoryID)
 
 	SELECT SCOPE_IDENTITY()
 END
+
 GO

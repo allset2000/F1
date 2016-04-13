@@ -4,7 +4,8 @@ CREATE TABLE [dbo].[JobsToDeliver]
 [JobNumber] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [Method] [smallint] NOT NULL,
 [RuleName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[LastUpdatedOn] [datetime] NOT NULL CONSTRAINT [DF_JobsToDeliver_LastUpdatedOn] DEFAULT (getdate())
+[LastUpdatedOn] [datetime] NOT NULL CONSTRAINT [DF_JobsToDeliver_LastUpdatedOn] DEFAULT (getdate()),
+[JobHistoryID] [int] NULL
 ) ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_JobsToDeliver_JobNumber] ON [dbo].[JobsToDeliver] ([JobNumber]) ON [PRIMARY]
 

@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -27,11 +28,13 @@ BEGIN
 		Declare @Method  smallint 
 		Declare @RuleName varchar(100)
 
+		DECLARE @JobHitoryID INT
+		SELECT @JobHitoryID = IDENT_CURRENT('Job_History')
 		SELECT top 1 @Method = Method, @RuleName = RuleName from JobDeliveryHistory where JobNumber = @JobNumber order by DeliveredOn DESC
 		IF NOT EXISTS(SELECT * FROM [dbo].[JobsToDeliver] WHERE (([JobNumber] = @JobNumber) AND ([Method] = @Method) AND ([RuleName] = @RuleName)))
 		   BEGIN
-				INSERT INTO [dbo].[JobsToDeliver] ( [JobNumber],[Method], [RuleName], [LastUpdatedOn]) 
-				VALUES  ( @JobNumber, @Method, @RuleName, Getdate())
+				INSERT INTO [dbo].[JobsToDeliver] ( [JobNumber],[Method], [RuleName], [LastUpdatedOn],[JobHistoryID]) 
+				VALUES  ( @JobNumber, @Method, @RuleName, Getdate(),@JobHitoryID)
 			END
 		END TRY
 		BEGIN CATCH
@@ -46,4 +49,5 @@ BEGIN
 		END CATCH
 
 END
+
 GO

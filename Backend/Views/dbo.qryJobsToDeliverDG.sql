@@ -14,6 +14,7 @@ FROM         dbo.JobsToDeliver INNER JOIN
                       dbo.Jobs_Custom ON dbo.Jobs.JobNumber = dbo.Jobs_Custom.JobNumber
 
 GO
+
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
@@ -166,6 +167,7 @@ EXEC sp_addextendedproperty N'MS_DiagramPane2', N' Or = 1350
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliverDG', NULL, NULL
 GO
+
 
 DECLARE @xp int
 SELECT @xp=2
