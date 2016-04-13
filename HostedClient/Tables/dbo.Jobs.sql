@@ -21,6 +21,8 @@ CREATE TABLE [dbo].[Jobs]
 [TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ChatHistory_ThreadID] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_RuleID_JobNumber] ON [dbo].[Jobs] ([RuleID], [JobNumber]) INCLUDE ([ClinicID], [EncounterID], [JobID], [Status]) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_Jobs_ProcessFailureCount] ON [dbo].[Jobs] ([ProcessFailureCount]) INCLUDE ([JobID], [JobNumber], [Status]) ON [PRIMARY]
 
 ALTER TABLE [dbo].[Jobs] ADD
