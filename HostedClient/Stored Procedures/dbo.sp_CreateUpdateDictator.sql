@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -10,6 +9,7 @@ GO
 -- Description: SP used to Create new Dictator accounts
 -- Updated: 11/10/2014 - Changed the sproc to allow update or insert
 -- Updated: 03/04/2016 - Changed the sproc to add record to UserClinicXref
+-- Updated: 04/12/2016 - Changed the sproc to add chubbs functionality
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_CreateUpdateDictator] (
 	@DictatorName varchar(50),
@@ -32,7 +32,9 @@ CREATE PROCEDURE [dbo].[sp_CreateUpdateDictator] (
 	@ForceCREndDate datetime,
 	@ExcludeStat bit,
 	@UserId int,
-	@SreTypeId int = -1,
+	@SreTypeId int = -1,	
+	@RhythmWorkFlowID INT = null,
+	@AppSetting_DisableSendToTranscription BIT = 0,
 	@SignatureImage varbinary(max) = null,
 	@ImageName varchar(100) = null
 ) AS 
@@ -41,8 +43,8 @@ BEGIN
 		BEGIN TRANSACTION
 			IF NOT EXISTS(select * from Dictators where ClinicID = @ClinicID and DictatorName = @DictatorName)
 			BEGIN
-				INSERT INTO Dictators(DictatorName,ClinicID,Deleted,DefaultJobTypeID,DefaultQueueID,Password,Salt,FirstName,MI,LastName,Suffix,Initials,Signature,EHRProviderID,EHRProviderAlias,VRMode,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,SignatureImage,ImageName,UserId,SreTypeId)
-				VALUES(@DictatorName,@ClinicID,0,@DefaultJobTypeID,@DefaultQueueID,@Password,@Salt,@FirstName,@MI,@LastName,@Suffix,@Initials,@Signature,@EHRProviderID,@EHRProviderAlias,@VRMode,@CRFlagType,@ForceCRStartDate,@ForceCREndDate,@ExcludeStat,@SignatureImage,@ImageName,@UserId,@SreTypeId)
+				INSERT INTO Dictators(DictatorName,ClinicID,Deleted,DefaultJobTypeID,DefaultQueueID,Password,Salt,FirstName,MI,LastName,Suffix,Initials,Signature,EHRProviderID,EHRProviderAlias,VRMode,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,SignatureImage,ImageName,UserId,SreTypeId,RhythmWorkFlowID,AppSetting_DisableSendToTranscription)
+				VALUES(@DictatorName,@ClinicID,0,@DefaultJobTypeID,@DefaultQueueID,@Password,@Salt,@FirstName,@MI,@LastName,@Suffix,@Initials,@Signature,@EHRProviderID,@EHRProviderAlias,@VRMode,@CRFlagType,@ForceCRStartDate,@ForceCREndDate,@ExcludeStat,@SignatureImage,@ImageName,@UserId,@SreTypeId,@RhythmWorkFlowID,@AppSetting_DisableSendToTranscription)
 			END
 			ELSE
 			BEGIN
@@ -66,7 +68,9 @@ BEGIN
 									 SignatureImage = @SignatureImage,
 									 ImageName = @ImageName,
 									 UserId = @UserId,
-									 SreTypeId = @SreTypeId
+									 SreTypeId = @SreTypeId,
+									 RhythmWorkFlowID = @RhythmWorkFlowID,
+									 AppSetting_DisableSendToTranscription = @AppSetting_DisableSendToTranscription
 				WHERE ClinicID = @ClinicID and DictatorName = @DictatorName
 			END
 	

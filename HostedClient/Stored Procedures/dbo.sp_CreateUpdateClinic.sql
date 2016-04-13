@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -16,6 +15,8 @@ GO
 --x  ver   |    date     |  by                 |  comments - include Ticket#
 --x_____________________________________________________________________________
 --x   1    | 11/10/2015  | sharif shaik        | Bug 4669 - incresed size for the @EHRLocationID varchar(500) from varchar(50)
+--x   1    | 04/11/2016  | sharif shaik        | 7225 - Updateing EHRLocationId of [dbo].[ExpressLinkConfigurations]table
+--x   2    | 04/12/2016  | Santhosh            | #5460 - Chubbs Console Changes
 --x
 --xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 */
@@ -48,7 +49,9 @@ CREATE PROCEDURE [dbo].[sp_CreateUpdateClinic] (
 	@SRETypeID int = -1,
 	@RealTimeClinicIP varchar(50) = null,
 	@RealTimeClinicPortNo int = null,
-	@RealTimeEnabled bit = 0
+	@RealTimeEnabled bit = 0,
+	@RhythmWorkFlowID INT = null,
+	@AppSetting_DisableSendToTranscription BIT = 0
 ) AS 
 BEGIN
 	
@@ -66,8 +69,8 @@ BEGIN
 		SET @DEF_PasswordMinCharacter = (select ConfigValue from systemconfiguration where ConfigKey = 'DEF_PasswordMinCharacter')
 		SET @DEF_FailedPasswordLockoutCount = (select ConfigValue from systemconfiguration where ConfigKey = 'DEF_FailedPasswordLockoutCount')
 		
-		INSERT INTO Clinics(ClinicId,Name,MobileCode,AccountManagerID,ExpressQueuesEnabled,ImageCaptureEnabled,PatientClinicalsEnabled,Deleted,EHRVendorID,EHRClinicID,EHRLocationID,ClinicCode,DisableUpdateAlert,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,AutoEnrollDevices,SRETypeID,DisablePatientImages,PortalTimeout,DaysToResetPassword,PreviousPasswordCount,PasswordMinCharacters,FailedPasswordLockoutCount,TimeZoneId,RealTimeClinicIP,RealTimeClinicPortNo,RealTimeEnabled)
-		VALUES(@ClinicId,@Name, @MobileCode, @AccountManagerID, @ExpressQueuesEnabled, @ImageCaptureEnabled, @PatientClinicalsEnabled, @Deleted, @EHRVendorID, @EHRClinicID, @EHRLocationID, @ClinicCode, @DisableUpdateAlert, @CRFlagType, @ForceCRStartDate, @ForceCREndDate, @ExcludeStat, @AutoEnrollDevices, @SRETypeID, @DisablePatientImages, @DEF_PortalTimeout, @DEF_DaysToResetPassword, @DEF_PreviousPasswordCount, @DEF_PasswordMinCharacter, @DEF_FailedPasswordLockoutCount, @TimeZoneId, @RealTimeClinicIP, @RealTimeClinicPortNo, @RealTimeEnabled)
+		INSERT INTO Clinics(ClinicId,Name,MobileCode,AccountManagerID,ExpressQueuesEnabled,ImageCaptureEnabled,PatientClinicalsEnabled,Deleted,EHRVendorID,EHRClinicID,EHRLocationID,ClinicCode,DisableUpdateAlert,CRFlagType,ForceCRStartDate,ForceCREndDate,ExcludeStat,AutoEnrollDevices,SRETypeID,DisablePatientImages,PortalTimeout,DaysToResetPassword,PreviousPasswordCount,PasswordMinCharacters,FailedPasswordLockoutCount,TimeZoneId,RealTimeClinicIP,RealTimeClinicPortNo,RealTimeEnabled,RhythmWorkFlowID,AppSetting_DisableSendToTranscription)
+		VALUES(@ClinicId,@Name, @MobileCode, @AccountManagerID, @ExpressQueuesEnabled, @ImageCaptureEnabled, @PatientClinicalsEnabled, @Deleted, @EHRVendorID, @EHRClinicID, @EHRLocationID, @ClinicCode, @DisableUpdateAlert, @CRFlagType, @ForceCRStartDate, @ForceCREndDate, @ExcludeStat, @AutoEnrollDevices, @SRETypeID, @DisablePatientImages, @DEF_PortalTimeout, @DEF_DaysToResetPassword, @DEF_PreviousPasswordCount, @DEF_PasswordMinCharacter, @DEF_FailedPasswordLockoutCount, @TimeZoneId, @RealTimeClinicIP, @RealTimeClinicPortNo, @RealTimeEnabled, @RhythmWorkFlowID, @AppSetting_DisableSendToTranscription)
 
 		IF (@EHRVendorID = 2)
 		BEGIN
@@ -106,7 +109,9 @@ BEGIN
 						   TimeZoneId = @TimeZoneId,
 						   RealTimeClinicIP = @RealTimeClinicIP,
 						   RealTimeClinicPortNo = @RealTimeClinicPortNo,
-						   RealTimeEnabled = @RealTimeEnabled
+						   RealTimeEnabled = @RealTimeEnabled,
+						   RhythmWorkFlowID = @RhythmWorkFlowID,
+						   AppSetting_DisableSendToTranscription = @AppSetting_DisableSendToTranscription
 		WHERE ClinicId = @ClinicID
 
 		IF (@EHRVendorID = 2)
@@ -120,6 +125,14 @@ BEGIN
 				INSERT INTO ClinicAPIs(ClinicId, ConnectionString) VALUES(@ClinicID, 'PracticeID='+@EHRClinicID+';DepartmentID=1')
 			END
 		END
+
+		-- Updating [dbo].[ExpressLinkConfigurations]table
+		IF EXISTS(select 1 from ExpressLinkConfigurations where clinicid = @ClinicID)
+			BEGIN
+				UPDATE ExpressLinkConfigurations 
+				SET EHRLocationID = @EHRLocationID 
+				WHERE ClinicId = @ClinicID
+		END
 	END
 	
 	SELECT ClinicID from Clinics where ClinicCode = @ClinicCode
@@ -128,4 +141,3 @@ END
 
 
 GO
-

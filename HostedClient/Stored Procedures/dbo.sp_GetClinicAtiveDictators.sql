@@ -8,6 +8,7 @@ GO
 -- Author: Sam Shoultz
 -- Create date: 3/7/2015
 -- Description: SP Used to get clinic dictators and dictator information for the admin console UI
+-- Updated: 04/12/2016 - Added Rhythm parameters
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetClinicAtiveDictators] (
 	@ClinicId int
@@ -29,7 +30,9 @@ BEGIN
 		   D.EHRProviderID,
 		   D.EHRProviderAlias,
 		   D.VRMode,
-		   (SELECT ClinicCode FROM Clinics WHERE ClinicID = @ClinicId) AS ClinicCode
+		   (SELECT ClinicCode FROM Clinics WHERE ClinicID = @ClinicId) AS ClinicCode,
+		   D.RhythmWorkFlowID,
+		   D.AppSetting_DisableSendToTranscription
 	FROM Dictators D
 		LEFT OUTER JOIN Users U on U.UserId = D.UserId
 	WHERE D.ClinicID = @ClinicId AND D.Deleted = 0

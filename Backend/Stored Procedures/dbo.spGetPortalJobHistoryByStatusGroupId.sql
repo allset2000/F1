@@ -16,6 +16,7 @@ GO
 * --   --------   -------   ------------------------------------ 
 * #393 2-Feb-2016 Baswaraj  Added "0 as isError" retrun calumn in select for know it is not error history         
 * #731 25-FEB-2016 Narender Added STAT Field to insert into Job History 
+* #4832 11-APR-2016 Narender Updated for Job Resend Feature
 *******************************/      
 CREATE PROCEDURE [dbo].[spGetPortalJobHistoryByStatusGroupId] 
 (          
@@ -50,7 +51,7 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- Get the history based status group id 
 		INSERT INTO @TempJobsHostory
-			SELECT  JT.JobNumber,JH.DocumentID,JG.StatusGroup,JT.StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus  
+			SELECT TOP 1  JT.JobNumber,JH.DocumentID,JG.StatusGroup,JT.StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus  
 			FROM JobTracking JT  
 			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
@@ -62,23 +63,20 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- get the Delivered history from JobDeliveryHistory table, if job is deliverd to customer
 		INSERT INTO @TempJobsHostory
-			--SELECT TOP 1 JT.JobNumber,null DocumentID,'Delivered' StatusGroup,min(jd.DeliveredOn) StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus  
-			SELECT JT.JobNumber,null DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus   -- this is related to resend the doc
+			SELECT JT.JobNumber, DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus
 			FROM JobTracking JT 
-			--INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId in(4,5) 
-			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId = 5 -- this is related to resend the doc
+			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId = 5
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 			INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
 			left outer join job_history JH on JT.jobnumber = JH.jobnumber and jt.status=JH.currentstatus
 			WHERE JT.JobNumber=@vvcrJobnumber
-			--GROUP BY jg.Id,JT.JobNumber,JH.JobType,JH.UserId,JH.MRN
 			ORDER BY jg.id DESC
 		END
 	ELSE 
 		BEGIN
 		-- get the history from jobtracking table if history not avalable in job_history table
 		INSERT INTO @TempJobsHostory
-			SELECT JH.JobNumber,null DocumentID,JG.StatusGroup,min(JH.StatusDate),null JobType,null UserId,null MRN,1 JobHistoryID,jg.id,null CurrentStatus  from JobTracking JH  
+			SELECT TOP 1  JH.JobNumber,null DocumentID,JG.StatusGroup,min(JH.StatusDate),null JobType,null UserId,null MRN,1 JobHistoryID,jg.id,null CurrentStatus  from JobTracking JH  
 			INNER JOIN dbo.StatusCodes SC ON JH.Status= SC.StatusID
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 			WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=@StatusGroupId 
@@ -86,7 +84,7 @@ DECLARE @TempJobsHostory TABLE(
 		END
 
 -- Get the jobtype, documentid and MRN from previous record in that group or get it from jobs and patient table.
-SELECT TOP 1 JH.JobNumber,
+SELECT JH.JobNumber,
 	doc.DocumentID,
 	JH.StatusGroup,JH.StatusDate,
 	CASE WHEN jt.JobType IS NULL or jt.JobType ='' THEN jb.JobType ELSE jt.JobType END JobType,

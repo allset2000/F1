@@ -208,7 +208,7 @@ BEGIN
 			----------End error Management------------
 			
 			--** Start of Draft Review jobs **-
-			IF(@statusgroupname IN ('DraftReview'))
+			ELSE IF(@statusgroupname IN ('DraftReview'))
 					BEGIN
 					   SET @Sql=';WITH DashBoardDetails_CTE AS ( 
 				     					SELECT	j.JobNumber, J.DictatorId, J.JobType, J.Stat, 

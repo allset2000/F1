@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -30,6 +29,7 @@ GO
 --X   0    | 05-18-2015   | Suresh		  			| Initial design
 --X   1    | 06-08-2015   | Sam Shoultz  			| 4355 - Added new Clinic values / variables to the SP
 --X   2    | 04-07-2016   | Naga					| 6446 - Modified the proc to return "Express Link ApiKey" as part of the resultset
+--X   3    | 04-12-2016   | Santhosh				| Chubbs Ticket
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 CREATE PROCEDURE [dbo].[spGetClinic] 
 (  
@@ -69,7 +69,9 @@ BEGIN
 	EV.CanAck, 
 	EV.Name AS EHRVendorName,
 	CA.ConnectionString AS ApiConnectionString,
-	EL.ApiKey
+	EL.ApiKey,
+	C.RhythmWorkFlowID,
+	C.AppSetting_DisableSendToTranscription
 	FROM Clinics C 
 		INNER JOIN EHRVendors EV ON C.EHRVendorID = EV.EHRVendorID
 		LEFT OUTER JOIN ClinicApis CA ON C.ClinicID = CA.ClinicID
