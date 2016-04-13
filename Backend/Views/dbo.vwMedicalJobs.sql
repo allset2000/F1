@@ -1,7 +1,9 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+
 CREATE VIEW [dbo].[vwMedicalJobs]
 AS
 SELECT     dbo.Jobs.JobNumber, dbo.Jobs.JobId, dbo.Jobs.DictatorID, dbo.Dictators.DictatorIdOk, dbo.Jobs.ClinicID, dbo.Clinics.ClinicName, dbo.Jobs.Location, 
@@ -29,7 +31,7 @@ SELECT     dbo.Jobs.JobNumber, dbo.Jobs.JobId, dbo.Jobs.DictatorID, dbo.Dictator
                       dbo.JobEditingSummary.CurrentQAStage, dbo.JobEditingSummary.LastQAStage, dbo.JobEditingSummary.AssignedToID, dbo.JobEditingSummary.QACategoryId, 
                       dbo.JobEditingSummary.LastQANote, dbo.JobEditingSummary.QAEditorsList, dbo.JobEditingSummary.FinishedOn, dbo.JobEditingSummary.LastEditingTaskId, 
                       dbo.JobEditingSummary.LastQAEditingTaskId, dbo.vwQACategories.QACategory, vwQACategories_1.QACategory AS QAParentCategory, dbo.Jobs.TemplateName, dbo.Jobs.IsGenericJob , 
-                      dbo.Jobs.JobStatus AS Status, dbo.Jobs.ProcessFailureCount
+                      dbo.Jobs.JobStatus AS Status, dbo.Jobs.ProcessFailureCount, dbo.Jobs.RhythmWorkFlowID
 FROM         dbo.Dictators INNER JOIN
                       dbo.Jobs ON dbo.Dictators.DictatorID = dbo.Jobs.DictatorID INNER JOIN
                       dbo.Clinics ON dbo.Jobs.ClinicID = dbo.Clinics.ClinicID INNER JOIN
@@ -41,7 +43,9 @@ FROM         dbo.Dictators INNER JOIN
                       dbo.vwQACategories AS vwQACategories_1 ON dbo.vwQACategories.ParentId = vwQACategories_1.QACategoryId LEFT OUTER JOIN
                       dbo.vwEditors ON dbo.Jobs.EditorID = dbo.vwEditors.EditorID LEFT OUTER JOIN
                       dbo.Jobs_Client ON dbo.Jobs.JobNumber = dbo.Jobs_Client.JobNumber
+
 GO
+
 
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
