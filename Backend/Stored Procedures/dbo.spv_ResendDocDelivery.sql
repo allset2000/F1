@@ -30,6 +30,7 @@ BEGIN
 
 		DECLARE @JobHitoryID INT
 		SELECT @JobHitoryID = IDENT_CURRENT('Job_History')
+		UPDATE dbo.Job_History SET UserId = @UserName WHERE JobHistoryID = @JobHitoryID
 		SELECT top 1 @Method = Method, @RuleName = RuleName from JobDeliveryHistory where JobNumber = @JobNumber order by DeliveredOn DESC
 		IF NOT EXISTS(SELECT * FROM [dbo].[JobsToDeliver] WHERE (([JobNumber] = @JobNumber) AND ([Method] = @Method) AND ([RuleName] = @RuleName)))
 		   BEGIN
