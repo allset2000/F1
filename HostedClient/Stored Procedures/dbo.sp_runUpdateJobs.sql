@@ -123,7 +123,7 @@ BEGIN
 			-- Insert into JobTracking
 			INSERT INTO JobsTracking(JobID, Status, ChangeDate, ChangedBy) VALUES(@cur_jobid, @new_status, GETDATE(), @UpdatedBy)
 		
-			IF(@cur_dictid != NULL)
+			IF(@cur_dictid IS NOT NULL)
 			BEGIN
 			-- Delete Dictation
 			UPDATE Dictations SET Status = @new_status,UpdatedDateInUTC=GETUTCDATE() WHERE DictationID = @cur_dictid
@@ -139,4 +139,5 @@ BEGIN
 
 	DROP TABLE #tmp_data
 END
+
 GO
