@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -20,24 +21,15 @@ CREATE PROCEDURE [dbo].[spUpdateBackendStatusAndDateIntoHosted]
  @vsintStatus SMALLINT
 )  
 AS  
-BEGIN TRANSACTION  
-	BEGIN TRY
+BEGIN
 
-		UPDATE [dbo].[EH_Jobs] SET UpdatedDateInUTC = GETUTCDATE() , BackendStatus = @vsintStatus 
-		from EH_Jobs JH
-		INNER JOIN JOBS_CLIENT JC 
-		on JC.filename=JH.jobnumber
-		where JC.jobnumber = @vvcrJobNumber
+	UPDATE [dbo].[EH_Jobs] SET UpdatedDateInUTC = GETUTCDATE() , BackendStatus = @vsintStatus 
+	FROM EH_Jobs JH
+	INNER JOIN JOBS_CLIENT JC 
+	ON JC.filename=JH.jobnumber
+	WHERE JC.jobnumber = @vvcrJobNumber
 
-		COMMIT
-	END TRY
-BEGIN CATCH
-	-- Rollback the transaction  
-    ROLLBACK  
-    -- Raise an error and return  
-    RAISERROR ('Error in Insert or Update Bacekend Status into Hosted.', 16, 1)  
-    RETURN  
-END CATCH
+END 
 
 		
 GO
