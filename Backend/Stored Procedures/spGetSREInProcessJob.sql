@@ -1,3 +1,7 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 /******************************  
 ** File:  spGetSREInProcessJob.sql  
 ** Name:  spGetSREInProcessJob  
@@ -18,7 +22,7 @@ CREATE PROCEDURE [dbo].[spGetSREInProcessJob]
 )    
 AS    
 BEGIN   
-	SELECT jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,js.path,js.StatusDate
+	SELECT jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,js.path,js.StatusDate,jb.TagMetaData,jb.RhythmWorkFlowID
 	FROM  Jobs jb      
 	INNER JOIN dbo.Dictators d on jb.DictatorID = d.DictatorID    
 	INNER JOIN Clinics c on jb.ClinicID = c.ClinicID    
@@ -29,4 +33,5 @@ BEGIN
 	AND ((d.SRETypeId IS NOT NULL AND d.SRETypeId = @vintSRETypeId) or (d.SRETypeId is NULL AND C.SRETypeId IS NOT NULL AND C.SRETypeID=@vintSRETypeId))    
 	ORDER BY JB.Stat desc, JB.ReceivedOn desc    
 END
+GO
 GO

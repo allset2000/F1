@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -37,16 +38,14 @@ DECLARE @UpdatedJobCount INT
  ReceivedOn datetime,  
  IsLockedForProcessing bit,  
  SRETypeId int,
- ProcessTypeId  int,
- TagMetaData varchar(2000),
- RhythmWorkFlowID int 
+ ProcessTypeId  int   
  )  
    
  DECLARE @IsLockedForProcessing BIT    
  -- Get nVoQ Jobs  
   INSERT INTO @TempJobs    
   SELECT top (@vintNVoQJobCount) jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,  
-  CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId,2 as ProcessTypeId ,null as TagMetaData , null as RhythmWorkFlowID      
+  CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId,2 as ProcessTypeId      
   FROM  Jobs jb    
   INNER JOIN dbo.Dictators d on jb.DictatorID = d.DictatorID  
   INNER JOIN Clinics c on jb.ClinicID = c.ClinicID  
@@ -60,7 +59,7 @@ DECLARE @UpdatedJobCount INT
  -- Get BBN Jobs  
   INSERT INTO @TempJobs   
   SELECT top (@vintBBNJobCount) jb.JobNumber, jb.DictatorID,jb.ClinicID, jb.Vocabulary, jb.Stat, jb.ReceivedOn,jb.IsLockedForProcessing,  
-  CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId,2 as ProcessTypeId, jb.TagMetaData , jb.RhythmWorkFlowID     
+  CASE WHEN (d.SRETypeId is null) then c.SRETypeId else d.SRETypeId end SRETypeId,2 as ProcessTypeId      
   FROM  Jobs jb    
   INNER JOIN dbo.Dictators d on jb.DictatorID = d.DictatorID  
   INNER JOIN Clinics c on jb.ClinicID = c.ClinicID  
