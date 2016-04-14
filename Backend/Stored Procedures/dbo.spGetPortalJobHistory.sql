@@ -44,6 +44,19 @@ DECLARE @TempJobsHostory1 TABLE(
 
  INSERT INTO @TempJobsHostory1
  EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,1 -- In Process Status 
+
+ INSERT INTO @TempJobsHostory1  -- Draft Review 
+ SELECT TOP 1 JobNumber,DocumentID, 'Draft Review', HistoryDateTime, JobType, UserId, MRN, FirstName, MI, LastName, null, 6, 0  FROM Job_History JH
+		 WHERE JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 136 ORDER BY JobHistoryID DESC
+ 
+ INSERT INTO @TempJobsHostory1  -- Approved From Mobile By
+ SELECT TOP 1 JobNumber,DocumentID, 'Approved From Mobile By', HistoryDateTime, JobType, UserId, MRN, FirstName, MI, LastName, null, 7, 0  FROM Job_History JH
+		 WHERE JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 138 AND  JH.IsFromMobile = 1 ORDER BY JobHistoryID DESC
+
+ INSERT INTO @TempJobsHostory1  -- Send To Transcription By
+ SELECT TOP 1 JobNumber,DocumentID, 'Send To Transcription By', HistoryDateTime, JobType, UserId, MRN, FirstName, MI, LastName, null, 4, 0  FROM Job_History JH
+		 WHERE JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 140 AND JH.IsFromMobile = 1 ORDER BY JobHistoryID DESC
+
  INSERT INTO @TempJobsHostory1
  EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,2 -- Available for CR Status 
  INSERT INTO @TempJobsHostory1

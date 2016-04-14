@@ -208,7 +208,7 @@ BEGIN
 			----------End error Management------------
 			
 			--** Start of Draft Review jobs **-
-			ELSE IF(@statusgroupname IN ('DraftReview'))
+			ELSE IF(@statusgroupname  = 'DraftReview')
 					BEGIN
 					   SET @Sql=';WITH DashBoardDetails_CTE AS ( 
 				     					SELECT	j.JobNumber, J.DictatorId, J.JobType, J.Stat, 
@@ -219,6 +219,7 @@ BEGIN
 												JP.MRN,  
 												CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
 												AD.AwaitingDelivery,
+												'''' as ErrorMessage,
 												COUNT(*) OVER()  as TotalCount												
 										 FROM jobs J WITH(NOLOCK)   
 										 INNER JOIN jobstatusA JA WITH(NOLOCK) on J.jobnumber = JA.JobNumber  
@@ -296,6 +297,7 @@ BEGIN
 								  ''In Process: '' + Convert(varchar,InProcessWithDate,100) AS InProcessWithDate,
 								  (CASE WHEN '''+@statusgroupname+'''=''DeliveredToday'' THEN ''Delivered: ''
 								        WHEN '''+@statusgroupname+'''=''Errors'' THEN ''Error: ''
+								        WHEN '''+@statusgroupname+'''=''DraftReview'' THEN ''Draft Review: ''
 									   WHEN '''+@statusgroupname+'''=''CustomerReview'' THEN ''Customer Review: ''
 									   ELSE ''In Process: '' END) +Convert(varchar,A.JObStatus,100) AS JObStatus,A.Stat,
 								A.MRN, A.Patient,
@@ -313,7 +315,6 @@ BEGIN
 							FETCH NEXT '+CAST(@RowspPage AS VARCHAR)+' ROWS ONLY   
 						
 						  '		
-			
 				EXEC (@Sql)
 
 	END TRY

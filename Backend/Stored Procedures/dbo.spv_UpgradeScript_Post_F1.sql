@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -54,6 +55,12 @@ BEGIN
 			INSERT INTO [dbo].[JobStatusGroup] (Id, StatusGroup) VALUES (6,'Draft Review')
 			SET IDENTITY_INSERT [dbo].[JobStatusGroup] OFF
 		END
+	IF NOT EXISTS (SELECT 1 FROM JobStatusGroup WHERE StatusGroup = 'Job Approved From Mobile' and Id = 7)
+		BEGIN
+			SET IDENTITY_INSERT [dbo].[JobStatusGroup] ON
+			INSERT INTO [dbo].[JobStatusGroup] (Id, StatusGroup) VALUES (7,'Job Approved From Mobile')
+			SET IDENTITY_INSERT [dbo].[JobStatusGroup] OFF
+		END
 	--Updating Status table with new status for DraftReview and SendDirectToEHR	
 	IF NOT EXISTS (SELECT 1 FROM StatusCodes WHERE StatusID = 136)
 		INSERT INTO [dbo].[StatusCodes] ([StatusID],[StatusName],[FriendlyStatusName],[StatusClass],[StatusStage],[EditionStage],[CurrentEditorRule],[SpeechFolderTag],
@@ -63,6 +70,10 @@ BEGIN
 		INSERT INTO [dbo].[StatusCodes] ([StatusID],[StatusName],[FriendlyStatusName],[StatusClass],[StatusStage],[EditionStage],[CurrentEditorRule],[SpeechFolderTag],
 				[IsActiveJobStatus],[IsJobSearchStatus],[IsSpecialCaseStatus],[StatusGroupId])
 		 VALUES (355,'Job Sent Direct to EHR','Job Sent Direct to EHR','','','Delivered','','',0,1,0,4)
+	IF NOT EXISTS (SELECT 1 FROM StatusCodes WHERE StatusID = 138)
+		INSERT INTO [dbo].[StatusCodes] ([StatusID],[StatusName],[FriendlyStatusName],[StatusClass],[StatusStage],[EditionStage],[CurrentEditorRule],[SpeechFolderTag],
+				[IsActiveJobStatus],[IsJobSearchStatus],[IsSpecialCaseStatus],[StatusGroupId])
+		 VALUES (136,'Job Approved From Mobile','Job Approved From Mobile','Job Approved From Mobile','','DR','','',0,1,0,7)
 	--end #5461#
 
 END
