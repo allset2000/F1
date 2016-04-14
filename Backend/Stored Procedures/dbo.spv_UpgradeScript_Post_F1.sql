@@ -73,7 +73,7 @@ BEGIN
 	IF NOT EXISTS (SELECT 1 FROM StatusCodes WHERE StatusID = 138)
 		INSERT INTO [dbo].[StatusCodes] ([StatusID],[StatusName],[FriendlyStatusName],[StatusClass],[StatusStage],[EditionStage],[CurrentEditorRule],[SpeechFolderTag],
 				[IsActiveJobStatus],[IsJobSearchStatus],[IsSpecialCaseStatus],[StatusGroupId])
-		 VALUES (136,'Job Approved From Mobile','Job Approved From Mobile','Job Approved From Mobile','','DR','','',0,1,0,7)
+		 VALUES (138,'Job Approved From Mobile','Job Approved From Mobile','Job Approved From Mobile','','DR','','',0,1,0,7)
 	--end #5461#
 
 END
