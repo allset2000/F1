@@ -27,11 +27,11 @@ BEGIN
      FROM dbo.Schedules s WITH(NOLOCK)
 	 INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON S.ScheduleID = e.ScheduleID
 	 INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON E.EncounterID = j.EncounterID 
-	 INNER JOIN dbo.Dictations D WITH(NOLOCK) ON D.JobID=J.JobID
-	 INNER JOIN Queue_Users qu WITH(NOLOCK) ON  qu.QueueID = d.QueueID 
-	 INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID	
-	WHERE qu.DictatorID = @DictatorId AND 	          
-		  d.[Status] IN (100, 200) AND 		
+	 LEFT JOIN dbo.Dictations D WITH(NOLOCK) ON D.JobID=J.JobID
+	 LEFT JOIN Queue_Users qu WITH(NOLOCK) ON  qu.QueueID = d.QueueID 
+	 LEFT JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID	
+	WHERE ((j.Status in (100,500) AND qu.DictatorID = @DictatorId) OR (j.Status NOT IN(100,500) AND 
+							  (d.DictatorID=@DictatorID OR j.OwnerDictatorID=@DictatorID)))  AND		
 		  ISNULL(s.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate AND
 		  e.ScheduleID IS NOT NULL
 END

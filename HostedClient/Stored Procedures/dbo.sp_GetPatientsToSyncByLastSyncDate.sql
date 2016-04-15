@@ -17,9 +17,13 @@ CREATE PROCEDURE [dbo].[sp_GetPatientsToSyncByLastSyncDate] (
 BEGIN
 		SET NOCOUNT ON;
 
-		  DECLARE @GenericPatientID INT
+		      DECLARE @GenericPatientID INT
 
-		  SELECT @GenericPatientID=GenericPatientID FROM SystemSettings WITH(NOLOCK) WHERE ClinicID=350
+			  SELECT @GenericPatientID=GenericPatientID 
+			  FROM SystemSettings SS WITH(NOLOCK) 
+			  INNER JOIN Dictators D  WITH(NOLOCK)  on D.ClinicID=SS.ClinicID
+			  WHERE D.DictatorID = @DictatorId
+		 
    
 			 SELECT DISTINCT p.PatientID AS ID, 
 					CASE WHEN q.Deleted = 1 THEN 500 ELSE 100 END AS [State],
@@ -36,13 +40,13 @@ BEGIN
 			FROM dbo.Patients  AS p WITH(NOLOCK)
 				INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON p.PatientID = e.PatientID
 				INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON e.EncounterID = j.EncounterID
-				INNER JOIN dbo.Dictations AS d WITH(NOLOCK) ON d.JobID = j.JobID 
-				INNER JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON d.QueueID = qu.QueueID 
-				INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID 
-			WHERE qu.DictatorID = @DictatorId AND 
+				LEFT JOIN dbo.Dictations AS d WITH(NOLOCK) ON d.JobID = j.JobID 
+				LEFT JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON d.QueueID = qu.QueueID 
+				LEFT JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID 
+
+			WHERE ((j.Status in (100,500) AND qu.DictatorID = @DictatorId) OR (j.Status NOT IN(100,500) AND 
+							  (d.DictatorID=@DictatorID OR j.OwnerDictatorID=@DictatorID)))  AND
 				  e.PatientID <>@GenericPatientID AND
-				  d.[Status] IN (100, 200) AND 				
-				  ISNULL(p.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate-- AND
-				 -- 
+				  ISNULL(p.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
 END
 GO

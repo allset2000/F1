@@ -9,7 +9,9 @@ GO
 -- Create date: 18/11/2014,3/27/2016
 -- Description: SP called from DictateAPI to pull Dictations to sync on mobile
 --Generic patient details issue fixed
---exec sp_GetEncountersToSyncByLastSyncDate 3489 ,'2013-11-20 10:15:02.970','2016-2-14','next'
+--exec sp_GetEncountersToSyncByLastSyncDate 3514 ,'2013-11-20 10:15:02.970','2016-02-20','next'
+--exec sp_GetEncountersToSyncByLastSyncDate 2916 ,'2013-11-20 10:15:02.970','2016-02-23','next'
+
 
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetEncountersToSyncByLastSyncDate](
@@ -40,14 +42,16 @@ BEGIN
 	        
 				SELECT @AppointmentDate=(CASE WHEN @Direction='prev' THEN MAX(e.AppointmentDate) ELSE MIN (e.AppointmentDate) END) 
 					FROM dbo.Encounters e WITH(NOLOCK)
-						INNER	JOIN dbo.Jobs j WITH(NOLOCK) ON j.EncounterID=e.EncounterID
-						INNER JOIN dbo.Dictations d WITH(NOLOCK) ON d.JobID=j.JobID	
-						INNER JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON qu.QueueID = d.QueueID 
-						INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID							
-				WHERE qu.DictatorID = @DictatorId AND 
-		     			@AppointmentDate<=(CASE WHEN @Direction='next' THEN CAST(e.AppointmentDate AS DATE) else @AppointmentDate END) AND
-						@AppointmentDate>=(CASE WHEN @Direction='prev' THEN CAST(e.AppointmentDate AS DATE) else @AppointmentDate END) AND
-						d.[Status] IN (100, 200)
+						INNER JOIN dbo.Jobs j WITH(NOLOCK) ON j.EncounterID=e.EncounterID
+						LEFT JOIN dbo.Dictations d WITH(NOLOCK) ON d.JobID=j.JobID	
+						LEFT JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON qu.QueueID = d.QueueID 
+						LEFT JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID							
+				WHERE-- qu.DictatorID = @DictatorId AND d.[Status] IN (100, 200) 
+					((j.Status in (100,500) AND qu.DictatorID = @DictatorId) OR (j.Status NOT IN(100,500) AND 
+							  (d.DictatorID=@DictatorID OR j.OwnerDictatorID=@DictatorID)))  
+		     		AND @AppointmentDate<=(CASE WHEN @Direction='next' THEN CAST(e.AppointmentDate AS DATE) else @AppointmentDate END) 
+					AND	@AppointmentDate>=(CASE WHEN @Direction='prev' THEN CAST(e.AppointmentDate AS DATE) else @AppointmentDate END)
+						
 
 			
 
@@ -72,17 +76,18 @@ BEGIN
 				  FOR XML PATH('')), 1, 2, '')  JobDetails			
 		 FROM dbo.Encounters e WITH(NOLOCK)
 				INNER JOIN dbo.Jobs j WITH(NOLOCK) ON j.EncounterID=e.EncounterID
-				INNER JOIN dbo.Dictations d WITH(NOLOCK) ON d.JobID=j.JobID	
-				INNER JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON qu.QueueID = d.QueueID 
-				INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID
+				LEFT JOIN dbo.Dictations d WITH(NOLOCK) ON d.JobID=j.JobID	
+				LEFT JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON qu.QueueID = d.QueueID 
+				LEFT JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID
 				LEFT JOIN dbo.Patients p WITH(NOLOCK) ON p.PatientID=e.PatientID
 				LEFT JOIN dbo.Schedules s WITH(NOLOCK) ON s.ScheduleID=e.ScheduleID
 				LEFT JOIN [SystemSettings] SS on SS.ClinicID=P.ClinicID and E.PatientID=SS.GenericPatientID
-		WHERE qu.DictatorID = @DictatorId AND 
-		     CAST(e.AppointmentDate AS DATE)=(CASE WHEN @AppointmentDate IS NOT NULL 
-							THEN  CAST(@AppointmentDate AS DATE)  ELSE CAST(e.AppointmentDate AS DATE) END) AND 	       
-			  d.[Status] IN (100, 200) AND 			  
-			  (ISNULL(e.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
+		WHERE  --qu.DictatorID = @DictatorId AND d.[Status] IN (100, 200)  
+			((j.Status in (100,500) AND qu.DictatorID = @DictatorId) OR (j.Status NOT IN(100,500) AND 
+							  (d.DictatorID=@DictatorID OR j.OwnerDictatorID=@DictatorID)))
+		    AND CAST(e.AppointmentDate AS DATE)=(CASE WHEN @AppointmentDate IS NOT NULL 
+							THEN  CAST(@AppointmentDate AS DATE)  ELSE CAST(e.AppointmentDate AS DATE) END)    
+			AND (ISNULL(e.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
 			   OR (e.ScheduleID  IS NOT NULL AND ISNULL(s.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate)
 			   OR (e.PatientID IS NOT NULL AND ISNULL(p.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate)
 			   OR (ISNULL(j.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate)
