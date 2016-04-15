@@ -44,14 +44,14 @@ BEGIN TRY
 			UPDATE dbo.Jobs 
 				SET [Status] = CASE WHEN @Status <> @OldStatus THEN @Status ELSE [Status] END,
 					Stat = CASE WHEN @Stat <> @OldStat THEN @Stat ELSE [Stat] END,				
-					JobTypeID = CASE WHEN @JobTypeID  <> @OldJobTypeID THEN JobTypeID ELSE JobTypeID END,
+					JobTypeID = CASE WHEN @JobTypeID  <> @OldJobTypeID THEN @JobTypeID ELSE JobTypeID END,
 					OwnerUserID=@OwnerUserID,
 					HasDictation=@HasDictation,
 					HasImages=@HasImages,
 					HasChatHistory=@HasChatHistory,
 					HasTagMetaData=@HasTagMetaData,
 					TagMetaData=@TagMetaData,
-					OwnerDictatorID=@OwnerDictatorID,			
+					OwnerDictatorID=@OwnerDictatorID,						
 					ChatHistory_ThreadID=CASE WHEN ISNULL(@MessageThreadID,'')='' THEN NULL ELSE CAST(@MessageThreadID AS INT) END,
 					UpdatedDateInUTC=GETUTCDATE() 
 			WHERE JobId = @JobId

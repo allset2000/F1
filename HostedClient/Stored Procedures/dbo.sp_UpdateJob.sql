@@ -46,7 +46,7 @@ BEGIN TRY
 					Stat = CASE WHEN @Stat <> @OldStat THEN @Stat ELSE [Stat] END,
 					[Priority] = CASE WHEN @Priority <> @OldPriority THEN @Priority ELSE [Priority] END,
 					AdditionalData = CASE WHEN (@OldAdditionalData IS NULL OR (@AdditonalData <> @OldAdditionalData)) THEN @AdditonalData ELSE AdditionalData END,
-					JobTypeID = CASE WHEN @JobTypeID  <> @OldJobTypeID THEN JobTypeID ELSE JobTypeID END,
+					JobTypeID = CASE WHEN @JobTypeID  <> @OldJobTypeID THEN @JobTypeID ELSE JobTypeID END,
 					UpdatedDateInUTC=GETUTCDATE() 
 			WHERE JobId = @JobId
 
