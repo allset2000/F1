@@ -40,6 +40,12 @@ BEGIN TRANSACTION
 			BEGIN 
 				UPDATE dbo.Jobs SET ProcessFailureCount=0,RecServer=@vvcrRecServer WHERE JobNumber=@vvcrJobNumber
 			END	
+
+		IF @vsintStatus = 136 OR @vsintStatus = 355
+			BEGIN
+				INSERT INTO job_history(jobnumber,CurrentStatus,HistoryDateTime,IsHistory)
+				VALUES(@vvcrJobNumber,@vsintStatus,GETDATE(),1)
+			END
 		COMMIT
 	END TRY
 BEGIN CATCH
