@@ -8,7 +8,8 @@ GO
 -- Author: Raghu A
 -- Create date: 18/11/2014
 -- Description: SP called from DictateAPI to pull patients to sync
---exec sp_GetPatientsToSyncByLastSyncDate 3489,'1/1/1753 12:00:00 AM'
+-- Modified:Raghu A--18/04/2016--Update proc for get completed jobs patients
+--exec sp_GetPatientsToSyncByLastSyncDate 1045,'1/1/1753 12:00:00 AM'
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetPatientsToSyncByLastSyncDate] (
 	 @DictatorId INT,
@@ -26,7 +27,7 @@ BEGIN
 		 
    
 			 SELECT DISTINCT p.PatientID AS ID, 
-					CASE WHEN q.Deleted = 1 THEN 500 ELSE 100 END AS [State],
+					CASE WHEN a.Deleted = 1 THEN 500 ELSE 100 END AS [State],
 					p.MRN, 
 					p.DOB, 
 					p.FirstName, 
@@ -40,13 +41,25 @@ BEGIN
 			FROM dbo.Patients  AS p WITH(NOLOCK)
 				INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON p.PatientID = e.PatientID
 				INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON e.EncounterID = j.EncounterID
-				LEFT JOIN dbo.Dictations AS d WITH(NOLOCK) ON d.JobID = j.JobID 
-				LEFT JOIN dbo.Queue_Users AS qu WITH(NOLOCK) ON d.QueueID = qu.QueueID 
-				LEFT JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID 
+				INNER JOIN ( 
+								--Get Completed jobs
+									SELECT j.JobID,J.EncounterID,0 AS Deleted,d.DictationID,NULL AS QueueID FROM 
+									dbo.Jobs j WITH(NOLOCK)
+									LEFT JOIN Dictations d WITH(NOLOCK) on d.JobID=j.JobID
+									WHERE j.Status NOT IN(100,500)  
+									AND j.OwnerDictatorID=@DictatorId 
+									   
+								UNION
+								--Get Non Completed jobs
+									 SELECT j.JobID,J.EncounterID,q.Deleted,d.DictationID,q.QueueID  FROM
+									  dbo.Jobs J WITH(NOLOCK)
+									 INNER JOIN Dictations D WITH(NOLOCK) ON J.JobID=D.JobID
+									 INNER JOIN Queue_Users QU WITH(NOLOCK) ON QU.QueueID=D.QueueID
+									 INNER JOIN Queues q WITH(NOLOCK) ON Q.QueueID=QU.QueueID
+									 WHERE  j.Status In(100,500) and QU.DictatorID=@DictatorId
+							)A on A.JobID=j.JobID and a.EncounterID=e.EncounterID
 
-			WHERE ((j.Status in (100,500) AND qu.DictatorID = @DictatorId) OR (j.Status NOT IN(100,500) AND 
-							  (d.DictatorID=@DictatorID OR j.OwnerDictatorID=@DictatorID)))  AND
-				  e.PatientID <>@GenericPatientID AND
+			WHERE  e.PatientID <>@GenericPatientID AND
 				  ISNULL(p.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
 END
 GO
