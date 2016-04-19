@@ -25,9 +25,11 @@ BEGIN
 
 	UPDATE [dbo].[EH_Jobs] SET UpdatedDateInUTC = GETUTCDATE() , BackendStatus = @vsintStatus 
 	FROM EH_Jobs JH
-	INNER JOIN JOBS_CLIENT JC 
+	INNER JOIN jobs_client JC 
 	ON JC.filename=JH.jobnumber
-	WHERE JC.jobnumber = @vvcrJobNumber
+	INNER JOIN jobs J 
+	ON J.jobnumber=JC.jobnumber
+	WHERE J.clinicid=JH.clinicid AND JC.jobnumber = @vvcrJobNumber
 
 END 
 
