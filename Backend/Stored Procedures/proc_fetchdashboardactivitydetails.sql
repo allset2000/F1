@@ -13,7 +13,7 @@ GO
 -- Tickey# 7110, Sharif Sharif added ISNULL(J2DE.Message, J2DE.ErrorMessage), date: March 24, 2016
 -- Updated: Narender - #5461 added script for draft review jobs 
 -- =============================================
---exec [proc_fetchdashboardactivitydetails] 'tscskumar', 'DraftReview',1,10,'JobStatus','Ascending'
+--exec [proc_fetchdashboardactivitydetails] 'elcmkumar', 'DraftReview',1,10,'JobStatus','Ascending'
 CREATE PROCEDURE [dbo].[proc_fetchdashboardactivitydetails]
 	
 	 @dictatorid  varchar(150),
@@ -218,7 +218,7 @@ BEGIN
 												IPD.StatusDate AS JobStatus ,   
 												JP.MRN,  
 												CONCAT(JP.Firstname,'' '',JP.MI,'' '',JP.LastName) Patient,
-												AD.AwaitingDelivery,
+												'''' as AwaitingDelivery,
 												'''' as ErrorMessage,
 												COUNT(*) OVER()  as TotalCount												
 										 FROM jobs J WITH(NOLOCK)   
@@ -233,13 +233,7 @@ BEGIN
 													   GROUP BY JT.JobNumber
 													) AS IPD 
 													ON  IPD.JobNumber= J.Jobnumber   
-										 LEFT JOIN (
-														SELECT  JT.JobNumber ,MIN(JT.StatusDate) AS AwaitingDelivery
-															 FROM Jobtracking JT WITH(NOLOCK)
-															 INNER JOIN statuscodes SC ON JT.status=SC.statusid
-															 WHERE SC.StatusGroupId=6
-															 GROUP BY JT.JobNumber
-													) AS AD ON  AD.JobNumber= J.Jobnumber
+										
 										WHERE  SCA.statusgroupid=6 
 										AND DATEDIFF(d, J.receivedon, getdate())<= 90'
 								SET @Sql=@Sql+' AND J.dictatorid ='''+@dictatorid+''' )'
@@ -314,7 +308,7 @@ BEGIN
 							OFFSET (('+CAST(@PageNumber AS VARCHAR)+'  - 1) * '+CAST(@RowspPage AS VARCHAR) +' ) ROWS
 							FETCH NEXT '+CAST(@RowspPage AS VARCHAR)+' ROWS ONLY   
 						
-						  '		
+						  '
 				EXEC (@Sql)
 
 	END TRY
