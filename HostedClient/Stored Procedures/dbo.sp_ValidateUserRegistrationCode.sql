@@ -22,15 +22,11 @@ CREATE PROCEDURE [dbo].[sp_ValidateUserRegistrationCode] (
 BEGIN
 
     SET NOCOUNT ON;
-
-	DECLARE @ShortCode VARCHAR(10)
-
-	SET @ShortCode = SUBSTRING(@RegCode, 0, CHARINDEX('-',@RegCode,0))
-
+	
 	SELECT UI.PhoneNumber, UI.EmailAddress, UI.ClinicId, UI.FirstName, UI.LastName, C.MobileCode , UI.MI
 	FROM DBO.UserInvitations UI
 		LEFT OUTER JOIN DBO.Clinics C ON C.ClinicId = UI.ClinicId
-	WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
+	WHERE  SecurityToken = @RegCode
 		AND (UI.RegisteredUserId IS NULL OR PendingRegStatus=1)
 		AND UI.Deleted = 0
 
