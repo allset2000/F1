@@ -46,8 +46,14 @@ DECLARE @TempJobsHostory1 TABLE(
  EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,1 -- In Process Status 
 
  INSERT INTO @TempJobsHostory1  -- Draft Review 
- SELECT TOP 1 JobNumber,DocumentID, 'Draft Review', HistoryDateTime, JobType, UserId, MRN, FirstName, MI, LastName, null, 6, 0  FROM Job_History JH
-		 WHERE JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 136 ORDER BY JobHistoryID DESC
+ SELECT TOP 1 JH.JobNumber, JH.DocumentID, 'Draft Review', HistoryDateTime,
+		 CASE WHEN JH.JobType IS NULL or JH.JobType ='' THEN J.JobType ELSE JH.JobType END JobType, UserId, JH.MRN, 
+		 CASE WHEN JH.FirstName IS NULL or JH.FirstName ='' THEN JP.FirstName ELSE JH.FirstName END FirstName, 
+		 CASE WHEN JH.MI IS NULL or JH.MI ='' THEN JP.MI ELSE JH.MI END MI, 
+		 CASE WHEN JH.LastName IS NULL or JH.LastName ='' THEN JP.LastName ELSE JH.LastName END LastName, null, 6, 0  FROM Job_History JH
+			INNER JOIN dbo.Jobs J ON J.JobNumber = JH.JobNumber
+			INNER JOIN dbo.Jobs_Patients JP ON JP.JobNumber = J.JobNumber
+		WHERE JH.JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 136 ORDER BY JobHistoryID DESC
  
  INSERT INTO @TempJobsHostory1  -- Approved From Mobile By
  SELECT TOP 1 JobNumber,DocumentID, 'Approved From Mobile By', HistoryDateTime, JobType, UserId, MRN, FirstName, MI, LastName, null, 7, 0  FROM Job_History JH
