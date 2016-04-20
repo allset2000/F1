@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -14,9 +15,11 @@ BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
-	DECLARE @CLINICID INT
-	SELECT @CLINICID = CLINICID FROM JOBS WHERE JobNumber =  @Jobnumber
-	SELECT DISTINCT 1 FROM JobDeliveryRules where ClinicID = @CLINICID and Method in (100,300) and AvoidRedelivery = 0
 	
+	SELECT DISTINCT 1 FROM Jobs J
+	INNER JOIN dbo.JobDeliveryHistory JDH ON J.JobNumber = JDH.JobNumber
+	INNER JOIN	dbo.JobDeliveryRules JDR ON J.ClinicID = JDR.ClinicID
+	WHERE JDR.Method in (100,300) and AvoidRedelivery = 0 AND J.JobNumber = @Jobnumber
 END
+
 GO
