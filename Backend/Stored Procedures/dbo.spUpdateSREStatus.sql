@@ -31,9 +31,11 @@ BEGIN TRANSACTION
 		INSERT INTO JobTracking  
 		VALUES (@vvcrJobNumber,@vsintStatus,GETDATE(),@vvcrPath )  
 
+		UPDATE jobs SET jobstatus=@vsintStatus WHERE jobnumber=@vvcrJobNumber
+
         IF @vsintStatus <> 130  
 			BEGIN 
-				UPDATE jobs SET IsLockedForProcessing=0 where jobNumber=@vvcrJobNumber  
+				UPDATE jobs SET IsLockedForProcessing=0 WHERE jobNumber=@vvcrJobNumber  
 			END	
 
 		IF @vsintStatus =140
@@ -41,7 +43,7 @@ BEGIN TRANSACTION
 				UPDATE dbo.Jobs SET ProcessFailureCount=0,RecServer=@vvcrRecServer WHERE JobNumber=@vvcrJobNumber
 			END	
 
-		IF @vsintStatus = 136 OR @vsintStatus = 355
+		IF @vsintStatus = 136 OR @vsintStatus = 275
 			BEGIN
 				INSERT INTO job_history(jobnumber,CurrentStatus,HistoryDateTime,IsHistory)
 				VALUES(@vvcrJobNumber,@vsintStatus,GETDATE(),1)
