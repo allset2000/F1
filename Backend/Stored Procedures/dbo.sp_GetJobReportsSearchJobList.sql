@@ -9,6 +9,7 @@ GO
 -- Create date: 05/26/2015
 -- Description:	This stored procedure will return the jobs list based on search filter criteria
 -- Updated Date: 24-Feb-2016 -- Added block for StatusGroup-10 Error
+-- Updated on 19thApril-16 : added a clinic comparision for jobs to get from hosted #7625
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobReportsSearchJobList] 
 @JobReportSearchPreferenceId int,
@@ -97,7 +98,7 @@ BEGIN
 				SELECT J.JobNumber AS JobNumber,MIN(EHJDE.FIRSTATTEMPT) AS ErrorDate
 				   FROM jobs J 
 				INNER JOIN jobs_client JC ON J.jobnumber=JC.jobnumber
-				INNER JOIN EntradaHostedClient.DBO.jobs EHJ ON EHJ.jobnumber=JC.[FILENAME]
+				INNER JOIN EntradaHostedClient.DBO.jobs EHJ ON EHJ.jobnumber=JC.[FILENAME] AND EHJ.ClinicID= J.ClinicID
 				INNER JOIN EntradaHostedClient.DBO.jobsdeliveryerrors EHJDE ON EHJDE.jobid=EHJ.jobid 
 				INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=EHJDE.ErrorCode
 				INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType

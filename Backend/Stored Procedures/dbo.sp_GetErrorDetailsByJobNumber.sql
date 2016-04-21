@@ -7,6 +7,7 @@ GO
 /******* This is used to get Latest Error Information(Jobnumber,ErrorDate,ResolutionGuide,FileName,EHREncounterId,AppointmentId) by jobnumber ******/
 --exec sp_GetErrorDetailsByJobNumber '2016012000000004'
 -- Tickey# 7110, Sharif Sharif added ISNULL(J2DE.Message, J2DE.ErrorMessage), date: March 24, 2016
+-- -- Updated on 19thApril-16 : added a clinic comparision for jobs to get from hosted #7625
 
 CREATE PROCEDURE [dbo].[sp_GetErrorDetailsByJobNumber]
 (
@@ -54,7 +55,7 @@ DECLARE @VendorId INT
 							SELECT J.JOBNUMBER AS JOBNUMBER,EHJDE.ErrorCode AS ErrorCode,EHJDE.ErrorMessage AS ErrorMessage,MAX(EHJDE.ChangedOn) AS ErrorDate
 							FROM jobs J 
 								INNER JOIN jobs_client JC ON J.jobnumber=JC.jobnumber
-								INNER JOIN eh_jobs EHJ ON EHJ.jobnumber=JC.[FILENAME] 
+								INNER JOIN eh_jobs EHJ ON EHJ.jobnumber=JC.[FILENAME] AND EHJ.ClinicID= J.ClinicID
 								INNER JOIN eh_jobsdeliveryerrors EHJDE ON EHJDE.jobid=EHJ.jobid 
 								INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=EHJDE.ErrorCode
 								INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType													
@@ -71,4 +72,3 @@ DECLARE @VendorId INT
 END
 
 GO
-
