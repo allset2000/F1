@@ -66,10 +66,10 @@ BEGIN
 		INSERT INTO [dbo].[StatusCodes] ([StatusID],[StatusName],[FriendlyStatusName],[StatusClass],[StatusStage],[EditionStage],[CurrentEditorRule],[SpeechFolderTag],
 				[IsActiveJobStatus],[IsJobSearchStatus],[IsSpecialCaseStatus],[StatusGroupId])
 		 VALUES (136,'Draft Review','Draft Review','Draft Review','','DR','','JobsInProcess',0,1,0,6)
-	IF NOT EXISTS (SELECT 1 FROM StatusCodes WHERE StatusID = 355)
+	IF NOT EXISTS (SELECT 1 FROM StatusCodes WHERE StatusID = 275)
 		INSERT INTO [dbo].[StatusCodes] ([StatusID],[StatusName],[FriendlyStatusName],[StatusClass],[StatusStage],[EditionStage],[CurrentEditorRule],[SpeechFolderTag],
 				[IsActiveJobStatus],[IsJobSearchStatus],[IsSpecialCaseStatus],[StatusGroupId])
-		 VALUES (355,'Job Sent Direct to EHR','Job Sent Direct to EHR','','','Delivered','','',0,1,0,4)
+		 VALUES (275,'Job Sent Direct to EHR','Job Sent Direct to EHR','','','Completed','','',0,1,0,4)
 	IF NOT EXISTS (SELECT 1 FROM StatusCodes WHERE StatusID = 138)
 		INSERT INTO [dbo].[StatusCodes] ([StatusID],[StatusName],[FriendlyStatusName],[StatusClass],[StatusStage],[EditionStage],[CurrentEditorRule],[SpeechFolderTag],
 				[IsActiveJobStatus],[IsJobSearchStatus],[IsSpecialCaseStatus],[StatusGroupId])
