@@ -19,9 +19,15 @@ CREATE TABLE [dbo].[Jobs]
 [HasChatHistory] [bit] NULL CONSTRAINT [DF_Jobs_HasChatHistory] DEFAULT ((0)),
 [OwnerUserID] [int] NULL,
 [TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[ChatHistory_ThreadID] [int] NULL
+[ChatHistory_ThreadID] [int] NULL,
+[RhythmWorkFlowID] [int] NULL,
+[BackendStatus] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_Jobs_RuleID_JobNumber] ON [dbo].[Jobs] ([RuleID], [JobNumber]) INCLUDE ([ClinicID], [EncounterID], [JobID], [Status]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) INCLUDE ([OwnerDictatorID], [Stat], [UpdatedDateInUTC], [BackendStatus], [JobID], [JobNumber], [EncounterID], [JobTypeID]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_Jobs_OwnerDictatorID] ON [dbo].[Jobs] ([OwnerDictatorID], [Status]) INCLUDE ([JobID], [EncounterID]) ON [PRIMARY]
+
+
 
 CREATE NONCLUSTERED INDEX [IX_Jobs_ProcessFailureCount] ON [dbo].[Jobs] ([ProcessFailureCount]) INCLUDE ([JobID], [JobNumber], [Status]) ON [PRIMARY]
 
@@ -40,8 +46,7 @@ CREATE UNIQUE NONCLUSTERED INDEX [IX_Jobs_JobNumber] ON [dbo].[Jobs] ([JobNumber
 GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_JobTypeID] ON [dbo].[Jobs] ([JobTypeID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) ON [PRIMARY]
-GO
+
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID])
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_Appointments] FOREIGN KEY ([EncounterID]) REFERENCES [dbo].[Encounters] ([EncounterID]) ON DELETE CASCADE

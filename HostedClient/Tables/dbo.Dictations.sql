@@ -12,12 +12,13 @@ CREATE TABLE [dbo].[Dictations]
 [ClientVersion] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
 [UpdatedDateInUTC] [datetime] NULL CONSTRAINT [DF_Dictations_UpdatedDateInUTC] DEFAULT (getutcdate())
 ) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Dictations_DictatorID] ON [dbo].[Dictations] ([DictatorID]) INCLUDE ([JobID]) ON [PRIMARY]
+
 GO
 
 ALTER TABLE [dbo].[Dictations] ADD CONSTRAINT [PK_Dictations] PRIMARY KEY CLUSTERED  ([DictationID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_Dictations_DictatorID] ON [dbo].[Dictations] ([DictatorID]) ON [PRIMARY]
-GO
+
 CREATE NONCLUSTERED INDEX [IX_Dictations_JobID] ON [dbo].[Dictations] ([JobID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_QueueID_INC_DictationID_JobID] ON [dbo].[Dictations] ([QueueID]) INCLUDE ([DictationID], [JobID]) ON [PRIMARY]
