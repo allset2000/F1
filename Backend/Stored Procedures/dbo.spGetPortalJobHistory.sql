@@ -18,8 +18,9 @@ GO
 *      18-Feb-2016 Baswaraj #393 added insert block to get override fields added values  
 *      25-FEB-2016 Narender: #731# Added STAT Field to insert into Job History 
 *      3-March-2016  : Added return UserName with Override values Added BY
+*      14-April-2016 Narender : #5461# Updated for Rhythm related status
 *******************************/      
-      
+-- EXEC spGetPortalJobHistory 2016012100000048  
 CREATE PROCEDURE [dbo].[spGetPortalJobHistory]  
 (
  @vvcrJobnumber VARCHAR(20)        
@@ -86,6 +87,11 @@ SELECT  rov.JobNumber,'Override Value Added By '+u.Name ,CASE WHEN rov.CreatedDa
  INSERT INTO @TempJobsHostory1  
  SELECT TOP 1 JobNumber,DocumentID, 'Job Marked as STAT',HistoryDateTime, null, UserId, null, null, null, null, null, SC.StatusGroupId, 0  FROM Job_History JH
 		INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JobNumber = @vvcrJobnumber AND  STAT = 1 ORDER BY JobHistoryID DESC
+ 
+ INSERT INTO @TempJobsHostory1  
+		SELECT JobNumber, NULL, 'Document Resent',HistoryDateTime, JH.JobType, JH.UserId, JH.MRN, JH.FirstName, JH.MI, JH.LastName, null, SC.StatusGroupId, 0  FROM Job_History JH
+			INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JobNumber = @vvcrJobnumber AND  Resent = 1 ORDER BY JobHistoryID DESC
+ 
  SELECT * FROM @TempJobsHostory1 order by IsError,SgId,StatusDate  asc 
 
 END
