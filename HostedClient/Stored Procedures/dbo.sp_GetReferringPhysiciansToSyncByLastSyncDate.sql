@@ -35,21 +35,22 @@ BEGIN
 					INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON j.EncounterID = e.EncounterID
 					INNER JOIN
 							(
-							  --Get completed jobs lists by owner dictator id
-					             SELECT j.JobID,J.EncounterID,0 AS Deleted,d.DictationID,NULL AS QueueID FROM 
+							  -- get completed jobs list match with owner dictatorID
+									SELECT j.JobID,J.EncounterID,0 AS Deleted
+									FROM 
 										dbo.Jobs j WITH(NOLOCK)
-									 LEFT JOIN Dictations d WITH(NOLOCK) on d.JobID=j.JobID
 									 WHERE j.Status NOT IN(100,500)  
 									   AND j.OwnerDictatorID=@DictatorId 
-									   
 								UNION
-								  --Get new jobs lists by dictator id
-									 SELECT j.JobID,J.EncounterID,q.Deleted,d.DictationID,q.QueueID  FROM
-									  dbo.Jobs J WITH(NOLOCK)
+								--get all jobs list match with dictation dictatorID
+									 SELECT j.JobID,J.EncounterID,
+										 CASE WHEN j.Status NOT IN(100,500) THEN 0 ELSE q.Deleted END AS Deleted
+									 FROM
+									  DBO.Jobs J WITH(NOLOCK) 
 									 INNER JOIN Dictations D WITH(NOLOCK) ON J.JobID=D.JobID
 									 INNER JOIN Queue_Users QU WITH(NOLOCK) ON QU.QueueID=D.QueueID
 									 INNER JOIN Queues q WITH(NOLOCK) ON Q.QueueID=QU.QueueID
-									 WHERE  j.Status In(100,500) and QU.DictatorID=@DictatorId
+									 WHERE  QU.DictatorID=@DictatorId
 							) temp on temp.EncounterID=e.EncounterID and j.JobID=temp.JobID				
 				WHERE ISNULL(rp.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
 			UNION ALL
@@ -65,19 +66,22 @@ BEGIN
 						INNER JOIN dbo.ReferringPhysicians rp WITH(NOLOCK) ON rp.ReferringID=p.PrimaryCareProviderID 
 						INNER JOIN 
 						         (
-							       SELECT j.JobID,J.EncounterID,0 AS Deleted,d.DictationID,NULL AS QueueID FROM 
+							       -- get completed jobs list match with owner dictatorID
+									SELECT j.JobID,J.EncounterID,0 AS Deleted
+									FROM 
 										dbo.Jobs j WITH(NOLOCK)
-									 LEFT JOIN Dictations d WITH(NOLOCK) on d.JobID=j.JobID
 									 WHERE j.Status NOT IN(100,500)  
-									   AND (j.OwnerDictatorID=@DictatorId) 
-									   
+									   AND j.OwnerDictatorID=@DictatorId 
 								UNION
-									 SELECT j.JobID,J.EncounterID,q.Deleted,d.DictationID,q.QueueID  FROM
-									  dbo.Jobs J WITH(NOLOCK)
+								--get all jobs list match with dictation dictatorID
+									 SELECT j.JobID,J.EncounterID,
+										 CASE WHEN j.Status NOT IN(100,500) THEN 0 ELSE q.Deleted END AS Deleted
+									 FROM
+									  DBO.Jobs J WITH(NOLOCK) 
 									 INNER JOIN Dictations D WITH(NOLOCK) ON J.JobID=D.JobID
 									 INNER JOIN Queue_Users QU WITH(NOLOCK) ON QU.QueueID=D.QueueID
 									 INNER JOIN Queues q WITH(NOLOCK) ON Q.QueueID=QU.QueueID
-									 WHERE  j.Status In(100,500) and QU.DictatorID=@DictatorId
+									 WHERE  QU.DictatorID=@DictatorId
 								) temp on temp.EncounterID=e.EncounterID and j.JobID=temp.JobID							
 					WHERE p.PrimaryCareProviderID IS NOT NULL AND		
 					      ISNULL(rp.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate

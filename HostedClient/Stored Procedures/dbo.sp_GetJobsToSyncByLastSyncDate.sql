@@ -17,7 +17,8 @@ GO
 CREATE PROCEDURE [dbo].[sp_GetJobsToSyncByLastSyncDate](
 	 @DictatorID INT,
 	 @EncounterId INT,
-	 @LastSyncDate DATETIME
+	 @LastSyncDate DATETIME,
+	 @AppointmentDate DATETIME=NULL
 ) AS 
 BEGIN
     
@@ -41,29 +42,33 @@ BEGIN
 					 WHEN J.[Status]=450 THEN 5
 					 WHEN J.[Status]=400 THEN ISNULL(SC.StatusGroupId,1)
 					 ELSE  6
-					 END  AS StatusGroupID
+					 END  AS StatusGroupID,
+					 j.OwnerDictatorID 
 			FROM dbo.Encounters AS e WITH(NOLOCK)
 				INNER JOIN Jobs j WITH(NOLOCK) on j.EncounterID=e.EncounterID 
 				INNER JOIN 
 						( 
-						     -- get completed jobs list
-									SELECT j.JobID,J.EncounterID,0 AS Deleted,d.DictationID,NULL AS QueueID 
+						     -- get completed jobs list match with owner dictatorID
+									SELECT j.JobID,J.EncounterID,0 AS Deleted,d.DictationID,d.QueueID AS QueueID
 									FROM 
 										dbo.Jobs j WITH(NOLOCK)
 									 LEFT JOIN Dictations d  WITH(NOLOCK) on d.JobID=j.JobID
 									 WHERE j.Status NOT IN(100,500)  
 									   AND j.OwnerDictatorID=@DictatorId 
-									    AND  ISNULL(j.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
+									   
 								UNION
-								--get new jobs list
-									 SELECT j.JobID,J.EncounterID,q.Deleted,d.DictationID,q.QueueID  
+								--get all jobs list match with dictation dictatorID
+									 SELECT j.JobID,J.EncounterID,
+										 CASE WHEN j.Status NOT IN(100,500) THEN 0 ELSE q.Deleted END AS Deleted,
+										 d.DictationID,
+										 d.QueueID AS QueueID										 
 									 FROM
 									  DBO.Jobs J WITH(NOLOCK) 
 									 INNER JOIN Dictations D WITH(NOLOCK) ON J.JobID=D.JobID
 									 INNER JOIN Queue_Users QU WITH(NOLOCK) ON QU.QueueID=D.QueueID
 									 INNER JOIN Queues q WITH(NOLOCK) ON Q.QueueID=QU.QueueID
-									 WHERE  j.Status In(100,500) and QU.DictatorID=@DictatorId
-									 AND  ISNULL(j.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
+									 WHERE  QU.DictatorID=@DictatorId
+								
 							)temp on temp.EncounterID=e.EncounterID and j.JobID=temp.JobID
 				LEFT JOIN
 				        (SELECT JT.JobID,max(JT.ChangeDate) as UploadedDate 
@@ -76,8 +81,9 @@ BEGIN
 				LEFT JOIN [Entrada].dbo.StatusCodes SC WITH(NOLOCK) ON SC.StatusID=j.BackendStatus	
 			WHERE
 				  @EncounterId=(CASE WHEN @EncounterId=0 THEN @EncounterId ELSE e.EncounterID END) AND 
+				  CAST(e.AppointmentDate AS DATE)=(CASE WHEN @AppointmentDate IS NOT NULL THEN  CAST(@AppointmentDate AS DATE)  ELSE CAST(e.AppointmentDate AS DATE) END) AND 
 				  temp.Deleted=0 AND
-				   ISNULL(j.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
+				  ISNULL(j.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate
 
 		 		
 
