@@ -20,7 +20,7 @@ GO
 *      3-March-2016  : Added return UserName with Override values Added BY
 *      14-April-2016 Narender : #5461# Updated for Rhythm related status
 *******************************/      
--- EXEC spGetPortalJobHistory 2016012100000048  
+-- EXEC spGetPortalJobHistory 2016041900000012  
 CREATE PROCEDURE [dbo].[spGetPortalJobHistory]  
 (
  @vvcrJobnumber VARCHAR(20)        
@@ -57,12 +57,24 @@ DECLARE @TempJobsHostory1 TABLE(
 		WHERE JH.JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 136 ORDER BY JobHistoryID DESC
  
  INSERT INTO @TempJobsHostory1  -- Approved From Mobile By
- SELECT TOP 1 JobNumber,DocumentID, 'Approved From Mobile By', HistoryDateTime, JobType, UserId, MRN, FirstName, MI, LastName, null, 11, 0  FROM Job_History JH
-		 WHERE JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 138 AND  JH.IsFromMobile = 1 ORDER BY JobHistoryID DESC
+ SELECT TOP 1 JH.JobNumber,JH.DocumentID, 'Approved From Mobile By', HistoryDateTime, 
+		 CASE WHEN JH.JobType IS NULL or JH.JobType ='' THEN J.JobType ELSE JH.JobType END JobType, UserId, JH.MRN, 
+		 CASE WHEN JH.FirstName IS NULL or JH.FirstName ='' THEN JP.FirstName ELSE JH.FirstName END FirstName, 
+		 CASE WHEN JH.MI IS NULL or JH.MI ='' THEN JP.MI ELSE JH.MI END MI, 
+		 CASE WHEN JH.LastName IS NULL or JH.LastName ='' THEN JP.LastName ELSE JH.LastName END LastName, null, 11, 0  FROM Job_History JH
+			INNER JOIN dbo.Jobs J ON J.JobNumber = JH.JobNumber
+			INNER JOIN dbo.Jobs_Patients JP ON JP.JobNumber = J.JobNumber
+		 WHERE JH.JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 138 AND  JH.IsFromMobile = 1 ORDER BY JobHistoryID DESC
 
  INSERT INTO @TempJobsHostory1  -- Send To Transcription By
- SELECT TOP 1 JobNumber,DocumentID, 'Send To Transcription By', HistoryDateTime, JobType, UserId, MRN, FirstName, MI, LastName, null, 4, 0  FROM Job_History JH
-		 WHERE JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 140 AND JH.IsFromMobile = 1 ORDER BY JobHistoryID DESC
+ SELECT TOP 1 JH.JobNumber,JH.DocumentID, 'Send To Transcription By', HistoryDateTime, 
+		 CASE WHEN JH.JobType IS NULL or JH.JobType ='' THEN J.JobType ELSE JH.JobType END JobType, UserId, JH.MRN, 
+		 CASE WHEN JH.FirstName IS NULL or JH.FirstName ='' THEN JP.FirstName ELSE JH.FirstName END FirstName, 
+		 CASE WHEN JH.MI IS NULL or JH.MI ='' THEN JP.MI ELSE JH.MI END MI, 
+		 CASE WHEN JH.LastName IS NULL or JH.LastName ='' THEN JP.LastName ELSE JH.LastName END LastName, null, 4, 0  FROM Job_History JH
+			INNER JOIN dbo.Jobs J ON J.JobNumber = JH.JobNumber
+			INNER JOIN dbo.Jobs_Patients JP ON JP.JobNumber = J.JobNumber
+		 WHERE JH.JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 140 AND JH.IsFromMobile = 1 ORDER BY JobHistoryID DESC
 
  INSERT INTO @TempJobsHostory1
  EXEC [spGetPortalJobHistoryByStatusGroupId] @vvcrJobnumber,2 -- Available for CR Status 
@@ -92,7 +104,7 @@ SELECT  rov.JobNumber,'Override Value Added By '+u.Name ,CASE WHEN rov.CreatedDa
 		SELECT JobNumber, NULL, 'Document Resent',HistoryDateTime, JH.JobType, JH.UserId, JH.MRN, JH.FirstName, JH.MI, JH.LastName, null, SC.StatusGroupId, 0  FROM Job_History JH
 			INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JobNumber = @vvcrJobnumber AND  Resent = 1 ORDER BY JobHistoryID DESC
  
- SELECT * FROM @TempJobsHostory1 order by IsError,SgId,StatusDate  asc 
+ SELECT * FROM @TempJobsHostory1 order by StatusDate,IsError,SgId  asc 
 
 END
 GO

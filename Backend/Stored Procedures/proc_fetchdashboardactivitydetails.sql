@@ -3,7 +3,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
 -- =============================================
 -- Author:		<A Raghu>
 -- Create date: <12-10-2015>
@@ -235,7 +234,7 @@ BEGIN
 													) AS IPD 
 													ON  IPD.JobNumber= J.Jobnumber   
 										
-										WHERE  SCA.statusgroupid=6 
+										WHERE  SCA.statusgroupid=7 
 										AND DATEDIFF(d, J.receivedon, getdate())<= 90'
 								SET @Sql=@Sql+' AND J.dictatorid ='''+@dictatorid+''' )'
 						
@@ -330,5 +329,4 @@ BEGIN
 	END CATCH
 
 END
-
 GO
