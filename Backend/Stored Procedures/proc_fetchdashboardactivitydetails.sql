@@ -230,7 +230,7 @@ BEGIN
 														SELECT  JT.JobNumber,MIN(JT.StatusDate) AS StatusDate
 													   FROM Jobtracking JT WITH(NOLOCK)   
 													   INNER JOIN statuscodes SC WITH(NOLOCK)  ON JT.Status=SC.StatusID  
-													   WHERE SC.statusgroupid=6 
+													   WHERE SC.statusgroupid=7 
 													   GROUP BY JT.JobNumber
 													) AS IPD 
 													ON  IPD.JobNumber= J.Jobnumber   

@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -158,7 +159,7 @@ WHERE
 	DATEDIFF(d, J.receivedon, getdate())<= 90 
 	AND J.dictatorid in (select dictatorid from #tempdictators)
 	AND J.RhythmWorkFlowID = 1 -- adding condition to fetch only the Rhythm jobs
-	AND JSGA.id =6
+	AND JSGA.id = 7
 group by J.dictatorid
 ) as S on T.dictatorid=S.dictatorid
 when matched then

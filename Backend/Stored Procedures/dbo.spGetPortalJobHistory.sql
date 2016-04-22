@@ -51,13 +51,13 @@ DECLARE @TempJobsHostory1 TABLE(
 		 CASE WHEN JH.JobType IS NULL or JH.JobType ='' THEN J.JobType ELSE JH.JobType END JobType, UserId, JH.MRN, 
 		 CASE WHEN JH.FirstName IS NULL or JH.FirstName ='' THEN JP.FirstName ELSE JH.FirstName END FirstName, 
 		 CASE WHEN JH.MI IS NULL or JH.MI ='' THEN JP.MI ELSE JH.MI END MI, 
-		 CASE WHEN JH.LastName IS NULL or JH.LastName ='' THEN JP.LastName ELSE JH.LastName END LastName, null, 6, 0  FROM Job_History JH
+		 CASE WHEN JH.LastName IS NULL or JH.LastName ='' THEN JP.LastName ELSE JH.LastName END LastName, null, 7, 0  FROM Job_History JH
 			INNER JOIN dbo.Jobs J ON J.JobNumber = JH.JobNumber
 			INNER JOIN dbo.Jobs_Patients JP ON JP.JobNumber = J.JobNumber
 		WHERE JH.JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 136 ORDER BY JobHistoryID DESC
  
  INSERT INTO @TempJobsHostory1  -- Approved From Mobile By
- SELECT TOP 1 JobNumber,DocumentID, 'Approved From Mobile By', HistoryDateTime, JobType, UserId, MRN, FirstName, MI, LastName, null, 7, 0  FROM Job_History JH
+ SELECT TOP 1 JobNumber,DocumentID, 'Approved From Mobile By', HistoryDateTime, JobType, UserId, MRN, FirstName, MI, LastName, null, 11, 0  FROM Job_History JH
 		 WHERE JobNumber = @vvcrJobnumber AND JH.CurrentStatus = 138 AND  JH.IsFromMobile = 1 ORDER BY JobHistoryID DESC
 
  INSERT INTO @TempJobsHostory1  -- Send To Transcription By
