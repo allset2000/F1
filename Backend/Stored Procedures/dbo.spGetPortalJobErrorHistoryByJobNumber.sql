@@ -4,6 +4,9 @@ GO
 SET ANSI_NULLS ON
 GO
  --exec spGetPortalJobErrorHistoryByJobNumber '2016012000000004'
+ --Updated on 19-April-16: added clinic comparision to get jobs from hostedDB
+ --Updated on 19-April-16: Getting latest jobtype from jobs table insted history; 
+ --Updated on 19-April-16: Removed mrn comparision as we dnt need here to get patient details
 CREATE PROCEDURE [dbo].[spGetPortalJobErrorHistoryByJobNumber] 
 (          
  @vvcrJobnumber VARCHAR(20)
@@ -49,7 +52,7 @@ DECLARE @TempJobsHostory TABLE(
 						SELECT J.JOBNUMBER AS JOBNUMBER,MIN(EHJDE.FIRSTATTEMPT) AS ErrorDate
 						FROM jobs J 
 						INNER JOIN jobs_client JC ON J.jobnumber=JC.jobnumber
-						INNER JOIN eh_jobs EHJ ON EHJ.jobnumber=JC.[FILENAME] 
+						INNER JOIN eh_jobs EHJ ON EHJ.jobnumber=JC.[FILENAME] AND EHJ.ClinicID= J.ClinicID
 						INNER JOIN eh_jobsdeliveryerrors EHJDE ON EHJDE.jobid=EHJ.jobid 
 						INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=EHJDE.ErrorCode 
 						INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType
@@ -64,8 +67,7 @@ DECLARE @TempJobsHostory TABLE(
 -- Get the jobtype, documentid and MRN from previous record in that group or get it from jobs and patient table.
 		SELECT TOP 1 JH.JobNumber,
 				doc.DocumentID,
-				JH.StatusGroup,JH.StatusDate,
-				CASE WHEN jt.JobType IS NULL or jt.JobType ='' THEN jb.JobType ELSE jt.JobType END JobType,
+				JH.StatusGroup,JH.StatusDate,jb.JobType,
 				un.UserId,
 				CASE WHEN mr.MRN IS NULL THEN JP.MRN ELSE  mr.MRN END MRN,JP.FirstName,JP.MI,JP.LastName,jb.ClinicID,JH.JgId,IsError 
 		FROM @TempJobsHostory as JH 
@@ -78,7 +80,7 @@ DECLARE @TempJobsHostory TABLE(
 				   (SELECT TOP 1 JobType FROM @TempJobsHostory as b WHERE b.JobType IS NOT NULL AND  b.JobType <> '' ORDER BY b.JobHistoryID ASC  ) jt
 				OUTER Apply
 					(SELECT TOP 1 UserId FROM @TempJobsHostory as b WHERE b.UserId IS NOT NULL ORDER BY b.JobHistoryID ASC) un
-				LEFT OUTER JOIN [dbo].[Jobs_Patients] JP ON JH.JobNumber=jp.JobNumber AND (mr.mrn=jp.mrn or mr.mrn IS NULL)	
+				LEFT OUTER JOIN [dbo].[Jobs_Patients] JP ON JH.JobNumber=jp.JobNumber 	
 		ORDER BY JH.StatusDate asc
 END
 

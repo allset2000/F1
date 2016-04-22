@@ -24,6 +24,13 @@ CREATE TABLE [dbo].[Jobs]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 ALTER TABLE [dbo].[Jobs] ADD
 CONSTRAINT [FK_Jobs_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
+[RhythmWorkFlowID] [int] NULL,
+[BackendStatus] [int] NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) INCLUDE ([OwnerDictatorID], [Stat], [UpdatedDateInUTC], [BackendStatus], [JobID], [JobNumber], [EncounterID], [JobTypeID]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_Jobs_OwnerDictatorID] ON [dbo].[Jobs] ([OwnerDictatorID], [Status]) INCLUDE ([JobID], [EncounterID]) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_Jobs_ProcessFailureCount] ON [dbo].[Jobs] ([ProcessFailureCount]) INCLUDE ([JobID], [JobNumber], [Status]) ON [PRIMARY]
 
 ALTER TABLE [dbo].[Jobs] ADD
@@ -41,8 +48,7 @@ CREATE UNIQUE NONCLUSTERED INDEX [IX_Jobs_JobNumber] ON [dbo].[Jobs] ([JobNumber
 GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_JobTypeID] ON [dbo].[Jobs] ([JobTypeID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) ON [PRIMARY]
-GO
+
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID])
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_Appointments] FOREIGN KEY ([EncounterID]) REFERENCES [dbo].[Encounters] ([EncounterID]) ON DELETE CASCADE

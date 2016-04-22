@@ -7,6 +7,7 @@ GO
 -- Author:		EntradaDev
 -- Updated:     Baswaraj on 02-Feb-2016 for #393 
 -- Updated:     Narender on 04-Apr-2016 for #5461 
+-- Updated on 19thApril-16 : added a clinic comparision for jobs to get from hosted #7625
 -- =============================================
 CREATE PROCEDURE [dbo].[proc_fetchdashboardactivity]
 	
@@ -129,7 +130,7 @@ when matched then
 						FROM jobs J 
 						    INNER JOIN #tempdictators temp on temp.dictatorid =j.dictatorid
 							INNER JOIN jobs_client JC ON J.jobnumber=JC.jobnumber
-							INNER JOIN EntradaHostedClient.DBO.jobs EHJ ON EHJ.jobnumber=JC.[FILENAME] 
+							INNER JOIN EntradaHostedClient.DBO.jobs EHJ ON EHJ.jobnumber=JC.[FILENAME] AND EHJ.ClinicID= J.ClinicID
 							INNER JOIN EntradaHostedClient.DBO.jobsdeliveryerrors EHJDE ON EHJDE.jobid=EHJ.jobid 
 							INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=EHJDE.ErrorCode							
 							INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType

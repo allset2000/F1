@@ -23,7 +23,7 @@ CREATE PROCEDURE [dbo].[sp_CreateUpdateUserInvitation] (
 	@RoleId VARCHAR(500), 
 	@SecurityToken VARCHAR(50), 
 	@RegisteredUserId INT, 
-	@InvitationMessage VARCHAR(1500), 
+	@InvitationMessage VARCHAR(MAX), 
 	@IntivationTypeId INT, 
 	@Deleted BIT
 ) AS 

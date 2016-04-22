@@ -127,6 +127,7 @@ BEGIN
 		END
 
 		-- Updating [dbo].[ExpressLinkConfigurations]table
+		-- We can update remaining columns of clinics table which are referred in ExpressLinkConfigurations table
 		IF EXISTS(select 1 from ExpressLinkConfigurations where clinicid = @ClinicID)
 			BEGIN
 				UPDATE ExpressLinkConfigurations 

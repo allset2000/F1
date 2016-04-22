@@ -6,16 +6,21 @@ GO
 
 -- =============================================
 -- Author: Raghu A
--- Create date: 23/11/2015
+-- Create date: 23/11/2015R
 -- Description: SP called from DictateAPI to pull Schedules to sync on mobile
 -- =============================================
---exec sp_GetScheduleMessagesToSyncByLastSyncDate 2196,'11/20/2015 7:37:37 PM',0
+--exec sp_GetScheduleMessagesToSyncByLastSyncDate 1045,'11/20/2015 7:37:37 PM'
 CREATE PROCEDURE [dbo].[sp_GetScheduleMessagesToSyncByLastSyncDate](
 	@DictatorId INT,
-    @LastSyncDate DATETIME
+    @LastSyncDate DATETIME,
+	@AppointmentDate DATETIME=NULL
+
 )
 AS
 BEGIN
+  
+  SET NOCOUNT ON;
+
 	 SELECT  s.ScheduleID AS ID, 
 			DATEDIFF(SECOND,{D '1970-01-01'}, s.AppointmentDate) AS AppointmentDate, --Unix Timestamp
 			s.ReasonName,
@@ -27,11 +32,26 @@ BEGIN
      FROM dbo.Schedules s WITH(NOLOCK)
 	 INNER JOIN dbo.Encounters AS e WITH(NOLOCK) ON S.ScheduleID = e.ScheduleID
 	 INNER JOIN dbo.Jobs AS j WITH(NOLOCK) ON E.EncounterID = j.EncounterID 
-	 INNER JOIN dbo.Dictations D WITH(NOLOCK) ON D.JobID=J.JobID
-	 INNER JOIN Queue_Users qu WITH(NOLOCK) ON  qu.QueueID = d.QueueID 
-	 INNER JOIN dbo.Queues AS q WITH(NOLOCK) ON q.QueueID = qu.QueueID	
-	WHERE qu.DictatorID = @DictatorId AND 	          
-		  d.[Status] IN (100, 200) AND 		
+	 INNER JOIN 
+				( 
+						-- get completed jobs list match with owner dictatorID
+									SELECT j.JobID,J.EncounterID
+									FROM 
+										dbo.Jobs j WITH(NOLOCK)
+									 WHERE j.Status NOT IN(100,500)  
+									   AND j.OwnerDictatorID=@DictatorId 
+								UNION
+								--get all jobs list match with dictation dictatorID
+									 SELECT j.JobID,J.EncounterID
+									 FROM
+									  DBO.Jobs J WITH(NOLOCK) 
+									 INNER JOIN Dictations D WITH(NOLOCK) ON J.JobID=D.JobID
+									 INNER JOIN Queue_Users QU WITH(NOLOCK) ON QU.QueueID=D.QueueID
+									 INNER JOIN Queues q WITH(NOLOCK) ON Q.QueueID=QU.QueueID
+									 WHERE  QU.DictatorID=@DictatorId
+				)A on A.JobID=j.JobID and a.EncounterID=e.EncounterID
+	WHERE 
+		  CAST(e.AppointmentDate AS DATE)=(CASE WHEN @AppointmentDate IS NOT NULL THEN  CAST(@AppointmentDate AS DATE)  ELSE CAST(e.AppointmentDate AS DATE) END) AND 		
 		  ISNULL(s.UpdatedDateInUTC,GETUTCDATE())>@LastSyncDate AND
 		  e.ScheduleID IS NOT NULL
 END

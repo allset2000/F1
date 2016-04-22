@@ -9,6 +9,7 @@ GO
 -- Description: SP used to update a job record
 -- Application Usage: DictateAPI
 -- Note : Modified on 9/9/2015 for updating the jobtypeid
+-- Modified:Raghu A--04/19/2016 -- Owner dictator id added as new parameter
 -- =============================================
   
 CREATE PROCEDURE [dbo].[sp_UpdateJob]  
@@ -19,7 +20,8 @@ CREATE PROCEDURE [dbo].[sp_UpdateJob]
 	@Priority SMALLINT,
 	@ChangedBy VARCHAR(200),
 	@AdditonalData VARCHAR(max) = '',
-	@JobTypeID INT
+	@JobTypeID INT,
+	@OwnerDictatorID INT=NULL
 )  
 AS  
 BEGIN TRY 
@@ -46,7 +48,8 @@ BEGIN TRY
 					Stat = CASE WHEN @Stat <> @OldStat THEN @Stat ELSE [Stat] END,
 					[Priority] = CASE WHEN @Priority <> @OldPriority THEN @Priority ELSE [Priority] END,
 					AdditionalData = CASE WHEN (@OldAdditionalData IS NULL OR (@AdditonalData <> @OldAdditionalData)) THEN @AdditonalData ELSE AdditionalData END,
-					JobTypeID = CASE WHEN @JobTypeID  <> @OldJobTypeID THEN JobTypeID ELSE JobTypeID END,
+					JobTypeID = CASE WHEN @JobTypeID  <> @OldJobTypeID THEN @JobTypeID ELSE JobTypeID END,
+					OwnerDictatorID=CASE WHEN ISNULL(@OwnerDictatorID,0)=0 THEN OwnerDictatorID ELSE @OwnerDictatorID END,
 					UpdatedDateInUTC=GETUTCDATE() 
 			WHERE JobId = @JobId
 
@@ -95,4 +98,5 @@ BEGIN CATCH
 END CATCH 
 
   
+
 GO

@@ -27,7 +27,7 @@ CREATE PROCEDURE [dbo].[sp_CreateUserInvitation]
 	@SecurityToken VARCHAR(50),
 	@InvitationTypeId INT,
 	@RequestingUserId INT,
-	@InvitationMessage VARCHAR(1500),
+	@InvitationMessage VARCHAR(MAX),
 	@IsMobileSMUser BIT=0 --1 
 
 )

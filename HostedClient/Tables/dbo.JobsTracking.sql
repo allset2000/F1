@@ -6,7 +6,9 @@ CREATE TABLE [dbo].[JobsTracking]
 [ChangeDate] [datetime] NOT NULL CONSTRAINT [DF_Jobs_Tracking_StatusDate] DEFAULT (getdate()),
 [ChangedBy] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL
 ) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_JobID_INC_JobsTrackingID] ON [dbo].[JobsTracking] ([JobID]) INCLUDE ([JobsTrackingID]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_JobID_INC_JobsTrackingID] ON [dbo].[JobsTracking] ([JobID], [Status]) INCLUDE ([JobsTrackingID]) ON [PRIMARY]
+
+
 
 GO
 ALTER TABLE [dbo].[JobsTracking] ADD CONSTRAINT [PK_Jobs_Status] PRIMARY KEY CLUSTERED  ([JobsTrackingID]) ON [PRIMARY]

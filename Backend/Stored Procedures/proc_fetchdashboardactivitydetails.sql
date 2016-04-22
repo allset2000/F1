@@ -12,6 +12,7 @@ GO
 -- Updated : Updated Case "Errors" block to return error message also with the results
 -- Tickey# 7110, Sharif Sharif added ISNULL(J2DE.Message, J2DE.ErrorMessage), date: March 24, 2016
 -- Updated: Narender - #5461 added script for draft review jobs 
+-- Updated on 19thApril-16 : added a clinic comparision for jobs to get from hosted #7625
 -- =============================================
 --exec [proc_fetchdashboardactivitydetails] 'elcmkumar', 'DraftReview',1,10,'JobStatus','Ascending'
 CREATE PROCEDURE [dbo].[proc_fetchdashboardactivitydetails]
@@ -193,7 +194,7 @@ BEGIN
 																SELECT J.JobNumber AS JobNumber,EHJDE.ErrorMessage AS ErrorMessage,MIN(EHJDE.FIRSTATTEMPT) AS ErrorDate
 																FROM jobs J 
 																INNER JOIN jobs_client JC ON J.jobnumber=JC.jobnumber
-																INNER JOIN EntradaHostedClient.DBO.jobs EHJ ON EHJ.jobnumber=JC.[FILENAME]
+																INNER JOIN EntradaHostedClient.DBO.jobs EHJ ON EHJ.jobnumber=JC.[FILENAME] AND EHJ.ClinicID= J.ClinicID
 																INNER JOIN EntradaHostedClient.DBO.jobsdeliveryerrors EHJDE ON EHJDE.jobid=EHJ.jobid 
 																INNER JOIN EntradaHostedClient.DBO.ErrorDefinitions ED ON ED.ErrorCode=EHJDE.ErrorCode
 																INNER JOIN EntradaHostedClient.DBO.ErrorSourceTypes EST ON EST.ErrorSourceTypeID=ED.ErrorSourceType

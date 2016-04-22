@@ -42,6 +42,8 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_E2]
 --X   10   | 14-Mar-2016  | Baswaraj				| #0000 - Update EHRVendor table to set DeliveryErrorAccess true 
 --X   10   | 23-Mar-2016  | Naga					| #0000 - Removed the hard coded database name (as it is not required when referring the current database, also will not work on Developer DBs)
 --X   11   | 29-Mar-2016  | Naga					| #0000 - removed the SET IDENTITY INSERT for [DBO].[PERMISSIONS] table, since we're not explicitly inserting identity value
+--X	  12   | 30-Mar-2016  | Sharif Shaik		    | #7288 -  Populate [EntradaLogs].[dbo].[LogConfiguration]
+--X   13   | 31-Mar-2016  | Naga					| #7273 - enabled the patient image feature for NextGen EHR provider
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
@@ -283,7 +285,24 @@ BEGIN
 
 	/* End #734 JOBACTIVITY In AdminConsole */
 
-	
+	/* Populate [EntradaLogs].[dbo].[LogConfiguration] */
+	IF (SELECT COUNT(1) FROM [EntradaLogs].[dbo].[LogConfiguration]) = 0
+	BEGIN
+
+		SET IDENTITY_INSERT [EntradaLogs].[dbo].[LogConfiguration] ON
+		INSERT INTO [EntradaLogs].[dbo].[LogConfiguration] (LogConfigurationID, ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate)
+			 SELECT LogConfigurationID, ApplicationName, ApplicationCode, IsActive, DatabaseEnabled, EmailEnabled, EmailTo, EmailFrom, EmailSubject, EmailSMTP, FileEnabled, LogFileName, LogFilePath, EventLogEnabled, IsPublicApp, PublicAppApiBaseUri, PublicAppApiUri, IsPublicWeb, PublicWebApiBaseUri, PublicWebApiUri, CreatedDate, UpdatedDate
+					FROM [EntradaHostedClient].[dbo].[LogConfiguration]
+		SET IDENTITY_INSERT [EntradaLogs].[dbo].[LogConfiguration] OFF
+
+	END
+
+	-- 7273 - begin change
+	UPDATE EHRVendors
+	SET PatientImagesEnabled = 1
+	WHERE EHRVendorID = 3
+	-- 7273 - end change
+
 
 END
 

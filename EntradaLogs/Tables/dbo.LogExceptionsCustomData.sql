@@ -20,7 +20,7 @@ CREATE TABLE [dbo].[LogExceptionsCustomData]
 [ClinicId] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ClinicCode] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [IP] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[MobileUserAgent] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[MobileUserAgent] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [EncounterID] [int] NULL,
 [PatientID] [int] NULL,
 [ThreadID] [varchar] (50) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
