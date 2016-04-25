@@ -63,7 +63,7 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- get the Delivered history from JobDeliveryHistory table, if job is deliverd to customer
 		INSERT INTO @TempJobsHostory
-			SELECT JT.JobNumber, DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus
+			SELECT JT.JobNumber, JH.DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus
 			FROM JobTracking JT 
 			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId = 5
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId

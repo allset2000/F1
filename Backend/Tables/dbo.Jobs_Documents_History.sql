@@ -1,6 +1,6 @@
 CREATE TABLE [dbo].[Jobs_Documents_History]
 (
-[DocumentID] [int] NOT NULL IDENTITY(1, 1),
+[DocumentID] [int] NOT NULL IDENTITY(1, 1) NOT FOR REPLICATION,
 [JobNumber] [varchar] (20) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Doc] [varbinary] (max) NOT NULL,
 [XmlData] [xml] NULL,
@@ -16,6 +16,7 @@ CREATE TABLE [dbo].[Jobs_Documents_History]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 ALTER TABLE [dbo].[Jobs_Documents_History] ADD 
 CONSTRAINT [PK_Jobs_Documents_History] PRIMARY KEY CLUSTERED  ([DocumentID]) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_JobNumber_DocDate_INC_Username] ON [dbo].[Jobs_Documents_History] ([JobNumber], [DocDate]) INCLUDE ([Username]) ON [PRIMARY]
 
 CREATE NONCLUSTERED INDEX [IX_JobDocumentsHistory_DocDate] ON [dbo].[Jobs_Documents_History] ([DocDate]) ON [PRIMARY]

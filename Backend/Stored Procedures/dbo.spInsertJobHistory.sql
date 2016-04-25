@@ -28,7 +28,8 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 	@vvcrMI VARCHAR(50) = NULL,
 	@vvcrLastName VARCHAR(50) = NULL,
 	@vvcrDOB VARCHAR(50) = NULL,
-	@vbitStat BIT = NULL
+	@vbitStat BIT = NULL,
+	@vsdtAppointmentDate SMALLDATETIME = NULL
 ) AS 
 	BEGIN 
 	DECLARE @oldStatus INT
@@ -49,9 +50,13 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 			WHERE J.JobNumber =@vvcrJobNumber
 		END
 		
+			
+		-- if any AppointmentDateTime value is changed then track that previous value.
+		SELECT  @vsdtAppointmentDate = CASE WHEN  AppointmentDate + AppointmentTime <> @vsdtAppointmentDate THEN AppointmentDate + AppointmentTime ELSE NULL END  FROM jobs WHERE JobNumber = @vvcrJobNumber	
+
 		-- if any jobtype value is changed then track that previous value.
 		SELECT  @vvcrJobType = CASE WHEN JobType <> @vvcrJobType THEN JobType ELSE NULL END  FROM jobs WHERE JobNumber = @vvcrJobNumber	
-			
+		
 		-- if any STAT value is changed then track that previous value.
 		SELECT  @newSTAT = CASE WHEN Stat = 1 and @vbitStat =1 THEN Stat ELSE NULL END  FROM jobs WHERE JobNumber = @vvcrJobNumber	
 		
@@ -99,8 +104,9 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 			SET @vvcrMRN = @newMRN
 			SET @vvcrJobType = @newJobType
 		END
-		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,FirstName,MI,LastName,DOB,IsHistory,STAT)
-		VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUserId,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,@IsHistory,@newSTAT)
+
+		INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,FirstName,MI,LastName,DOB,IsHistory,STAT,AppointmentDate)
+		VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,@vsintCurrentStatus,@vintDocumentID,@vvcrUserId,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,@IsHistory,@newSTAT,@vsdtAppointmentDate)
 	END
 	
 GO

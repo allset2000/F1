@@ -15,7 +15,8 @@ CREATE TABLE [dbo].[Job_History]
 [IsHistory] [bit] NOT NULL CONSTRAINT [DF__Job_Histo__IsHis__336B6C9B] DEFAULT ((0)),
 [STAT] [bit] NULL,
 [IsFromMobile] [bit] NULL,
-[Resent] [bit] NULL
+[Resent] [bit] NULL,
+[AppointmentDate] [smalldatetime] NULL
 ) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[Job_History] ADD CONSTRAINT [PK__Job_Hist__A809D914EF8C2E5A] PRIMARY KEY CLUSTERED  ([JobHistoryID]) ON [PRIMARY]

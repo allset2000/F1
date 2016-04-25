@@ -46,8 +46,9 @@ CREATE PROCEDURE [dbo].[spUpdatePortalJobDetails]
  @vnitIsApproved Bit,
  @vnvcrDocumnet NVARCHAR(MAX),
  @vvcrUsername VARCHAR(200),
- @vvcrLastQANote VARCHAR(255) 
-)  
+ @vvcrLastQANote VARCHAR(255),
+ @vsdtAppointmentDate smallDateTime
+  )  
 AS  
 BEGIN TRY 
 	DECLARE @currentDate DATETIME
@@ -73,22 +74,24 @@ BEGIN TRY
 		ELSE
 			set @vbitStat1 = NULL
 
-			-- Update the Stat value
+
+		-- Update the Stat value
 		IF NOT EXISTS(SELECT * FROM Jobs WHERE JobNumber = @vvcrJobNumber and Stat = @vbitStat) 
 		BEGIN
 			UPDATE Jobs SET Stat = @vbitStat WHERE ([JobNumber] = @vvcrJobNumber)
 		END
 		ELSE
 			set @vbitStat1 = NULL
-
+	
+		
 		-- Tracking the previous status details
-		EXEC [spInsertJobHistory] @vvcrJobNumber,null,null,null,null,@vvcrUsername,null,null,null,null,null
+		EXEC [spInsertJobHistory] @vvcrJobNumber,null,null,null,null,@vvcrUsername,null,null,null,null,NULL,@vsdtAppointmentDate
 
 		select @oldStatus = status from JobStatusA where jobnumber=@vvcrJobNumber
 		if(@oldStatus is NULL )
 			select @oldStatus = status from JobStatusB where jobnumber=@vvcrJobNumber
-
-		IF(@vbitStat1 = 1)
+		
+		if(@vbitStat1 = 1)
 		INSERT INTO Job_History(JobNumber, CurrentStatus,UserId, HistoryDateTime,IsHistory, STAT ) VALUES (@vvcrJobNumber,@oldStatus,@vvcrUsername,GETDATE(),0, @vbitStat1)
 
 		-- Update the Patient		
@@ -97,8 +100,18 @@ BEGIN TRY
 			--SELECT @oldMRN=MRN FROM Jobs_Patients where jobnumber=@vvcrJobNumber
 			EXEC dbo.writePatient @vintPatientId,@vvcrJobNumber,@vvcrAlternateID,@vvcrMRN, @vvcrFirstName, @vvcrMI,@vvcrLastName,@vvcrSuffix,@vvcrDOB,
 									  @vvcrSSN,@vvcrAddress1,@vvcrAddress2,@vvcrCity,@vvcrState,@vvcrZip,@vvcrPhone,@vvcrSex,@vintAppointmentId  
-			
 		END 
+
+		-- THIS IS TO UPDATE THE CURRENT AppointmentDate WHICH IS MODIFIED
+		IF @vsdtAppointmentDate IS NOT NULL
+		BEGIN
+			DECLARE @DatePart smallDateTime
+			DECLARE @TimePart smallDateTime
+			SELECT @DatePart = DATEADD(D, 0, DATEDIFF(D, 0, @vsdtAppointmentDate))
+			SELECT @TimePart = DATEADD(day, -DATEDIFF(D, 0, @vsdtAppointmentDate), @vsdtAppointmentDate)
+			
+			UPDATE Jobs SET AppointmentDate = @DatePart,AppointmentTime = @TimePart  WHERE ([JobNumber] = @vvcrJobNumber)
+		END	
 
 		-- Updating JobType and stat details into jobs table
 		IF @vvcrJobType <> ''
@@ -122,7 +135,8 @@ BEGIN TRY
 			END
 		END
 
-	
+		
+
 		--updating document into jobs_documents table
 		IF @vbinDocumnet IS NOT Null AND  @oldStatus < 250 OR @oldStatus >= 360 
 			BEGIN
