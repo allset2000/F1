@@ -20,19 +20,19 @@ CREATE TABLE [dbo].[Jobs]
 [OwnerUserID] [int] NULL,
 [TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ChatHistory_ThreadID] [int] NULL,
-[RhythmWorkFlowID] [int] NULL
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-ALTER TABLE [dbo].[Jobs] ADD
-CONSTRAINT [FK_Jobs_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
 [RhythmWorkFlowID] [int] NULL,
 [BackendStatus] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[Jobs] ADD
+CONSTRAINT [FK_Jobs_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
+GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) INCLUDE ([OwnerDictatorID], [Stat], [UpdatedDateInUTC], [BackendStatus], [JobID], [JobNumber], [EncounterID], [JobTypeID]) ON [PRIMARY]
-
+GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_OwnerDictatorID] ON [dbo].[Jobs] ([OwnerDictatorID], [Status]) INCLUDE ([JobID], [EncounterID]) ON [PRIMARY]
-
+GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_ProcessFailureCount] ON [dbo].[Jobs] ([ProcessFailureCount]) INCLUDE ([JobID], [JobNumber], [Status]) ON [PRIMARY]
-
+GO
 ALTER TABLE [dbo].[Jobs] ADD
 CONSTRAINT [CK_jobs_Status_colHasLength] CHECK (([Status]>(0)))
 GO
