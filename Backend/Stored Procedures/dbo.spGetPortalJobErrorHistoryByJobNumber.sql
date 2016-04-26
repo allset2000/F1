@@ -69,7 +69,7 @@ DECLARE @TempJobsHostory TABLE(
 				doc.DocumentID,
 				JH.StatusGroup,JH.StatusDate,jb.JobType,
 				un.UserId,
-				CASE WHEN mr.MRN IS NULL THEN JP.MRN ELSE  mr.MRN END MRN,JP.FirstName,JP.MI,JP.LastName,jb.ClinicID,JH.JgId,IsError 
+				CASE WHEN mr.MRN IS NULL THEN JP.MRN ELSE  mr.MRN END MRN,JP.FirstName,JP.MI,JP.LastName,jb.ClinicID,JH.JgId,IsError, NULL --added for 5366, to have correct columns returned to parent table
 		FROM @TempJobsHostory as JH 
 			INNER JOIN jobs jb ON jh.JobNumber=jb.JobNumber		
 				OUTER APPLY  
