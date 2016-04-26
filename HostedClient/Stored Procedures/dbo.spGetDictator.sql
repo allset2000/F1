@@ -1,3 +1,7 @@
+SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
+GO
 /******************************  
 ** File:  spGetDictator.sql  
 ** Name:  spGetDictator  
@@ -9,8 +13,9 @@
 **************************  
 ** PR   Date     Author  Description   
 ** --   --------   -------   ------------------------------------  
-**   
+**      4/5/2016, Raghu A, New columns add  RhythmWorkFlowID, AppSetting_DisableSendToTranscription added
 *******************************/  
+--Exec [spGetDictator] 2216
 CREATE PROCEDURE [dbo].[spGetDictator]  
 (  
  @vintDictatorID  INT  
@@ -18,34 +23,37 @@ CREATE PROCEDURE [dbo].[spGetDictator]
 AS  
 BEGIN 
 	
-	SELECT DictatorID,
+	SELECT D.DictatorID,
 		DictatorName,
-		ClinicID,
-		Deleted,
-		DefaultJobTypeID,
-		Password,
-		Salt,
-		FirstName,
-		MI,
-		LastName,
-		Suffix,
-		Initials,
-		Signature,
-		EHRProviderID,
-		EHRProviderAlias,
-		DefaultQueueID,
-		VRMode,
-		CRFlagType,
-		ForceCRStartDate,
-		ForceCREndDate,
-		ExcludeStat,
-		SignatureImage,
-		ImageName,
-		UserId,
-		SRETypeId
-	FROM Dictators 
+		D.ClinicID,
+		D.Deleted,
+		D.DefaultJobTypeID,
+		D.Password,
+		D.Salt,
+		D.FirstName,
+		D.MI,
+		D.LastName,
+		D.Suffix,
+		D.Initials,
+		D.Signature,
+		D.EHRProviderID,
+		D.EHRProviderAlias,
+		D.DefaultQueueID,
+		D.VRMode,
+		D.CRFlagType,
+		D.ForceCRStartDate,
+		D.ForceCREndDate,
+		D.ExcludeStat,
+		D.SignatureImage,
+		D.ImageName,
+		D.UserId,
+		D.SRETypeId,
+		ISNULL(D.RhythmWorkFlowID,C.RhythmWorkFlowID) AS RhythmWorkFlowID,
+        ISNULL(D.AppSetting_DisableSendToTranscription,C.AppSetting_DisableSendToTranscription) AS AppSetting_DisableSendToTranscription
+	FROM Dictators D
+	INNER JOIN clinics c ON C.ClinicID=D.ClinicID
 	WHERE DictatorID =  @vintDictatorID
 
 END  
 
-  
+GO
