@@ -20,7 +20,7 @@ GO
 *      3-March-2016  : Added return UserName with Override values Added BY
 *      14-April-2016 Narender : #5461# Updated for Rhythm related status
 *******************************/      
--- EXEC spGetPortalJobHistory 2016020500000001  
+-- EXEC spGetPortalJobHistory 2016031100000033  
 CREATE PROCEDURE [dbo].[spGetPortalJobHistory]  
 (
  @vvcrJobnumber VARCHAR(20)        
@@ -41,7 +41,8 @@ DECLARE @TempJobsHostory1 TABLE(
 	ClinicID SMALLINT,
 	SgId INT,
 	IsError INT, -- To Identify the error existence in the job history page
-	AppointmentDate SMALLDATETIME 
+	AppointmentDate SMALLDATETIME,
+	DOB SMALLDATETIME 
 )  
 
  INSERT INTO @TempJobsHostory1
@@ -53,7 +54,8 @@ DECLARE @TempJobsHostory1 TABLE(
 		 CASE WHEN JH.FirstName IS NULL or JH.FirstName ='' THEN JP.FirstName ELSE JH.FirstName END FirstName, 
 		 CASE WHEN JH.MI IS NULL or JH.MI ='' THEN JP.MI ELSE JH.MI END MI, 
 		 CASE WHEN JH.LastName IS NULL or JH.LastName ='' THEN JP.LastName ELSE JH.LastName END LastName, null, 7, 0,
-		 CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN J.AppointmentDate + J.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate
+		 CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN J.AppointmentDate + J.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate,
+		 CASE WHEN JH.DOB IS NULL or JH.DOB ='' THEN JP.DOB ELSE JH.DOB END DOB
 		 FROM Job_History JH
 			INNER JOIN dbo.Jobs J ON J.JobNumber = JH.JobNumber
 			INNER JOIN dbo.Jobs_Patients JP ON JP.JobNumber = J.JobNumber
@@ -65,7 +67,8 @@ DECLARE @TempJobsHostory1 TABLE(
 		 CASE WHEN JH.FirstName IS NULL or JH.FirstName ='' THEN JP.FirstName ELSE JH.FirstName END FirstName, 
 		 CASE WHEN JH.MI IS NULL or JH.MI ='' THEN JP.MI ELSE JH.MI END MI, 
 		 CASE WHEN JH.LastName IS NULL or JH.LastName ='' THEN JP.LastName ELSE JH.LastName END LastName, null, 11, 0,
-		 CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN J.AppointmentDate + J.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate
+		 CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN J.AppointmentDate + J.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate,
+		 CASE WHEN JH.DOB IS NULL or JH.DOB ='' THEN JP.DOB ELSE JH.DOB END DOB
 		 FROM Job_History JH
 			INNER JOIN dbo.Jobs J ON J.JobNumber = JH.JobNumber
 			INNER JOIN dbo.Jobs_Patients JP ON JP.JobNumber = J.JobNumber
@@ -77,7 +80,8 @@ DECLARE @TempJobsHostory1 TABLE(
 		 CASE WHEN JH.FirstName IS NULL or JH.FirstName ='' THEN JP.FirstName ELSE JH.FirstName END FirstName, 
 		 CASE WHEN JH.MI IS NULL or JH.MI ='' THEN JP.MI ELSE JH.MI END MI, 
 		 CASE WHEN JH.LastName IS NULL or JH.LastName ='' THEN JP.LastName ELSE JH.LastName END LastName, null, 4, 0,
-		 CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN J.AppointmentDate + J.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate
+		 CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN J.AppointmentDate + J.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate,
+		 CASE WHEN JH.DOB IS NULL or JH.DOB ='' THEN JP.DOB ELSE JH.DOB END DOB
 		 FROM Job_History JH
 			INNER JOIN dbo.Jobs J ON J.JobNumber = JH.JobNumber
 			INNER JOIN dbo.Jobs_Patients JP ON JP.JobNumber = J.JobNumber
@@ -94,21 +98,21 @@ DECLARE @TempJobsHostory1 TABLE(
  INSERT INTO @TempJobsHostory1 
  EXEC [spGetPortalJobErrorHistoryByJobNumber] @vvcrJobnumber --  Error Message
  -- the below query to insert the override values #393
- INSERT INTO @TempJobsHostory1(JobNumber,StatusGroup,StatusDate,JobType,UserId,FirstName,LastName,SgId,IsError,AppointmentDate)
+ INSERT INTO @TempJobsHostory1(JobNumber,StatusGroup,StatusDate,JobType,UserId,FirstName,LastName,SgId,IsError,AppointmentDate,DOB)
  
 SELECT  rov.JobNumber,'Override Value Added By '+u.Name ,CASE WHEN rov.CreatedDate IS NULL THEN Getdate() ELSE rov.CreatedDate END
-		 ,rof.FieldName,'','',rov.Value,0,CASE WHEN rov.IsActive IS NULL or rov.IsActive =1 THEN 2 ELSE 3 END IsError, NULL -- IF 2 it is Active and 3 It is InActive
+		 ,rof.FieldName,'','',rov.Value,0,CASE WHEN rov.IsActive IS NULL or rov.IsActive =1 THEN 2 ELSE 3 END IsError, NULL, NULL -- IF 2 it is Active and 3 It is InActive
 		 FROM EH_ROWOverrideValues rov 
 		 INNER JOIN EH_ROWOverrideFields rof ON rof.FieldID = rov.FieldID 
 		 INNER JOIN EH_Users u ON u.UserID=rov.CreatedBY			                              
 		 WHERE JobNumber= @vvcrJobnumber
 
  INSERT INTO @TempJobsHostory1  
- SELECT TOP 1 JobNumber,DocumentID, 'Job Marked as STAT',HistoryDateTime, null, UserId, null, null, null, null, null, SC.StatusGroupId, 0,NULL  FROM Job_History JH
+ SELECT TOP 1 JobNumber,DocumentID, 'Job Marked as STAT',HistoryDateTime, null, UserId, null, null, null, null, null, SC.StatusGroupId, 0,NULL,NULL  FROM Job_History JH
 		INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JobNumber = @vvcrJobnumber AND  STAT = 1 ORDER BY JobHistoryID DESC
  
  INSERT INTO @TempJobsHostory1  
-		SELECT JobNumber, NULL, 'Document Resent',HistoryDateTime, JH.JobType, JH.UserId, JH.MRN, JH.FirstName, JH.MI, JH.LastName, null, SC.StatusGroupId, 0,NULL  FROM Job_History JH
+		SELECT JobNumber, NULL, 'Document Resent',HistoryDateTime, JH.JobType, JH.UserId, JH.MRN, JH.FirstName, JH.MI, JH.LastName, null, SC.StatusGroupId, 0,JH.AppointmentDate,JH.DOB  FROM Job_History JH
 			INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JobNumber = @vvcrJobnumber AND  Resent = 1 ORDER BY JobHistoryID DESC
  
  SELECT * FROM @TempJobsHostory1 order by StatusDate,IsError,SgId  asc 

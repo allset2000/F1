@@ -40,7 +40,8 @@ DECLARE @TempJobsHostory TABLE(
 	JobHistoryID int,
 	JgId int,
 	CurrentStatus INT,
-	AppointmentDate SMALLDATETIME
+	AppointmentDate SMALLDATETIME,
+	DOB SMALLDATETIME 
  )  
 
   Declare @IsJobinHistory bit = 0
@@ -53,7 +54,7 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- Get the history based status group id 
 		INSERT INTO @TempJobsHostory
-			SELECT TOP 1  JT.JobNumber,JH.DocumentID,JG.StatusGroup,JT.StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus,JH.AppointmentDate  
+			SELECT TOP 1  JT.JobNumber,JH.DocumentID,JG.StatusGroup,JT.StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus,JH.AppointmentDate,JH.DOB  
 			FROM JobTracking JT  
 			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
@@ -65,7 +66,7 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- get the Delivered history from JobDeliveryHistory table, if job is deliverd to customer
 		INSERT INTO @TempJobsHostory
-			SELECT JT.JobNumber, JH.DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus,JH.AppointmentDate 
+			SELECT JT.JobNumber, JH.DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus,JH.AppointmentDate,JH.DOB 
 			FROM JobTracking JT 
 			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId = 5
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
@@ -78,7 +79,7 @@ DECLARE @TempJobsHostory TABLE(
 		BEGIN
 		-- get the history from jobtracking table if history not avalable in job_history table
 		INSERT INTO @TempJobsHostory
-			SELECT TOP 1  JH.JobNumber,null DocumentID,JG.StatusGroup,min(JH.StatusDate),null JobType,null UserId,null MRN,1 JobHistoryID,jg.id,null CurrentStatus,NULL  from JobTracking JH  
+			SELECT TOP 1  JH.JobNumber,null DocumentID,JG.StatusGroup,min(JH.StatusDate),null JobType,null UserId,null MRN,1 JobHistoryID,jg.id,null CurrentStatus,NULL,NULL  from JobTracking JH  
 			INNER JOIN dbo.StatusCodes SC ON JH.Status= SC.StatusID
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 			WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=@StatusGroupId 
@@ -94,7 +95,8 @@ DECLARE @TempJobsHostory TABLE(
 	CASE WHEN JH.JobType IS NULL or JH.JobType ='' THEN jb.JobType ELSE JH.JobType END JobType,
 	JH.UserId,
 	CASE WHEN JH.MRN IS NULL THEN JP.MRN ELSE  JH.MRN END MRN,JP.FirstName,JP.MI,JP.LastName,jb.ClinicID,JH.JgId, 0 as isError, -- added this to represent that it is not error history
-	CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN jb.AppointmentDate + jb.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate
+	CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN jb.AppointmentDate + jb.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate,
+	CASE WHEN JH.DOB IS NULL or JH.DOB ='' THEN JP.DOB ELSE JH.DOB END DOB
 	FROM @TempJobsHostory as JH 
 	INNER JOIN jobs jb ON jh.JobNumber=jb.JobNumber
 	LEFT OUTER JOIN [dbo].[Jobs_Patients] JP ON JH.JobNumber = jp.JobNumber 
@@ -108,7 +110,8 @@ DECLARE @TempJobsHostory TABLE(
 	CASE WHEN jt.JobType IS NULL or jt.JobType ='' THEN jb.JobType ELSE jt.JobType END JobType,
 	un.UserId,
 	CASE WHEN mr.MRN IS NULL THEN JP.MRN ELSE  mr.MRN END MRN,JP.FirstName,JP.MI,JP.LastName,jb.ClinicID,JH.JgId, 0 as isError, -- added this to represent that it is not error history
-	CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN jb.AppointmentDate + jb.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate
+	CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN jb.AppointmentDate + jb.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate,
+	CASE WHEN JH.DOB IS NULL or JH.DOB ='' THEN JP.DOB ELSE JH.DOB END DOB
 	FROM @TempJobsHostory as JH 
 	OUTER APPLY  
         (SELECT TOP 1 DocumentID FROM @TempJobsHostory as b WHERE b.DocumentID IS NOT NULL ORDER BY b.JobHistoryID ASC) doc
