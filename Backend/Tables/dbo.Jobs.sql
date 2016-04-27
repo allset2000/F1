@@ -32,7 +32,7 @@ CREATE TABLE [dbo].[Jobs]
 [PoorAudioFlag] [bit] NOT NULL CONSTRAINT [DF_Jobs_PoorAudioFlag] DEFAULT ((0)),
 [TranscriptionModeFlag] [bit] NOT NULL CONSTRAINT [DF_Jobs_TranscriptionModeFlag] DEFAULT ((0)),
 [JobEditingSummaryId] [int] NOT NULL CONSTRAINT [DF__Jobs__JobEditing__78159CA3] DEFAULT ((-1)),
-[JobId] [int] NOT NULL IDENTITY(2, 1) NOT FOR REPLICATION,
+[JobId] [int] NOT NULL IDENTITY(2, 1),
 [DueDate] [datetime] NULL,
 [TemplateName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [IsGenericJob] [bit] NULL,
@@ -43,7 +43,8 @@ CREATE TABLE [dbo].[Jobs]
 [LokedbyUserForJobDetailsView] [varchar] (48) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [LockbyUserTimeStamp] [datetime] NULL,
 [RhythmWorkFlowID] [int] NULL,
-[TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
+[TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[LineCountFromSRE] [int] NULL
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[Jobs] ADD 
 CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) WITH (FILLFACTOR=90) ON [PRIMARY]
