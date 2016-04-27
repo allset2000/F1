@@ -20,7 +20,6 @@ CREATE TABLE [dbo].[Jobs]
 [OwnerUserID] [int] NULL,
 [TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ChatHistory_ThreadID] [int] NULL,
-[RhythmWorkFlowID] [int] NULL,
 [BackendStatus] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) INCLUDE ([OwnerDictatorID], [Stat], [UpdatedDateInUTC], [BackendStatus], [JobID], [JobNumber], [EncounterID], [JobTypeID]) ON [PRIMARY]
