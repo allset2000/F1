@@ -22,6 +22,10 @@ CREATE TABLE [dbo].[Jobs]
 [ChatHistory_ThreadID] [int] NULL,
 [BackendStatus] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_ClinicID_JobAddData] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([AdditionalData], [JobNumber], [OwnerDictatorID], [Priority], [RuleID], [Stat]) ON [PRIMARY]
+
+CREATE UNIQUE NONCLUSTERED INDEX [IX_Jobs_JobNumber] ON [dbo].[Jobs] ([JobNumber], [ClinicID]) ON [PRIMARY]
+
 CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) INCLUDE ([OwnerDictatorID], [Stat], [UpdatedDateInUTC], [BackendStatus], [JobID], [JobNumber], [EncounterID], [JobTypeID]) ON [PRIMARY]
 
 CREATE NONCLUSTERED INDEX [IX_Jobs_OwnerDictatorID] ON [dbo].[Jobs] ([OwnerDictatorID], [Status]) INCLUDE ([JobID], [EncounterID]) ON [PRIMARY]
@@ -35,14 +39,10 @@ CONSTRAINT [CK_jobs_Status_colHasLength] CHECK (([Status]>(0)))
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_Jobs_ClinicID] ON [dbo].[Jobs] ([ClinicID]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [UNQ_ClinicID_Jobnumber] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([JobNumber], [OwnerDictatorID], [Stat], [Priority], [RuleID], [AdditionalData]) ON [PRIMARY]
-GO
+
 CREATE NONCLUSTERED INDEX [FK_EncounterID_Status] ON [dbo].[Jobs] ([EncounterID], [Status]) ON [PRIMARY]
 GO
-CREATE UNIQUE NONCLUSTERED INDEX [IX_Jobs_JobNumber] ON [dbo].[Jobs] ([JobNumber]) ON [PRIMARY]
-GO
+
 CREATE NONCLUSTERED INDEX [IX_Jobs_JobTypeID] ON [dbo].[Jobs] ([JobTypeID]) ON [PRIMARY]
 GO
 
