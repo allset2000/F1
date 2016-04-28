@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -27,54 +28,50 @@ GO
 --X  VER   |    DATE      |  BY						|  COMMENTS - include Ticket#
 --X_____________________________________________________________________________
 --X   0    | 04/27/2016   | Naga					| Initial Design
+--X   1    | 04/28/2016   | Naga					| #6932 - re-wrote the stored procedure to delete and re-create the entry instead of updating
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 CREATE PROCEDURE [dbo].[spv_Update_JobDocuments]
 				@JobNumber			VARCHAR(20),
 				@Doc				VARBINARY(MAX) = NULL,
 				@XmlData			XML = NULL,
 				@UserName			VARCHAR(200),
-				@DocDate			DATETIME = GETDATE,
+				@DocDate			DATETIME = NULL,
 				@DocumentId			INT = 0,
 				@DocumentTypeId		INT = 0,
 				@DocumentStatusId	INT = 0,
 				@JobId				INT = 0,
 				@Status				SMALLINT,
-				@StatusDate			DATETIME = GETDATE,
+				@StatusDate			DATETIME = NULL,
 				@TemplateName		VARCHAR(100)
 
 AS
 BEGIN
 
 	SET NOCOUNT ON;
+	
+	IF @StatusDate IS NULL
+		SET @StatusDate = GETDATE()
 
-	-- If the Jobs Document doesn't contain an entry for this JobNumber, then add the record
-	IF NOT EXISTS (SELECT 1 FROM dbo.Jobs_Documents WHERE JobNumber = @JobNumber)
+	IF @DocDate IS NULL
+		SET @DocDate = GETDATE()
+
+	-- If the Jobs Document already exist, move it to History and delete the record from main table
+	IF EXISTS (SELECT 1 FROM dbo.Jobs_Documents WHERE JobNumber = @JobNumber)
 	BEGIN
-		INSERT INTO dbo.Jobs_Documents
-				( JobNumber , Doc , XmlData , Username , DocDate , DocumentId , DocumentTypeId , DocumentStatusId , JobId , [Status] , StatusDate )
-		VALUES  
-				( @JobNumber , @Doc , @XmlData , @UserName , @DocDate , 0 , 0 , 0 , 0 , 0 , @StatusDate )
-	END
-	ELSE
-	BEGIN
-		-- Otherwise add a history record and update the Jobs Document
 		INSERT INTO dbo.Jobs_Documents_History
 		        ( JobNumber , Doc , XmlData , Username , DocDate , DocumentIdOk , DocumentTypeId , DocumentStatusId , JobId , TemplateName , [Status] , StatusDate )
 		SELECT  JobNumber , Doc , XmlData , Username , DocDate , 0 , DocumentTypeId , DocumentStatusId , JobId , @TemplateName , [Status] , StatusDate 
 			FROM dbo.Jobs_Documents WHERE JobNumber = @JobNumber
-		
-		UPDATE dbo.Jobs_Documents
-		SET Doc = @Doc, 
-			XmlData = @XmlData, 
-			Username = @UserName, 
-			DocDate = @DocDate, 
-			DocumentId = @DocumentId, 
-			DocumentTypeId = @DocumentTypeId, 
-			DocumentStatusId = @DocumentStatusId, 
-			JobId = @JobId, 
-			[Status] = @Status, 
-			StatusDate = @StatusDate
+
+		DELETE FROM dbo.Jobs_Documents WHERE JobNumber = @JobNumber
 	END
+
+	-- insert the new record with latest values
+	INSERT INTO dbo.Jobs_Documents
+			( JobNumber , Doc , XmlData , Username , DocDate , DocumentId , DocumentTypeId , DocumentStatusId , JobId , [Status] , StatusDate )
+	VALUES  
+			( @JobNumber , @Doc , @XmlData , @UserName , @DocDate , 0 , 0 , 0 , 0 , 0 , @StatusDate )
+
 
 END
 GO
