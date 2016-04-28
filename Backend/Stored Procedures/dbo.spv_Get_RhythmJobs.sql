@@ -5,11 +5,11 @@ GO
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 --XX  Entrada Inc
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
---X PROCEDURE: [spv_Add_DocumentsToProcess]
+--X PROCEDURE: [spv_Get_RhythmJobs]
 --X
 --X AUTHOR: Naga
 --X
---X DESCRIPTION: Stored procedure to Add the Job to DocumentsToProcess table
+--X DESCRIPTION: Stored procedure to get the list of Rhythm Jobs
 --X				 
 --X
 --X ASSUMPTIONS: 
@@ -26,19 +26,21 @@ GO
 --X_____________________________________________________________________________
 --X  VER   |    DATE      |  BY						|  COMMENTS - include Ticket#
 --X_____________________________________________________________________________
---X   0    | 04/27/2016   | Naga					| Initial Design
+--X   0    | 04/28/2016   | Naga					| Initial Design
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
-CREATE PROCEDURE [dbo].[spv_Add_DocumentsToProcess]
-				@JobNumber			VARCHAR(20)
-
+CREATE PROCEDURE [dbo].[spv_Get_RhythmJobs]
+				@ProcessFailureCountMax SMALLINT
 AS
 BEGIN
 
 	SET NOCOUNT ON;
 
-	INSERT INTO dbo.DocumentsToProcess
-	        ( JobNumber, ProcessFailureCount )
-	VALUES  ( @JobNumber, 0 )
+	SELECT j.JobNumber, j.JobId, j.DictatorID, j.DictationDate, j.JobType, j.ClinicID, ja.[Status] AS [JobStatus], j.TemplateName FROM dbo.Jobs j
+	INNER JOIN dbo.JobStatusA ja
+		ON j.JobNumber = ja.JobNumber
+	WHERE (j.RhythmWorkFlowID = 1 AND j.JobStatus = 138) OR (j.RhythmWorkFlowID = 3 AND j.JobStatus = 275)
+		AND ISNULL(j.ProcessFailureCount, 0) < @ProcessFailureCountMax
+
 
 END
 GO
