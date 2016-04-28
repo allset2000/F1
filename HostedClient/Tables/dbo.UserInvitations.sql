@@ -21,6 +21,8 @@ CREATE TABLE [dbo].[UserInvitations]
 [Deleted] [bit] NULL CONSTRAINT [DF_UserInvitations_Deleted] DEFAULT ((0)),
 [PendingRegStatus] [bit] NULL CONSTRAINT [UserInvitations_PendingRegStatus] DEFAULT ((1))
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_UserInvitations_SecurityTokenDeleted] ON [dbo].[UserInvitations] ([SecurityToken], [Deleted]) ON [PRIMARY]
+
 
 ALTER TABLE [dbo].[UserInvitations] ADD
 CONSTRAINT [FK_UserInvitations_UserInvitations] FOREIGN KEY ([UserInvitationId]) REFERENCES [dbo].[UserInvitations] ([UserInvitationId])

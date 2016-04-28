@@ -23,6 +23,8 @@ CREATE TABLE [dbo].[ExpressLinkConfigurations]
 [Deleted] [bit] NULL CONSTRAINT [DF_ExpressLinkConfigurations_Deleted] DEFAULT ((0)),
 [EnableAthenaACK] [bit] NULL CONSTRAINT [DF_ExpressLinkConfigurations_EnableAthenaACK] DEFAULT ((0))
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_ExpressLinkConfigurations_ClinicID] ON [dbo].[ExpressLinkConfigurations] ([ClinicID]) ON [PRIMARY]
+
 ALTER TABLE [dbo].[ExpressLinkConfigurations] ADD 
 CONSTRAINT [PK_ExpressLinkConfigurations] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
 GO
