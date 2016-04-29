@@ -112,8 +112,13 @@ SELECT  rov.JobNumber,'Override Value Added By '+u.Name ,CASE WHEN rov.CreatedDa
 		INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JobNumber = @vvcrJobnumber AND  STAT = 1 ORDER BY JobHistoryID DESC
  
  INSERT INTO @TempJobsHostory1  
-		SELECT JobNumber, NULL, 'Document Resent',HistoryDateTime, JH.JobType, JH.UserId, JH.MRN, JH.FirstName, JH.MI, JH.LastName, null, SC.StatusGroupId, 0,JH.AppointmentDate,JH.DOB  FROM Job_History JH
-			INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JobNumber = @vvcrJobnumber AND  Resent = 1 ORDER BY JobHistoryID DESC
+		SELECT JH.JobNumber, NULL, 'Document Resent',HistoryDateTime, JH.JobType, JH.UserId, JH.MRN, JH.FirstName, JH.MI, JH.LastName, null, SC.StatusGroupId, 0,
+		CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN J.AppointmentDate + J.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate,
+		CASE WHEN JH.DOB IS NULL or JH.DOB ='' THEN JP.DOB ELSE JH.DOB END DOB
+		FROM Job_History JH
+		INNER JOIN dbo.Jobs J ON J.JobNumber = JH.JobNumber
+		INNER JOIN dbo.Jobs_Patients JP ON JP.JobNumber = J.JobNumber
+		INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JH.JobNumber = @vvcrJobnumber AND  Resent = 1 ORDER BY JobHistoryID DESC
  
  SELECT * FROM @TempJobsHostory1 order by StatusDate,IsError,SgId  asc 
 
