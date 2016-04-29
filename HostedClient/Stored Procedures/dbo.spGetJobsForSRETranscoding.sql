@@ -1,4 +1,5 @@
-    SET QUOTED_IDENTIFIER ON
+
+SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
@@ -61,7 +62,7 @@ BEGIN
  END        
  --update the jobs to IsProcessed     
  UPDATE Jobs Set Status = 350 FROM Jobs JB           
- INNER JOIN @TempJobs TJ on JB.JobNumber = TJ.JobNumber   
+ INNER JOIN @TempJobs TJ on JB.JobID = TJ.JobID   
  WHERE JB.Status <> 350
     
  SET @UpdatedJobCount = @@ROWCOUNT          
