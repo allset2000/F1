@@ -22,9 +22,7 @@ CREATE TABLE [dbo].[Jobs]
 [ChatHistory_ThreadID] [int] NULL,
 [BackendStatus] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[Jobs] ADD
-CONSTRAINT [FK_Jobs_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
+
 GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_ClinicID_JobAddData] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([AdditionalData], [JobNumber], [OwnerDictatorID], [Priority], [RuleID], [Stat]) ON [PRIMARY]
 
