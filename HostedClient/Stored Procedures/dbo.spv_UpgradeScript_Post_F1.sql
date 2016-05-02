@@ -30,7 +30,8 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_F1]
 --X  VER   |    DATE      |  BY						|  COMMENTS - include Ticket#
 --X_____________________________________________________________________________
 --X   0    | 29-Mar-2016  | Sharif Shaik			| Initial Design
---X   1    | 31-Mar-2016  | Sharif Shaik			| Inserting records into new tables EncounterSearchType and TaskType
+--X   1    | 31-Mar-2016  | Sharif Shaik			| #366 - Inserting records into new tables EncounterSearchType and TaskType
+--X   22   | 31-Mar-2016  | Sharif Shaik			| #366 - Inserting records "None" into TaskType
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
@@ -67,6 +68,10 @@ BEGIN
 	END
 	IF NOT EXISTS (SELECT 1 FROM EncounterSearchType  WHERE EncounterSearchTypeName = 'Best Match') BEGIN
 		INSERT INTO EncounterSearchType (EncounterSearchTypeId, EncounterSearchTypeName) VALUES (7, 'Best Match')
+	END
+
+	IF NOT EXISTS (SELECT 1 FROM TaskType  WHERE TaskTypeID = 0) BEGIN
+		INSERT INTO TaskType (TaskTypeID, TaskTypeName) VALUES (0, 'None')
 	END
 
 	IF NOT EXISTS (SELECT 1 FROM TaskType  WHERE TaskTypeID = 1) BEGIN
