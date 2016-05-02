@@ -20,31 +20,50 @@ CREATE TABLE [dbo].[Jobs]
 [OwnerUserID] [int] NULL,
 [TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ChatHistory_ThreadID] [int] NULL,
+[RhythmWorkFlowID] [int] NULL,
 [BackendStatus] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+ALTER TABLE [dbo].[Jobs] ADD 
+CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobID]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_OwnerDictatorID] ON [dbo].[Jobs] ([OwnerDictatorID], [Status]) INCLUDE ([JobID], [EncounterID]) ON [PRIMARY]
 
-GO
-CREATE NONCLUSTERED INDEX [IX_Jobs_ClinicID_JobAddData] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([AdditionalData], [JobNumber], [OwnerDictatorID], [Priority], [RuleID], [Stat]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Jobs_ProcessFailureCount] ON [dbo].[Jobs] ([ProcessFailureCount]) INCLUDE ([JobID], [JobNumber], [Status]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) INCLUDE ([JobTypeID], [Stat], [UpdatedDateInUTC], [BackendStatus], [JobID], [JobNumber], [EncounterID], [OwnerDictatorID]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [UNQ_ClinicID_Jobnumber] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([RuleID], [AdditionalData], [JobNumber], [OwnerDictatorID], [Stat], [Priority]) ON [PRIMARY]
+
+CREATE NONCLUSTERED INDEX [IX_Jobs_ClinicID_JobAddData] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([RuleID], [Stat], [AdditionalData], [JobNumber], [OwnerDictatorID], [Priority]) ON [PRIMARY]
 
 CREATE UNIQUE NONCLUSTERED INDEX [IX_Jobs_JobNumber] ON [dbo].[Jobs] ([JobNumber], [ClinicID]) ON [PRIMARY]
 
-CREATE NONCLUSTERED INDEX [IX_Jobs_Status] ON [dbo].[Jobs] ([Status]) INCLUDE ([OwnerDictatorID], [Stat], [UpdatedDateInUTC], [BackendStatus], [JobID], [JobNumber], [EncounterID], [JobTypeID]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_Jobs_OwnerDictatorID] ON [dbo].[Jobs] ([OwnerDictatorID], [Status]) INCLUDE ([JobID], [EncounterID]) ON [PRIMARY]
-GO
-CREATE NONCLUSTERED INDEX [IX_Jobs_ProcessFailureCount] ON [dbo].[Jobs] ([ProcessFailureCount]) INCLUDE ([JobID], [JobNumber], [Status]) ON [PRIMARY]
-GO
-ALTER TABLE [dbo].[Jobs] ADD
-CONSTRAINT [CK_jobs_Status_colHasLength] CHECK (([Status]>(0)))
-GO
-ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobID]) ON [PRIMARY]
-GO
-
 CREATE NONCLUSTERED INDEX [FK_EncounterID_Status] ON [dbo].[Jobs] ([EncounterID], [Status]) ON [PRIMARY]
-GO
 
 CREATE NONCLUSTERED INDEX [IX_Jobs_JobTypeID] ON [dbo].[Jobs] ([JobTypeID]) ON [PRIMARY]
+
 GO
+EXEC sp_addextendedproperty N'MS_Description', N'Main Job Type', 'SCHEMA', N'dbo', 'TABLE', N'Jobs', 'COLUMN', N'JobTypeID'
+GO
+
+EXEC sp_addextendedproperty N'MS_Description', N'Dictator Owner', 'SCHEMA', N'dbo', 'TABLE', N'Jobs', 'COLUMN', N'OwnerDictatorID'
+GO
+
+EXEC sp_addextendedproperty N'MS_Description', N'Priority of Job', 'SCHEMA', N'dbo', 'TABLE', N'Jobs', 'COLUMN', N'Priority'
+GO
+
+EXEC sp_addextendedproperty N'MS_Description', N'Rule Applied to Create Job', 'SCHEMA', N'dbo', 'TABLE', N'Jobs', 'COLUMN', N'RuleID'
+GO
+
+EXEC sp_addextendedproperty N'MS_Description', N'Status of the Whole Job', 'SCHEMA', N'dbo', 'TABLE', N'Jobs', 'COLUMN', N'Status'
+GO
+
+ALTER TABLE [dbo].[Jobs] ADD
+CONSTRAINT [CK_jobs_Status_colHasLength] CHECK (([Status]>(0)))
+ALTER TABLE [dbo].[Jobs] ADD
+CONSTRAINT [FK_Jobs_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
+
+GO
+
 
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID])
 GO
@@ -53,14 +72,4 @@ GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_JobTypes] FOREIGN KEY ([JobTypeID]) REFERENCES [dbo].[JobTypes] ([JobTypeID])
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_Dictators] FOREIGN KEY ([OwnerDictatorID]) REFERENCES [dbo].[Dictators] ([DictatorID]) ON DELETE CASCADE
-GO
-EXEC sp_addextendedproperty N'MS_Description', N'Main Job Type', 'SCHEMA', N'dbo', 'TABLE', N'Jobs', 'COLUMN', N'JobTypeID'
-GO
-EXEC sp_addextendedproperty N'MS_Description', N'Dictator Owner', 'SCHEMA', N'dbo', 'TABLE', N'Jobs', 'COLUMN', N'OwnerDictatorID'
-GO
-EXEC sp_addextendedproperty N'MS_Description', N'Priority of Job', 'SCHEMA', N'dbo', 'TABLE', N'Jobs', 'COLUMN', N'Priority'
-GO
-EXEC sp_addextendedproperty N'MS_Description', N'Rule Applied to Create Job', 'SCHEMA', N'dbo', 'TABLE', N'Jobs', 'COLUMN', N'RuleID'
-GO
-EXEC sp_addextendedproperty N'MS_Description', N'Status of the Whole Job', 'SCHEMA', N'dbo', 'TABLE', N'Jobs', 'COLUMN', N'Status'
 GO

@@ -43,7 +43,8 @@ BEGIN
 					 WHEN J.[Status]=400 THEN ISNULL(SC.StatusGroupId,1)
 					 ELSE  6
 					 END  AS StatusGroupID,
-					 j.OwnerDictatorID 
+					 j.OwnerDictatorID,
+					 j.RhythmWorkFlowID
 			FROM dbo.Encounters AS e WITH(NOLOCK)
 				INNER JOIN Jobs j WITH(NOLOCK) on j.EncounterID=e.EncounterID 
 				INNER JOIN 

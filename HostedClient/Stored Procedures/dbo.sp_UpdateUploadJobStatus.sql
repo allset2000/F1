@@ -8,6 +8,7 @@ GO
 -- Create date: 08/02/2015
 -- Description: SP used to update a job record
 -- Application Usage: DictateAPI
+--Modified : 05/02/2015--Raghu A--RhythmWorkFlowID new input parameter added
 -- =============================================  
 CREATE PROCEDURE [dbo].[sp_UpdateUploadJobStatus]  
 (
@@ -23,7 +24,8 @@ CREATE PROCEDURE [dbo].[sp_UpdateUploadJobStatus]
 	@HasDictation SMALLINT,
 	@HasChatHistory SMALLINT,
 	@OwnerDictatorID INT,
-	@ChangedBy VARCHAR(200)
+	@ChangedBy VARCHAR(200),
+	@RhythmWorkFlowID INT
 )  
 AS  
 BEGIN TRY 
@@ -53,7 +55,8 @@ BEGIN TRY
 					TagMetaData=@TagMetaData,
 					OwnerDictatorID=@OwnerDictatorID,						
 					ChatHistory_ThreadID=CASE WHEN ISNULL(@MessageThreadID,'')='' THEN NULL ELSE CAST(@MessageThreadID AS INT) END,
-					UpdatedDateInUTC=GETUTCDATE() 
+					UpdatedDateInUTC=GETUTCDATE(),
+					RhythmWorkFlowID=@RhythmWorkFlowID
 			WHERE JobId = @JobId
 
 			IF (@Status <> @OldStatus)
