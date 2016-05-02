@@ -75,7 +75,7 @@ BEGIN
 			END
 	
 			-- Add record to UserClinicXref
-			IF(@UserId != null)
+			IF(@UserId is not null)
 			BEGIN
 				IF EXISTS(SELECT * FROM UserClinicXref WHERE UserId = @UserId AND ClinicId = @ClinicID)
 				BEGIN

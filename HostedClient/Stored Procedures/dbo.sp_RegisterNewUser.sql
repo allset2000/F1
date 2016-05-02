@@ -36,13 +36,11 @@ BEGIN
 		DECLARE @cur_InvitationType INT
 		DECLARE @UserId INT
 		DECLARE @InviteId INT
-		DECLARE @ShortCode varchar(10)
 		DECLARE @cur_registeredid INT
 
 		IF @MI is null BEGIN SET @MI = '' END
 
-		SET @ShortCode = SUBSTRING(@RegistrationCode, 0, CHARINDEX('-',@RegistrationCode,0))
-	
+		
 		SELECT @InviteId=UserInvitationId, 
 			   @cur_clinicid=ClinicId, 
 			   @cur_requestuserid=RequestingUserId, 
@@ -50,7 +48,7 @@ BEGIN
 			   @cur_InvitationType=InvitationTypeId,
 			   @cur_registeredid=RegisteredUserId			  
 		FROM UserInvitations
-		WHERE SUBSTRING(SecurityToken, 0, CHARINDEX('-', SecurityToken, 0)) = @ShortCode
+		WHERE SecurityToken = @RegistrationCode
 			
 		-- Validate the ClinicId
 		IF(@cur_clinicid <=0)

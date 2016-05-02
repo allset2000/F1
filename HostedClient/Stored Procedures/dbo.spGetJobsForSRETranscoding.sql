@@ -64,7 +64,7 @@ BEGIN
  END        
  --update the jobs to IsProcessed     
  UPDATE Jobs Set Status = 350 FROM Jobs JB           
- INNER JOIN @TempJobs TJ on JB.JobNumber = TJ.JobNumber   
+ INNER JOIN @TempJobs TJ on JB.JobID = TJ.JobID   
  WHERE JB.Status <> 350
     
  SET @UpdatedJobCount = @@ROWCOUNT          
