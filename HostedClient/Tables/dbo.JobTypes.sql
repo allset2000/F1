@@ -25,7 +25,7 @@ CREATE TABLE [dbo].[JobTypes]
 [EncounterCategory] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [TaskSubject] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [TaskName] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[TaskTypeId] [int] NULL
+[TaskTypeId] [int] NULL CONSTRAINT [DF_JobTypes_TaskTypeId] DEFAULT ((0))
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[JobTypes] ADD
 CONSTRAINT [FK_JobTypes_EncounterSearchType] FOREIGN KEY ([EncounterSearchTypeId]) REFERENCES [dbo].[EncounterSearchType] ([EncounterSearchTypeId])
