@@ -20,7 +20,8 @@ CREATE PROCEDURE [dbo].[spUpdateSREStatus]
  @vvcrJobNumber VARCHAR(20),  
  @vsintStatus SMALLINT,  
  @vvcrPath  VARCHAR(255),
- @vvcrRecServer VARCHAR(50)  
+ @vvcrRecServer VARCHAR(50),
+ @vintCharacterCount INT = null  
 )  
 AS  
 BEGIN TRANSACTION  
@@ -40,7 +41,7 @@ BEGIN TRANSACTION
 
 		IF @vsintStatus =140
 			BEGIN 
-				UPDATE dbo.Jobs SET ProcessFailureCount=0,RecServer=@vvcrRecServer WHERE JobNumber=@vvcrJobNumber
+				UPDATE dbo.Jobs SET ProcessFailureCount=0,RecServer=@vvcrRecServer,CharacterCount=@vintCharacterCount WHERE JobNumber=@vvcrJobNumber
 			END	
 
 		IF @vsintStatus = 136 OR @vsintStatus = 275
