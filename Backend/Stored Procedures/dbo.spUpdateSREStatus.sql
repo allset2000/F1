@@ -33,6 +33,9 @@ BEGIN TRANSACTION
 		VALUES (@vvcrJobNumber,@vsintStatus,GETDATE(),@vvcrPath )  
 
 		UPDATE jobs SET jobstatus=@vsintStatus WHERE jobnumber=@vvcrJobNumber
+		
+		-- update the status into hosted db.
+		EXEC spUpdateBackendStatusAndDateIntoHosted @vvcrJobNumber,@vsintStatus
 
         IF @vsintStatus <> 130  
 			BEGIN 
