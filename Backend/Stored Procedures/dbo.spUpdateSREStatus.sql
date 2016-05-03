@@ -44,7 +44,7 @@ BEGIN TRANSACTION
 
 		IF @vsintStatus =140 OR @vsintStatus = 136 OR @vsintStatus = 275
 			BEGIN 
-				UPDATE dbo.Jobs SET ProcessFailureCount=0,RecServer=@vvcrRecServer,CharacterCount=@vintCharacterCount WHERE JobNumber=@vvcrJobNumber
+				UPDATE dbo.Jobs SET ProcessFailureCount=0,RecServer=@vvcrRecServer,CharacterCountFromSRE=@vintCharacterCount WHERE JobNumber=@vvcrJobNumber
 			END	
 
 		IF @vsintStatus = 136 OR @vsintStatus = 275

@@ -44,7 +44,7 @@ CREATE TABLE [dbo].[Jobs]
 [LockbyUserTimeStamp] [datetime] NULL,
 [RhythmWorkFlowID] [int] NULL,
 [TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[CharacterCount] [int] NULL
+[CharacterCountFromSRE] [int] NULL
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[Jobs] ADD 
 CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) WITH (FILLFACTOR=90) ON [PRIMARY]
