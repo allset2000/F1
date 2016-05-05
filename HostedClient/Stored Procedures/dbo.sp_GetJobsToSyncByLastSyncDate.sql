@@ -44,7 +44,8 @@ BEGIN
 					 ELSE  6
 					 END  AS StatusGroupID,
 					 j.OwnerDictatorID,
-					 j.RhythmWorkFlowID
+					 j.RhythmWorkFlowID,
+					 j.BackendStatus
 			FROM dbo.Encounters AS e WITH(NOLOCK)
 				INNER JOIN Jobs j WITH(NOLOCK) on j.EncounterID=e.EncounterID 
 				INNER JOIN 

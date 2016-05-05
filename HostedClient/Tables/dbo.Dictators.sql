@@ -26,7 +26,8 @@ CREATE TABLE [dbo].[Dictators]
 [UserId] [int] NULL,
 [SRETypeId] [int] NULL,
 [RhythmWorkFlowID] [int] NULL,
-[AppSetting_DisableSendToTranscription] [bit] NOT NULL CONSTRAINT [DF_Dictators_AppSetting_DisableSendToTranscription] DEFAULT ((0))
+[AppSetting_DisableSendToTranscription] [bit] NOT NULL CONSTRAINT [DF_Dictators_AppSetting_DisableSendToTranscription] DEFAULT ((0)),
+[Preference] [varchar] (max) COLLATE SQL_Latin1_General_CP1_CI_AS NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 ALTER TABLE [dbo].[Dictators] ADD
 CONSTRAINT [FK_Dictators_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
