@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -15,11 +16,15 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	 SELECT j.*, jc.Jobnumber As BackendJobnumber
+	  SELECT j.*, jc.Jobnumber As BackendJobnumber,C.ClinicCode+d.DictatorName As DictatorCode
 	 FROM Jobs j WITH(NOLOCK)
-	 lEFT JOIN [EA_Jobs_Client] jc WITH(NOLOCK) ON jc.FileName=j.JobNumber
+	 INNER JOIN Clinics c WITH(NOLOCK) on j.ClinicID=c.ClinicID
+	 INNER JOIN Dictators d WITH(NOLOCK) on d.DictatorID=j.OwnerDictatorID
+	 lEFT JOIN [Entrada].dbo.Jobs_Client jc WITH(NOLOCK) ON jc.FileName=j.JobNumber
 	 WHERE j.JobID=@JobID
 
 
 END
+
+
 GO
