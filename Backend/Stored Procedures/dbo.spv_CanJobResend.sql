@@ -9,7 +9,7 @@ GO
 -- Description:	This procedure will get check if a job can be resent from NCP job details view
 -- Updated : baswaraj: #5412 - Unlocked jobs also needs to set to Resend- added document status 130 
 -- =============================================
-CREATE PROCEDURE [dbo].[spv_CanJobResend]
+ALTER PROCEDURE [dbo].[spv_CanJobResend]
 @Jobnumber varchar(20)
 AS
 BEGIN
@@ -20,6 +20,6 @@ BEGIN
 	SELECT DISTINCT 1 FROM Jobs J
 	INNER JOIN dbo.JobDeliveryHistory JDH ON J.JobNumber = JDH.JobNumber
 	INNER JOIN	dbo.JobDeliveryRules JDR ON J.ClinicID = JDR.ClinicID
-	WHERE (JDR.Method in (100,300) OR J.DocumentStatus=130) and AvoidRedelivery = 0 AND J.JobNumber = @Jobnumber 	 
+	WHERE (JDR.Method in (100,300) and AvoidRedelivery = 0) OR J.DocumentStatus=130 AND J.JobNumber = @Jobnumber 	 
 END
 GO
