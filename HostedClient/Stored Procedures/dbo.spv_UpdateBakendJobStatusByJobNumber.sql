@@ -19,23 +19,29 @@ BEGIN
 	BEGIN TRY
 		BEGIN TRANSACTION
 
-		  		   
-		   UPDATE [Entrada].dbo.Jobs SET 
-					JobStatus = @NewJobStatus, 
-					ProcessFailureCount = 0, 
-					IsLockedForProcessing = 0,
-					JobStatusDate = GetDate()
-			WHERE JobNumber = @BakendJobNumber
+	    DECLARE @oldJobStatus INT
 
-			--Updates Only JobStatusB since the proc handles only 345 and 354. 
-			--Anything lower than 280 should be updated on JobStatusA
-			UPDATE [Entrada].dbo.JobStatusB SET
-					Status = @NewJobStatus,
-					StatusDate = GetDate()
-			WHERE JobNumber = @BakendJobNumber
+		Select @oldJobStatus=JobStatus from [Entrada].dbo.Jobs WHERE JobNumber = @BakendJobNumber
+		
+		IF(@oldJobStatus<>@NewJobStatus)
+		  BEGIN  		   
+				   UPDATE [Entrada].dbo.Jobs SET 
+							JobStatus = @NewJobStatus, 
+							ProcessFailureCount = 0, 
+							IsLockedForProcessing = 0,
+							JobStatusDate = GetDate()
+					WHERE JobNumber = @BakendJobNumber
 
-			INSERT INTO [Entrada].dbo.JobTracking (JobNumber, Status, StatusDate)
+					--Updates Only JobStatusB since the proc handles only 345 and 354. 
+					--Anything lower than 280 should be updated on JobStatusA
+					UPDATE [Entrada].dbo.JobStatusB SET
+							Status = @NewJobStatus,
+							StatusDate = GetDate()
+					WHERE JobNumber = @BakendJobNumber
+
+					INSERT INTO [Entrada].dbo.JobTracking (JobNumber, Status, StatusDate)
 				VALUES(@BakendJobNumber, @NewJobStatus, GetDate())
+         END
 
          UPDATE Jobs SET BackendStatus=@NewJobStatus,UpdatedDateInUTC=GETUTCDATE(),RhythmWorkFlowID=@RhythmWorkFlowID Where JobNumber=@HostedJobNumber
 
