@@ -20,6 +20,6 @@ BEGIN
 	SELECT DISTINCT 1 FROM Jobs J
 	INNER JOIN dbo.JobDeliveryHistory JDH ON J.JobNumber = JDH.JobNumber
 	INNER JOIN	dbo.JobDeliveryRules JDR ON J.ClinicID = JDR.ClinicID
-	WHERE (JDR.Method in (100,300) and AvoidRedelivery = 0) OR J.DocumentStatus=130 AND J.JobNumber = @Jobnumber 	 
+	WHERE (JDR.Method in (100,300) OR J.DocumentStatus=130) and AvoidRedelivery = 0 AND J.JobNumber = @Jobnumber 	 
 END
 GO
