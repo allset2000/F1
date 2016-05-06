@@ -18,13 +18,13 @@ CREATE TABLE [dbo].[JobTypes]
 [ACKTemplateId] [int] NULL,
 [UpdatedDateInUTC] [datetime] NULL CONSTRAINT [DF_JobTypes_UpdatedDateInUTC] DEFAULT (getutcdate()),
 [JobTypeCategoryId] [int] NOT NULL CONSTRAINT [DF__JobTypes__JobTyp__1EF06FC3] DEFAULT ((1)),
-[EncounterTemplate] [varchar] (1000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[DictationTemplate] [varchar] (1000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[EncounterTemplate] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[DictationTemplate] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [CreateEncounter] [bit] NULL,
 [EncounterSearchTypeId] [int] NULL,
-[EncounterCategory] [varchar] (200) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[TaskSubject] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
-[TaskName] [varchar] (500) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[EncounterCategory] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[TaskSubject] [varchar] (30) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
+[TaskName] [varchar] (32) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [TaskTypeId] [int] NULL CONSTRAINT [DF_JobTypes_TaskTypeId] DEFAULT ((0))
 ) ON [PRIMARY]
 ALTER TABLE [dbo].[JobTypes] ADD
