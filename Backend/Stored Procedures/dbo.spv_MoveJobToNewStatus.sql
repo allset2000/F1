@@ -20,6 +20,10 @@ BEGIN
 	DECLARE @CurrentJobStatus smallint
 	DECLARE @Path varchar(200)	--JobTracking takes 255 but JobStatusA and JobStatusB has only 200.
 
+	--Set to 354 (delivery success) only if there is nothing more to deliver
+	IF (@NewJobStatus=354 AND EXISTS(SELECT 1 FROM JobsToDeliver WHERE @JobNumber=@JobNumber))
+		RETURN;
+
 	SELECT @CurrentJobStatus = Status, @Path = Path from JobstatusB WHERE JobNumber=@JobNumber 
 
 	-- status hasn't changed so nothing to update
@@ -28,7 +32,8 @@ BEGIN
 
 	--Designed only for 280-->345, 280-->354 and 345-->354. To be called from EL and Downloader.
 	--Can be used for other status movement but check the code and test it.
-	IF (@NewJobStatus NOT IN(345,354))
+	--Once it goes to 360, no change after that since 360 is the final stage for now. Might change in future.
+	IF (@NewJobStatus NOT IN(345,354) or @CurrentJobStatus = 360)
 		RETURN; 
 
 	BEGIN TRY
@@ -65,4 +70,5 @@ BEGIN
 	END CATCH
 
 END
+
 GO
