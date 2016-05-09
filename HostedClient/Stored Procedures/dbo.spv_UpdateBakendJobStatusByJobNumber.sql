@@ -32,9 +32,9 @@ BEGIN
 							JobStatusDate = GetDate()
 					WHERE JobNumber = @BakendJobNumber
 
-					--Updates Only JobStatusB since the proc handles only 345 and 354. 
+					
 					--Anything lower than 280 should be updated on JobStatusA
-					UPDATE [Entrada].dbo.JobStatusB SET
+					UPDATE [Entrada].dbo.JobStatusA SET
 							Status = @NewJobStatus,
 							StatusDate = GetDate()
 					WHERE JobNumber = @BakendJobNumber

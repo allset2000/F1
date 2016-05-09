@@ -32,7 +32,7 @@ BEGIN TRANSACTION
 		INSERT INTO JobTracking  
 		VALUES (@vvcrJobNumber,@vsintStatus,GETDATE(),@vvcrPath )  
 
-		UPDATE jobs SET jobstatus=@vsintStatus WHERE jobnumber=@vvcrJobNumber
+		UPDATE jobs SET jobstatus=@vsintStatus,JobStatusDate=GETDATE() WHERE jobnumber=@vvcrJobNumber
 		
 		-- update the status into hosted db.
 		EXEC spUpdateBackendStatusAndDateIntoHosted @vvcrJobNumber,@vsintStatus

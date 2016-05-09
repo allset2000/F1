@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -26,7 +27,7 @@ BEGIN
 	-- Reset the failed jobs for reprocess based on job number and status=150 in backend db
     IF EXISTS(SELECT 1 FROM dbo.JobStatusA WHERE JobNumber=@vvcrjobNumber AND Status=150)
 		BEGIN 
-			UPDATE dbo.Jobs SET	IsLockedForProcessing = 0
+			UPDATE dbo.Jobs SET	IsLockedForProcessing = 0,jobstatus=110,JobStatusDate=GETDATE()
 			WHERE JobNumber=@vvcrjobNumber
 
 			UPDATE dbo.jobstatusa SET Status = 110 
@@ -34,6 +35,7 @@ BEGIN
 		END	
 	
 END
+
 
 
 
