@@ -10,7 +10,7 @@ GO
 -- Description: SP called from DictateAPI to pull Dictations to sync on mobile
 --Generic patient details issue fixed
 --Modified:Raghu A--18/04/2016--Update proc for get completed jobs encounters
---exec sp_GetEncountersToSyncByLastSyncDate 1045 ,'2013-11-20 10:15:02.970','2016-02-20','prev'
+--exec sp_GetEncountersToSyncByLastSyncDate 3660 ,'2013-11-20 10:15:02.970','2016-04-28','prev'
 --exec sp_GetEncountersToSyncByLastSyncDate_A 3514 ,'2013-11-20 10:15:02.970','2016-02-23','prev'
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetEncountersToSyncByLastSyncDate](
@@ -22,10 +22,10 @@ CREATE PROCEDURE [dbo].[sp_GetEncountersToSyncByLastSyncDate](
 BEGIN
     SET NOCOUNT ON;
 	   DECLARE @TempEncounter AS TABLE	
-				(ID INT,
+				(ID BIGINT,
 				 AppointmentDate INT,
 				 PatientID INT,
-				 ScheduleID INT,
+				 ScheduleID BIGINT,
 				 [State] INT,
 				 JobDetails VARCHAR(2000)
 				)

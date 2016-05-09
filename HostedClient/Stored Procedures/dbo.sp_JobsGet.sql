@@ -9,6 +9,9 @@ GO
 --x_____________________________________________________________________________
 --x   0    | 02/17/2016  | sharif shaik        | get image only jobs
 --X	  1	   | 03/01/2016	 | sharif shaik        | Changes for NextGen
+--X	  2	   | 05/03/2016	 | sharif shaik        | Add Patients.AlternateID, clinic.EHRLocationID
+--X	  3	   | 05/03/2016	 | sharif shaik        | Add JobTypes.CreateEncounter, JobTypes.EncounterSearchTypeId, JobTypes.EncounterCategory
+--X											   |, JobTypes.TaskTypeId, JobTypes.TaskName, JobTypes.TaskSubject
 --xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 /*
 	set statistics io on
@@ -35,6 +38,7 @@ BEGIN
 			,Encounters.AppointmentDate
 			,'pdf' as DocumentFormat
 			,Patients.MRN
+			,Patients.AlternateID
 			,Patients.FirstName
 			,Patients.LastName
 			,Jobs.JobNumber AS ClientJobNumber
@@ -53,7 +57,14 @@ BEGIN
 			,JobTypes.AllowNotifications
 			,JobTypes.DocumentType
 			,JobTypes.ACKEnabled
+			,JobTypes.CreateEncounter
+			,JobTypes.EncounterSearchTypeId
+			,JobTypes.EncounterCategory
+			,JobTypes.TaskTypeId
+			,JobTypes.TaskName
+			,JobTypes.TaskSubject
             ,Clinics.EHRClinicID
+			,Clinics.EHRLocationID
 			FROM Jobs INNER JOIN JobTypes ON Jobs.JobTypeID = JobTypes.JobTypeID
 			INNER JOIN Clinics ON Clinics.ClinicID = Jobs.ClinicID AND Jobs.ClinicID = @ClinicID                                
             LEFT OUTER JOIN Encounters ON Encounters.EncounterID = Jobs.EncounterID
