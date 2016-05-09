@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -27,10 +28,12 @@ GO
 --X  VER   |    DATE      |  BY						|  COMMENTS - include Ticket#
 --X_____________________________________________________________________________
 --X   0    | 04/28/2016   | Naga					| Initial Design
+--X   1    | 05/09/2016   | Naga					| #5457 - Included the Document Status column, so that the update the can be done in the same stored procedure
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 CREATE PROCEDURE [dbo].[spv_Update_RhythmJob]
 				@JobNumber				VARCHAR(20),
 				@JobStatus				SMALLINT,
+				@DocumentStatus			SMALLINT,
 				@UpdatedBy				VARCHAR(50),
 				@TemplateName			VARCHAR(100),
 				@DocBinary				VARBINARY(MAX),
@@ -101,7 +104,7 @@ BEGIN
 
 	-- Update the new job status in Jobs table
 	UPDATE dbo.Jobs
-	SET JobStatus = @JobStatus, JobStatusDate = @StatusDate
+	SET JobStatus = @JobStatus, JobStatusDate = @StatusDate, DocumentStatus = @DocumentStatus
 	WHERE JobNumber = @JobNumber
 
 	-- Add a Jobs Tracking entry
