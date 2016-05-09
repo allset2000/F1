@@ -7,7 +7,7 @@ GO
 -- Author:		Narender
 -- Create date: 01/27/2016
 -- Description:	This SP will return WorkList for selected search filter
---EXEC sp_GetWorklistSearchReport @clinicID=353,@PageNo=1,@SortColumnFromGrid='Patient',@SortTypeFromGrid='Descending',@PageSize=10,@QueueID=3671
+--EXEC sp_GetWorklistSearchReport @clinicID=352,@PageNo=1,@PageSize=10,@MRN='1367'
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetWorklistSearchReport] 
 @clinicID smallint,
@@ -81,7 +81,7 @@ BEGIN
 				IF(@To IS NOT NULL)
 					SET @sql += ' AND Convert(Date,E.AppointmentDate) <=  CAST(''' +CAST( @To AS VARCHAR) +''' AS DATE)'
 				IF(@MRN IS NOT NULL)
-					SET @sql += ' AND P.MRN = ' + @MRN
+					SET @sql += ' AND P.MRN = ''' + @MRN +''''
 				IF(@FirstName IS NOT NULL)
 					SET @sql += ' AND P.FirstName like ''%' + @FirstName +'%'''
 				IF(@LastName IS NOT NULL)
@@ -122,4 +122,5 @@ BEGIN
 	END CATCH
 
 END
+
 GO

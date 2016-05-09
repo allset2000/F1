@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -49,8 +50,9 @@ BEGIN TRY
 		DECLARE @EHREncounterID VARCHAR(50)
 		DECLARE @JobNumber VARCHAR(20)
 		DECLARE @RuleId SMALLINT
+		DECLARE @RemoveAppointments bit=0
 
-		SELECT @EHREncounterID = S.EHREncounterID, @JobNumber = J.JobNumber, @RuleId = J.RuleID 
+		SELECT @EHREncounterID = S.EHREncounterID, @JobNumber = J.JobNumber, @RuleId = J.RuleID, @RemoveAppointments=1 
 		FROM Dictations D
 			INNER JOIN Jobs J ON J.JobID = D.JobID
 			INNER JOIN Encounters E ON E.EncounterID = J.EncounterID
@@ -59,24 +61,36 @@ BEGIN TRY
 			INNER JOIN Rules R ON R.RuleID = J.RuleID AND R.RemoveAppointments = 1
 		WHERE D.DictationID = @bgintDictationID		
 	
-		UPDATE Jobs
-		SET Status = 500, UpdatedDateInUTC = GETUTCDATE()
-		FROM Jobs J 
-			INNER JOIN Dictations D ON D.JobID = J.JobID AND D.Status = 100
-			INNER JOIN Clinics C ON C.ClinicID = J.ClinicID AND C.EHRVendorID = 3
-			INNER JOIN Encounters E ON E.EncounterID = J.EncounterID
-			INNER JOIN Schedules S ON S.ScheduleID = E.ScheduleID AND S.EHREncounterID = @EHREncounterID
-		WHERE J.RuleID = @RuleId AND J.JobNumber <> @JobNumber
+		if @RemoveAppointments=1 
+		BEGIN
+			--temp tables to store JobIds and DictationIDs to be deleted 		
+			DECLARE @JobstoDelete AS TABLE (JOBID BIGINT, DICTATIONID BIGINT)
+			
+			INSERT INTO @JobstoDelete (JOBID, DICTATIONID)
+			SELECT J.JobID, D.DictationID 
+			FROM Jobs J 
+				INNER JOIN Dictations D ON D.JobID = J.JobID AND D.Status = 100
+				INNER JOIN Clinics C ON C.ClinicID = J.ClinicID AND C.EHRVendorID = 3
+				INNER JOIN Encounters E ON E.EncounterID = J.EncounterID
+				INNER JOIN Schedules S ON S.ScheduleID = E.ScheduleID AND S.EHREncounterID = @EHREncounterID
+			WHERE J.RuleID = @RuleId AND J.JobNumber <> @JobNumber
 
-		UPDATE Dictations
-		SET Status = 500, UpdatedDateInUTC = GETUTCDATE()
-		FROM Dictations D 
-			INNER JOIN Jobs J ON D.JobID = J.JobID AND D.Status = 100
-			INNER JOIN Clinics C ON C.ClinicID = J.ClinicID AND C.EHRVendorID = 3
-			INNER JOIN Encounters E ON E.EncounterID = J.EncounterID
-			INNER JOIN Schedules S ON S.ScheduleID = E.ScheduleID AND S.EHREncounterID = @EHREncounterID
-		WHERE J.RuleID = @RuleId AND J.JobNumber <> @JobNumber
-		-- Only for NextGen Vendor
+			UPDATE Jobs
+			SET Status = 500, UpdatedDateInUTC = GETUTCDATE()
+			FROM Jobs J 
+				INNER JOIN @JobstoDelete JT ON J.JobID = JT.JobID 
+
+			INSERT INTO JobsTracking (JobID, Status, Changedate, ChangedBy) 
+			SELECT JobID, 500, GETUTCDATE(), 'LinkedAppt' FROM @JobstoDelete
+
+			UPDATE Dictations
+			SET Status = 500, UpdatedDateInUTC = GETUTCDATE()
+			FROM Dictations D INNER JOIN @JobstoDelete JT ON D.DictationID = JT.DictationID
+
+			INSERT INTO DictationsTracking (DictationID, Status, Changedate, ChangedBy) 
+			SELECT DictationID, 500, GETUTCDATE(), 'LinkedAppt' FROM @JobstoDelete
+			-- Only for NextGen Vendor
+		END
 	END
 	COMMIT TRANSACTION
 END TRY
