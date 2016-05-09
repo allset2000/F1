@@ -9,7 +9,7 @@ GO
 -- Description:	This procedure will get check if a job can be resent from NCP job details view
 -- Updated : baswaraj: #5412 - Unlocked jobs also needs to set to Resend- added document status 130 
 -- =============================================
-ALTER PROCEDURE [dbo].[spv_CanJobResend]
+CREATE PROCEDURE [dbo].[spv_CanJobResend]
 @Jobnumber varchar(20)
 AS
 BEGIN
