@@ -132,7 +132,7 @@ BEGIN TRY
 	VALUES(@JobNumber,getdate())
 
 	--Update the current  status into jobs table
-	UPDATE jobs SET JobStatus=@Status,JobStatusDate=JobTracking.value('StatusDate[1]','datetime') where jobnumber = @JobNumber
+	UPDATE jobs SET JobStatus=@Status,JobStatusDate=GETDATE() where jobnumber = @JobNumber
 
 	COMMIT TRANSACTION  
  END TRY
