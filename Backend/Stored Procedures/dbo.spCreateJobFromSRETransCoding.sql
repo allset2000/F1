@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -130,6 +131,9 @@ BEGIN TRY
 	INSERT INTO OrphanJobsToProcess(JobNumber,CreatedOn)
 	VALUES(@JobNumber,getdate())
 
+	--Update the current  status into jobs table
+	UPDATE jobs SET JobStatus=@Status,JobStatusDate=JobTracking.value('StatusDate[1]','datetime') where jobnumber = @JobNumber
+
 	COMMIT TRANSACTION  
  END TRY
 BEGIN CATCH
@@ -141,4 +145,5 @@ BEGIN CATCH
 		RAISERROR(@ErrMsg, @ErrSeverity, 1)
 	   END
 END CATCH
+
 GO
