@@ -12,7 +12,8 @@ GO
 ** Change History          
 *************************          
 * PR   Date     Author  Description           
-* --   --------   -------   ------------------------------------       
+* --   --------   -------   ------------------------------------      
+* 5909 11-May-2016 baswaraj Added IsJobDelivered column to hold the jobdelivered status 
 *******************************/      
       
 CREATE PROCEDURE [dbo].[spGetPortalJobDetails] 
@@ -27,6 +28,9 @@ DECLARE @Status INT
 	SELECT @Status = status FROM JobStatusA WHERE jobnumber=@vvcrJobNumber
 	IF(@Status is NULL )
 		SELECT @Status = status FROM JobStatusB WHERE jobnumber=@vvcrJobNumber
+DECLARE @IsJobDelivered bit=0
+    IF EXISTS(SELECT * FROM JobDeliveryHistory where jobnumber=@vvcrJobNumber)
+       SET @IsJobDelivered=1
 
 IF EXISTS( SELECT 1 FROM jobs WHERE jobnumber=@vvcrJobNumber AND DATEDIFF(MINUTE, LockbyUserTimeStamp, GETDATE())  > 30 AND (LokedbyUserForJobDetailsView IS NOT NULL OR LokedbyUserForJobDetailsView = ''))
  UPDATE jobs SET LokedbyUserForJobDetailsView = null, LockbyUserTimeStamp=null WHERE jobnumber=@vvcrJobNumber
@@ -61,7 +65,8 @@ IF EXISTS( SELECT 1 FROM jobs WHERE jobnumber=@vvcrJobNumber AND DATEDIFF(MINUTE
 		JA.FileArchivedOn,
 		JE.LastQANote,
 		JB.AppointmentId,
-		JP.SSN
+		JP.SSN,
+		@IsJobDelivered as IsJobDelivered
 	FROM jobs JB
 	INNER JOIN Jobs_Patients JP
 	ON JB.jobnumber = JP.jobnumber
