@@ -8,8 +8,7 @@ GO
 -- Create date: 5/5/2016
 -- Description:	Update Backend and hosted job status
 -- =============================================
-CREATE PROCEDURE [dbo].[spv_UpdateBakendJobStatusByJobNumber]
-	@HostedJobNumber  VARCHAR(20),
+CREATE PROCEDURE [dbo].[spv_UpdateBakendJobStatusByJobNumber]	
 	@BakendJobNumber VARCHAR(20),
 	@NewJobStatus Int,
 	@RhythmWorkFlowID Int,
@@ -56,7 +55,10 @@ BEGIN
 
          END
 
-         UPDATE Jobs SET BackendStatus=@NewJobStatus,UpdatedDateInUTC=GETUTCDATE(),RhythmWorkFlowID=@RhythmWorkFlowID Where JobNumber=@HostedJobNumber
+         UPDATE J SET BackendStatus=@NewJobStatus,UpdatedDateInUTC=GETUTCDATE(),RhythmWorkFlowID=@RhythmWorkFlowID 
+		 FROM dbo.Jobs J
+		 INNER JOIN [entrada].dbo.Jobs_Client JC on Jc.FileName=j.JobNumber
+		 WHERE JC.JobNumber=@BakendJobNumber
 
     COMMIT TRANSACTION
 
