@@ -12,6 +12,7 @@ GO
 --X	  2	   | 05/03/2016	 | sharif shaik        | Add Patients.AlternateID, clinic.EHRLocationID
 --X	  3	   | 05/03/2016	 | sharif shaik        | Add JobTypes.CreateEncounter, JobTypes.EncounterSearchTypeId, JobTypes.EncounterCategory
 --X											   |, JobTypes.TaskTypeId, JobTypes.TaskName, JobTypes.TaskSubject
+--X	  4	   | 05/10/2016	 | sharif shaik        | Add JobTypes.EncounterTemplate, JobTypes.DictationTemplate
 --xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 /*
 	set statistics io on
@@ -63,6 +64,8 @@ BEGIN
 			,JobTypes.TaskTypeId
 			,JobTypes.TaskName
 			,JobTypes.TaskSubject
+			,JobTypes.EncounterTemplate
+			,JobTypes.DictationTemplate
             ,Clinics.EHRClinicID
 			,Clinics.EHRLocationID
 			FROM Jobs INNER JOIN JobTypes ON Jobs.JobTypeID = JobTypes.JobTypeID
