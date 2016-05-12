@@ -12,6 +12,7 @@ GO
 -- Updated Date: 04-APR-2016 -- Added status group 6(Draft Review) to jobs filter
 -- Updated on 19thApril-16 : added a clinic comparision for jobs to get from hosted #7625
 -- Updated on 12thMay-16 : Modified ReceivedOn Months from 3 to 6 Months as part of #5914.
+-- Updated on 12thMay-16 : Added EditingComplete SortType also #4047.
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobReportsSearchJobList] 
 @JobReportSearchPreferenceId int,
@@ -221,6 +222,7 @@ BEGIN
 					WHEN 'User' THEN DictatorID 
 					WHEN 'JobType' THEN JobType 
 					WHEN 'Patient' THEN FirstName 
+					WHEN 'EditingComplete' THEN AwaitingDelivery
 					END
 				END,
 				CASE WHEN @SortTypeFromGrid = 'Descending' THEN
@@ -231,6 +233,7 @@ BEGIN
 					WHEN 'User' THEN DictatorID 
 					WHEN 'JobType' THEN JobType 
 					WHEN 'Patient' THEN FirstName 
+					WHEN 'EditingComplete' THEN AwaitingDelivery
 					END
 				END DESC,
 				CASE WHEN @SortTypeFromGrid = 'Ascending' THEN
