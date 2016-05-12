@@ -11,6 +11,7 @@ GO
 -- Updated Date: 24-Feb-2016 -- Added block for StatusGroup-10 Error
 -- Updated Date: 04-APR-2016 -- Added status group 6(Draft Review) to jobs filter
 -- Updated on 19thApril-16 : added a clinic comparision for jobs to get from hosted #7625
+-- Updated on 12thMay-16 : Modified ReceivedOn Months from 3 to 6 Months as part of #5914.
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobReportsSearchJobList] 
 @JobReportSearchPreferenceId int,
@@ -116,7 +117,7 @@ BEGIN
 							and (@CC is null or JB.CC = @CC) 
 							and (@STAT is null or JB.Stat = @STAT) 
 							and (@JobNumber is null or JB.JobNumber = @JobNumber) 
-							and (JB.ReceivedOn  >= DATEADD(M,-3,GETDATE()))
+							and (JB.ReceivedOn  >= DATEADD(M,-6,GETDATE()))
 						    and (@dateRangeFrom is null or (E.ErrorDate  >= @dateRangeFrom))
 							and (@dateRangeTo is null or (E.ErrorDate  <= @dateRangeTo))
 							--and (JB.ClinicID = @ClinicID)
@@ -137,7 +138,7 @@ BEGIN
 							and (@CC is null or J.CC = @CC) 
 							and (@STAT is null or J.Stat = @STAT) 
 							and (@JobNumber is null or J.JobNumber = @JobNumber) 
-							and (J.ReceivedOn  >= DATEADD(M,-3,GETDATE()))
+							and (J.ReceivedOn  >= DATEADD(M,-6,GETDATE()))
 						GROUP BY jg.Id,JG.StatusGroup, JT.JobNumber,j.ClinicID 
 						HAVING (@DateField is null or JG.Id= @DateField)
 							and (@dateRangeFrom is null or (min(jt.StatusDate)  >= @dateRangeFrom))
@@ -163,7 +164,7 @@ BEGIN
 							and (@STAT is null or J.Stat = @STAT) 
 							and (@ClinicID is null or J.ClinicID = @ClinicID)  
 							and (@JobNumber is null or J.JobNumber = @JobNumber) 
-							and (J.ReceivedOn  >= DATEADD(M,-3,GETDATE()))
+							and (J.ReceivedOn  >= DATEADD(M,-6,GETDATE()))
 						GROUP BY jg.Id,JG.StatusGroup, JT.JobNumber,j.ClinicID  
 
 		END
