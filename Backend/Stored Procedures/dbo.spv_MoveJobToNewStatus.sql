@@ -10,6 +10,12 @@ GO
 --				Designed only for 280-->345, 280-->354 and 345-->354. To be called from EL and Downloader.
 --				Can be used for other status movement but check the code and test it.
 --exec spv_MoveJobToNewStatus '2016050500000002',354
+--X HISTORY:
+--X_____________________________________________________________________________
+--X  VER   |    DATE      |  BY						|  COMMENTS - include Ticket#
+--X_____________________________________________________________________________
+--X   0    | 05/04/2016   | Vivek					| Initial Design
+--X   1    | 05/09/2016   | Naga					| Fixed the where clause on 354 status validation
 -- =============================================
 CREATE PROCEDURE [dbo].[spv_MoveJobToNewStatus] 
 	@JobNumber varchar(20),
@@ -21,7 +27,7 @@ BEGIN
 	DECLARE @Path varchar(200)	--JobTracking takes 255 but JobStatusA and JobStatusB has only 200.
 
 	--Set to 354 (delivery success) only if there is nothing more to deliver
-	IF (@NewJobStatus=354 AND EXISTS(SELECT 1 FROM JobsToDeliver WHERE @JobNumber=@JobNumber))
+	IF (@NewJobStatus=354 AND EXISTS(SELECT 1 FROM JobsToDeliver WHERE JobNumber=@JobNumber))
 		RETURN;
 
 	SELECT @CurrentJobStatus = Status, @Path = Path from JobstatusB WHERE JobNumber=@JobNumber 
