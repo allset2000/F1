@@ -174,8 +174,11 @@ BEGIN TRY
 			select @Status = status from JobStatusB where jobnumber=@vvcrJobNumber
 		if  @Status=250 
 			BEGIN
-			INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime, STAT)
-			SELECT @vvcrJobNumber,MRN,JobType,250,null,@vvcrUsername,GETDATE(), @vbitStat1 from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber 
+
+			if(@vsdtAppointmentDate is null) select @vsdtAppointmentDate = AppointmentDate + AppointmentTime from jobs where jobnumber = @vvcrJobNumber
+
+			INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime, STAT,FirstName,MI,LastName,DOB,IsHistory,AppointmentDate)
+			SELECT @vvcrJobNumber,MRN,JobType,250,null,@vvcrUsername,GETDATE(), @vbitStat1,@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,1,@vsdtAppointmentDate from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber 
 					WHERE (j.[JobNumber] = @vvcrJobNumber)
 			END
 
@@ -190,5 +193,4 @@ BEGIN CATCH
 			RAISERROR(@ErrMsg, @ErrSeverity, 1)
 		END
 END CATCH 
-
 GO

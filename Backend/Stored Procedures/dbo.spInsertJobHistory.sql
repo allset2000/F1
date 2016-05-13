@@ -52,7 +52,8 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		
 			
 		-- if any AppointmentDateTime value is changed then track that previous value.
-		SELECT  @vsdtAppointmentDate = CASE WHEN  AppointmentDate + AppointmentTime <> @vsdtAppointmentDate THEN AppointmentDate + AppointmentTime ELSE NULL END  FROM jobs WHERE JobNumber = @vvcrJobNumber	
+		-- 
+		SELECT  @vsdtAppointmentDate =  AppointmentDate + AppointmentTime FROM jobs WHERE JobNumber = @vvcrJobNumber	
 
 		-- if any jobtype value is changed then track that previous value.
 		SELECT  @vvcrJobType = CASE WHEN JobType <> @vvcrJobType THEN JobType ELSE NULL END  FROM jobs WHERE JobNumber = @vvcrJobNumber	
@@ -81,11 +82,13 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 			SET @IsHistory =1
 			END
 
+
 		-- if job is sent to finsh in Editor stage then we need to track in process data and status
-		IF @vsintCurrentStatus >= 250 and not exists(SELECT 1 FROM JOB_HISTORY WHERE jobnumber=@vvcrJobNumber)
+		IF NOT EXISTS(SELECT 1 FROM JOB_HISTORY WHERE jobnumber=@vvcrJobNumber)
 			BEGIN
-				INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,IsHistory)
-				VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,170,@vintDocumentID,@vvcrUserId,GETDATE(),@IsHistory)
+				INSERT INTO Job_History 
+				(JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,FirstName,MI,LastName,DOB,IsHistory,STAT,AppointmentDate)
+				VALUES(@vvcrJobNumber,@vvcrMRN,@vvcrJobType,110,@vintDocumentID,@vvcrUserId,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,@IsHistory,@newSTAT,@vsdtAppointmentDate)
 			END
 
 		-- For tracking the MRN and Jobtype history we need previous status

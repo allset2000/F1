@@ -62,8 +62,8 @@ DECLARE @TempJobsHostory TABLE(
 			FROM JobTracking JT  
 			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
-			left outer join job_history JH on JT.jobnumber = JH.jobnumber and jt.status=JH.currentstatus
-			WHERE JT.JobNumber=@vvcrJobnumber and sc.StatusGroupId=@StatusGroupId AND jh.STAT IS NULL
+			LEFT OUTER JOIN job_history JH on JT.jobnumber = JH.jobnumber and JT.status=JH.currentstatus 
+			WHERE JT.JobNumber=@vvcrJobnumber and sc.StatusGroupId=@StatusGroupId AND jh.STAT IS NULL AND JH.JobHistoryID IS NOT NULL AND IsHistory = 1
 			ORDER by JT.StatusDate ASC
 			END
 	ELSE IF @StatusGroupId = 5 --Delivered
@@ -77,19 +77,21 @@ DECLARE @TempJobsHostory TABLE(
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 			INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
 			left outer join job_history JH on JT.jobnumber = JH.jobnumber and jt.status=JH.currentstatus AND JD.JobHistoryID = JH.JobHistoryID
-			WHERE JT.JobNumber=@vvcrJobnumber
+			WHERE JT.JobNumber=@vvcrJobnumber and IsHistory = 1
 			ORDER BY jg.id DESC
 		END
 	ELSE 
 		BEGIN
 		-- get the history from jobtracking table if history not avalable in job_history table
 		INSERT INTO @TempJobsHostory
-			SELECT TOP 1  JH.JobNumber,null DocumentID,JG.StatusGroup,min(JH.StatusDate),null JobType,null UserId,null MRN,1 JobHistoryID,jg.id,null CurrentStatus,
-			NULL AppointmentDate,NULL DOB,NULL FirstName,NULL MI,NULL LastName from JobTracking JH  
+			SELECT top 1 JH.JobNumber,null DocumentID,JG.StatusGroup,min(JH.StatusDate),JobType,null UserId,null MRN,1 JobHistoryID,jg.id,null CurrentStatus,
+			j.AppointmentDate+j.AppointmentTime as AppointmentDate, DOB, FirstName, MI, LastName from JobTracking JH   
 			INNER JOIN dbo.StatusCodes SC ON JH.Status= SC.StatusID
 			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
+			INNER JOIN jobs j on j.Jobnumber = jh.jobnumber
+			INNER JOIN Jobs_patients jp on jp.jobnumber = j.jobnumber 
 			WHERE JH.JobNumber=@vvcrJobnumber and sc.StatusGroupId=@StatusGroupId 
-			GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup
+			GROUP BY jg.Id,JH.JobNumber,JG.StatusGroup,JobType,AppointmentDate,AppointmentTime,DOB,FirstName,MI,LastName
 		END
 
 -- Get the jobtype, documentid and MRN from previous record in that group or get it from jobs and patient table.
@@ -121,11 +123,10 @@ DECLARE @TempJobsHostory TABLE(
 	un.UserId,
 	CASE WHEN mr.MRN IS NULL THEN JP.MRN ELSE  mr.MRN END MRN,
 	CASE WHEN JH.FirstName IS NULL or JH.FirstName =''  THEN JP.FirstName ELSE  JH.FirstName END FirstName,
-	CASE WHEN JH.MI IS NULL or JH.MI =''  THEN JP.MI ELSE  JH.MI END MI,
+	JH.MI,
 	CASE WHEN JH.LastName IS NULL or JH.LastName =''  THEN JP.LastName ELSE  JH.LastName END LastName,
 	jb.ClinicID,JH.JgId, 0 as isError, -- added this to represent that it is not error history
-	CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN jb.AppointmentDate + jb.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate,
-	CASE WHEN JH.DOB IS NULL or JH.DOB ='' THEN JP.DOB ELSE JH.DOB END DOB
+	JH.AppointmentDate,JH.DOB
 	FROM @TempJobsHostory as JH 
 	OUTER APPLY  
         (SELECT TOP 1 DocumentID FROM @TempJobsHostory as b WHERE b.DocumentID IS NOT NULL ORDER BY b.JobHistoryID ASC) doc

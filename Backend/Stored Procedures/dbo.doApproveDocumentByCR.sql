@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -27,7 +28,10 @@ BEGIN
 	
 			/* Tracking into job history table */
 			SELECT @DocumentId = IDENT_CURRENT('Jobs_Documents_History')
-			exec spInsertJobHistory @JobNumber,null,null,@Status,@documentID,@oldUsername,null,null,null,null
+			
+			INSERT INTO Job_History
+			(JobNumber, MRN, CurrentStatus, FirstName, MI, LastName, DOB, HistoryDateTime,DocumentID,UserId)
+			select @JobNumber,MRN,@Status,FirstName, MI, LastName, DOB,GETDATE(),@documentID,@oldUsername FROM Jobs_patients WHERE Jobnumber = @JobNumber 
 
 		/* Update Job Document */							
 		UPDATE Jobs_Documents
