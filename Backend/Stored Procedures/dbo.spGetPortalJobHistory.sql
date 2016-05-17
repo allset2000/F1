@@ -112,7 +112,7 @@ SELECT  rov.JobNumber,'Override Value Added By '+u.Name ,CASE WHEN rov.CreatedDa
 		INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JobNumber = @vvcrJobnumber AND  STAT = 1 ORDER BY JobHistoryID DESC
  
  INSERT INTO @TempJobsHostory1  
-		SELECT JH.JobNumber, NULL, 'Document Resent',HistoryDateTime, JH.JobType, JH.UserId, JH.MRN, JH.FirstName, JH.MI, JH.LastName, null, SC.StatusGroupId, 0,
+		SELECT JH.JobNumber, NULL, 'Document Resent',HistoryDateTime, J.JobType, JH.UserId, JH.MRN, JH.FirstName, JH.MI, JH.LastName, null, SC.StatusGroupId, 0,
 		CASE WHEN JH.AppointmentDate IS NULL or JH.AppointmentDate ='' THEN J.AppointmentDate + J.AppointmentTime ELSE JH.AppointmentDate END AppointmentDate,
 		CASE WHEN JH.DOB IS NULL or JH.DOB ='' THEN JP.DOB ELSE JH.DOB END DOB
 		FROM Job_History JH

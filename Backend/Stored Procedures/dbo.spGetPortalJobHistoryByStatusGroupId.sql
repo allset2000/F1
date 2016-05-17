@@ -92,7 +92,7 @@ DECLARE @TempJobsHostory TABLE(
   					INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId		  			
  					INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber	
 					outer apply(select top 1 * from  job_history JH where JT.jobnumber = JH.jobnumber and JH.currentstatus in (360, 354)  order by JobHistoryID asc) JH	 
- 					WHERE JT.JobNumber=@vvcrJobnumber and sc.StatusGroupId=5 and jd.Method not in (100,300)		
+ 					WHERE JT.JobNumber=@vvcrJobnumber and sc.StatusGroupId=5 --and jd.Method not in (100,300)		
  					GROUP BY JH.JobNumber,JG.StatusGroup,JH.DocumentID,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,jh.CurrentStatus,JH.AppointmentDate,JH.DOB,JH.FirstName,JH.MI,JH.LastName   
 				END
 		END
