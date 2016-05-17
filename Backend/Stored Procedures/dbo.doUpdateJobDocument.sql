@@ -30,9 +30,14 @@ BEGIN
 			/* Tracking into job history table */
 			SELECT @DocumentId = IDENT_CURRENT('Jobs_Documents_History')
 
+			Declare @CurrentJobStatus INT
+			SELECT @CurrentJobStatus = STATUS FROM JobStatusA WHERE jobnumber=@JobNumber
+			IF(@CurrentJobStatus is NULL )
+			SELECT @CurrentJobStatus = STATUS FROM JobStatusB WHERE jobnumber=@JobNumber
+			
 			INSERT INTO Job_History
 			(JobNumber, MRN, CurrentStatus, FirstName, MI, LastName, DOB, HistoryDateTime,DocumentID,UserId)
-			select @JobNumber,MRN,@Status,FirstName, MI, LastName, DOB,GETDATE(),@documentID,@oldUsername FROM Jobs_patients  WHERE Jobnumber = @JobNumber
+			select @JobNumber,MRN,@CurrentJobStatus,FirstName, MI, LastName, DOB,GETDATE(),@documentID,@oldUsername FROM Jobs_patients  WHERE Jobnumber = @JobNumber
 
 			/* Update Job Document */							
 			UPDATE Jobs_Documents
@@ -55,4 +60,5 @@ BEGIN
 	RETURN
 END
 GO
+
 GO

@@ -120,7 +120,7 @@ SELECT  rov.JobNumber,'Override Value Added By '+u.Name ,CASE WHEN rov.CreatedDa
 		INNER JOIN dbo.Jobs_Patients JP ON JP.JobNumber = J.JobNumber
 		INNER JOIN StatusCodes  SC on SC.StatusID = JH.CurrentStatus WHERE JH.JobNumber = @vvcrJobnumber AND  Resent = 1 ORDER BY JobHistoryID DESC
  
- SELECT * FROM @TempJobsHostory1 order by IsError,SgId  asc 
+ SELECT * FROM @TempJobsHostory1 order by IsError,SgId,StatusDate  asc 
 
 END
 GO

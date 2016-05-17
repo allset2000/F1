@@ -69,16 +69,32 @@ DECLARE @TempJobsHostory TABLE(
 	ELSE IF @StatusGroupId = 5 --Delivered
 		BEGIN
 		-- get the Delivered history from JobDeliveryHistory table, if job is deliverd to customer
-		INSERT INTO @TempJobsHostory
-			SELECT JT.JobNumber, JH.DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus,
-			JH.AppointmentDate,JH.DOB,JH.FirstName,JH.MI,JH.LastName 
-			FROM JobTracking JT 
-			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId = 5  AND SC.StatusID = 360
-			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
-			INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
-			left outer join job_history JH on JT.jobnumber = JH.jobnumber and jt.status=JH.currentstatus AND JD.JobHistoryID = JH.JobHistoryID
-			WHERE JT.JobNumber=@vvcrJobnumber and IsHistory = 1
-			ORDER BY jg.id DESC
+			IF EXISTS (SELECT 1 FROM JobDeliveryHistory WHERE JobNumber=@vvcrJobnumber AND JobHistoryID IS NOT NULL)
+			BEGIN
+				INSERT INTO @TempJobsHostory
+					SELECT JT.JobNumber, JH.DocumentID,'Delivered' StatusGroup,jd.DeliveredOn StatusDate,JH.JobType,JH.UserId,JH.MRN,1 JobHistoryID,jg.id,null CurrentStatus,
+					JH.AppointmentDate,JH.DOB,JH.FirstName,JH.MI,JH.LastName 
+					FROM JobTracking JT 
+					INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID and sc.StatusGroupId = 5  AND SC.StatusID = 360
+					INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
+					INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
+					left outer join job_history JH on JT.jobnumber = JH.jobnumber and jt.status=JH.currentstatus AND JD.JobHistoryID = JH.JobHistoryID
+					WHERE JT.JobNumber=@vvcrJobnumber --and IsHistory = 1
+					ORDER BY jg.id DESC
+				END
+			ELSE
+				BEGIN
+				INSERT INTO @TempJobsHostory
+					SELECT JH.JobNumber,JH.DocumentID,JG.StatusGroup,min(jd.DeliveredOn) StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,jh.CurrentStatus ,
+					JH.AppointmentDate,JH.DOB,JH.FirstName,JH.MI,JH.LastName  
+					from JobTracking JT  		
+ 					INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID		 
+  					INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId		  			
+ 					INNER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber	
+					outer apply(select top 1 * from  job_history JH where JT.jobnumber = JH.jobnumber and JH.currentstatus in (360, 354)  order by JobHistoryID asc) JH	 
+ 					WHERE JT.JobNumber=@vvcrJobnumber and sc.StatusGroupId=5 and jd.Method not in (100,300)		
+ 					GROUP BY JH.JobNumber,JG.StatusGroup,JH.DocumentID,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,jh.CurrentStatus,JH.AppointmentDate,JH.DOB,JH.FirstName,JH.MI,JH.LastName   
+				END
 		END
 	ELSE 
 		BEGIN
