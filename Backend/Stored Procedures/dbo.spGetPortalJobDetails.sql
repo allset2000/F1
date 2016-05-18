@@ -14,6 +14,7 @@ GO
 * PR   Date     Author  Description           
 * --   --------   -------   ------------------------------------      
 * 5909 11-May-2016 baswaraj Added IsJobDelivered column to hold the jobdelivered status 
+* 8394 18-May-2016 baswaraj Added DocumentStatus column return for to check the DocumentLock status.
 *******************************/      
       
 CREATE PROCEDURE [dbo].[spGetPortalJobDetails] 
@@ -66,7 +67,8 @@ IF EXISTS( SELECT 1 FROM jobs WHERE jobnumber=@vvcrJobNumber AND DATEDIFF(MINUTE
 		JE.LastQANote,
 		JB.AppointmentId,
 		JP.SSN,
-		@IsJobDelivered as IsJobDelivered
+		@IsJobDelivered as IsJobDelivered,
+		ISNULL(JB.DocumentStatus,0) AS DocumentStatus
 	FROM jobs JB
 	INNER JOIN Jobs_Patients JP
 	ON JB.jobnumber = JP.jobnumber
