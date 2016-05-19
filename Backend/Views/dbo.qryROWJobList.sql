@@ -7,6 +7,7 @@ GO
 
 
 
+
 CREATE VIEW [dbo].[qryROWJobList]
 AS
 SELECT     dbo.Jobs.JobNumber, dbo.Jobs.DictatorID, dbo.Jobs.ClinicID, dbo.Jobs.Location, dbo.Jobs.AppointmentDate, dbo.Jobs.AppointmentTime, dbo.Jobs.JobType, dbo.Jobs.ContextName, 
@@ -40,9 +41,5 @@ FROM         dbo.JobsToDeliver INNER JOIN
                       dbo.Dictators ON dbo.Jobs.DictatorID = dbo.Dictators.DictatorID INNER JOIN
                       dbo.Clinics ON dbo.Jobs.ClinicID = dbo.Clinics.ClinicID LEFT OUTER JOIN
                       dbo.Jobs_Client ON dbo.Jobs.JobNumber = dbo.Jobs_Client.JobNumber
-					  OUTER APPLY(SELECT TOP 1 DeliveryID, ErrorDate from [JobsToDeliverErrors] where JobsToDeliver.DeliveryID= DeliveryID order by ErrorDate desc) jde
-
-
-
-
+					  LEFT OUTER JOIN ( SELECT DeliveryID, MAX(ErrorDate) ErrorDate FROM JobsToDeliverErrors GROUP BY DeliveryID ) jde on JobsToDeliver.DeliveryID= jde.DeliveryID 
 GO
