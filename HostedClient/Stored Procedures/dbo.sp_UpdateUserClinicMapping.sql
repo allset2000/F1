@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -10,13 +11,13 @@ GO
 CREATE PROCEDURE [dbo].[sp_UpdateUserClinicMapping]
 (
 	@UserId INT,
-	@AddClinics varchar(100),
-	@DelClinics varchar(100),
+	@AddClinics varchar(5000),
+	@DelClinics varchar(5000),
 	@ChangedBy varchar(100)
 )
 AS
 BEGIN
-	DECLARE @AppPermChange VARCHAR(100)
+	DECLARE @AppPermChange VARCHAR(1000)
 
 	SET @AppPermChange = '<User>' + CAST(@UserId as varchar(10)) + '</User><action>Clinics</action>'
 
