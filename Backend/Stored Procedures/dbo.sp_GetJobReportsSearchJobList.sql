@@ -3,13 +3,13 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
 -- =============================================
 -- Author:		Narender
 -- Create date: 05/26/2015
 -- Description:	This stored procedure will return the jobs list based on search filter criteria
 -- Updated Date: 24-Feb-2016 -- Added block for StatusGroup-10 Error
 -- Updated on 19thApril-16 : added a clinic comparision for jobs to get from hosted #7625
+-- Updated on 25thMay-16 : Change DateField to Delivered when JobStatus is Delivered & DateField is NULL as part of #8131 & #6940 - Rohith
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobReportsSearchJobList] 
 @JobReportSearchPreferenceId int,
@@ -49,7 +49,12 @@ BEGIN
 			return -1 -- this condition is to make sure that we get a valid filter record, not to try to get a record which was deleted
 
 			if @DateField is null 
-				set @DateField=1 -- this condition is to get primary group status, is @DateField is null 
+			BEGIN
+				IF @JobStatus = 5
+					SET @DateField=5 -- this condition is to get delivered jobs and when @DateField is null & @JobStatus is Delivered
+				ELSE
+					set @DateField=1 -- this condition is to get primary group status, is @DateField is null 
+			END
 
 			if @DateField = 5 
 				set @JobStatus=5 -- this condition is to sure jobs are available in JobDeliveryHistory, don't consider 360 status
@@ -307,6 +312,7 @@ BEGIN
 		DROP TABLE #SearchItems
        
 END
+
 
 
 
