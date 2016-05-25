@@ -83,7 +83,7 @@ BEGIN
 	IF NOT EXISTS (SELECT 1 FROM StatusCodes WHERE StatusID = 136)
 		INSERT INTO [dbo].[StatusCodes] ([StatusID],[StatusName],[FriendlyStatusName],[StatusClass],[StatusStage],[EditionStage],[CurrentEditorRule],[SpeechFolderTag],
 				[IsActiveJobStatus],[IsJobSearchStatus],[IsSpecialCaseStatus],[StatusGroupId])
-		 VALUES (136,'Draft Review','Draft Review','Draft Review','','DR','','JobsInProcess',1,1,0,7)
+		 VALUES (136,'Draft Review','Draft Review','Draft Review','','NotStarted','','JobsInProcess',1,1,0,7)
 	IF NOT EXISTS (SELECT 1 FROM StatusCodes WHERE StatusID = 275)
 		INSERT INTO [dbo].[StatusCodes] ([StatusID],[StatusName],[FriendlyStatusName],[StatusClass],[StatusStage],[EditionStage],[CurrentEditorRule],[SpeechFolderTag],
 				[IsActiveJobStatus],[IsJobSearchStatus],[IsSpecialCaseStatus],[StatusGroupId])
