@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -6,6 +7,7 @@ GO
 -- Author: Sam Shoultz
 -- Create date: 01/22/2015
 -- Description: SP used to create a random job for a given clinic / dictator
+-- Mike Cardwell 5/17/2016: Modified SP to only create jobs for dictation job types and to exclude creating jobs for generic patients.
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_CreateRandomJobForDictator]
 (
@@ -27,10 +29,13 @@ BEGIN
 		DECLARE @JobId INT
 		DECLARE @QueueId INT
 		DECLARE @DictationTypeId INT
+		DECLARE @UTCDatewOffset DATETIME
+
+		SET @UTCDatewOffset = DATEADD(MINUTE,+5,GETUTCDATE())
 
 		-- Get Random Patient,JobType,RefPhy from clinic, choose random appointment time
-		SET @PatientId = (SELECT TOP 1 PatientId FROM Patients WHERE ClinicId = @ClinicId ORDER BY NEWID())
-		SET @JobTypeId = (SELECT TOP 1 JobTypeId FROM JobTypes WHERE ClinicId = @ClinicId ORDER BY NEWID())
+		SET @PatientId = (SELECT TOP 1 PatientId FROM Patients WHERE ClinicId = @ClinicId AND Firstname <> 'GENERIC' ORDER BY NEWID())
+		SET @JobTypeId = (SELECT TOP 1 JobTypeId FROM JobTypes WHERE ClinicId = @ClinicId AND JobtypeCategoryID = 1 ORDER BY NEWID())
 		SET @RefPhyId = (SELECT TOP 1 ReferringId FROM ReferringPhysicians WHERE ClinicId = @ClinicId ORDER BY NEWID())
 		SET @Date = GETDATE()
 		SET @Hour = RAND() * 8 + 8 -- Random hour between the hours of 8am and 5pm
@@ -54,14 +59,14 @@ BEGIN
 
 		-- Create Encounter
 		INSERT INTO Encounters(AppointmentDate,PatientId,ScheduleId,UpdatedDateInUTC) 
-		VALUES(@AppointmentDate,@PatientId,NULL,GETUTCDATE())
+		VALUES(@AppointmentDate,@PatientId,NULL,@UTCDatewOffset)
 		SET @EncounterId = (SELECT TOP 1 EncounterId FROM Encounters WHERE PatientId = @PatientId and AppointmentDate = @AppointmentDate ORDER BY EncounterId DESC)
 		-- Create Job
 		INSERT INTO Jobs(JobNumber,ClinicId,EncounterId,JobTypeId,OwnerDictatorId,Status,Stat,Priority,RuleId,AdditionalData,UpdatedDateInUTC)
-		VALUES(@NewJobNumber,@ClinicId,@EncounterId,@JobTypeId,@DictatorId,100,0,0,0,NULL,GETUTCDATE())
+		VALUES(@NewJobNumber,@ClinicId,@EncounterId,@JobTypeId,@DictatorId,100,0,0,0,NULL,@UTCDatewOffset)
 		SET @JobId = (SELECT JobId FROM Jobs WHERE JobNumber = @NewJobNumber)
 		-- Create Dictation
 		INSERT INTO Dictations(JobId,DictationTypeId,DictatorId,QueueId,Status,Duration,MachineName,FileName,ClientVersion,UpdatedDateInUTC)
-		VALUES(@JobId,@DictationTypeId,@DictatorId,@QueueId,100,0,'','','',GETUTCDATE())
+		VALUES(@JobId,@DictationTypeId,@DictatorId,@QueueId,100,0,'','','',@UTCDatewOffset)
 END
 GO
