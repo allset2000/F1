@@ -17,7 +17,7 @@ GO
 --x   1    | 11/10/2015  | sharif shaik        | Bug 4669 - incresed size for the @EHRLocationID varchar(500) from varchar(50)
 --x   1    | 04/11/2016  | sharif shaik        | 7225 - Updateing EHRLocationId of [dbo].[ExpressLinkConfigurations]table
 --x   2    | 04/12/2016  | Santhosh            | #5460 - Chubbs Console Changes
---x
+--x   3    | 05/26/2016  | Santhosh            | #8400 - Forcing BBN as SRE Vendor and removal of obsolete fields
 --xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 */
 CREATE PROCEDURE [dbo].[sp_CreateUpdateClinic] (
@@ -82,6 +82,9 @@ BEGIN
 	END
 	ELSE
 	BEGIN
+		DECLARE @OldRhythmWorkFlowId INT		
+		SET @OldRhythmWorkFlowId = (SELECT RhythmWorkFlowID FROM Clinics WHERE ClinicID = @ClinicID)
+
 		UPDATE Clinics SET Name = @Name,
 						   MobileCode = @MobileCode,
 						   AccountManagerID = @AccountManagerID,
@@ -113,6 +116,15 @@ BEGIN
 						   RhythmWorkFlowID = @RhythmWorkFlowID,
 						   AppSetting_DisableSendToTranscription = @AppSetting_DisableSendToTranscription
 		WHERE ClinicId = @ClinicID
+
+		-- Updating Rhythm details of the dictators with the clinic rhythm details
+		-- For Device Edit, No Edit - Need to add BBN Sre Vendor
+		UPDATE Dictators
+		SET 
+			RhythmWorkFlowID = @RhythmWorkFlowID, 
+			AppSetting_DisableSendToTranscription = @AppSetting_DisableSendToTranscription,
+			SRETypeId = CASE WHEN (@RhythmWorkFlowID = 1 OR @RhythmWorkFlowID = 3) THEN 2 ELSE Dictators.SRETypeId END
+		WHERE ClinicID = @ClinicID AND RhythmWorkFlowID = @OldRhythmWorkFlowId
 
 		IF (@EHRVendorID = 2)
 		BEGIN
