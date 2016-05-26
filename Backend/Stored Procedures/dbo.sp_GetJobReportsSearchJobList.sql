@@ -3,7 +3,6 @@ SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
-
 -- =============================================
 -- Author:		Narender
 -- Create date: 05/26/2015
@@ -13,6 +12,7 @@ GO
 -- Updated on 19thApril-16 : added a clinic comparision for jobs to get from hosted #7625
 -- Updated on 12thMay-16 : Modified ReceivedOn Months from 3 to 6 Months as part of #5914.
 -- Updated on 12thMay-16 : Added EditingComplete SortType also #4047.
+-- Updated on 25thMay-16 : Change DateField to Delivered when JobStatus is Delivered & DateField is NULL as part of #8131 & #6940 - Rohith
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetJobReportsSearchJobList] 
 @JobReportSearchPreferenceId int,
@@ -52,7 +52,12 @@ BEGIN
 			return -1 -- this condition is to make sure that we get a valid filter record, not to try to get a record which was deleted
 
 			if @DateField is null 
-				set @DateField=1 -- this condition is to get primary group status, is @DateField is null 
+			BEGIN
+				IF @JobStatus = 5
+					SET @DateField=5 -- this condition is to get delivered jobs and when @DateField is null & @JobStatus is Delivered
+				ELSE
+					set @DateField=1 -- this condition is to get primary group status, is @DateField is null 
+			END
 
 			if @DateField = 5 
 				set @JobStatus=5 -- this condition is to sure jobs are available in JobDeliveryHistory, don't consider 360 status
@@ -201,8 +206,8 @@ BEGIN
 						INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
 						LEFT OUTER JOIN JobDeliveryHistory JD ON JD.jobnumber=JT.jobnumber
 						WHERE JT.jobnumber = JH.jobnumber and (jg.id in (1,2,3,4,7) or (@jobStatus =4 or @jobStatus is null or @jobStatus =5 and JH.JobNumber  in (SELECT jobnumber FROM JobDeliveryHistory WHERE jobnumber=JH.JobNumber )))
-						GROUP BY JT.JobNumber,JG.StatusGroup,jg.id
-						ORDER BY JG.ID DESC)  JSB
+						GROUP BY JT.JobNumber,JG.StatusGroup,jg.id,JT.Status
+						ORDER BY JT.Status DESC)  JSB
 		WHERE	((@JobStatus is null or JSB.Id = @JobStatus or @DateField=10) OR (JSB.DeliveredOn is null and JTA.id=@JobStatus))			
 				and (@MRN is null or JP.MRN = @MRN) 
 				and (@FirstName is null or JP.FirstName = @FirstName) 
@@ -312,6 +317,7 @@ BEGIN
 		DROP TABLE #SearchItems
        
 END
+
 
 
 
