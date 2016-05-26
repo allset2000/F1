@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -124,7 +125,7 @@ BEGIN
 			RhythmWorkFlowID = @RhythmWorkFlowID, 
 			AppSetting_DisableSendToTranscription = @AppSetting_DisableSendToTranscription,
 			SRETypeId = CASE WHEN (@RhythmWorkFlowID = 1 OR @RhythmWorkFlowID = 3) THEN 2 ELSE Dictators.SRETypeId END
-		WHERE ClinicID = @ClinicID AND RhythmWorkFlowID = @OldRhythmWorkFlowId
+		WHERE ClinicID = @ClinicID AND ISNULL(RhythmWorkFlowID,0) = ISNULL(@OldRhythmWorkFlowId,0)
 
 		IF (@EHRVendorID = 2)
 		BEGIN
