@@ -1,8 +1,9 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+
+
 
 CREATE VIEW [dbo].[vwMedicalJobs]
 AS
@@ -10,7 +11,7 @@ SELECT     dbo.Jobs.JobNumber, dbo.Jobs.JobId, dbo.Jobs.DictatorID, dbo.Dictator
 					  dbo.Dictators.TemplatesFolder, dbo.Jobs.AppointmentDate, dbo.Jobs.AppointmentTime, dbo.Jobs.JobType, dbo.Jobs.ContextName, dbo.Jobs.Vocabulary, 
                       dbo.Jobs.Stat, dbo.Jobs.CC, dbo.Jobs.GenericPatientFlag, dbo.Jobs.Duration, dbo.Jobs.DictationDate, dbo.Jobs.DictationTime, dbo.Jobs.ReceivedOn, 
                       dbo.Jobs.DueDate, dbo.Jobs.ReturnedOn, dbo.Jobs.CompletedOn, dbo.Jobs.RecServer, dbo.Jobs.BilledOn, dbo.Jobs.Amount, dbo.Jobs.ParentJobNumber, 
-                      ISNULL(dbo.Jobs_Client.FileName, '') AS CustomerJobNumber, dbo.Jobs.DocumentStatus, ISNULL(dbo.Dictators.VREnabled, 0) AS VREnabled, 
+                      ISNULL(dbo.Jobs_Client.FileName, '') AS CustomerJobNumber, dbo.Jobs.DocumentStatus, CASE WHEN ISNULL(Dictators.SreTypeId, Clinics.SreTypeId) = 0 THEN 0 ELSE 1 END AS VREnabled, 
                       ISNULL(dbo.Dictators.FirstName, '') AS FirstName, ISNULL(dbo.Dictators.MI, '') AS MI, ISNULL(dbo.Dictators.LastName, '') AS LastName, ISNULL(dbo.Dictators.Suffix, 
                       '') AS Suffix, ISNULL(dbo.Dictators.Initials, '') AS Initials, ISNULL(dbo.Dictators.Signature, '') AS Signature, ISNULL(dbo.Dictators.User_Code, '') AS User_Code, 
                       dbo.Dictators.FirstName AS DictatorFirstName, ISNULL(dbo.Dictators.MI, '') AS DictatorMI, dbo.Dictators.LastName AS DictatorLastName, 
@@ -44,9 +45,9 @@ FROM         dbo.Dictators INNER JOIN
                       dbo.vwEditors ON dbo.Jobs.EditorID = dbo.vwEditors.EditorID LEFT OUTER JOIN
                       dbo.Jobs_Client ON dbo.Jobs.JobNumber = dbo.Jobs_Client.JobNumber
 
+
+
 GO
-
-
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
@@ -187,7 +188,6 @@ Begin DesignProperties =
             End
    ', 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL
 GO
-
 EXEC sp_addextendedproperty N'MS_DiagramPane2', N'         DisplayFlags = 280
             TopColumn = 9
          End
@@ -261,8 +261,6 @@ EXEC sp_addextendedproperty N'MS_DiagramPane2', N'         DisplayFlags = 280
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL
 GO
-
-
 DECLARE @xp int
 SELECT @xp=2
 EXEC sp_addextendedproperty N'MS_DiagramPaneCount', @xp, 'SCHEMA', N'dbo', 'VIEW', N'vwMedicalJobs', NULL, NULL

@@ -1,4 +1,3 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -31,7 +30,7 @@ CREATE PROCEDURE [dbo].[spv_UpgradeScript_Post_F1]
 --X_____________________________________________________________________________
 --X   0    | 29-Mar-2016  | Sharif Shaik			| Initial Design
 --X   1    | 04-Apr-2016  | Narender Ramadheni		| #5461# Added new status and status group
-
+--x   2    | 05-May-2016  | Santhosh                | #8400 Forcing BBN as SRE Vendor and removal of obsolete fields
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 AS
 BEGIN
@@ -94,6 +93,11 @@ BEGIN
 		 VALUES (138,'Job Approved From Mobile','Job Approved From Mobile','Job Approved From Mobile','','Completed','','',1,1,0,11)
 	--end #5461#
 
+	--#8400
+	UPDATE B SET B.SreTypeId = H.SreTypeId FROM Clinics B INNER JOIN EH_Clinics H ON H.ClinicId = B.ClinicId
+
+	UPDATE B SET B.SreTypeId = H.SreTypeId FROM Dictators B INNER JOIN EH_Dictators H ON H.ClinicId = B.ClinicId AND H.DictatorName = B.ClientUserID
+	--#8400
 END
 
 GO
