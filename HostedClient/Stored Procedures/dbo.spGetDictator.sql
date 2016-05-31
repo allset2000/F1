@@ -49,11 +49,10 @@ BEGIN
 		D.ImageName,
 		D.UserId,
 		D.SRETypeId,
-		ISNULL(D.RhythmWorkFlowID,C.RhythmWorkFlowID) AS RhythmWorkFlowID,
-        ISNULL(D.AppSetting_DisableSendToTranscription,C.AppSetting_DisableSendToTranscription) AS AppSetting_DisableSendToTranscription,
+		D.RhythmWorkFlowID,
+        D.AppSetting_DisableSendToTranscription,
 		D.Preference
-	FROM Dictators D
-	INNER JOIN clinics c ON C.ClinicID=D.ClinicID
+	FROM dbo.Dictators D  WITH(NOLOCK)
 	WHERE DictatorID =  @vintDictatorID
 
 END  
