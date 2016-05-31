@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -27,6 +28,7 @@ GO
 --X  VER   |    DATE      |  BY						|  COMMENTS - include Ticket#
 --X_____________________________________________________________________________
 --X   0    | 05/31/2016   | Naga					| Initial Design
+--X   1    | 05/31/2016   | Naga					| Added the additional JOIN on ClinicID column
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 CREATE PROCEDURE [dbo].[spv_Get_DictatorSignature]
 					@DictatorID			VARCHAR(50)
@@ -39,6 +41,7 @@ BEGIN
 	SELECT TOP 1 hosted.[Signature], hosted.SignatureImage FROM Dictators backend
 	INNER JOIN EH_Dictators hosted
 	ON backend.ClientUserID = hosted.DictatorName
+	AND backend.ClinicID = hosted.ClinicID
 	AND backend.DictatorID = @DictatorID
 
 END
