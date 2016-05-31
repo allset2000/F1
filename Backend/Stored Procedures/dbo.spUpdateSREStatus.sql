@@ -56,8 +56,15 @@ BEGIN TRANSACTION
 							SELECT J.Jobnumber,JP.MRN,J.JobType, 110, GETDATE(),JP.FirstName, JP.MI, JP.LastName, JP.DOB, 1, J.AppointmentDate + J.AppointmentTime  AS AppointmentDate 
 							FROM [Entrada].dbo.Jobs J INNER JOIN [Entrada].dbo.Jobs_Patients JP ON J.JobNumber = JP.JobNumber WHERE J.JobNumber = @vvcrJobNumber
 					END
-				INSERT INTO job_history(jobnumber,CurrentStatus,HistoryDateTime,IsHistory)
-				VALUES(@vvcrJobNumber,@vsintStatus,GETDATE(),1)
+				--INSERT INTO job_history(jobnumber,CurrentStatus,HistoryDateTime,IsHistory)
+				--VALUES(@vvcrJobNumber,@vsintStatus,GETDATE(),1)
+				
+				-- Need to insert MRN,FirstName,MI,LastName,DOB and AppointmentDate
+				INSERT INTO [Entrada].dbo.Job_History (JobNumber,MRN,JobType,CurrentStatus,HistoryDateTime,FirstName,MI,LastName,DOB,IsHistory,AppointmentDate)
+					SELECT J.Jobnumber,JP.MRN,J.JobType, @vsintStatus, GETDATE(),JP.FirstName, JP.MI, JP.LastName, JP.DOB, 1, J.AppointmentDate + J.AppointmentTime  AS AppointmentDate 
+					FROM [Entrada].dbo.Jobs J 
+					INNER JOIN [Entrada].dbo.Jobs_Patients JP ON J.JobNumber = JP.JobNumber 
+					WHERE J.JobNumber = @vvcrJobNumber
 			END
 		COMMIT
 	END TRY

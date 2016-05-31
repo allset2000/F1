@@ -30,8 +30,8 @@ BEGIN
 			SELECT @DocumentId = IDENT_CURRENT('Jobs_Documents_History')
 			
 			INSERT INTO Job_History
-			(JobNumber, MRN, CurrentStatus, FirstName, MI, LastName, DOB, HistoryDateTime,DocumentID,UserId)
-			select @JobNumber,MRN,@Status,FirstName, MI, LastName, DOB,GETDATE(),@documentID,@oldUsername FROM Jobs_patients WHERE Jobnumber = @JobNumber 
+			(JobNumber, MRN, CurrentStatus, FirstName, MI, LastName, DOB, HistoryDateTime,DocumentID,UserId,IsHistory)
+			select @JobNumber,MRN,@Status,FirstName, MI, LastName, DOB,GETDATE(),@documentID,@oldUsername,1 FROM Jobs_patients WHERE Jobnumber = @JobNumber 
 
 		/* Update Job Document */							
 		UPDATE Jobs_Documents
