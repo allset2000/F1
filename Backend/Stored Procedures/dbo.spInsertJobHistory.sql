@@ -65,8 +65,9 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		SELECT @vvcrMRN = CASE WHEN MRN <> @vvcrMRN THEN MRN ELSE NULL END,
 		@vvcrFirstName = CASE WHEN FirstName <> @vvcrFirstName THEN FirstName ELSE NULL END,
 		@vvcrMI = CASE WHEN MI <> @vvcrMI THEN MI ELSE NULL END,
-		@vvcrLastName = CASE WHEN LastName <> @vvcrLastName THEN LastName ELSE NULL END,
-		@vvcrDOB = CASE WHEN DOB <> @vvcrDOB THEN DOB ELSE NULL END
+		@vvcrLastName = CASE WHEN LastName <> @vvcrLastName THEN LastName ELSE NULL END
+		--,
+		--@vvcrDOB = CASE WHEN DOB <> @vvcrDOB THEN DOB ELSE NULL END
 		FROM jobs_patients
 		WHERE JOBNUMBER = @vvcrJobNumber
 
@@ -102,6 +103,7 @@ CREATE PROCEDURE [dbo].[spInsertJobHistory]
 		IF @vsintCurrentStatus = 250
 			SET	@vvcrUserId = NULL
 						
+
 		IF @vsintCurrentStatus = 260
 		BEGIN
 			SET @vvcrMRN = @newMRN

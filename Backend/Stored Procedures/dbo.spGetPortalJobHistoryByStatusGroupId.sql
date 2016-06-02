@@ -53,7 +53,7 @@ DECLARE @TempJobsHostory TABLE(
 							INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId WHERE JobNumber=@vvcrJobnumber AND jh.STAT IS NULL
 
 
- 	IF @IsJobinHistory =1 AND @StatusGroupId <> 5
+ 	IF @IsJobinHistory =1 AND @StatusGroupId <> 5 AND @StatusGroupId <> 2
 		BEGIN
 		-- Get the history based status group id 
 		INSERT INTO @TempJobsHostory
@@ -96,6 +96,20 @@ DECLARE @TempJobsHostory TABLE(
  					GROUP BY JH.JobNumber,JG.StatusGroup,JH.DocumentID,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,jh.CurrentStatus,JH.AppointmentDate,JH.DOB,JH.FirstName,JH.MI,JH.LastName   
 				END
 		END
+	ELSE IF @IsJobinHistory =1 AND @StatusGroupId = 2
+		BEGIN
+		-- Get the history based status group id 
+		INSERT INTO @TempJobsHostory
+			SELECT TOP 1  JT.JobNumber,JH.DocumentID,JG.StatusGroup,JT.StatusDate,JH.JobType,JH.UserId,JH.MRN,JH.JobHistoryID,jg.id,JH.CurrentStatus,
+			JH.AppointmentDate,JH.DOB,JH.FirstName,JH.MI,JH.LastName  
+			FROM JobTracking JT  
+			INNER JOIN dbo.StatusCodes SC ON JT.Status= SC.StatusID
+			INNER JOIN dbo.JobStatusGroup JG ON JG.Id = SC.StatusGroupId
+			LEFT OUTER JOIN job_history JH on JT.jobnumber = JH.jobnumber and JT.status=JH.currentstatus 
+			WHERE JT.JobNumber=@vvcrJobnumber and sc.StatusGroupId=@StatusGroupId AND jh.STAT IS NULL AND JH.JobHistoryID IS NOT NULL AND IsHistory = 1
+			ORDER by JH.DocumentID DESC
+			--ORDER by JT.StatusDate ASC
+			END
 	ELSE 
 		BEGIN
 		-- get the history from jobtracking table if history not avalable in job_history table
