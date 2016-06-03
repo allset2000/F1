@@ -1,7 +1,7 @@
-SET ANSI_NULLS ON
-GO
 
 SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
 GO
 
 -- =============================================
@@ -10,7 +10,7 @@ GO
 -- Description:	This stored procedure will return the serach filter
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_GetPortalJobReportPreference] 
-@preferenceId smallint,
+@preferenceId int,
 @DateField varchar(50) output,
 @Range varchar(50) output,
 @RangeOptionFromDate varchar(20) output,
@@ -94,5 +94,3 @@ BEGIN
 END
 
 GO
-
-

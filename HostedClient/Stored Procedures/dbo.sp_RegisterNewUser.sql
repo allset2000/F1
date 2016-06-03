@@ -12,10 +12,11 @@ GO
 -- Update existing user details for pending invitation user
 -- Updated : Changed procedure to save a record in UserClinicXref table
 -- Updated : Logic changed to temp user registration
+-- Updated : May 17, 2016 (Naga) - changed the parameter length to 25 for @RegistrationCode
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_RegisterNewUser]
 (
-	@RegistrationCode varchar(10),
+	@RegistrationCode varchar(25),
 	@FirstName varchar(100),
 	@LastName varchar(100),
 	@MI varchar(100),
