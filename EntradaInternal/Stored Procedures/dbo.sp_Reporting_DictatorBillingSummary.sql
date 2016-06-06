@@ -35,7 +35,7 @@ SET NOCOUNT ON;
 			SUM(BJ.NumVBC / 65.0) as EntradaLines,
 			SUM(BJ.DocumentWSpaces) as [NumChars w Spaces],
 			SUM(BJ.DocumentWSpaces / 65.0) as [EntradaLines w Spaces],
-			SUM(BJ.CharacterCountFromSRE) as TotalSRELines,
+			SUM(BJ.CharacterCountFromSRE / 65.0) as TotalSRELines,
 			SUM(CASE WHEN ISNULL(BJ.RhythmWorkFlowID,0) = 0 THEN 0 ELSE 1 END) as RhythmJobCount
 			/*
 			SUM(JED.NumPages_Job) as NumPages,
