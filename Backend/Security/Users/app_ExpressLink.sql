@@ -1,0 +1,3 @@
+CREATE USER [app_ExpressLink] WITHOUT LOGIN WITH DEFAULT_SCHEMA=[[dbo]]]
+GO
+GRANT EXECUTE TO [app_ExpressLink]

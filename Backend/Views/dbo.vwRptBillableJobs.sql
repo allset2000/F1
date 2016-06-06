@@ -1,8 +1,13 @@
-
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
 GO
+/* =======================================================
+Change log
+
+date		Ticket #	username		description
+05/19/2016	7666	    Mike Cardwell	Added columns dbo.Jobs.RhythmWorkFlowID, dbo.jobs.CharacterCountFromSRE to use on Reports
+======================================================= */
 CREATE VIEW [dbo].[vwRptBillableJobs]
 AS
 SELECT     dbo.JobEditingSummary.JobId, dbo.Jobs.JobNumber, dbo.JobEditingTasks.JobEditingTaskId, dbo.Jobs.DictatorID, dbo.Jobs.ClinicID, dbo.Jobs.EditorID, 
@@ -11,53 +16,15 @@ SELECT     dbo.JobEditingSummary.JobId, dbo.Jobs.JobNumber, dbo.JobEditingTasks.
                       dbo.JobEditingTasksData.NumCharsPC, dbo.JobEditingTasksData.BodyWSpaces, dbo.JobEditingTasksData.HeaderFirstWSpaces, 
                       dbo.JobEditingTasksData.HeaderPrimaryWSpaces, dbo.JobEditingTasksData.HeaderEvenWSpaces, dbo.JobEditingTasksData.FooterFirstWSpaces, 
                       dbo.JobEditingTasksData.FooterPrimaryWSpaces, dbo.JobEditingTasksData.FooterEvenWSpaces, dbo.JobEditingTasksData.HeaderTotalWSpaces, 
-                      dbo.JobEditingTasksData.FooterTotalWSpaces, dbo.JobEditingTasksData.HeaderFooterTotalWSpaces, dbo.JobEditingTasksData.DocumentWSpaces
+                      dbo.JobEditingTasksData.FooterTotalWSpaces, dbo.JobEditingTasksData.HeaderFooterTotalWSpaces, dbo.JobEditingTasksData.DocumentWSpaces, dbo.Jobs.RhythmWorkFlowID, dbo.jobs.CharacterCountFromSRE
 FROM         dbo.Jobs INNER JOIN
                       dbo.JobEditingSummary ON dbo.Jobs.JobId = dbo.JobEditingSummary.JobId INNER JOIN
                       dbo.JobEditingTasks ON dbo.JobEditingSummary.JobId = dbo.JobEditingTasks.JobId AND 
                       dbo.JobEditingSummary.BillingEditingTaskId = dbo.JobEditingTasks.JobEditingTaskId INNER JOIN
                       dbo.JobEditingTasksData ON dbo.JobEditingTasks.JobEditingTaskId = dbo.JobEditingTasksData.JobEditingTaskId INNER JOIN
                       dbo.vwWorkflowStates ON dbo.JobEditingSummary.CurrentStateId = dbo.vwWorkflowStates.WorkflowStateId
-GO
 
-EXEC sp_addextendedproperty N'MS_DiagramPane2', N'
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-         Width = 1500
-      End
-   End
-   Begin CriteriaPane = 
-      Begin ColumnWidths = 11
-         Column = 3060
-         Alias = 1125
-         Table = 2145
-         Output = 720
-         Append = 1400
-         NewValue = 1170
-         SortType = 1350
-         SortOrder = 1410
-         GroupBy = 1350
-         Filter = 1350
-         Or = 1350
-         Or = 1350
-         Or = 1350
-      End
-   End
-End
-', 'SCHEMA', N'dbo', 'VIEW', N'vwRptBillableJobs', NULL, NULL
 GO
-
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
@@ -201,7 +168,43 @@ Begin DesignProperties =
          Width = 1500
          Width = 1500', 'SCHEMA', N'dbo', 'VIEW', N'vwRptBillableJobs', NULL, NULL
 GO
-
+EXEC sp_addextendedproperty N'MS_DiagramPane2', N'
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+         Width = 1500
+      End
+   End
+   Begin CriteriaPane = 
+      Begin ColumnWidths = 11
+         Column = 3060
+         Alias = 1125
+         Table = 2145
+         Output = 720
+         Append = 1400
+         NewValue = 1170
+         SortType = 1350
+         SortOrder = 1410
+         GroupBy = 1350
+         Filter = 1350
+         Or = 1350
+         Or = 1350
+         Or = 1350
+      End
+   End
+End
+', 'SCHEMA', N'dbo', 'VIEW', N'vwRptBillableJobs', NULL, NULL
+GO
 DECLARE @xp int
 SELECT @xp=2
 EXEC sp_addextendedproperty N'MS_DiagramPaneCount', @xp, 'SCHEMA', N'dbo', 'VIEW', N'vwRptBillableJobs', NULL, NULL

@@ -6,6 +6,7 @@
   <DefaultUser>dbo</DefaultUser>
   <DefaultFilegroup>PRIMARY</DefaultFilegroup>
   <DatabaseVersion>12</DatabaseVersion>
+  <IsAzure>False</IsAzure>
   <MaxDataFileSize>10485760</MaxDataFileSize>
   <WriteToFileOptions>
     <Prefixes>
@@ -55,7 +56,6 @@
     </Prefixes>
     <DataWriteAllFilesInOneDirectory>True</DataWriteAllFilesInOneDirectory>
   </WriteToFileOptions>
-  <IsAzure>False</IsAzure>
   <DataFileSet>
     <Count>0</Count>
   </DataFileSet>
