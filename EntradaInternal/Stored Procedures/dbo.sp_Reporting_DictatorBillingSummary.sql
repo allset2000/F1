@@ -12,6 +12,7 @@ change log
 
 date		username		description
 4/11/13		jablumenthal	updated stored proc to use new tables.
+06/05/16	Michael Cardwell Updated SP to pull in Rhythm SRE data.
 ======================================================= */
 CREATE PROCEDURE [dbo].[sp_Reporting_DictatorBillingSummary] 
 
@@ -33,7 +34,9 @@ SET NOCOUNT ON;
 			SUM(BJ.NumVBC) as NumChars,
 			SUM(BJ.NumVBC / 65.0) as EntradaLines,
 			SUM(BJ.DocumentWSpaces) as [NumChars w Spaces],
-			SUM(BJ.DocumentWSpaces / 65.0) as [EntradaLines w Spaces]
+			SUM(BJ.DocumentWSpaces / 65.0) as [EntradaLines w Spaces],
+			SUM(BJ.CharacterCountFromSRE) as TotalSRELines,
+			SUM(CASE WHEN ISNULL(BJ.RhythmWorkFlowID,0) = 0 THEN 0 ELSE 1 END) as RhythmJobCount
 			/*
 			SUM(JED.NumPages_Job) as NumPages,
 			SUM(JED.NumChars_Job) as NumVBC, --vbc

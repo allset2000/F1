@@ -18,7 +18,8 @@ the amounts necessary before sending out invoices.
 				
 change log
 
-date		username		description
+date		Ticket #	username		description
+05/19/2016	7666	    Mike Cardwell	Added SRE Character Counts to report
 ======================================================= */
 CREATE PROCEDURE [dbo].[sp_Reporting_BillingInvoiceDetail] 
 --declare
@@ -56,7 +57,10 @@ SET NOCOUNT ON;
 						JobCharge int,
 						SelfEditLines decimal(12,6),
 						ENTEditLines decimal(12,6),
-						PerDictatorRevenue decimal(12,6))
+						PerDictatorRevenue decimal(12,6),
+						SRECharacterCount int,
+						SRElineCount decimal(12,6),
+						RhythymJobCount INT)
 	
 	insert into #temp (ClinicName,
 						ClinicCode,
@@ -74,7 +78,10 @@ SET NOCOUNT ON;
 						JobCharge,
 						SelfEditLines,
 						ENTEditLines,
-						PerDictatorRevenue)
+						PerDictatorRevenue,
+						SRECharacterCount,
+						SRELineCount,
+						RhythymJobCount)
 	Select  sumtot.ClinicName,
 			sumtot.ClinicCode,
 			sumtot.DictatorID,
@@ -97,7 +104,10 @@ SET NOCOUNT ON;
 				when sumtot.ClinicCode <> sumtot.PayType then TotalLines
 				else 0.0
 			end as ENTEditLines,
-			NULL as PerDictatorRevenue
+			NULL as PerDictatorRevenue,
+			sumtot.TotalSRECharacters,
+			sumtot.TotalSRELines,
+			sumtot.RhythmJobCount
 	from (
 		Select  tot.ClinicName,
 				tot.ClinicCode,
@@ -107,7 +117,10 @@ SET NOCOUNT ON;
 				--tot.[Signature],
 				tot.PayType,
 				count(tot.JobNumber) as jobs,
-				sum(tot.[EntradaLines_w_Spaces]) as TotalLines
+				sum(tot.[EntradaLines_w_Spaces]) as TotalLines,
+				Sum(tot.CharacterCountFromSRE) as TotalSRECharacters,
+				sum(tot.[SRELines]) as TotalSRELines,
+				sum(tot.RhythmWorkflowID) as RhythmJobCount
 		from (
 			select  J.JobNumber,
 					J.DictatorID,
@@ -119,7 +132,10 @@ SET NOCOUNT ON;
 					C.ClinicName,
 					J.EditorID,
 					EP.PayType,
-					(BJ.DocumentWSpaces / 65.0) as [EntradaLines_w_Spaces]
+					(BJ.DocumentWSpaces / 65.0) as [EntradaLines_w_Spaces],
+					J.CharacterCountFromSRE,
+					(J.CharacterCountFromSRE / 65.0) as [SRELines],
+					CASE WHEN ISNULL(J.RhythmWorkflowID,0) = 0 THEN 0 ELSE 1 END as [RhythmWorkflowID]
 			from Entrada.dbo.Jobs J with (nolock)
 			join Entrada.dbo.Clinics C with (nolock) on J.ClinicID = C.ClinicID
 			join Entrada.dbo.Dictators D with (nolock) on J.DictatorID = D.DictatorID
@@ -186,7 +202,10 @@ SET NOCOUNT ON;
 				when ClinicCode = 'SMOC' then sum(TotalLines) * avg(LineCharge)
 				when ClinicCode = 'CMC' then (sum(ENTEditLines) * avg(EditingLineCharge)) + (sum(TotalLines) * avg(TechLineCharge))
 				else sum(ENTEditLines) * avg(LineCharge)
-			end as LineRevenue
+			end as LineRevenue,
+			sum(SRECharacterCount) AS SRECharacterCount,
+			sum(SRELineCount) AS SRELineCount,
+			sum(RhythymJobCount) AS RhythymJobCount
 	from #temp
 	--where ClinicCode = @ClinicCode
 	group by ClinicName, ClinicCode, DictatorID, FirstName, LastName	

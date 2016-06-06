@@ -1,0 +1,2 @@
+CREATE USER [carnold] WITHOUT LOGIN
+GO

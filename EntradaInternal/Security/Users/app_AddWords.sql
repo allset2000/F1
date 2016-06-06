@@ -1,0 +1,2 @@
+CREATE USER [app_AddWords] WITHOUT LOGIN
+GO

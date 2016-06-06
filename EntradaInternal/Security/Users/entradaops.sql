@@ -1,0 +1,3 @@
+CREATE USER [entradaops] WITHOUT LOGIN
+GO
+GRANT EXECUTE TO [entradaops]

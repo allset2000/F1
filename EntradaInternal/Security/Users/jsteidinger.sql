@@ -1,0 +1,2 @@
+CREATE USER [jsteidinger] WITHOUT LOGIN
+GO

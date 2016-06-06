@@ -1,0 +1,2 @@
+CREATE USER [app_EntradaAdmin] WITHOUT LOGIN
+GO

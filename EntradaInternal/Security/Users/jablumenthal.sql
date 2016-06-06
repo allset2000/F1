@@ -1,0 +1,2 @@
+CREATE USER [jablumenthal] WITHOUT LOGIN
+GO
