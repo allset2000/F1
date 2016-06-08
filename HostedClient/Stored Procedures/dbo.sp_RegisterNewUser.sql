@@ -13,6 +13,7 @@ GO
 -- Updated : Changed procedure to save a record in UserClinicXref table
 -- Updated : Logic changed to temp user registration
 -- Updated : May 17, 2016 (Naga) - changed the parameter length to 25 for @RegistrationCode
+--exec sp_RegisterNewUser 'OMXRTR-QA1','kabali',NULL,NULL,'kabali@yopmail.com','543d84d47c1dfb536cd7bbcbeedf4ef916290ed4f8e61ffa617c47fb1ded4b90','d285582f80d4db433e8f44f76387c8cec196a3a36b5e384a0bbebd9727a3f916',NULL
 -- =============================================
 CREATE PROCEDURE [dbo].[sp_RegisterNewUser]
 (
@@ -38,10 +39,11 @@ BEGIN
 		DECLARE @UserId INT
 		DECLARE @InviteId INT
 		DECLARE @cur_registeredid INT
-
+		DECLARE @Name VARCHAR(50)
 		IF @MI is null BEGIN SET @MI = '' END
 
-		
+		SET @Name=LTRIM(RTrim(ISNULL(@FirstName,'') + ' ' +ISNULL(@LastName,'')))
+
 		SELECT @InviteId=UserInvitationId, 
 			   @cur_clinicid=ClinicId, 
 			   @cur_requestuserid=RequestingUserId, 
@@ -64,6 +66,7 @@ BEGIN
 			END
 		END
 
+
 		-- Create User entry in the DB
 		-- Added new field while creating a new user, The name of the field added in the insert statement below is  LastPasswordReset. Ticket#3237 modified by Tamojit Chakraborty
 		  IF EXISTS(SELECT '*' FROM DBO.Users U
@@ -83,7 +86,7 @@ BEGIN
 							LastName=@LastName,
 							ClinicId=@cur_clinicid,
 							LoginEmail=@EmailAddress,
-							Name= @FirstName + ' ' + @LastName,
+							Name= @Name,
 							Password=@Password,
 							Salt=@Salt,
 							LastPasswordReset=GETDATE()
@@ -94,60 +97,17 @@ BEGIN
 			  END
          ELSE IF NOT EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress)
 				BEGIN
-	
+	             
 					INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt,LastPasswordReset) 
-						 VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt,getdate())
+						 VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @Name, @Password, @Salt,getdate())
 					SET @UserId = SCOPE_IDENTITY()  --(SELECT UserId FROM Users WHERE UserName = @EmailAddress)
 				END
 			ELSE
 				BEGIN			  		    
 					   RAISERROR ('Username already registered',16,1);			
 				END
-
-		--IF NOT EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress)
-		--BEGIN
-	
-		--	INSERT INTO Users(UserName,FirstName,MI,LastName,ClinicId,LoginEmail,Name,Password,Salt,LastPasswordReset) 
-		--	     VALUES(@EmailAddress, @FirstName, @MI, @LastName, @cur_clinicid, @EmailAddress, @FirstName + ' ' + @LastName, @Password, @Salt,getdate())
-		--	SET @UserId = SCOPE_IDENTITY()  --(SELECT UserId FROM Users WHERE UserName = @EmailAddress)
-		--END
-		--ELSE
-		--BEGIN
-		     
-		--	IF EXISTS (SELECT 1 FROM DBO.Users WHERE UserName = @EmailAddress and UserID<>@cur_registeredid)
-		--	BEGIN
-		--	    RAISERROR ('Username already exists',16,1);
-		--	END
-
-		--  --Raghu Added --3518- WS for invite a user with a new message
-		--	  IF EXISTS(SELECT '*' FROM DBO.Users U
-		--					INNER JOIN UserInvitations UI ON UI.RegisteredUserId=U.UserID
-		--					 WHERE UI.UserInvitationId=@InviteId AND UI.PendingRegStatus=1  )
-		--	  BEGIN	
-			  
-			          
-		--			   UPDATE USERS 
-		--			   SET  UserName=@EmailAddress,
-		--					FirstName=@FirstName,
-		--					MI=@MI,
-		--					LastName=@LastName,
-		--					ClinicId=@cur_clinicid,
-		--					LoginEmail=@EmailAddress,
-		--					Name= @FirstName + ' ' + @LastName,
-		--					Password=@Password,
-		--					Salt=@Salt,
-		--					LastPasswordReset=GETDATE()
-		--			   WHERE UserID=@cur_registeredid
-
-		--			 SET @UserId =@cur_registeredid
-
-		--	  END
-		--  --END
-		--	 ELSE
-		--	  BEGIN		    
-		--		   RAISERROR ('Username already registered',16,1);
-		--	  END
-		--END
+				
+		
 
 		-- Add User Clinic Xref
 		IF EXISTS(SELECT 1 FROM UserClinicXref WHERE UserId = @UserId AND ClinicId = @cur_clinicid)
