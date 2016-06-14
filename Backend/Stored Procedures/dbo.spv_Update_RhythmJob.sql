@@ -29,6 +29,7 @@ GO
 --X_____________________________________________________________________________
 --X   0    | 04/28/2016   | Naga					| Initial Design
 --X   1    | 05/09/2016   | Naga					| #5457 - Included the Document Status column, so that the update the can be done in the same stored procedure
+--X   2    | 06/14/2016   | Naga					| changed the logic to update the document record instead of deleting it and re-inserting
 --XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX	
 CREATE PROCEDURE [dbo].[spv_Update_RhythmJob]
 				@JobNumber				VARCHAR(20),
@@ -70,7 +71,7 @@ BEGIN
 							@vvcrDOB = @PatientDOB
 
 
-	-- if a job document already exist, then move it history table
+	-- if a job document already exist, then add a history record and update the current record with latest document
 	IF EXISTS (SELECT 1 FROM dbo.Jobs_Documents WHERE JobNumber = @JobNumber)
 	BEGIN
 		INSERT INTO dbo.Jobs_Documents_History
@@ -78,15 +79,21 @@ BEGIN
 		SELECT  JobNumber , Doc , XmlData , Username , DocDate , 0 , DocumentTypeId , DocumentStatusId , JobId , @TemplateName , [Status] , StatusDate 
 			FROM dbo.Jobs_Documents WHERE JobNumber = @JobNumber
 
-		DELETE FROM dbo.Jobs_Documents WHERE JobNumber = @JobNumber
+		UPDATE dbo.Jobs_Documents 
+		SET Doc = @DocBinary,
+			Username = @UpdatedBy,
+			DocDate = @StatusDate,
+			StatusDate = @StatusDate
+		WHERE JobNumber = @JobNumber
 	END
-
-	-- insert the new job document entry with latest document binary
-	INSERT INTO dbo.Jobs_Documents
-			( JobNumber , Doc , XmlData , Username , DocDate , DocumentId , DocumentTypeId , DocumentStatusId , JobId , [Status] , StatusDate )
-	VALUES  
-			( @JobNumber , @DocBinary , NULL , @UpdatedBy , @StatusDate , 0 , 0 , 0 , 0 , 0 , @StatusDate )
-
+	ELSE
+	BEGIN
+		-- insert the new job document entry with latest document binary
+		INSERT INTO dbo.Jobs_Documents
+				( JobNumber , Doc , XmlData , Username , DocDate , DocumentId , DocumentTypeId , DocumentStatusId , JobId , [Status] , StatusDate )
+		VALUES  
+				( @JobNumber , @DocBinary , NULL , @UpdatedBy , @StatusDate , 0 , 0 , 0 , 0 , 0 , @StatusDate )
+	END
 
 	-- add an entry to DocumentToProcess table
 	INSERT INTO dbo.DocumentsToProcess
