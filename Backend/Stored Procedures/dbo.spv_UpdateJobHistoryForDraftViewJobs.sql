@@ -20,12 +20,7 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-		--DECLARE @MRN VARCHAR(50) DECLARE @JOBTYPE VARCHAR(100) DECLARE @CURRENTSTATUS SMALLINT DECLARE @USERID VARCHAR(48) 
-		IF(@Operation = 1) --- 1 means job approved from Mobile
-		INSERT INTO Job_History(JOBNUMBER, MRN, JOBTYPE, CurrentStatus , UserId, HistoryDateTime, FIRSTNAME, MI, LASTNAME, DOB, ISHISTORY, STAT,IsFromMobile) 
-				   SELECT TOP 1 JOBNUMBER, MRN, JOBTYPE, 138 ,@UserName, GETDATE(), FIRSTNAME, MI, LASTNAME, DOB, ISHISTORY, STAT, 1 FROM Job_History WHERE JobNumber = @Jobnumber ORDER BY JobHistoryID DESC
-		IF(@Operation = 2) --- 2 means job Sent to Transcription from Mobile
-		INSERT INTO Job_History(JOBNUMBER, MRN, JOBTYPE, CurrentStatus , UserId, HistoryDateTime, FIRSTNAME, MI, LASTNAME, DOB, ISHISTORY, STAT,IsFromMobile) 
-				   SELECT TOP 1 JOBNUMBER, MRN, JOBTYPE, 140 ,@UserName, GETDATE(), FIRSTNAME, MI, LASTNAME, DOB, ISHISTORY, STAT, 1 FROM Job_History WHERE JobNumber = @Jobnumber ORDER BY JobHistoryID DESC
+		INSERT INTO Job_History(JOBNUMBER, MRN, JOBTYPE, CurrentStatus, UserId, HistoryDateTime, FIRSTNAME, MI, LASTNAME, DOB, ISHISTORY, STAT,IsFromMobile) 
+			SELECT TOP 1 JOBNUMBER, MRN, JOBTYPE, CASE WHEN @Operation = 1 THEN 138 ELSE 140 END ,@UserName, GETDATE(), FIRSTNAME, MI, LASTNAME, DOB, ISHISTORY, STAT, 1 FROM Job_History WHERE JobNumber = @Jobnumber ORDER BY JobHistoryID DESC
 END
 GO

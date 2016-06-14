@@ -10,7 +10,7 @@ GO
 -- =============================================
 CREATE PROCEDURE [dbo].[spv_ResendDocDelivery]
 @Jobnumber varchar(20),
-@Documnet varbinary(max),
+@Document varbinary(max),
 @UserName varchar(50)
 AS
 BEGIN
@@ -19,12 +19,12 @@ BEGIN
 	SET NOCOUNT ON;
 	   BEGIN TRY
 	--1 INSERT the jobs_documents_history with current document exists in jobs_document
-	--2 UPDATE the @Docuemnt into Jobs_docuemnts
+	--2 UPDATE the @Document into Jobs_documents
 	--3 INSERT into Job_History with document ID mapping with JobS_Documents_History for Delivery status
 		DECLARE @currentDate DATETIME 	
 		SET @currentDate = GETDATE()
-		EXEC doUpdateJobDocument @Jobnumber, @Documnet,@UserName,@currentDate
-	--4 INSERT into JobsToDeliver with previously used Delivery mehtod which we need to get form Jobsdelivery_History.
+		EXEC doUpdateJobDocument @Jobnumber, @Document,@UserName,@currentDate
+	--4 INSERT into JobsToDeliver with previously used Delivery method which we need to get from Jobsdelivery_History.
 		Declare @Method  smallint 
 		Declare @RuleName varchar(100)
 
