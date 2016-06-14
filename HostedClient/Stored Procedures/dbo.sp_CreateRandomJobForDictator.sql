@@ -47,6 +47,10 @@ BEGIN
 		SET @QueueId = (SELECT DefaultQueueId FROM Dictators WHERE DictatorId = @DictatorId)
 		SET @DictationTypeId = (SELECT DictationTypeId FROM DictationTypes WHERE ClinicId = @ClinicId and JobTypeId = @JobTypeId)
 
+	   --Bug 9392 fixed--> If No DictationTypeID for JobtypeID avoid job creation
+		IF(@DictationTypeId IS NULL)
+		  RETURN
+
 		-- Generate New JobNumber
 		DECLARE @str varchar(10)
 		DECLARE @val varchar(8)
