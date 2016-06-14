@@ -58,7 +58,7 @@ BEGIN
 									 WHERE j.Status NOT IN(100,500)  
 									   AND j.OwnerDictatorID=@DictatorId 
 									   
-								UNION
+								UNION ALL
 								--get all jobs list match with dictation dictatorID
 									 SELECT j.JobID,J.EncounterID,
 										 CASE WHEN j.Status NOT IN(100,500) THEN 0 ELSE q.Deleted END AS Deleted,

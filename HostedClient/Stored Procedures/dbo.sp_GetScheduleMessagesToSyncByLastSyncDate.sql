@@ -21,7 +21,7 @@ BEGIN
   
   SET NOCOUNT ON;
 
-	 SELECT  s.ScheduleID AS ID, 
+	 SELECT DISTINCT s.ScheduleID AS ID, 
 			DATEDIFF(SECOND,{D '1970-01-01'}, s.AppointmentDate) AS AppointmentDate, --Unix Timestamp
 			s.ReasonName,
 			s.PatientID,
@@ -40,7 +40,7 @@ BEGIN
 										dbo.Jobs j WITH(NOLOCK)
 									 WHERE j.Status NOT IN(100,500)  
 									   AND j.OwnerDictatorID=@DictatorId 
-								UNION
+								UNION ALL
 								--get all jobs list match with dictation dictatorID
 									 SELECT j.JobID,J.EncounterID
 									 FROM

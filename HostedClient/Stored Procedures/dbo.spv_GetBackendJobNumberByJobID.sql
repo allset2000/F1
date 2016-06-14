@@ -16,7 +16,10 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-	  SELECT j.*, jc.Jobnumber As BackendJobnumber,C.ClinicCode+d.DictatorName As DictatorCode
+	  SELECT j.JobID, j.JobNumber, j.ClinicID, j.EncounterID, j.JobTypeID, j.OwnerDictatorID, j.[Status], j.Stat, 
+			 j.[Priority], j.RuleID, j.AdditionalData, j.ProcessFailureCount, j.UpdatedDateInUTC, j.HasDictation, 
+			 j.HasImages, j.HasTagMetaData, j.HasChatHistory, j.OwnerUserID, j.TagMetaData, j.ChatHistory_ThreadID, 
+			 j.RhythmWorkFlowID, j.BackendStatus, jc.Jobnumber As BackendJobnumber,C.ClinicCode+d.DictatorName As DictatorCode
 	 FROM Jobs j WITH(NOLOCK)
 	 INNER JOIN Clinics c WITH(NOLOCK) on j.ClinicID=c.ClinicID
 	 INNER JOIN Dictators d WITH(NOLOCK) on d.DictatorID=j.OwnerDictatorID

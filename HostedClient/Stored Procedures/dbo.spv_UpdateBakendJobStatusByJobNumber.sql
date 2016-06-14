@@ -25,11 +25,11 @@ BEGIN
 
 		SELECT @UserName=UserName FROM Dbo.USERS WITH(NOLOCK) WHERE USERID=@UserID
 
-		SELECT @oldJobStatus=JobStatus FROM [Entrada].dbo.Jobs WHERE JobNumber = @BakendJobNumber
+		SELECT @oldJobStatus=JobStatus FROM [dbo].[EN_Jobs] WHERE JobNumber = @BakendJobNumber
 		
 		IF(@oldJobStatus<>@NewJobStatus)
 		  BEGIN  		   
-				   UPDATE [Entrada].dbo.Jobs SET 
+				   UPDATE [dbo].[EN_Jobs] SET 
 							JobStatus = @NewJobStatus, 
 							ProcessFailureCount = 0, 
 							IsLockedForProcessing = 0,
@@ -38,26 +38,26 @@ BEGIN
 
 					
 					--Anything lower than 280 should be updated on JobStatusA
-					UPDATE [Entrada].dbo.JobStatusA SET
+					UPDATE [dbo].[EN_JobStatusA] SET
 							Status = @NewJobStatus,
 							StatusDate = GetDate()
 					WHERE JobNumber = @BakendJobNumber
 
-					INSERT INTO [Entrada].dbo.JobTracking (JobNumber, Status, StatusDate)
+					INSERT INTO [dbo].[EN_JobTracking] (JobNumber, Status, StatusDate)
 				    VALUES(@BakendJobNumber, @NewJobStatus, GetDate())
 
-					   INSERT INTO [Entrada].dbo.Job_History
+					   INSERT INTO [dbo].[EN_Job_History]
 								(JOBNUMBER, MRN, JOBTYPE, CurrentStatus , UserId, HistoryDateTime, FIRSTNAME, MI, LASTNAME, DOB, ISHISTORY, STAT,IsFromMobile) 
 					   SELECT 
 						  TOP 1 JOBNUMBER, MRN, JOBTYPE, @NewJobStatus ,@UserName, GETDATE(), FIRSTNAME, MI, LASTNAME, DOB, ISHISTORY, STAT, 1 
-					   FROM [Entrada].dbo.Job_History 
+					   FROM [dbo].[EN_Job_History]
 					   WHERE JobNumber = @BakendJobNumber ORDER BY JobHistoryID DESC
 
          END
 
          UPDATE J SET BackendStatus=@NewJobStatus,UpdatedDateInUTC=GETUTCDATE(),RhythmWorkFlowID=@RhythmWorkFlowID 
 		 FROM dbo.Jobs J
-		 INNER JOIN [entrada].dbo.Jobs_Client JC on Jc.FileName=j.JobNumber
+		 INNER JOIN [dbo].[EN_Jobs_Client] JC on Jc.FileName=j.JobNumber
 		 WHERE JC.JobNumber=@BakendJobNumber
 
     COMMIT TRANSACTION

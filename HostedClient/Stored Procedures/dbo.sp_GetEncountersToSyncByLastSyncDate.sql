@@ -85,7 +85,7 @@ BEGIN
 			 CASE WHEN E.PatientID=SS.GenericPatientID THEN NULL ELSE P.PatientID END AS PatientID,
 			 e.ScheduleID,
 			 CASE WHEN A.Deleted = 1 THEN 500 ELSE 100 END AS [State],
-			 STUFF((SELECT ', ' + CAST(JobID AS VARCHAR)
+			 STUFF((SELECT ', ' + CAST(JobID AS VARCHAR(30))
 				  FROM   dbo.Jobs j2 With(Nolock)  
 				  WHERE  j2.EncounterID = e.EncounterID                   
 				  FOR XML PATH('')), 1, 2, '')  JobDetails			
@@ -99,7 +99,7 @@ BEGIN
 								dbo.Jobs j WITH(NOLOCK)
 								WHERE j.Status NOT IN(100,500)  
 								AND j.OwnerDictatorID=@DictatorId 
-						UNION
+						UNION ALL
 						  --get all jobs list match with dictation dictatorID
 								SELECT j.JobID,J.EncounterID,
 									CASE WHEN j.Status NOT IN(100,500) THEN 0 ELSE q.Deleted END AS Deleted
