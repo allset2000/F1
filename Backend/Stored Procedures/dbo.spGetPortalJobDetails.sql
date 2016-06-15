@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -30,7 +31,7 @@ DECLARE @Status INT
 	IF(@Status is NULL )
 		SELECT @Status = status FROM JobStatusB WHERE jobnumber=@vvcrJobNumber
 DECLARE @IsJobDelivered bit=0
-    IF EXISTS(SELECT * FROM JobDeliveryHistory where jobnumber=@vvcrJobNumber)
+    IF EXISTS(SELECT 1 FROM JobDeliveryHistory where jobnumber=@vvcrJobNumber)
        SET @IsJobDelivered=1
 
 IF EXISTS( SELECT 1 FROM jobs WHERE jobnumber=@vvcrJobNumber AND DATEDIFF(MINUTE, LockbyUserTimeStamp, GETDATE())  > 30 AND (LokedbyUserForJobDetailsView IS NOT NULL OR LokedbyUserForJobDetailsView = ''))
