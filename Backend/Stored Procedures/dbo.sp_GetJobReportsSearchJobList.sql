@@ -227,7 +227,6 @@ BEGIN
 					WHEN 'User' THEN DictatorID 
 					WHEN 'JobType' THEN JobType 
 					WHEN 'Patient' THEN FirstName 
-					WHEN 'EditingComplete' THEN AwaitingDelivery
 					END
 				END,
 				CASE WHEN @SortTypeFromGrid = 'Descending' THEN
@@ -238,7 +237,6 @@ BEGIN
 					WHEN 'User' THEN DictatorID 
 					WHEN 'JobType' THEN JobType 
 					WHEN 'Patient' THEN FirstName 
-					WHEN 'EditingComplete' THEN AwaitingDelivery
 					END
 				END DESC,
 				CASE WHEN @SortTypeFromGrid = 'Ascending' THEN
@@ -298,6 +296,7 @@ BEGIN
 				WHEN 'In Process' THEN InProcess--StatusDate -- JTI
 				WHEN 'Appointment Date' THEN AppointmentDate
 				WHEN 'Awaiting Delivery' THEN AwaitingDelivery --StatusDate -- JTA
+				WHEN 'EditingComplete' THEN AwaitingDelivery
 			  END
 			END,
 			CASE WHEN @SortType = 'Descending' THEN
@@ -305,6 +304,7 @@ BEGIN
 				WHEN 'In Process' THEN InProcess --StatusDate -- JTI
 				WHEN 'Appointment Date' THEN AppointmentDate
 				WHEN 'Awaiting Delivery' THEN AwaitingDelivery --StatusDate -- JTA
+				WHEN 'EditingComplete' THEN AwaitingDelivery
 			  END
 			END DESC
 		  OFFSET (@PageNo - 1) * @PageSize ROWS
