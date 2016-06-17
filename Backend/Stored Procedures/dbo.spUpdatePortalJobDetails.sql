@@ -114,6 +114,30 @@ BEGIN TRY
 			UPDATE Jobs SET AppointmentDate = @DatePart,AppointmentTime = @TimePart  WHERE ([JobNumber] = @vvcrJobNumber)
 		END	
 
+		
+		
+
+		--updating document into jobs_documents table
+		IF @vbinDocumnet IS NOT Null AND  @oldStatus < 250 OR @oldStatus >= 360 
+			BEGIN
+				IF @vnitIsApproved = 0 
+					EXEC doUpdateJobDocument @vvcrJobNumber, @vbinDocumnet,@vvcrUsername,@currentDate
+				ELSE IF @vnitIsApproved = 1 
+					EXEC doApproveDocumentByCR @vvcrJobNumber, @vbinDocumnet,@vvcrUsername,@currentDate
+				SELECT @documentID = DocumentId FROM Jobs_Documents_History WHERE jobnumber=@vvcrJobNumber AND Username=@vvcrUsername AND DocDate = @currentDate
+			END 
+		Else if @vbinDocumnet is null and @vnitIsApproved = 1 
+			BEGIN
+					
+					UPDATE JobStatusA SET [Status] = 250,StatusDate = @currentDate WHERE JobNumber = @vvcrJobNumber;
+
+					INSERT INTO [dbo].[JobTracking]	([JobNumber], [Status], [StatusDate], [Path])		
+					SELECT [JobNumber], [Status], [StatusDate], [Path] 
+					FROM [dbo].JobStatusA
+					WHERE (JobNumber = @vvcrJobNumber)
+			END
+
+
 		-- Updating JobType and stat details into jobs table
 		IF @vvcrJobType <> ''
 		BEGIN
@@ -136,27 +160,7 @@ BEGIN TRY
 			END
 		END
 
-		
 
-		--updating document into jobs_documents table
-		IF @vbinDocumnet IS NOT Null AND  @oldStatus < 250 OR @oldStatus >= 360 
-			BEGIN
-				IF @vnitIsApproved = 0 
-					EXEC doUpdateJobDocument @vvcrJobNumber, @vbinDocumnet,@vvcrUsername,@currentDate
-				ELSE IF @vnitIsApproved = 1 
-					EXEC doApproveDocumentByCR @vvcrJobNumber, @vbinDocumnet,@vvcrUsername,@currentDate
-				SELECT @documentID = DocumentId FROM Jobs_Documents_History WHERE jobnumber=@vvcrJobNumber AND Username=@vvcrUsername AND DocDate = @currentDate
-			END 
-		Else if @vbinDocumnet is null and @vnitIsApproved = 1 
-			BEGIN
-					
-					UPDATE JobStatusA SET [Status] = 250,StatusDate = @currentDate WHERE JobNumber = @vvcrJobNumber;
-
-					INSERT INTO [dbo].[JobTracking]	([JobNumber], [Status], [StatusDate], [Path])		
-					SELECT [JobNumber], [Status], [StatusDate], [Path] 
-					FROM [dbo].JobStatusA
-					WHERE (JobNumber = @vvcrJobNumber)
-			END
 		-- updating QA Notes into jobEditingsummery table
 		IF @vvcrLastQANote <> ''
 		BEGIN 
@@ -180,6 +184,10 @@ BEGIN TRY
 
 			INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime, STAT,FirstName,MI,LastName,DOB,IsHistory,AppointmentDate)
 			SELECT @vvcrJobNumber,MRN,JobType,250,null,@vvcrUsername,GETDATE(), @vbitStat1,@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,1,@vsdtAppointmentDate from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber 
+					WHERE (j.[JobNumber] = @vvcrJobNumber)
+					
+			INSERT INTO Job_History (JobNumber,MRN,JobType,CurrentStatus,DocumentID,UserId,HistoryDateTime,FirstName,MI,LastName,DOB,IsHistory,AppointmentDate)
+			SELECT @vvcrJobNumber,MRN,JobType,250,null,@vvcrUsername,GETDATE(),@vvcrFirstName,@vvcrMI,@vvcrLastName,@vvcrDOB,1,@vsdtAppointmentDate from jobs j inner join Jobs_Patients p on j.jobnumber=p.jobnumber 
 					WHERE (j.[JobNumber] = @vvcrJobNumber)
 			END
 
