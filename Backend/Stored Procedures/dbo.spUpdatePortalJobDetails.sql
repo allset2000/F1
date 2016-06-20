@@ -95,24 +95,7 @@ BEGIN TRY
 		if(@vbitStat1 = 1)
 		INSERT INTO Job_History(JobNumber, CurrentStatus,UserId, HistoryDateTime,IsHistory, STAT ) VALUES (@vvcrJobNumber,@oldStatus,@vvcrUsername,GETDATE(),0, @vbitStat1)
 
-		-- Update the Patient		
-		IF @vvcrMRN is not null
-		BEGIN
-			--SELECT @oldMRN=MRN FROM Jobs_Patients where jobnumber=@vvcrJobNumber
-			EXEC dbo.writePatient @vintPatientId,@vvcrJobNumber,@vvcrAlternateID,@vvcrMRN, @vvcrFirstName, @vvcrMI,@vvcrLastName,@vvcrSuffix,@vvcrDOB,
-									  @vvcrSSN,@vvcrAddress1,@vvcrAddress2,@vvcrCity,@vvcrState,@vvcrZip,@vvcrPhone,@vvcrSex,@vintAppointmentId  
-		END 
-
-		-- THIS IS TO UPDATE THE CURRENT AppointmentDate WHICH IS MODIFIED
-		IF @vsdtAppointmentDate IS NOT NULL
-		BEGIN
-			DECLARE @DatePart smallDateTime
-			DECLARE @TimePart smallDateTime
-			SELECT @DatePart = DATEADD(D, 0, DATEDIFF(D, 0, @vsdtAppointmentDate))
-			SELECT @TimePart = DATEADD(day, -DATEDIFF(D, 0, @vsdtAppointmentDate), @vsdtAppointmentDate)
-			
-			UPDATE Jobs SET AppointmentDate = @DatePart,AppointmentTime = @TimePart  WHERE ([JobNumber] = @vvcrJobNumber)
-		END	
+		
 
 		
 		
@@ -136,7 +119,25 @@ BEGIN TRY
 					FROM [dbo].JobStatusA
 					WHERE (JobNumber = @vvcrJobNumber)
 			END
+			
+		-- Update the Patient		
+		IF @vvcrMRN is not null
+		BEGIN
+			--SELECT @oldMRN=MRN FROM Jobs_Patients where jobnumber=@vvcrJobNumber
+			EXEC dbo.writePatient @vintPatientId,@vvcrJobNumber,@vvcrAlternateID,@vvcrMRN, @vvcrFirstName, @vvcrMI,@vvcrLastName,@vvcrSuffix,@vvcrDOB,
+									  @vvcrSSN,@vvcrAddress1,@vvcrAddress2,@vvcrCity,@vvcrState,@vvcrZip,@vvcrPhone,@vvcrSex,@vintAppointmentId  
+		END 
 
+		-- THIS IS TO UPDATE THE CURRENT AppointmentDate WHICH IS MODIFIED
+		IF @vsdtAppointmentDate IS NOT NULL
+		BEGIN
+			DECLARE @DatePart smallDateTime
+			DECLARE @TimePart smallDateTime
+			SELECT @DatePart = DATEADD(D, 0, DATEDIFF(D, 0, @vsdtAppointmentDate))
+			SELECT @TimePart = DATEADD(day, -DATEDIFF(D, 0, @vsdtAppointmentDate), @vsdtAppointmentDate)
+			
+			UPDATE Jobs SET AppointmentDate = @DatePart,AppointmentTime = @TimePart  WHERE ([JobNumber] = @vvcrJobNumber)
+		END	
 
 		-- Updating JobType and stat details into jobs table
 		IF @vvcrJobType <> ''
