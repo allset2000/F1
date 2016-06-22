@@ -8,6 +8,7 @@ GO
 -- Author: Narender
 -- Create date: 05/21/2015
 -- Description: SP Used to Save the User Search Preferences
+-- #9684:Fixed issue of int to small int conversion
 -- =============================================
 
 CREATE PROCEDURE [dbo].[sp_InsertAndUpdatePortalJobReportPreferences]
