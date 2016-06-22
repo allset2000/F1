@@ -1,7 +1,7 @@
-SET ANSI_NULLS ON
-GO
 
 SET QUOTED_IDENTIFIER ON
+GO
+SET ANSI_NULLS ON
 GO
 
 -- =============================================
@@ -33,7 +33,7 @@ CREATE PROCEDURE [dbo].[sp_InsertAndUpdatePortalJobReportPreferences]
   @sortBy VARCHAR(50) = null,
   @sortType VARCHAR(50) = null,
   @reportName VARCHAR(300) = null,
-  @id SMALLINT = null,
+  @id INT = null,
   @clinicId smallint= null,
   @isSaved BIT,
   @jobNumber VARCHAR(20) = null,
@@ -87,5 +87,3 @@ BEGIN CATCH
 END CATCH
 
 GO
-
-
