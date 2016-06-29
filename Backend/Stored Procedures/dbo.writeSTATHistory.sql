@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -6,6 +7,9 @@ GO
 -- Author:		Narender
 -- Create date: 02/24/2016
 -- Description:	This SP is called from BackendWS to store the STAT changes from Ops Portal
+-- Author: Narender
+-- Updated date: 29/06/2016
+-- Description: Updated SP to use specific columns while updating the history table
 -- =============================================
 CREATE PROCEDURE [dbo].[writeSTATHistory]
 @JobNumber  [varchar]  (20),
@@ -23,7 +27,8 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	BEGIN TRY
-		INSERT INTO [dbo].[Job_History] VALUES( @JobNumber, @MRN, @JobType, @CurrentStatus, NULL, @UserId, GETDATE(), @FirstName, @MI, @LastName, NULL, 0, @STAT )
+		INSERT INTO [dbo].[Job_History](JobNumber, MRN, JobType, CurrentStatus, DocumentID, UserId, HistoryDateTime,
+										FirstName, MI, LastName, DOB, IsHistory, STAT) VALUES( @JobNumber, @MRN, @JobType, @CurrentStatus, NULL, @UserId, GETDATE(), @FirstName, @MI, @LastName, NULL, 1, @STAT )
 	END TRY
 	BEGIN CATCH
 	    
@@ -36,4 +41,5 @@ BEGIN
 		   WHERE ApplicationCode='CUSTOMER_PORTAL_UI'
 	END CATCH
 END
+
 GO
