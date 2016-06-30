@@ -1,3 +1,4 @@
+
 SET QUOTED_IDENTIFIER ON
 GO
 SET ANSI_NULLS ON
@@ -18,8 +19,10 @@ CREATE PROCEDURE [dbo].[qryJobTracking] (
 						  OUTER APPLY (SELECT TOP 1 Username, DocumentID, Doc from dbo.Jobs_Documents_History JDH 
 						  WHERE dbo.JobTracking.JobNumber= JDH.JobNumber 
 						  AND dbo.JobTracking.Status= JDH.Status	
-						  AND dbo.JobTracking.StatusDate = JDH.StatusDate ORDER BY JDH.DocDate ASC) JDHH		 						  
+						  --AND dbo.JobTracking.StatusDate = JDH.StatusDate 
+						  ORDER BY JDH.DocDate ASC) JDHH		 						  
 	WHERE (dbo.JobTracking.JobNumber = @JobNumber) AND (dbo.JobTracking.Status in(100,160,180,210,360,240,250))
 	ORDER BY dbo.JobTracking.Status, dbo.JobTracking.StatusDate
 RETURN
+
 GO
