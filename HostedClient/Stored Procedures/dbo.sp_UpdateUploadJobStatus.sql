@@ -59,13 +59,14 @@ BEGIN TRY
 					RhythmWorkFlowID=@RhythmWorkFlowID
 			WHERE JobId = @JobId
 
-			IF (@Status <> @OldStatus)
-			BEGIN				
+			--commented to due got production need to find commented this code
+			--IF (@Status <> @OldStatus)
+			--BEGIN				
 				INSERT INTO dbo.Jobstracking
 				       (JobID,[Status],ChangeDate,ChangedBy) 
 				VALUES (@JobId, @Status, GETDATE(), @ChangedBy)
 
-			END
+			--END
 
        --If upload is image only or chat history only then change status to 390 (In Delivery) status
 		IF((@HasImages=1 OR @HasChatHistory=1) AND @HasDictation=0 )
