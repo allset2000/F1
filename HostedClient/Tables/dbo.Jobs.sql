@@ -21,7 +21,8 @@ CREATE TABLE [dbo].[Jobs]
 [TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [ChatHistory_ThreadID] [int] NULL,
 [RhythmWorkFlowID] [int] NULL,
-[BackendStatus] [int] NULL
+[BackendStatus] [int] NULL,
+[HasUploadError] [bit] NULL CONSTRAINT [DF_Jobs_HasUploadError] DEFAULT ((0))
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 ALTER TABLE [dbo].[Jobs] ADD 
 CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobID]) ON [PRIMARY]
