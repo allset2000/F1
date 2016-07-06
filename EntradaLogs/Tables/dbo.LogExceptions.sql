@@ -13,16 +13,13 @@ CREATE TABLE [dbo].[LogExceptions]
 [ErrorWrittenDate] [datetime] NOT NULL CONSTRAINT [DF__LogExcept__Error__71E7C201] DEFAULT (getdate())
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-CREATE FULLTEXT INDEX ON [dbo].[LogExceptions] KEY INDEX [PK_LogExceptions] ON [LogExceptionErrors]
-GO
-
-ALTER FULLTEXT INDEX ON [dbo].[LogExceptions] ADD ([ExceptionMessage] LANGUAGE 1033)
-GO
-
-ALTER FULLTEXT INDEX ON [dbo].[LogExceptions] ENABLE
-GO
-
 ALTER TABLE [dbo].[LogExceptions] ADD CONSTRAINT [PK_LogExceptions] PRIMARY KEY CLUSTERED  ([LogExceptionID]) ON [PRIMARY]
 GO
+CREATE NONCLUSTERED INDEX [NonClusteredIndex-20160701-102541] ON [dbo].[LogExceptions] ([LogConfigurationID], [ErrorWrittenDate]) INCLUDE ([ErrorThrownAtMethodName]) ON [PRIMARY]
+GO
 ALTER TABLE [dbo].[LogExceptions] ADD CONSTRAINT [FK_LogExceptions_LogConfiguration] FOREIGN KEY ([LogConfigurationID]) REFERENCES [dbo].[LogConfiguration] ([LogConfigurationID])
+GO
+CREATE FULLTEXT INDEX ON [dbo].[LogExceptions] KEY INDEX [PK_LogExceptions] ON [LogExceptionErrors]
+GO
+ALTER FULLTEXT INDEX ON [dbo].[LogExceptions] ADD ([ExceptionMessage] LANGUAGE 1033)
 GO
