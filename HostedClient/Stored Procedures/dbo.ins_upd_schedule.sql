@@ -91,6 +91,11 @@ INSERT INTO @schedulesToAdd
 		(SELECT ROW_Number() OVER (ORDER BY (SELECT 1)) as ID, * FROM split(@ResourceID,'|')) RI
 		INNER JOIN (SELECT ROW_Number() OVER (ORDER BY (SELECT 1)) as ID, * FROM split(@ResourceName,'|')) RN ON RI.ID=RN.ID
 
+DECLARE @scheduleCount INT
+SET @scheduleCount = (SELECT COUNT(*) FROM @schedulesToAdd)
+
+IF @scheduleCount = 1
+BEGIN
 UPDATE @schedulesToAdd SET exactmatch = 
 	CASE WHEN 		
 		S.AppointmentDate = SA.AppointmentDate AND
@@ -111,15 +116,46 @@ UPDATE @schedulesToAdd SET exactmatch =
 		ISNULL (S.AttendingLast, '') = ISNULL (SA.attendingLast, '')
 	THEN 1 ELSE 0 END
 	,existing = 
-	CASE WHEN S.ResourceID = SA.ResourceID THEN 1 ELSE 0 END
+	CASE WHEN @scheduleCount = 1 AND S.AppointmentID = SA.AppointmentID THEN 1 
+		 WHEN @scheduleCount >= 2 AND S.AppointmentID = SA.AppointmentID AND S.ResourceID=SA.ResourceID THEN 1
+		 ELSE 0 END
 	FROM Schedules S INNER JOIN @schedulesToAdd SA
 	ON
 		S.ClinicID = SA.ClinicID AND 
 		S.AppointmentID = SA.AppointmentID
-	WHERE 
-		((SELECT count(*) FROM @schedulesToAdd)>1 AND (S.ResourceID = SA.ResourceID)) OR
-		((SELECT count(*) FROM @schedulesToAdd)=1)
+END
 
+IF @scheduleCount >= 2
+BEGIN
+UPDATE @schedulesToAdd SET exactmatch = 
+	CASE WHEN 		
+		S.AppointmentDate = SA.AppointmentDate AND
+		S.PatientID = @PatientID AND
+		ISNULL (S.EHREncounterID, '') = ISNULL (SA.EncounterID, '') AND
+		ISNULL (S.Attending, '') = ISNULL (SA.Attending, '') AND
+		S.LocationID = SA.LocationID AND
+		S.LocationName = SA.LocationName AND
+		S.ReasonID = SA.ReasonID AND
+		S.ReasonName = SA.ReasonName AND
+		S.ResourceID = SA.ResourceID AND
+		S.ResourceName = SA.ResourceName AND
+		S.Status = SA.Status AND
+		ISNULL (S.AdditionalData, '') = ISNULL (SA.AdditionalData, '') AND
+		ISNULL (S.ReferringID, '') = ISNULL (SA.ReferringID, '') AND
+		ISNULL (S.ReferringName, '') = ISNULL (SA.referringName, '') AND
+		ISNULL (S.AttendingFirst, '') = ISNULL (SA.attendingFirst, '') AND
+		ISNULL (S.AttendingLast, '') = ISNULL (SA.attendingLast, '')
+	THEN 1 ELSE 0 END
+	,existing = 
+	CASE WHEN @scheduleCount = 1 AND S.AppointmentID = SA.AppointmentID THEN 1 
+		 WHEN @scheduleCount >= 2 AND S.AppointmentID = SA.AppointmentID AND S.ResourceID=SA.ResourceID THEN 1
+		 ELSE 0 END
+	FROM Schedules S INNER JOIN @schedulesToAdd SA
+	ON
+		S.ClinicID = SA.ClinicID AND 
+		S.AppointmentID = SA.AppointmentID AND
+		S.ResourceID = SA.ResourceID
+END
 
 --Exits the Stored Procedure if the appointment data we have it exactly the same as whats already in the database
 IF NOT EXISTS (SELECT * FROM @schedulesToAdd WHERE ISNULL(exactMatch,0) = 0)  
