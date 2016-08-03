@@ -26,7 +26,7 @@ ALTER TABLE [dbo].[ReferringPhysicians] ADD CONSTRAINT [PK_ReferringPhysicians] 
 GO
 CREATE NONCLUSTERED INDEX [IX_ClinicID_INC_PhysicianID_FirstName_MI_LastName] ON [dbo].[ReferringPhysicians] ([ClinicID]) INCLUDE ([FirstName], [LastName], [MI], [PhysicianID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_ReferringPhysicians_1] ON [dbo].[ReferringPhysicians] ([PhysicianID]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_ReferringPhysicians_1] ON [dbo].[ReferringPhysicians] ([PhysicianID]) INCLUDE ([ClinicID], [ReferringID]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[ReferringPhysicians] ADD CONSTRAINT [FK_ReferringPhysicians_Clinics] FOREIGN KEY ([ClinicID]) REFERENCES [dbo].[Clinics] ([ClinicID]) ON DELETE CASCADE
 GO

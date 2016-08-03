@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[Encounters]
 GO
 ALTER TABLE [dbo].[Encounters] ADD CONSTRAINT [PK_Appointments] PRIMARY KEY CLUSTERED  ([EncounterID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_Encounters_AppointmentDate] ON [dbo].[Encounters] ([AppointmentDate]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Encounters_AppointmentDate] ON [dbo].[Encounters] ([AppointmentDate]) INCLUDE ([PatientID], [ScheduleID], [UpdatedDateInUTC]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [FK_Schedules_ScheduleID] ON [dbo].[Encounters] ([ScheduleID]) ON [PRIMARY]
 GO

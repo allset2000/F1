@@ -10,3 +10,5 @@ CREATE TABLE [dbo].[UserSessionTracking]
 GO
 ALTER TABLE [dbo].[UserSessionTracking] ADD CONSTRAINT [PK_UserSessionTracking] PRIMARY KEY CLUSTERED  ([UserSessionTrackingId]) ON [PRIMARY]
 GO
+CREATE NONCLUSTERED INDEX [IX_UserSessionTracking_Userid] ON [dbo].[UserSessionTracking] ([UserId]) ON [PRIMARY]
+GO

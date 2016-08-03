@@ -9,7 +9,7 @@ CREATE TABLE [dbo].[RulesProviders]
 GO
 ALTER TABLE [dbo].[RulesProviders] ADD CONSTRAINT [PK_RulesProviders] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[RulesProviders] ADD CONSTRAINT [UN_Providers_Clinic_EHRCode] UNIQUE NONCLUSTERED  ([ClinicID], [EHRCode]) ON [PRIMARY]
+CREATE UNIQUE NONCLUSTERED INDEX [UN_Providers_Clinic_EHRCode] ON [dbo].[RulesProviders] ([ClinicID], [EHRCode]) INCLUDE ([Description], [UpdatedDateInUTC]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_RulesProviders_EHRCode] ON [dbo].[RulesProviders] ([EHRCode]) ON [PRIMARY]
 GO

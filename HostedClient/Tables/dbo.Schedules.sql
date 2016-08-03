@@ -30,9 +30,11 @@ ALTER TABLE [dbo].[Schedules] ADD CONSTRAINT [PK_Schedules] PRIMARY KEY CLUSTERE
 GO
 CREATE NONCLUSTERED INDEX [IX_Schedules_1] ON [dbo].[Schedules] ([AppointmentID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_Schedules] ON [dbo].[Schedules] ([ClinicID]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_Schedule_ClinIDAppointmentIDResID] ON [dbo].[Schedules] ([ClinicID], [AppointmentID], [ResourceID]) INCLUDE ([AppointmentDate], [EHREncounterID], [LocationID], [PatientID], [ReasonID], [ResourceName], [Status]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IDX_Schedules_ClinicIDAttending] ON [dbo].[Schedules] ([ClinicID], [Attending], [AttendingLast], [AttendingFirst]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Schedules] ON [dbo].[Schedules] ([ClinicID], [LocationID]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_Schedule_ClinIDResIDResNm] ON [dbo].[Schedules] ([ClinicID], [ResourceID], [ResourceName]) ON [PRIMARY]
 GO

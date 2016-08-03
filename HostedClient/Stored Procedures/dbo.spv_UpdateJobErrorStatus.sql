@@ -15,10 +15,9 @@ BEGIN
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 	--future we will use this Statement
-	--IF NOT EXISTS (SELECT '*' FROM dbo.Jobs WITH(NOLOCK) WHERE JobID = @JobID AND HasUploadError  = 1)
-	--BEGIN
-
-	--	 UPDATE Jobs SET HasUploadError  = 1,UpdatedDateInUTC=GETUTCDATE() WHERE JobID = @JobID
- --   END
+	IF NOT EXISTS (SELECT '*' FROM dbo.Jobs WITH(NOLOCK) WHERE JobID = @JobID AND HasUploadError  = 1)
+	BEGIN
+		UPDATE Jobs SET HasUploadError  = 1,UpdatedDateInUTC=GETUTCDATE() WHERE JobID = @JobID
+ 	END
 END
 GO

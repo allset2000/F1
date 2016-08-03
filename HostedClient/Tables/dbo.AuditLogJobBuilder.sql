@@ -1,0 +1,43 @@
+CREATE TABLE [dbo].[AuditLogJobBuilder]
+(
+[ID] [bigint] NOT NULL IDENTITY(1, 1),
+[ScheduleID] [bigint] NULL,
+[StartTime] [datetime] NULL,
+[EndTime] [datetime] NULL,
+[Step1] [int] NULL,
+[Step2] [int] NULL,
+[Step3] [int] NULL,
+[Step4] [int] NULL,
+[Step5] [int] NULL,
+[Step6] [int] NULL,
+[Step7] [int] NULL,
+[Step8] [int] NULL,
+[Step9] [int] NULL,
+[Step10] [int] NULL,
+[Step11] [int] NULL,
+[Step12] [int] NULL,
+[Step13] [int] NULL,
+[Step14] [int] NULL,
+[Step15] [int] NULL,
+[Step16] [int] NULL,
+[Step17] [int] NULL,
+[Step18] [int] NULL,
+[Step19] [int] NULL,
+[Step20] [int] NULL,
+[Step21] [int] NULL,
+[Step22] [int] NULL,
+[Step23] [int] NULL,
+[Step24] [int] NULL,
+[Step25] [int] NULL,
+[Step26] [int] NULL,
+[Step27] [int] NULL,
+[Step28] [int] NULL,
+[Step29] [int] NULL,
+[Step30] [int] NULL,
+[Step31] [int] NULL,
+[Step32] [int] NULL,
+[Step33] [int] NULL
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[AuditLogJobBuilder] ADD CONSTRAINT [PK_AuditLogJobBuilder] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
+GO

@@ -24,14 +24,14 @@ CREATE TABLE [dbo].[SchedulesTracking]
 [AttendingLast] [varchar] (120) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [Type] [varchar] (1) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL CONSTRAINT [DF__SchedulesT__Type__5540965B] DEFAULT ('S')
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [ix_Schedulestracking_ClinicID] ON [dbo].[SchedulesTracking] ([ClinicID]) INCLUDE ([ChangedOn]) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_SchedulesTracking_ChangedOn] ON [dbo].[SchedulesTracking] ([ChangedOn] DESC) ON [PRIMARY]
-
 GO
 ALTER TABLE [dbo].[SchedulesTracking] ADD CONSTRAINT [PK_EncountersTracking] PRIMARY KEY CLUSTERED  ([SchedulesTrackingID]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_SchedulesTracking] ON [dbo].[SchedulesTracking] ([ScheduleID]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_SchedulesTracking_ChangedOn] ON [dbo].[SchedulesTracking] ([ChangedOn] DESC) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [ix_Schedulestracking_ClinicID] ON [dbo].[SchedulesTracking] ([ClinicID]) INCLUDE ([ChangedOn]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_SchedulesTracking] ON [dbo].[SchedulesTracking] ([ScheduleID]) INCLUDE ([AppointmentDate], [ChangedOn]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[SchedulesTracking] ADD CONSTRAINT [FK_SchedulesTracking_Schedules] FOREIGN KEY ([ScheduleID]) REFERENCES [dbo].[Schedules] ([ScheduleID])
 GO

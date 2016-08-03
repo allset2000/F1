@@ -10,6 +10,7 @@ GO
 -- Ticket#	Date			Fixed by			Comments
 -- #6077#	10 Feb 2016		Sharif Shaik		if @PatientID is NULL, EXIT the stored procedure without adding the record to schedules table
 --			05 MAY 2016		Mike Cardwell		Redesigned SP to increase performance and reduce Duplicate code	
+--			22 July 2016    Mike Cardwell		Resolved issue with duplicate appointmetns being created for Nextgen EHR's
 -- =============================================
 CREATE PROCEDURE [dbo].[ins_upd_schedule]
 	@ClinicID smallint ,
@@ -80,101 +81,97 @@ BEGIN
 	SELECT @attendingFirst = FirstName, @attendingLast = LastName FROM Dictators WHERE EHRProviderID = @Attending AND ClinicID = @ClinicID
 END
 
-CREATE TABLE #schedulesToAdd 
-	(ID INT, ClinicID smallint, AppointmentDate datetime, MRN varchar(36), AppointmentID varchar(100), EncounterID varchar(50), Attending varchar(50), LocationID varchar(50), LocationName varchar(100), ReasonID varchar(50), ReasonName varchar(200),
-	ResourceID varchar(1000), ResourceName varchar(1000), Status smallint, AdditionalData varchar(max), ReferringID varchar(50), referringName varchar(100), attendingFirst varchar(120), attendingLast varchar(120), alternate_id varchar(36), type varchar(1), exactMatch bit, existing BIT)
+--CREATE TEMPORARY TABLES TO STAGE THE SCHEDULING DATA
+IF OBJECT_ID('tempdb..#tempSchedules') IS NOT NULL
+    DROP TABLE #tempSchedules
+
+IF OBJECT_ID('tempdb..#schedulesToAdd') IS NOT NULL
+    DROP TABLE #schedulesToAdd
+
+CREATE TABLE #tempSchedules 
+	(ScheduleID BIGINT, ClinicID smallint, AppointmentDate datetime, PatientID BIGINT, AppointmentID varchar(100), EHREncounterID varchar(50), Attending varchar(50), LocationID varchar(50), LocationName varchar(100), ReasonID varchar(50), ReasonName varchar(200),
+	ResourceID varchar(1000), ResourceName varchar(1000), Status smallint, AdditionalData varchar(max), ReferringID varchar(50), referringName varchar(100), attendingFirst varchar(120), attendingLast varchar(120), type varchar(1))
+
+CREATE TABLE #schedulesToAdd
+	(ID INT, ClinicID smallint, AppointmentDate datetime, PatientID BIGINT, AppointmentID varchar(100), EHREncounterID varchar(50), Attending varchar(50), LocationID varchar(50), LocationName varchar(100), ReasonID varchar(50), ReasonName varchar(200),
+	ResourceID varchar(1000), ResourceName varchar(1000), Status smallint, AdditionalData varchar(max), ReferringID varchar(50), referringName varchar(100), attendingFirst varchar(120), attendingLast varchar(120), type varchar(1), exactMatch bit, existing BIT)
+
+--POPULATE TEMPORARY TABLES
+INSERT INTO #tempSchedules
+	SELECT DISTINCT scheduleID, ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID, 
+		ISNULL(LocationName,''), ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, ReferringID, referringName, attendingFirst, attendingLast, type
+	FROM Schedules 
+	WHERE ClinicID = @clinicID AND appointmentID=@appointmentID
 
 INSERT INTO #schedulesToAdd 		
-	SELECT RI.ID, @clinicID, @AppointmentDate, @MRN, @appointmentID, @encounterID, @attending, @locationID, @LocationName, @ReasonID, @ReasonName, 
-		RI.value, RN.value, @Status, @additionalData, @referringID, @ReferringName, @attendingFirst, @attendingLast, @alternate_id, @type, 0,0  
+	SELECT RI.ID, @clinicID, @AppointmentDate, @patientID, @appointmentID, @encounterID, @attending, @locationID, @LocationName, @ReasonID, @ReasonName, 
+		RI.value, RN.value, @Status, @additionalData, @referringID, @ReferringName, @attendingFirst, @attendingLast, @type, 0,0 
 	FROM 
 		(SELECT ROW_Number() OVER (ORDER BY (SELECT 1)) as ID, * FROM split(@ResourceID,'|')) RI
 		INNER JOIN (SELECT ROW_Number() OVER (ORDER BY (SELECT 1)) as ID, * FROM split(@ResourceName,'|')) RN ON RI.ID=RN.ID
 
 DECLARE @scheduleCount INT
-SET @scheduleCount = (SELECT COUNT(*) FROM #schedulesToAdd)
+SET @scheduleCount = (SELECT COUNT(*) FROM #schedulesToAdd )
 
-IF @scheduleCount = 1
-BEGIN
-UPDATE #schedulesToAdd SET exactmatch = 
-	CASE WHEN 		
-		S.AppointmentDate = SA.AppointmentDate AND
-		S.PatientID = @PatientID AND
-		ISNULL (S.EHREncounterID, '') = ISNULL (SA.EncounterID, '') AND
-		ISNULL (S.Attending, '') = ISNULL (SA.Attending, '') AND
-		S.LocationID = SA.LocationID AND
-		S.LocationName = SA.LocationName AND
-		S.ReasonID = SA.ReasonID AND
-		S.ReasonName = SA.ReasonName AND
-		S.ResourceID = SA.ResourceID AND
-		S.ResourceName = SA.ResourceName AND
-		S.Status = SA.Status AND
-		ISNULL (S.AdditionalData, '') = ISNULL (SA.AdditionalData, '') AND
-		ISNULL (S.ReferringID, '') = ISNULL (SA.ReferringID, '') AND
-		ISNULL (S.ReferringName, '') = ISNULL (SA.referringName, '') AND
-		ISNULL (S.AttendingFirst, '') = ISNULL (SA.attendingFirst, '') AND
-		ISNULL (S.AttendingLast, '') = ISNULL (SA.attendingLast, '')
-	THEN 1 ELSE 0 END
-	,existing = 
-	CASE WHEN @scheduleCount = 1 AND S.AppointmentID = SA.AppointmentID THEN 1 
-		 WHEN @scheduleCount >= 2 AND S.AppointmentID = SA.AppointmentID AND S.ResourceID=SA.ResourceID THEN 1
-		 ELSE 0 END
-	FROM Schedules S INNER JOIN #schedulesToAdd SA
-	ON
-		S.ClinicID = SA.ClinicID AND 
-		S.AppointmentID = SA.AppointmentID
-END
+DECLARE @TEMPscheduleCount INT
+SET @TEMPscheduleCount = (SELECT COUNT(*) FROM #tempSchedules  )
 
-IF @scheduleCount >= 2
-BEGIN
-UPDATE #schedulesToAdd SET exactmatch = 
-	CASE WHEN 		
-		S.AppointmentDate = SA.AppointmentDate AND
-		S.PatientID = @PatientID AND
-		ISNULL (S.EHREncounterID, '') = ISNULL (SA.EncounterID, '') AND
-		ISNULL (S.Attending, '') = ISNULL (SA.Attending, '') AND
-		S.LocationID = SA.LocationID AND
-		S.LocationName = SA.LocationName AND
-		S.ReasonID = SA.ReasonID AND
-		S.ReasonName = SA.ReasonName AND
-		S.ResourceID = SA.ResourceID AND
-		S.ResourceName = SA.ResourceName AND
-		S.Status = SA.Status AND
-		ISNULL (S.AdditionalData, '') = ISNULL (SA.AdditionalData, '') AND
-		ISNULL (S.ReferringID, '') = ISNULL (SA.ReferringID, '') AND
-		ISNULL (S.ReferringName, '') = ISNULL (SA.referringName, '') AND
-		ISNULL (S.AttendingFirst, '') = ISNULL (SA.attendingFirst, '') AND
-		ISNULL (S.AttendingLast, '') = ISNULL (SA.attendingLast, '')
-	THEN 1 ELSE 0 END
-	,existing = 
-	CASE WHEN @scheduleCount = 1 AND S.AppointmentID = SA.AppointmentID THEN 1 
-		 WHEN @scheduleCount >= 2 AND S.AppointmentID = SA.AppointmentID AND S.ResourceID=SA.ResourceID THEN 1
-		 ELSE 0 END
-	FROM Schedules S RIGHT JOIN #schedulesToAdd SA
-	ON
-		S.ClinicID = SA.ClinicID AND 
-		S.AppointmentID = SA.AppointmentID AND
-		S.ResourceID = SA.ResourceID
-END
+--FLAG IF INCOMING DATA IS AN EXACT MATCH OF CURRENT DATA
+UPDATE #schedulesToAdd SET exactmatch = 1
+	FROM #tempSchedules SA
+	WHERE
+		[#schedulesToAdd].AppointmentID = SA.AppointmentID AND	
+		[#schedulesToAdd].AppointmentDate = SA.AppointmentDate AND
+		[#schedulesToAdd].PatientID = SA.PatientID AND
+		[#schedulesToAdd].EHREncounterID = SA.EHREncounterID AND
+		[#schedulesToAdd].Attending = SA.Attending AND
+		[#schedulesToAdd].LocationID = SA.LocationID AND
+		[#schedulesToAdd].LocationName = SA.LocationName AND
+		[#schedulesToAdd].ReasonID = SA.ReasonID AND
+		[#schedulesToAdd].ReasonName = SA.ReasonName AND
+		[#schedulesToAdd].ResourceID = SA.ResourceID AND
+		[#schedulesToAdd].ResourceName = SA.ResourceName AND
+		[#schedulesToAdd].Status = SA.Status AND
+		[#schedulesToAdd].AdditionalData = SA.AdditionalData AND
+		[#schedulesToAdd].ReferringID = SA.ReferringID AND
+		[#schedulesToAdd].ReferringName = SA.referringName AND
+		[#schedulesToAdd].AttendingFirst = SA.attendingFirst AND
+		[#schedulesToAdd].AttendingLast = SA.attendingLast 
 
---Exits the Stored Procedure if the appointment data we have it exactly the same as whats already in the database
-IF NOT EXISTS (SELECT * FROM #schedulesToAdd WHERE ISNULL(exactMatch,0) = 0)  
+--FLAG IF INCOMING DATA ALREADY EXISTS 	
+DECLARE @SQL NVARCHAR(MAX)
+DECLARE @SQlfilter NVARCHAR(MAX)=''
+
+	SET @SQL  = 'UPDATE #schedulesToAdd SET existing = 1
+	FROM #tempSchedules SA
+	WHERE
+		[#schedulesToAdd].AppointmentID = SA.AppointmentID'
+		IF @scheduleCount > 1 OR @TEMPscheduleCount > 1
+		SET @SQLfilter = ' AND [#schedulesToAdd].resourceID=SA.resourceID'
+
+	execute ( @sql+@SQLfilter )
+
+--EXIT SP IF ALL INCOMGING DATA MATCHES EXACTLY WHATS ALREADY IN THE SYSTEM
+IF NOT EXISTS (SELECT * FROM #schedulesToAdd WHERE ISNULL(exactMatch,0) = 0) AND @scheduleCount=((SELECT COUNT(*) FROM #tempSchedules WHERE STATUS <> 500 ))
 BEGIN
 	print 'no new records' 
 	RETURN 
 END 
 
---Needs work, doesnt work when originally 2 appointemrns then down to 1.
 --MARKS APPOINEMTNES AS DELETED WHEN THERE IS MORE THAN 1 APPOINTMENT AND THE RESOURCE IS MISSING IN THE UPDATE
-IF @scheduleCount > 1
+IF (SELECT count(*) FROM #tempSchedules) > 1
 BEGIN
-	UPDATE Schedules SET Status=500, RowProcessed = 0 WHERE ClinicID = @ClinicID AND AppointmentID = @AppointmentID
-	AND resourceID NOT IN (SELECT resourceID FROM #schedulesToAdd)
+
+	INSERT INTO #schedulesToAdd
+	SELECT SCHEDULEid, ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID, 
+		ISNULL(LocationName,''), ReasonID, ReasonName, ResourceID, ResourceName, '500', AdditionalData, ReferringID, referringName, attendingFirst, attendingLast, type,0,1
+	FROM 
+		#tempSchedules SA WHERE resourceID NOT IN (SELECT resourceID FROM #schedulesToAdd WITH(NOLOCK))
 END
 
 --IF AN APPOINTMENT IS NOT EXISTING ALREADY THEN INSERT THE APPOINTMENT
 IF EXISTS (SELECT * FROM #schedulesToAdd WHERE ISNULL(existing,0) = 0)
-BEGIN
+BEGIN	
 	
 	INSERT INTO Schedules 
 		(ClinicID, AppointmentDate, PatientID, AppointmentID, EHREncounterID, Attending, LocationID,
@@ -182,42 +179,51 @@ BEGIN
 		 ReferringName, AttendingFirst, AttendingLast, Type, CreateDate, ChangedOn,UpdatedDateInUTC)
 	OUTPUT Inserted.ScheduleID, Inserted.AppointmentID, Inserted.ResourceID INTO #ScheduleID	
 	SELECT 
-		ClinicID, AppointmentDate, @PatientID, AppointmentID, EncounterID, Attending, LocationID, 
+		ClinicID, AppointmentDate, @PatientID, AppointmentID, EHREncounterID, Attending, LocationID, 
 		ISNULL(LocationName,''), ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, ReferringID, 
 		referringName, attendingFirst, attendingLast, type, GETDATE(), GETDATE(),GETUTCDATE()	
-	FROM #schedulesToAdd WHERE existing = 0
+	FROM #schedulesToAdd WHERE existing = 0 and Exactmatch = 0
 	
 END
-ELSE
+
+IF EXISTS (SELECT * FROM #schedulesToAdd WHERE ISNULL(existing,0) > 0)
 BEGIN
-	
-	UPDATE Schedules
-	SET 
-		AppointmentDate = SA.AppointmentDate, 
-		PatientID = @PatientID,
-		EHREncounterID = SA.EncounterID,
-		Attending = SA.Attending,
-		LocationID = SA.LocationID,
-		LocationName = ISNULL(SA.LocationName,''),
-		ReasonID = SA.ReasonID,
-		ReasonName = SA.ReasonName,
-		ResourceID = SA.ResourceID,
-		ResourceName = SA.ResourceName,
-		Status = SA.Status,
-		AdditionalData = SA.AdditionalData,
-		ReferringID = SA.ReferringID,
-		ReferringName = SA.referringName,
-		AttendingFirst = SA.attendingFirst,
-		AttendingLast = SA.attendingLast,
-		RowProcessed = 0,
-		Type = SA.Type,
-		ChangedOn = GETDATE(),
-		UpdatedDateInUTC=GETUTCDATE()
-	OUTPUT Inserted.ScheduleID, Inserted.AppointmentID, Inserted.ResourceID INTO #ScheduleID
-	FROM Schedules S INNER JOIN #schedulesToAdd SA ON S.ClinicID = SA.ClinicID AND S.AppointmentID = SA.AppointmentID
-	WHERE
-		((SELECT count(*) FROM #schedulesToAdd)>1 AND (S.ResourceID = SA.ResourceID)) OR
-		((SELECT count(*) FROM #schedulesToAdd)=1)
+
+	SET @scheduleCount = (SELECT COUNT(*) FROM #schedulesToAdd )
+
+	DECLARE @SQL2 NVARCHAR(MAX)
+	DECLARE @SQlfilter2 NVARCHAR(MAX)=''
+
+	SET @SQL2  = 'UPDATE Schedules
+		SET 
+			AppointmentDate = SA.AppointmentDate, 
+			PatientID = SA.PatientID,
+			EHREncounterID = SA.EHREncounterID,
+			Attending = SA.Attending,
+			LocationID = SA.LocationID,
+			LocationName = ISNULL(SA.LocationName,'+''''''+'),
+			ReasonID = SA.ReasonID,
+			ReasonName = SA.ReasonName,
+			ResourceID = SA.ResourceID,
+			ResourceName = SA.ResourceName,
+			Status = SA.Status,
+			AdditionalData = SA.AdditionalData,
+			ReferringID = SA.ReferringID,
+			ReferringName = SA.referringName,
+			AttendingFirst = SA.attendingFirst,
+			AttendingLast = SA.attendingLast,
+			RowProcessed = 0,
+			Type = SA.Type,
+			ChangedOn = GETDATE(),
+			UpdatedDateInUTC=GETUTCDATE()
+		OUTPUT Inserted.ScheduleID, Inserted.AppointmentID, Inserted.ResourceID INTO #ScheduleID
+		FROM Schedules S 
+		INNER JOIN #schedulesToAdd SA ON S.ClinicID = SA.ClinicID AND S.AppointmentID = SA.AppointmentID '
+		IF @scheduleCount > 1
+		SET @SQLfilter2 = ' AND S.resourceID=SA.resourceID'
+
+	execute ( @sql2+@SQLfilter2 )
+
 END
 
 --INSERT INTO TRACKING TABLE
@@ -225,10 +231,10 @@ INSERT INTO SchedulesTracking
 		(ScheduleID, ClinicID, AppointmentDate, PatientID, AppointmentID, EncounterID, Attending, LocationID, 
 		 LocationName, ReasonID, ReasonName, ResourceID, ResourceName, Status, AdditionalData, ChangedOn, ChangedBy, 
 		 referringID, ReferringName, AttendingFirst, AttendingLast, Type)
-SELECT S.ScheduleID, SA.ClinicID, SA.AppointmentDate, @PatientID, SA.AppointmentID, SA.EncounterID, SA.Attending, SA.LocationID,
+SELECT S.ScheduleID, SA.ClinicID, SA.AppointmentDate, @PatientID, SA.AppointmentID, SA.EHREncounterID, SA.Attending, SA.LocationID,
 	   ISNULL(SA.LocationName,''), SA.ReasonID, SA.ReasonName, SA.ResourceID, SA.ResourceName, SA.Status, SA.AdditionalData, GETDATE(), 'HL7',
 		SA.referringID, SA.referringname, SA.AttendingFirst, SA.attendingLast, SA.Type
-FROM #ScheduleID S INNER JOIN #schedulesToAdd SA ON S.appointmentID=SA.appointmentID AND S.resourceID=SA.resourceID
+FROM #ScheduleID S WITH(NOLOCK) INNER JOIN #schedulesToAdd SA ON S.appointmentID=SA.appointmentID AND S.resourceID=SA.resourceID
 
 
 -- Ensure the RulesReasons and RulesProviders tables are updated
