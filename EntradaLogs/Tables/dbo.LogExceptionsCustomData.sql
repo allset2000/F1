@@ -63,10 +63,10 @@ CREATE TABLE [dbo].[LogExceptionsCustomData]
 [ConnectionString] [varchar] (1000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [InvitationId] [int] NULL
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [NonClusteredIndex-20160706-140405] ON [dbo].[LogExceptionsCustomData] ([LogExceptionID]) INCLUDE ([UserID], [JobID], [JobNumber]) ON [PRIMARY]
-
 GO
 ALTER TABLE [dbo].[LogExceptionsCustomData] ADD CONSTRAINT [PK_LogExceptionsCustomData] PRIMARY KEY CLUSTERED  ([LogExceptionsCustomDataID]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_LogExceptionsCustomData_LogExceptionID] ON [dbo].[LogExceptionsCustomData] ([LogExceptionID]) INCLUDE ([JobID], [JobNumber], [UserID]) ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[LogExceptionsCustomData] ADD CONSTRAINT [FK_LogExceptionsCustomData_LogExceptions] FOREIGN KEY ([LogExceptionID]) REFERENCES [dbo].[LogExceptions] ([LogExceptionID])
 GO
