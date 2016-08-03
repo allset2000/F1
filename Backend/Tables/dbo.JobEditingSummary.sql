@@ -17,8 +17,10 @@ CREATE TABLE [dbo].[JobEditingSummary]
 [LastQAEditingTaskId] [int] NOT NULL,
 [BillingEditingTaskId] [int] NOT NULL
 ) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_ON_AssignedToID_WITH_INC] ON [dbo].[JobEditingSummary] ([AssignedToID]) INCLUDE ([JobId], [QACategoryId]) ON [PRIMARY]
-
 GO
 ALTER TABLE [dbo].[JobEditingSummary] ADD CONSTRAINT [PK_JobEditingSummary] PRIMARY KEY CLUSTERED  ([JobId]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_ON_AssignedToID_WITH_INC] ON [dbo].[JobEditingSummary] ([AssignedToID]) INCLUDE ([JobId], [QACategoryId]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_JobEditingSummary_CurrentStateId] ON [dbo].[JobEditingSummary] ([CurrentStateId]) INCLUDE ([BillingEditingTaskId], [JobId]) ON [PRIMARY]
 GO

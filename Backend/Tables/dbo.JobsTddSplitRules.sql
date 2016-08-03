@@ -10,3 +10,5 @@ CREATE TABLE [dbo].[JobsTddSplitRules]
 GO
 ALTER TABLE [dbo].[JobsTddSplitRules] ADD CONSTRAINT [PK_JobsTddSplitRules] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
 GO
+CREATE NONCLUSTERED INDEX [IX_JobsTddSplitRules_ClinicIDJobType] ON [dbo].[JobsTddSplitRules] ([ClinicID], [JobType]) INCLUDE ([ID]) ON [PRIMARY]
+GO

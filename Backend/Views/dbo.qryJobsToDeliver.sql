@@ -13,13 +13,12 @@ FROM            dbo.JobsToDeliver INNER JOIN
                          dbo.Clinics ON dbo.Jobs.ClinicID = dbo.Clinics.ClinicID INNER JOIN
                          dbo.Jobs_Patients ON dbo.Jobs.JobNumber = dbo.Jobs_Patients.JobNumber
 GO
-
-EXEC sp_addextendedproperty N'MS_DiagramPane2', N'nd
+EXEC sp_addextendedproperty N'MS_DiagramPane2', N'   Or = 1350
+      End
    End
 End
 ', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliver', NULL, NULL
 GO
-
 EXEC sp_addextendedproperty N'MS_DiagramPane1', N'[0E232FF0-B466-11cf-A24F-00AA00A3EFFF, 1.00]
 Begin DesignProperties = 
    Begin PaneConfigurations = 
@@ -83,9 +82,10 @@ Begin DesignProperties =
          NumPanes = 1
          Configuration = "(V (2))"
       End
-      ActivePaneConfig = 0
+      ActivePaneConfig = 3
    End
    Begin DiagramPane = 
+      PaneHidden = 
       Begin Origin = 
          Top = 0
          Left = 0
@@ -99,7 +99,7 @@ Begin DesignProperties =
                Right = 198
             End
             DisplayFlags = 280
-            TopColumn = 3
+            TopColumn = 0
          End
          Begin Table = "Jobs"
             Begin Extent = 
@@ -164,8 +164,7 @@ Begin DesignProperties =
          Filter = 1350
          Or = 1350
          Or = 1350
-         Or = 1350
-      E', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliver', NULL, NULL
+      ', 'SCHEMA', N'dbo', 'VIEW', N'qryJobsToDeliver', NULL, NULL
 GO
 
 

@@ -9,3 +9,5 @@ CREATE TABLE [dbo].[JobsTddAllowedTags]
 GO
 ALTER TABLE [dbo].[JobsTddAllowedTags] ADD CONSTRAINT [PK_JobsTddAllowedTags] PRIMARY KEY CLUSTERED  ([ID]) ON [PRIMARY]
 GO
+CREATE NONCLUSTERED INDEX [IX_JobsTddAllowedTags_SplitRuleID] ON [dbo].[JobsTddAllowedTags] ([SplitRuleID]) INCLUDE ([FieldName], [ID], [Name], [Required]) ON [PRIMARY]
+GO

@@ -14,7 +14,7 @@ CREATE TABLE [dbo].[JobsToDeliverErrors]
 GO
 ALTER TABLE [dbo].[JobsToDeliverErrors] ADD CONSTRAINT [PK_JobsToDeliverErrors] PRIMARY KEY CLUSTERED  ([ErrorDeliveryId]) ON [PRIMARY]
 GO
-CREATE NONCLUSTERED INDEX [IX_JobsToDeliverErrors_DeliveryID] ON [dbo].[JobsToDeliverErrors] ([DeliveryId], [ErrorDeliveryId]) ON [PRIMARY]
+CREATE NONCLUSTERED INDEX [IX_JobsToDeliverErrors_DeliveryID] ON [dbo].[JobsToDeliverErrors] ([DeliveryId], [ErrorDeliveryId]) INCLUDE ([ErrorDate]) ON [PRIMARY]
 GO
 CREATE NONCLUSTERED INDEX [IX_JobsToDeliverErrors_ErrorDate] ON [dbo].[JobsToDeliverErrors] ([ErrorDate]) ON [PRIMARY]
 GO

@@ -31,7 +31,7 @@ CREATE TABLE [dbo].[Jobs]
 [GenericPatientFlag] [bit] NOT NULL CONSTRAINT [DF_Jobs_GenericPatientFlag] DEFAULT ((0)),
 [PoorAudioFlag] [bit] NOT NULL CONSTRAINT [DF_Jobs_PoorAudioFlag] DEFAULT ((0)),
 [TranscriptionModeFlag] [bit] NOT NULL CONSTRAINT [DF_Jobs_TranscriptionModeFlag] DEFAULT ((0)),
-[JobEditingSummaryId] [int] NOT NULL CONSTRAINT [DF__Jobs__JobEditing__78159CA3] DEFAULT ((-1)),
+[JobEditingSummaryId] [int] NOT NULL CONSTRAINT [DF_Jobs_JobEditingSummaryID] DEFAULT ((-1)),
 [JobId] [int] NOT NULL IDENTITY(2, 1),
 [DueDate] [datetime] NULL,
 [TemplateName] [varchar] (100) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
@@ -46,36 +46,28 @@ CREATE TABLE [dbo].[Jobs]
 [TagMetaData] [varchar] (2000) COLLATE SQL_Latin1_General_CP1_CI_AS NULL,
 [CharacterCountFromSRE] [int] NULL
 ) ON [PRIMARY]
-ALTER TABLE [dbo].[Jobs] ADD 
-CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) WITH (FILLFACTOR=90) ON [PRIMARY]
-CREATE NONCLUSTERED INDEX [IX_ClinicID_INC] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [ReceivedOn], [Stat]) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [ix_Jobs_JobId] ON [dbo].[Jobs] ([JobId]) WITH (ALLOW_PAGE_LOCKS=OFF) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_ReceivedOn_INC_JobNumber_DictatorID_ClinicID_Location...] ON [dbo].[Jobs] ([ReceivedOn]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [ClinicID], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [IsGenericJob], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [Stat]) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_JobsDictatorID] ON [dbo].[Jobs] ([DictatorID]) WITH (FILLFACTOR=90) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_JobsJobEditingSummaryId] ON [dbo].[Jobs] ([JobEditingSummaryId]) WITH (FILLFACTOR=90) ON [PRIMARY]
-
-CREATE NONCLUSTERED INDEX [IX_Jobs_ReturnedOn] ON [dbo].[Jobs] ([ReturnedOn]) INCLUDE ([EditorID], [JobNumber]) WITH (FILLFACTOR=90) ON [PRIMARY]
-
 GO
-GRANT SELECT ON  [dbo].[Jobs] TO [app_DocExtract]
+ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [PK_Jobs] PRIMARY KEY CLUSTERED  ([JobNumber] DESC) WITH (ALLOW_PAGE_LOCKS=OFF) ON [PRIMARY]
 GO
-
-ALTER TABLE [dbo].[Jobs] ADD
-CONSTRAINT [FK_Jobs_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
-
-
+CREATE NONCLUSTERED INDEX [IX_ClinicID_INC] ON [dbo].[Jobs] ([ClinicID]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [ParentJobNumber], [ReceivedOn], [Stat]) ON [PRIMARY]
 GO
-
-
+CREATE NONCLUSTERED INDEX [IX_JobsDictatorID] ON [dbo].[Jobs] ([DictatorID]) WITH (ALLOW_PAGE_LOCKS=OFF) ON [PRIMARY]
+GO
 CREATE NONCLUSTERED INDEX [IX_Jobs_DictatorID_AppointmentDate_includes] ON [dbo].[Jobs] ([DictatorID], [AppointmentDate]) INCLUDE ([ClinicID], [EditorID], [JobEditingSummaryId], [JobNumber], [JobType]) ON [PRIMARY]
 GO
-
-
+CREATE NONCLUSTERED INDEX [IX_JobsJobEditingSummaryId] ON [dbo].[Jobs] ([JobEditingSummaryId]) WITH (ALLOW_PAGE_LOCKS=OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [ix_Jobs_JobId] ON [dbo].[Jobs] ([JobId]) WITH (ALLOW_PAGE_LOCKS=OFF) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Jobs_JobStatusRhythmWorkFlowIDJobNumber] ON [dbo].[Jobs] ([JobStatus], [RhythmWorkFlowID], [JobNumber]) INCLUDE ([ClinicID], [DictationDate], [DictatorID], [JobId], [JobType], [TemplateName]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_ReceivedOn_INC_JobNumber_DictatorID_ClinicID_Location...] ON [dbo].[Jobs] ([ReceivedOn]) INCLUDE ([AppointmentDate], [AppointmentTime], [CC], [ClinicID], [CompletedOn], [DictationDate], [DictationTime], [DictatorID], [DocumentStatus], [Duration], [EditorID], [GenericPatientFlag], [IsGenericJob], [JobEditingSummaryId], [JobId], [JobNumber], [JobType], [Location], [Stat]) ON [PRIMARY]
+GO
+CREATE NONCLUSTERED INDEX [IX_Jobs_ReturnedOn] ON [dbo].[Jobs] ([ReturnedOn]) INCLUDE ([EditorID], [JobNumber]) WITH (ALLOW_PAGE_LOCKS=OFF) ON [PRIMARY]
+GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_Dictators] FOREIGN KEY ([DictatorID]) REFERENCES [dbo].[Dictators] ([DictatorID])
 GO
 ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_DocumentStatus] FOREIGN KEY ([DocumentStatus]) REFERENCES [dbo].[DocumentStatus] ([DocStatus])
+GO
+ALTER TABLE [dbo].[Jobs] ADD CONSTRAINT [FK_Jobs_RhythmWorkFlows] FOREIGN KEY ([RhythmWorkFlowID]) REFERENCES [dbo].[RhythmWorkFlows] ([RhythmWorkFlowID])
 GO
